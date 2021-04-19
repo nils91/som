@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strconv"
 )
@@ -20,6 +21,15 @@ func main() {
 	fmt.Println("Address size: " + fmt.Sprint(n) + " bits")
 	fmt.Println("Memory space: " + fmt.Sprint(memsize) + " bits")
 	fmt.Println("Input file: " + filename)
+
+	content, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println(string(content))
 }
 
 func upow(n uint, i uint) uint {

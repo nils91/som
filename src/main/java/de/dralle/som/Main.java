@@ -3,6 +3,8 @@
  */
 package de.dralle.som;
 
+import java.io.File;
+
 /**
  * @author Nils Dralle
  *
@@ -21,8 +23,10 @@ public class Main {
 		String filename=args[1];
 		int memAddressSize=Integer.parseInt(argN);
 		long memSpaceSize=(long) Math.pow(2, memAddressSize);
+		File f=new File(filename);
 		System.out.println("Mem Address Size: "+memAddressSize);
 		System.out.println("Mem Space Size (Bits): "+memSpaceSize);
 		System.out.println("File: "+filename);
+		System.out.println("File exist: "+f.exists());
 	}
 }

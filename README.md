@@ -7,4 +7,4 @@ opcode|4 letter code| Description
 10|NAND|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.
 11|CJMP|Conditional jump. If the accumulator has value 1, perform jump.
 The opcode is followed by n bits denoting the memory address (or jump target address). The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
-Program execution starts at 0. Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address.
+Program execution starts at 0. Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. To end execution, perform a jump to 2^n-n-2.

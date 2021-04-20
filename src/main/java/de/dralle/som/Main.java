@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,9 +51,43 @@ public class Main {
 				break;
 			}
 		}
-		int opcodeSize=2;
-		int commandSize=opcodeSize+memAddressSize;
-		System.out.println("Opcode Size: "+opcodeSize);
-		System.out.println("Command Size: "+commandSize);
+		int opcodeSize = 2;
+		int commandSize = opcodeSize + memAddressSize;
+		System.out.println("Opcode Size: " + opcodeSize);
+		System.out.println("Command Size: " + commandSize);
+		Boolean[] bitArray = bits.toArray(new Boolean[bits.size()]);
+		int ACC = 0;// accumulator address
+		int PC = 0;// program counter
+		int step=0;
+		while (true) {
+			if(PC>bitArray.length-1) {
+				break;
+			}
+			Boolean[] commandBits = Arrays.copyOfRange(bitArray, PC, PC + commandSize);
+			Boolean[] opcodeBits = Arrays.copyOfRange(commandBits, 0, opcodeSize);
+			Boolean[] addressBits = Arrays.copyOfRange(commandBits, opcodeSize, opcodeSize + memAddressSize);
+			Opcode op = null;
+			long address = 0;
+			if (!opcodeBits[0] && !opcodeBits[1]) {// 00
+				op = Opcode.READ;
+			} else if (!opcodeBits[0] && opcodeBits[1]) {// 01
+				op = Opcode.WRITE;
+			} else if (opcodeBits[0] && !opcodeBits[1]) {// 10
+				op = Opcode.NAND;
+			} else if (opcodeBits[0] && opcodeBits[1]) {// 11
+				op = Opcode.CJMP;
+			}
+			for (int i = 0; i < addressBits.length; i++) {
+				if(addressBits[i]) {
+					address+=Math.pow(2, memAddressSize-i-1);
+				}
+			}
+			System.out.println("Step: "+step);
+			System.out.println("PC: "+PC);
+			System.out.println("Opcode: "+op);
+			System.out.println("Address: "+address);
+			step++;
+			PC+=commandSize;
+		}
 	}
 }

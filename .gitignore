@@ -1,4 +1,19 @@
 #binary output folder
-bin/
+/bin/
+
 #windows binaries
 *.exe
+
+#eclipse
+.project
+.classpath
+/.settings/
+
+#java
+*.class
+
+#maven
+/target/
+
+#other
+*.bak

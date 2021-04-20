@@ -1,1 +1,4 @@
-som.exe
+#binary output folder
+bin/
+#windows binaries
+*.exe

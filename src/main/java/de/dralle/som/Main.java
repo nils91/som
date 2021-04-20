@@ -51,6 +51,7 @@ public class Main {
 				break;
 			}
 		}
+		br.close();
 		int opcodeSize = 2;
 		int commandSize = opcodeSize + memAddressSize;
 		System.out.println("Opcode Size: " + opcodeSize);
@@ -114,9 +115,9 @@ public class Main {
 		for (int i = 0; i < bitArray.length; i++) {
 			Boolean bit = bitArray[i];
 			if(bit) {
-				System.out.println("1");
+				System.out.print("1");
 			}else {
-				System.out.println("0");
+				System.out.print("0");
 			}
 			
 		}

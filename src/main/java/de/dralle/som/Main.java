@@ -58,16 +58,16 @@ public class Main {
 		Boolean[] bitArray = bits.toArray(new Boolean[bits.size()]);
 		int ACC = 0;// accumulator address
 		int PC = 0;// program counter
-		int step=0;
+		int step = 0;
 		while (true) {
-			if(PC>bitArray.length-1) {
+			if (PC > bitArray.length - 1) {
 				break;
 			}
 			Boolean[] commandBits = Arrays.copyOfRange(bitArray, PC, PC + commandSize);
 			Boolean[] opcodeBits = Arrays.copyOfRange(commandBits, 0, opcodeSize);
 			Boolean[] addressBits = Arrays.copyOfRange(commandBits, opcodeSize, opcodeSize + memAddressSize);
 			Opcode op = null;
-			long address = 0;
+			int address = 0;
 			if (!opcodeBits[0] && !opcodeBits[1]) {// 00
 				op = Opcode.READ;
 			} else if (!opcodeBits[0] && opcodeBits[1]) {// 01
@@ -78,16 +78,38 @@ public class Main {
 				op = Opcode.CJMP;
 			}
 			for (int i = 0; i < addressBits.length; i++) {
-				if(addressBits[i]) {
-					address+=Math.pow(2, memAddressSize-i-1);
+				if (addressBits[i]) {
+					address += Math.pow(2, memAddressSize - i - 1);
 				}
 			}
-			System.out.println("Step: "+step);
-			System.out.println("PC: "+PC);
-			System.out.println("Opcode: "+op);
-			System.out.println("Address: "+address);
+			System.out.println("Accumulator: " + bitArray[ACC]);
+			System.out.println("Step: " + step);
+			System.out.println("PC: " + PC);
+			System.out.println("Opcode: " + op);
+			System.out.println("Address: " + address);
 			step++;
-			PC+=commandSize;
+			PC += commandSize;
+			switch (op) {
+			case READ:
+				bitArray[ACC] = bitArray[address];
+				break;
+			case WRITE:
+				bitArray[address] = bitArray[ACC];
+				break;
+			case NAND:
+				Boolean valueAtAddr = bitArray[address];
+				Boolean valueAcc = bitArray[ACC];
+				boolean newValueAcc = !(valueAtAddr && valueAcc);
+				bitArray[ACC] = newValueAcc;
+				break;
+			case CJMP:
+				if (bitArray[ACC]) {
+					PC = address; // Can be done here because execution advance is performed before switch/case
+				}
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }

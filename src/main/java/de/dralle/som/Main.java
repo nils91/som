@@ -111,5 +111,14 @@ public class Main {
 				break;
 			}
 		}
+		for (int i = 0; i < bitArray.length; i++) {
+			Boolean bit = bitArray[i];
+			if(bit) {
+				System.out.println("1");
+			}else {
+				System.out.println("0");
+			}
+			
+		}
 	}
 }

@@ -17,7 +17,12 @@ public class Main {
 			String string = args[i];
 			System.out.println("Argument["+i+"]: "+string);
 		}
-
+		String argN=args[0];
+		String filename=args[1];
+		int memAddressSize=Integer.parseInt(argN);
+		long memSpaceSize=(long) Math.pow(2, memAddressSize);
+		System.out.println("Mem Address Size: "+memAddressSize);
+		System.out.println("Mem Space Size (Bits): "+memSpaceSize);
+		System.out.println("File: "+filename);
 	}
-
 }

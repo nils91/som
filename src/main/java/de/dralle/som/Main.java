@@ -25,6 +25,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
+	public static final String VERSION="0.0.2-SNAPSHOT";
 	/**
 	 * @param args
 	 * @throws IOException
@@ -141,10 +142,13 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(cmd.hasOption("version")) {
+			System.out.println(VERSION);
+		}
 		if(cmd.hasOption("help")) {
 			HelpFormatter formatter=new HelpFormatter();
 			formatter.printHelp("som-java", options);
-		}
+		}		
 		if(cmd.hasOption("verbose")) {
 			System.out.println("verbose");
 		}

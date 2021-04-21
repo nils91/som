@@ -164,6 +164,8 @@ public class Main {
 		options.addOption("out","outfile",true,"Spacify output file");
 		options.addOption("if","informat",true,"Input file format");
 		options.addOption("of","outformat",true,"Output file format");
+		options.addOption(null,"run",false,"Run a file");
+		options.addOption(null,"compile",false,"Compile a file");
 		return options;
 	}
 }

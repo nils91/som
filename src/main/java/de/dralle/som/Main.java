@@ -12,6 +12,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 /**
  * @author Nils Dralle
  *
@@ -23,6 +29,7 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+		parseCli(args);
 		for (int i = 0; i < args.length; i++) {
 			String string = args[i];
 			System.out.println("Argument[" + i + "]: " + string);
@@ -121,5 +128,37 @@ public class Main {
 			}
 			
 		}
+	}
+
+	private static void parseCli(String[] args) {
+		System.out.println("start!");
+		Options options= setupCliOptions();
+		CommandLineParser parser = new DefaultParser();
+		CommandLine cmd = null;
+		try {
+			cmd = parser.parse(options, args);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(cmd.hasOption("help")) {
+			System.out.println("help");
+		}
+		if(cmd.hasOption("verbose")) {
+			System.out.println("verbose");
+		}
+		System.exit(1);
+	}
+
+	private static Options setupCliOptions() {
+		Options options=new Options();
+		options.addOption("v", "version", false, "Display the version");
+		options.addOption("h", "help", false, "Display all available CLI options");
+		options.addOption(null,"verbose",false,"Enable verbose mode");
+		options.addOption("in","infile",true,"Specify input file");
+		options.addOption("out","outfile",true,"Spacify output file");
+		options.addOption("if","informat",true,"Input file format");
+		options.addOption("of","outformat",true,"Output file format");
+		return options;
 	}
 }

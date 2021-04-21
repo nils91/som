@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -131,7 +132,6 @@ public class Main {
 	}
 
 	private static void parseCli(String[] args) {
-		System.out.println("start!");
 		Options options= setupCliOptions();
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -142,7 +142,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		if(cmd.hasOption("help")) {
-			System.out.println("help");
+			HelpFormatter formatter=new HelpFormatter();
+			formatter.printHelp("som-java", options);
 		}
 		if(cmd.hasOption("verbose")) {
 			System.out.println("verbose");

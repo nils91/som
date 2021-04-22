@@ -6,6 +6,20 @@ opcode|letter code| Description
 01|WRITE|Write a value from accumulator to memory.
 10|NAND|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.
 11|CJMP|Conditional jump. If the accumulator has value 1, perform jump.
+
+## som bitcode
+
 The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
 Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
 Program execution starts at 6. Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0.
+
+### Example
+
+Note: For readability each command is written as a new line and commented. Comments are not supported within the bitcode.
+
+0			//accumulator
+00001		//n=5
+10 00000	//NAND ACC. This has the effect of inverting the accumulator bit.
+11 11001	//CJMP 25.
+
+Each bit not explicitly written in the file is 0. The file is 2^n bits in size.

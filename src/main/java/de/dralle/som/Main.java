@@ -61,6 +61,18 @@ public class Main {
 		if (cmd.hasOption("infile")) {
 			infile = cmd.getOptionValue("infile");
 		}
+		String outfile =null;
+		if (cmd.hasOption("outfile")) {
+			infile = cmd.getOptionValue("outfile");
+		}
+		String informat = null;
+		if (cmd.hasOption("informat")) {
+			informat = cmd.getOptionValue("informat");
+		}
+		String outformat =null;
+		if (cmd.hasOption("outformat")) {
+			outformat = cmd.getOptionValue("outformat");
+		}
 		if (cmd.hasOption("run")) {
 			runProgramFromFile(infile, verbose);
 		}

@@ -24,6 +24,10 @@ Note: For readability each command is written as a new line and commented. Comme
 
 Each bit not explicitly written in the file is 0. The file is 2^n bits in size.
 
+## SOM language
+
+SOM language comes in different flavors, .hra, .hrb and .hrc. .hra is just as slightly more human readable version of the bitcode, while .hrb and .hrc are human readable assembly languages. .hrc is a more complex version of .hrb. .hrb programs can also be interpreted as .hrc.
+
 ## Formats
 
 SOM bitcode can be used in several formats.
@@ -35,3 +39,19 @@ The ascii binary format is a format is a format where the bits are the character
 ### Binary (.bin)
 
 Same thing as ascii binary, but instead of characters the bits are actual bits. The file does not need to be 2^n bits in size, it only needs to contain the bits nescessary. If the bits that make up the program don´t come out to be a round number of bytes, the file should be padded with '0'´s to the next byte.
+
+### SOM bitlanguage (.hra)
+
+The bitlanguage replaces the opcode bits with human-readable letter codes. The file only contains the commands, the compiler handles the accumulator bits. N is specified as a directive at the top of the file, like `;n=5`. hra also allows the ACC and EXIT symbols in place of addresses. Comments are also supported, but only as line comments starting with `'#'`. The following is a valid .hra program:
+
+```
+;n=5
+NAND ACC
+CJMP EXIT
+```
+
+That program is equivalent to above bitcode example.h
+
+### SOM simplified (.hrb))
+
+### SOM language (.hrc))

@@ -23,3 +23,15 @@ Note: For readability each command is written as a new line and commented. Comme
 11 11001	//CJMP 25.
 
 Each bit not explicitly written in the file is 0. The file is 2^n bits in size.
+
+## Formats
+
+SOM bitcode can be used in several formats.
+
+### Ascii binary (.ab)
+
+The ascii binary format is a format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example, minus the comments, is a valid program in ascii binary.
+
+### Binary (.bin)
+
+Same thing as ascii binary, but instead of characters the bits are actual bits. The file does not need to be 2^n bits in size, it only needs to contain the bits nescessary. If the bits that make up the program don´t come out to be a round number of bytes, the file should be padded with '0'´s to the next byte.

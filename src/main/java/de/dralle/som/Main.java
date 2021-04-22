@@ -88,6 +88,10 @@ public class Main {
 			}
 		}
 		br.close();
+		runProgramFromBitList(bits,verbose);
+	}
+
+	private static void runProgramFromBitList(List<Boolean> bits, boolean verbose) {
 		int n = getAsUnsignedInt(bits.subList(1, 6))+4;
 		long memSpaceSize = (long) Math.pow(2, n);
 		if (verbose) {
@@ -161,7 +165,7 @@ public class Main {
 			} else {
 				System.out.print("0");
 			}
-		}
+		}		
 	}
 
 	private static int getAsUnsignedInt(List<Boolean> subList) {

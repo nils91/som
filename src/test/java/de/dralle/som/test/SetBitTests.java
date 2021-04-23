@@ -202,4 +202,11 @@ class SetBitTests {
 		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 7, true, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
+	@Test
+	void testSet8bitUnsignedIntByte0Val1() {
+		byte[] memSpace = new byte[2];
+		memSpace=SOMBitcodeRunner.setBitsUnsigned(0, 8, 1, memSpace);
+		byte expected = (byte) 0x01;
+		assertEquals(expected, memSpace[0]);
+	}
 }

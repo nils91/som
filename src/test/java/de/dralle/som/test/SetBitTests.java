@@ -202,30 +202,36 @@ class SetBitTests {
 		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 7, true, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
+
 	@Test
 	void testSet8bitUnsignedIntByte0Val1() {
 		byte[] memSpace = new byte[2];
-		memSpace=SOMBitcodeRunner.setBitsUnsigned(0, 8, 1, memSpace);
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 1, memSpace);
 		byte expected = (byte) 0x01;
 		assertEquals(expected, memSpace[0]);
-	}@Test
+	}
+
+	@Test
 	void testSet8bitUnsignedIntByte0Val255() {
 		byte[] memSpace = new byte[2];
-		memSpace=SOMBitcodeRunner.setBitsUnsigned(0, 8, 255, memSpace);
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 255, memSpace);
 		byte expected = (byte) 0xFF;
 		assertEquals(expected, memSpace[0]);
-	}@Test
+	}
+
+	@Test
 	void testSet8bitUnsignedIntByte0Val127() {
 		byte[] memSpace = new byte[2];
-		memSpace=SOMBitcodeRunner.setBitsUnsigned(0, 8, 127, memSpace);
-		byte expected = (byte) 0x0F;
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 127, memSpace);
+		byte expected = (byte) 0x7F;
 		assertEquals(expected, memSpace[0]);
 	}
+
 	@Test
 	void testSet8bitUnsignedIntByte0Val128() {
 		byte[] memSpace = new byte[2];
-		memSpace=SOMBitcodeRunner.setBitsUnsigned(0, 8, 128, memSpace);
-		byte expected = (byte) 0x10;
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 128, memSpace);
+		byte expected = (byte) 0x80;
 		assertEquals(expected, memSpace[0]);
 	}
 }

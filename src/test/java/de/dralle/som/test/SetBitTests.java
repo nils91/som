@@ -234,4 +234,20 @@ class SetBitTests {
 		byte expected = (byte) 0x80;
 		assertEquals(expected, memSpace[0]);
 	}
+
+	@Test
+	void testSet8bitUnsignedIntByte0Val170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 170, memSpace);
+		byte expected = (byte) 0xAA;
+		assertEquals(expected, memSpace[0]);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntByte0Val85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 8, 85, memSpace);
+		byte expected = (byte) 0x55;
+		assertEquals(expected, memSpace[0]);
+	}
 }

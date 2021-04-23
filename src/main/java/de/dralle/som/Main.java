@@ -110,15 +110,17 @@ public class Main {
 			System.out.println("Mem Address Size: " + n);
 			System.out.println("Mem Space Size (Bits): " + memSpaceSize);
 		}
+		int startAddress=getAsUnsignedInt(bits.subList(6, 6+n));
 		int opcodeSize = 2;
 		int commandSize = opcodeSize + n;
 		if (verbose) {
 			System.out.println("Opcode Size: " + opcodeSize);
 			System.out.println("Command Size: " + commandSize);
+			System.out.println("Program starts at: "+startAddress);
 		}
 		Boolean[] bitArray = bits.toArray(new Boolean[bits.size()]);
 		int ACC = 0;// accumulator address
-		int PC = 6;// program counter
+		int PC = startAddress;// program counter
 		int step = 0;
 		while (true) {
 			if (PC > bitArray.length - 1) {

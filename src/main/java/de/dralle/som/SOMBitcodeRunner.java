@@ -54,7 +54,7 @@ public class SOMBitcodeRunner {
 		this.memSpace=memSpace;
 	}
 	public SOMBitcodeRunner(String bits) {
-		bits=bits.replaceAll("~(0|1)", "");
+		bits=bits.replaceAll("[^0-1]", "");
 		int bitCnt = bits.length();
 		int byteCnt = bitCnt/8;
 		if(bitCnt%8!=0) {

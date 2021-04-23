@@ -297,4 +297,51 @@ class SetBitTests {
 		byte expected = (byte) 0x55;
 		assertEquals(expected, memSpace[1]);
 	}
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal1() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 1, memSpace);
+		byte expected = (byte) 0x01;
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal255() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 255, memSpace);
+		byte expected = (byte) 0xFF;
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal127() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 127, memSpace);
+		byte expected = (byte) 0x7F;
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal128() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 128, memSpace);
+		byte expected = (byte) 0x80;
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 170, memSpace);
+		byte expected = (byte) 0xAA;
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSet16bitUnsignedIntAccross2BytesVal85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(0, 16, 85, memSpace);
+		byte expected = (byte) 0x55;
+		assertEquals(expected, memSpace[1]);
+	}
 }

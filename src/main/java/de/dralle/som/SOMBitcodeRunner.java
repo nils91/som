@@ -26,7 +26,7 @@ public class SOMBitcodeRunner {
 
 	public static byte[] setBit(int address, boolean bitValue, byte[] memSpace) {
 		int byteAddress=address/8;
-		int offset=address%8;
+		int offset=7-address%8;
 		byte bite=memSpace[byteAddress];
 		byte bitmask=(byte) (1<<offset);
 		if(!bitValue) {

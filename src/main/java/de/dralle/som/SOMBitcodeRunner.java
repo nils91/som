@@ -3,6 +3,8 @@
  */
 package de.dralle.som;
 
+import java.util.List;
+
 /**
  * @author Nils Dralle
  *
@@ -22,7 +24,49 @@ public class SOMBitcodeRunner {
 		memSpace=setBitsUnsignedBounds(6, 6+n, startAddress, memSpace);
 		this.memSpace=memSpace;
 	}
-
+	public SOMBitcodeRunner(byte[] memSpace) {
+		this.memSpace=memSpace;
+	}
+	public SOMBitcodeRunner(boolean[] bits) {
+		int bitCnt = bits.length;
+		int byteCnt = bitCnt/8;
+		if(bitCnt%8!=0) {
+			byteCnt++;
+		}
+		byte[] memSpace = new byte[(int) byteCnt];
+		for (int i = 0; i < bits.length; i++) {
+			boolean b = bits[i];
+			memSpace=setBit(i, b, memSpace);
+		}
+		this.memSpace=memSpace;
+	}
+	public SOMBitcodeRunner(List<Boolean> bits) {
+		int bitCnt = bits.size();
+		int byteCnt = bitCnt/8;
+		if(bitCnt%8!=0) {
+			byteCnt++;
+		}
+		byte[] memSpace = new byte[(int) byteCnt];
+		for (int i = 0; i < bits.size(); i++) {
+			boolean b = bits.get(i);
+			memSpace=setBit(i, b, memSpace);
+		}
+		this.memSpace=memSpace;
+	}
+	public SOMBitcodeRunner(String bits) {
+		bits=bits.replaceAll("~(0|1)", "");
+		int bitCnt = bits.length();
+		int byteCnt = bitCnt/8;
+		if(bitCnt%8!=0) {
+			byteCnt++;
+		}
+		byte[] memSpace = new byte[(int) byteCnt];
+		for (int i = 0; i < bits.length(); i++) {
+			boolean b = bits.charAt(i)!='0';
+			memSpace=setBit(i, b, memSpace);
+		}
+		this.memSpace=memSpace;
+	}
 	public static byte[] setBitsUnsignedBounds(int lowerBound, int upperBound, int value, byte[] memSpace) {
 		int bits=upperBound-lowerBound;
 		for (int i = 0; i < bits; i++) {

@@ -344,4 +344,51 @@ class SetBitTests {
 		byte expected = (byte) 0x55;
 		assertEquals(expected, memSpace[1]);
 	}
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal1() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 1, memSpace);
+		byte[] expected = new byte[]{(byte) 0x00,0x10};
+		assertArrayEquals(expected, memSpace);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal255() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 255, memSpace);
+		byte[] expected = new byte[]{(byte) 0x0F,(byte) 0xF0};
+		assertArrayEquals(expected, memSpace);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal127() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 127, memSpace);
+		byte[] expected = new byte[]{(byte) 0x07,(byte) 0xF0};
+		assertArrayEquals(expected, memSpace);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal128() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 128, memSpace);
+		byte[] expected = new byte[]{(byte) 0x08,0x00};
+		assertArrayEquals(expected, memSpace);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 170, memSpace);
+		byte[] expected = new byte[]{(byte) 0x0A,(byte) 0xA0};
+		assertArrayEquals(expected, memSpace);
+	}
+
+	@Test
+	void testSet8bitUnsignedIntAccross2BytesVal85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(4, 8, 85, memSpace);
+		byte[] expected = new byte[]{(byte) 0x05,0x50};
+		assertArrayEquals(expected, memSpace);
+	}
 }

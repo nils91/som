@@ -1,9 +1,9 @@
-name: "Build"
+name: "Test"
 on:
     [push, pull_request]
 jobs:
   build:
-    name: build
+    name: run_tests_all
     runs-on: ubuntu-latest        
     steps:
     - uses: actions/checkout@v2.3.4
@@ -11,5 +11,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: Build with Maven
-      run: mvn -DskipTests clean install
+    - name: Test with Maven
+      run: mvn clean test

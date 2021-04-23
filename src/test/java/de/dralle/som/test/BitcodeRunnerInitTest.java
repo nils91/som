@@ -2,6 +2,8 @@ package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,22 +29,53 @@ class BitcodeRunnerInitTest {
 	@AfterEach
 	void tearDown() throws Exception {
 	}
+
 	@Test
 	void testInitMemspace() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
 		assertNotNull(runner);
 	}
+
 	@Test
 	void testInitMemspaceSize() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
-		int expectedMemspaceSize=(int) Math.pow(2, 5);
-		int actualSize = runner.getMemSpace().length*8;
+		int expectedMemspaceSize = (int) Math.pow(2, 5);
+		int actualSize = runner.getMemSpace().length * 8;
 		assertEquals(expectedMemspaceSize, actualSize);
 	}
+
 	@Test
 	void testInitMemspaceContent() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
-		byte[] expected=new byte[] {0x05,0x60,0x00,0x00};
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		assertArrayEquals(expected, runner.getMemSpace());
+	}
+
+	@Test
+	void testInitWithMemspaceContent() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(expected);
+		assertArrayEquals(expected, runner.getMemSpace());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitArray() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(new boolean[] { false, false, false, false, false, true, false,
+				true, false, true, true, false, false, false, false, false, false, false, false, false, false, false,
+				false, false, false, false, false, false, false, false, false, false });
+		assertArrayEquals(expected, runner.getMemSpace());
+	}
+	@Test
+	void testInitWithMemspaceContentAsBitString() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101011000000000000000000000");
+		assertArrayEquals(expected, runner.getMemSpace());
+	}
+	@Test
+	void testInitWithMemspaceContentAsBitStringWithSpaces() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011 00 00000 00 00000 00 00000");
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
 }

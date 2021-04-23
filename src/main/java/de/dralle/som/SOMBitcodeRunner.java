@@ -19,7 +19,7 @@ public class SOMBitcodeRunner {
 		long byteCnt=bitCnt/8;
 		byte[] memSpace = new byte[(int) byteCnt];
 		memSpace=setBitsUnsignedBounds(1,6,n-4,memSpace);
-		memSpace=setBitsUnsignedBounds(7, 7+n, startAddress, memSpace);
+		memSpace=setBitsUnsignedBounds(6, 6+n, startAddress, memSpace);
 		this.memSpace=memSpace;
 	}
 

@@ -18,7 +18,7 @@ public class SOMBitcodeRunner {
 	public static byte[] setBitsUnsignedBounds(int lowerBound, int upperBound, int value, byte[] memSpace) {
 		int bits=upperBound-lowerBound;
 		for (int i = 0; i < bits; i++) {
-			boolean bitValue=value%(Math.pow(2, bits-i-1))==0?false:true;
+			boolean bitValue=value%(Math.pow(2, bits-i-1))==0?true:false;
 			memSpace=setBit(lowerBound+i,bitValue,memSpace);
 		}
 		return memSpace;

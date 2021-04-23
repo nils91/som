@@ -8,11 +8,19 @@ package de.dralle.som;
  *
  */
 public class SOMBitcodeRunner {
-	public SOMBitcodeRunner(int n) {
+	private byte[] memSpace;
+
+	public byte[] getMemSpace() {
+		return memSpace;
+	}
+
+	public SOMBitcodeRunner(int n,int startAddress) {
 		long bitCnt=(long) Math.pow(2, n);
 		long byteCnt=bitCnt/8;
 		byte[] memSpace = new byte[(int) byteCnt];
-		setBitsUnsignedBounds(1,6,n,memSpace);
+		memSpace=setBitsUnsignedBounds(1,6,n-4,memSpace);
+		memSpace=setBitsUnsignedBounds(7, 7+n, startAddress, memSpace);
+		this.memSpace=memSpace;
 	}
 
 	public static byte[] setBitsUnsignedBounds(int lowerBound, int upperBound, int value, byte[] memSpace) {

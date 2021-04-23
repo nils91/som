@@ -43,6 +43,6 @@ class BitcodeRunnerInitTest {
 	void testInitMemspaceContent() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
 		byte[] expected=new byte[] {0x05,0x60,0x00,0x00};
-		assertEquals(expected, runner.getMemSpace());
+		assertArrayEquals(expected, runner.getMemSpace());
 	}
 }

@@ -391,4 +391,41 @@ class SetBitTests {
 		byte[] expected = new byte[]{(byte) 0x05,0x50};
 		assertArrayEquals(expected, memSpace);
 	}
+	@Test
+	void testSet7bitUnsignedIntByte0Val1() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(1, 7, 1, memSpace);
+		byte expected = (byte) 0x01;
+		assertEquals(expected, memSpace[0]);
+	}
+
+	@Test
+	void testSet7bitUnsignedIntByte0Val127() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(1, 7, 127, memSpace);
+		byte expected = (byte) 0x7F;
+		assertEquals(expected, memSpace[0]);
+	}
+
+	@Test
+	void testSet7bitUnsignedIntByte0Val85() {// Value selected because 1010101
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(1, 7, 85, memSpace);
+		byte expected = (byte) 0x55;
+		assertEquals(expected, memSpace[0]);
+	}
+	@Test
+	void testSet7bitUnsignedIntByte0Val63() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(1, 7, 63, memSpace);
+		byte expected = (byte) 0x3F;
+		assertEquals(expected, memSpace[0]);
+	}
+	@Test
+	void testSet7bitUnsignedIntByte0Val64() {
+		byte[] memSpace = new byte[2];
+		memSpace = SOMBitcodeRunner.setBitsUnsigned(1, 7, 64, memSpace);
+		byte expected = (byte) 0x40;
+		assertEquals(expected, memSpace[0]);
+	}
 }

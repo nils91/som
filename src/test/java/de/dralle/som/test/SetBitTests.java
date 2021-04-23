@@ -89,7 +89,7 @@ class SetBitTests {
 			memSpace[i] = (byte) 0xFF;
 		}
 		byte expected = (byte) 0x7F;
-		memSpace = SOMBitcodeRunner.setBit(1*8+0, false, memSpace);
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 0, false, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 
@@ -100,7 +100,7 @@ class SetBitTests {
 			memSpace[i] = (byte) 0xFF;
 		}
 		byte expected = (byte) 0xF7;
-		memSpace = SOMBitcodeRunner.setBit(1*8+4, false, memSpace);
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 4, false, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 
@@ -111,7 +111,7 @@ class SetBitTests {
 			memSpace[i] = (byte) 0xFF;
 		}
 		byte expected = (byte) 0xFE;
-		memSpace = SOMBitcodeRunner.setBit(1*8+7, false, memSpace);
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 7, false, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 
@@ -121,8 +121,19 @@ class SetBitTests {
 		for (int i = 0; i < memSpace.length; i++) {
 			memSpace[i] = (byte) 0x00;
 		}
-		byte expected = (byte) 0xF0;
+		byte expected = (byte) 0x80;
 		memSpace = SOMBitcodeRunner.setBit(0, true, memSpace);
+		assertEquals(expected, memSpace[0]);
+	}
+
+	@Test
+	void testSetBitByte0Bit3Init0Set1() {
+		byte[] memSpace = new byte[2];
+		for (int i = 0; i < memSpace.length; i++) {
+			memSpace[i] = (byte) 0x00;
+		}
+		byte expected = (byte) 0x10;
+		memSpace = SOMBitcodeRunner.setBit(3, true, memSpace);
 		assertEquals(expected, memSpace[0]);
 	}
 
@@ -132,7 +143,7 @@ class SetBitTests {
 		for (int i = 0; i < memSpace.length; i++) {
 			memSpace[i] = (byte) 0x00;
 		}
-		byte expected = (byte) 0x0F;
+		byte expected = (byte) 0x08;
 		memSpace = SOMBitcodeRunner.setBit(4, true, memSpace);
 		assertEquals(expected, memSpace[0]);
 	}
@@ -154,8 +165,19 @@ class SetBitTests {
 		for (int i = 0; i < memSpace.length; i++) {
 			memSpace[i] = (byte) 0x00;
 		}
-		byte expected = (byte) 0xF0;
-		memSpace = SOMBitcodeRunner.setBit(1*8+0, true, memSpace);
+		byte expected = (byte) 0x80;
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 0, true, memSpace);
+		assertEquals(expected, memSpace[1]);
+	}
+
+	@Test
+	void testSetBitByte1Bit3Init0Set1() {
+		byte[] memSpace = new byte[2];
+		for (int i = 0; i < memSpace.length; i++) {
+			memSpace[i] = (byte) 0x00;
+		}
+		byte expected = (byte) 0x10;
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 3, true, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 
@@ -165,8 +187,8 @@ class SetBitTests {
 		for (int i = 0; i < memSpace.length; i++) {
 			memSpace[i] = (byte) 0x00;
 		}
-		byte expected = (byte) 0x0F;
-		memSpace = SOMBitcodeRunner.setBit(1*8+4, true, memSpace);
+		byte expected = (byte) 0x08;
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 4, true, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 
@@ -177,7 +199,7 @@ class SetBitTests {
 			memSpace[i] = (byte) 0x00;
 		}
 		byte expected = (byte) 0x01;
-		memSpace = SOMBitcodeRunner.setBit(1*8+7, true, memSpace);
+		memSpace = SOMBitcodeRunner.setBit(1 * 8 + 7, true, memSpace);
 		assertEquals(expected, memSpace[1]);
 	}
 }

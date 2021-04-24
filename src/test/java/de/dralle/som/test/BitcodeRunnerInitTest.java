@@ -52,14 +52,14 @@ class BitcodeRunnerInitTest {
 	}
 
 	@Test
-	void testInitWithMemspaceContent() {
+	void testInitWithMemspaceContentFullMemspaceProvided() {
 		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(expected);
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
 
 	@Test
-	void testInitWithMemspaceContentAsBitArray() {
+	void testInitWithMemspaceContentAsBitArrayFullMemspaceProvided() {
 		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(new boolean[] { false, false, false, false, false, true, false,
 				true, false, true, true, false, false, false, false, false, false, false, false, false, false, false,
@@ -67,13 +67,13 @@ class BitcodeRunnerInitTest {
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
 	@Test
-	void testInitWithMemspaceContentAsBitString() {
+	void testInitWithMemspaceContentAsBitStringFullMemspaceProvided() {
 		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101011000000000000000000000");
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
 	@Test
-	void testInitWithMemspaceContentAsBitStringWithSpaces() {
+	void testInitWithMemspaceContentAsBitStringWithSpacesFullMemspaceProvided() {
 		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011 00 00000 00 00000 00 00000");
 		assertArrayEquals(expected, runner.getMemSpace());

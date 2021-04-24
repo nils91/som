@@ -110,7 +110,7 @@ public class SOMBitcodeRunner {
 		int returnValue=0;
 		for (int i = 0; i < bits; i++) {
 			if(getBit(lowerBound+i, memSpace)) {
-				int bitmask=1<<(lowerBound+i);
+				int bitmask=1<<(bits-i-1);
 				returnValue=returnValue|bitmask;
 			}
 		}

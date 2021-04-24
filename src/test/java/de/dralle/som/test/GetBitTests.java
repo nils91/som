@@ -369,11 +369,11 @@ class GetBitTests {
 	}
 
 	@Test
-	void testGet8bitUnsignedIntAccross2BytesVal1() {
+	void testGet8bitUnsignedIntAccross2BytesVal16() {
 		byte[] memSpace = new byte[2];
 		memSpace[0] = (byte) 0x01;
 		int actual = SOMBitcodeRunner.getBitsUnsigned(4, 8, memSpace);
-		int expected = 1;
+		int expected = 16;
 		assertEquals(expected, actual);
 	}
 

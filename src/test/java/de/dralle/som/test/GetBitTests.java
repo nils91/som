@@ -215,4 +215,201 @@ class GetBitTests {
 		assertEquals(expected, actual);
 	}
 
+	@Test
+	void testGet8bitUnsignedIntByte0Val255() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0xFF;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 8, memSpace);
+		int expected = 255;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte0Val127() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x7F;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 8, memSpace);
+		int expected = 127;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte0Val128() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x80;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 8, memSpace);
+		int expected = 128;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte0Val170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0xAA;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 8, memSpace);
+		int expected = 170;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte0Val85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x55;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 8, memSpace);
+		int expected = 85;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val1() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x01;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 1;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val255() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0xFF;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 255;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val127() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x7F;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 127;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val128() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x80;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 128;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0xAA;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 170;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntByte1Val85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x55;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(8, 8, memSpace);
+		int expected = 85;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal1() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x01;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 1;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal255() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0xFF;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 255;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal127() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x7F;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 127;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal128() {
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x80;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 128;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal170() { // Value selected because 10101010
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0xAA;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 170;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet16bitUnsignedIntAccross2BytesVal85() {// Value selected because 01010101
+		byte[] memSpace = new byte[2];
+		memSpace[1] = (byte) 0x55;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(0, 16, memSpace);
+		int expected = 85;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet8bitUnsignedIntAccross2BytesVal1() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x01;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(4, 8, memSpace);
+		int expected = 1;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet7bitUnsignedIntByte0Val127() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x7F;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(1, 7, memSpace);
+		int expected = 127;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet7bitUnsignedIntByte0Val85() {// Value selected because 1010101
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x55;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(1, 7, memSpace);
+		int expected = 85;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet7bitUnsignedIntByte0Val63() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x3F;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(1, 7, memSpace);
+		int expected = 63;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	void testGet7bitUnsignedIntByte0Val64() {
+		byte[] memSpace = new byte[2];
+		memSpace[0] = (byte) 0x40;
+		int actual = SOMBitcodeRunner.getBitsUnsigned(1, 7, memSpace);
+		int expected = 64;
+		assertEquals(expected, actual);
+	}
 }

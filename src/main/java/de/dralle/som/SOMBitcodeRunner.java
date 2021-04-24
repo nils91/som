@@ -105,4 +105,19 @@ public class SOMBitcodeRunner {
 		boolean bitValue=(bite&bitmask)!=0;		
 		return bitValue;
 	}
+	public static int getBitsUnsignedBounds(int lowerBound, int upperBound, byte[] memSpace) {
+		int bits=upperBound-lowerBound;
+		int returnValue=0;
+		for (int i = 0; i < bits; i++) {
+			if(getBit(lowerBound+i, memSpace)) {
+				int bitmask=1<<(lowerBound+i);
+				returnValue=returnValue|bitmask;
+			}
+		}
+		return returnValue;
+	}
+	
+	public static int getBitsUnsigned(int lowerBound, int n, byte[] memSpace) {
+		return getBitsUnsignedBounds(lowerBound, lowerBound+n, memSpace);
+	}
 }

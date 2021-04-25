@@ -20,7 +20,7 @@ jobs:
         java-version: '11'
     - name: Test with Maven
       env:
-        TEST_TEST_EXEC_FILE = ./tmp/test/JUnitTestExecutionTestfile
+        TEST_TEST_EXEC_FILE: ./tmp/test/JUnitTestExecutionTestfile
       run: mvn clean test
     - name: Check if new file exist
       shell: bash

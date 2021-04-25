@@ -10,6 +10,10 @@ import java.util.List;
  *
  */
 public class SOMBitcodeRunner {
+	private static final int START_ADDRESS_START = 6;
+	private static final int ADDRESS_SIZE_END = 5;
+	private static final int ADDRESS_SIZE_START = 1;
+	private static final int ADDRESS_SIZE_OFFSET = 4;
 	private byte[] memSpace;
 
 	public byte[] getMemSpace() {
@@ -17,17 +21,45 @@ public class SOMBitcodeRunner {
 	}
 
 	public SOMBitcodeRunner(int n,int startAddress) {
-		long bitCnt=(long) Math.pow(2, n);
+		byte[] memSpace=initMemspaceFromAddressSizeAndStartAddress(n,startAddress);
+		this.memSpace=memSpace;
+	}
+	private byte[] initMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress) {
+		long bitCnt=(long) Math.pow(2, addressSizeBits);
 		long byteCnt=bitCnt/8;
 		byte[] memSpace = new byte[(int) byteCnt];
-		memSpace=setBitsUnsignedBounds(1,6,n-4,memSpace);
-		memSpace=setBitsUnsignedBounds(6, 6+n, startAddress, memSpace);
+		memSpace = initEmptyMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress, memSpace);
+		return memSpace;
+	}
+
+	private byte[] initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
+			byte[] memSpace) {
+		memSpace=setBitsUnsignedBounds(ADDRESS_SIZE_START,ADDRESS_SIZE_END+1,addressSizeBits-ADDRESS_SIZE_OFFSET,memSpace);
+		memSpace=setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START+addressSizeBits, startAddress, memSpace);
+		return memSpace;
+	}
+
+	public SOMBitcodeRunner(byte[] memSpace) {
+		memSpace = initFromExistingPartialMemspace(memSpace);
 		this.memSpace=memSpace;
 	}
-	public SOMBitcodeRunner(byte[] memSpace) {
-		this.memSpace=memSpace;
+
+	private byte[] initFromExistingPartialMemspace(byte[] memSpace) {
+		int addressSizeBits=getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END+1, memSpace)+ADDRESS_SIZE_OFFSET;
+		int startAddress=getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START+addressSizeBits, memSpace);
+		byte[] origgMemSpace = memSpace;
+		memSpace=initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
+		for (int i = 0; i < origgMemSpace.length; i++) {
+			memSpace[i]=origgMemSpace[i];
+		}
+		return memSpace;
 	}
 	public SOMBitcodeRunner(boolean[] bits) {
+		byte[] memSpace = initFromBooleanArray(bits);
+		this.memSpace=memSpace;
+	}
+
+	private byte[] initFromBooleanArray(boolean[] bits) {
 		int bitCnt = bits.length;
 		int byteCnt = bitCnt/8;
 		if(bitCnt%8!=0) {
@@ -38,34 +70,28 @@ public class SOMBitcodeRunner {
 			boolean b = bits[i];
 			memSpace=setBit(i, b, memSpace);
 		}
-		this.memSpace=memSpace;
+		memSpace=initFromExistingPartialMemspace(memSpace);
+		return memSpace;
+	}
+	private byte[] initFromBooleanArray(Boolean[] bits) {
+		boolean[] realBooleanArray=new boolean[bits.length];
+		for (int i = 0; i < realBooleanArray.length; i++) {
+			realBooleanArray[i]=bits[i];
+		}
+		return initFromBooleanArray(realBooleanArray);
 	}
 	public SOMBitcodeRunner(List<Boolean> bits) {
-		int bitCnt = bits.size();
-		int byteCnt = bitCnt/8;
-		if(bitCnt%8!=0) {
-			byteCnt++;
-		}
-		byte[] memSpace = new byte[(int) byteCnt];
-		for (int i = 0; i < bits.size(); i++) {
-			boolean b = bits.get(i);
-			memSpace=setBit(i, b, memSpace);
-		}
+		byte[] memSpace = initFromBooleanArray(bits.toArray(new Boolean[bits.size()]));
 		this.memSpace=memSpace;
 	}
 	public SOMBitcodeRunner(String bits) {
 		bits=bits.replaceAll("[^0-1]", "");
-		int bitCnt = bits.length();
-		int byteCnt = bitCnt/8;
-		if(bitCnt%8!=0) {
-			byteCnt++;
-		}
-		byte[] memSpace = new byte[(int) byteCnt];
+		boolean[] boolArr=new boolean[bits.length()];
 		for (int i = 0; i < bits.length(); i++) {
 			boolean b = bits.charAt(i)!='0';
-			memSpace=setBit(i, b, memSpace);
+			boolArr[i]=b;
 		}
-		this.memSpace=memSpace;
+		this.memSpace=initFromBooleanArray(boolArr);
 	}
 	public static byte[] setBitsUnsignedBounds(int lowerBound, int upperBound, int value, byte[] memSpace) {
 		int bits=upperBound-lowerBound;

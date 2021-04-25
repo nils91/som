@@ -3,10 +3,10 @@
 Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. There is only one memory space for both program AND data. The opcode of each command is just 2 bits long, meaning there are 4 different opcodes available:
  opcode | letter code |Description |
  --- | --- |--- |
-00|READ|Reads a value from memory into accumulator.|
-01|WRITE|Write a value from accumulator to memory.|
-10|NAND|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
-11|CJMP|Conditional jump. If the accumulator has value 1, perform jump.|
+00|`READ`|Reads a value from memory into accumulator.|
+01|`WRITE`|Write a value from accumulator to memory.|
+10|`AND`|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
+11|`CJMP`|Conditional jump. If the accumulator has value 1, perform jump.|
 
 ## som bitcode
 
@@ -20,10 +20,12 @@ Each command is n+2 bits long. After a command is executed, execution will advan
 Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Which write hook is active is selected by setting `WH0` and `WH1`.
  `WH0` | `WH1` |Selected write hook |
  --- | --- |--- |
-0|0|Switch to previous page|
+0|0|WH 0|
 0|1|WH 1|
 1|0|WH 2|
-1|1|Switch to next page|
+1|1|Page switch|
+Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the `WH_COM` is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, `WH_TRG` is set to 1 and `WH_COM` will contain the next data bit. If `WH_TRG` remains 0, there is no new data available.
+The 'Page switch' write hook is a special write hook, which is used to switch the runtime to another write hook page, so that more than 3 write hooks can be used. 'Page switch' is used like any other write hook. If 0 is sent through the `WH_COM` bit, it will switch to the previous page, while 1 means it will switch to the next one. When reading from 'Page switch', the content of `WH_COM` indicates whether the last page switch was successfull.
 
 ### Example
 

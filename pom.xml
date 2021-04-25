@@ -14,7 +14,7 @@
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>${project.mainResourceFolder}</directory>
 			</resource>
 		</resources>
 		<plugins>
@@ -31,7 +31,10 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${maven.properties.file.out}</directory>
+									<directory>${project.mainResourceFolder}</directory>
+										<includes>
+											<include>${maven.properties.out.file.name}</include>
+										</includes>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -59,7 +62,7 @@
 							<goal>write-project-properties</goal>
 						</goals>
 						<configuration>
-							<outputFile>${maven.properties.file.out}</outputFile>
+							<outputFile>${maven.properties.file.out.fullPath}</outputFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -126,7 +129,9 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<junit.jupiter.version>5.4.0</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.properties.file.out>src/main/resources/maven.properties</maven.properties.file.out>
+		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
+		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>
+		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
 	</properties>

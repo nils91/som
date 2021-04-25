@@ -19,6 +19,26 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>remove-generated-mvn-properties</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${maven.properties.file.out}</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
@@ -44,7 +64,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Build executable jar. Executable will be under target/ and have suffix '-shaded' -->
+			<!-- Build executable jar. Executable will be under target/ and have suffix 
+				'-shaded' -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -59,7 +80,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-	   							 <mainClass>de.dralle.som.Main</mainClass>
+									<mainClass>de.dralle.som.Main</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

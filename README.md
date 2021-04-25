@@ -11,7 +11,18 @@ opcode|letter code| Description
 
 The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
 Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
-The n bits after that are the startaddress (unsigned int, no offset). Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0.
+The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook communication bit (`WH_COM`), the next 2 (`WH0`and `WH1`) are the internal write hook number. 
+Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0.
+
+### write hooks
+
+Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Which write hook is active is selected by setting `WH0` and `WH1`.
+ `WH` | `WH1` |Selected write hook |
+--- |--- |--- |
+0|0|Switch to previous page|
+0|1|WH 1|
+1|0|WH 2|
+1|1|Switch to next page|
 
 ### Example
 

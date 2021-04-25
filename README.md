@@ -1,11 +1,12 @@
 # som
 
 Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. There is only one memory space for both program AND data. The opcode of each command is just 2 bits long, meaning there are 4 different opcodes available:
-opcode|letter code| Description
-00|READ|Reads a value from memory into accumulator.
-01|WRITE|Write a value from accumulator to memory.
-10|NAND|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.
-11|CJMP|Conditional jump. If the accumulator has value 1, perform jump.
+ opcode | letter code |Description |
+ --- | --- |--- |
+00|READ|Reads a value from memory into accumulator.|
+01|WRITE|Write a value from accumulator to memory.|
+10|NAND|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
+11|CJMP|Conditional jump. If the accumulator has value 1, perform jump.|
 
 ## som bitcode
 
@@ -17,8 +18,8 @@ Each command is n+2 bits long. After a command is executed, execution will advan
 ### write hooks
 
 Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Which write hook is active is selected by setting `WH0` and `WH1`.
- `WH` | `WH1` |Selected write hook |
---- |--- |--- |
+ `WH0` | `WH1` |Selected write hook |
+ --- | --- |--- |
 0|0|Switch to previous page|
 0|1|WH 1|
 1|0|WH 2|

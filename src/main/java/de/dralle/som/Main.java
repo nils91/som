@@ -8,10 +8,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,7 +35,33 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+		setupVersionInformation();
 		parseCli(args);
+	}
+
+	private static void setupVersionInformation() {
+		InputStream mavenPropsFile = Main.class.getClassLoader().getResourceAsStream("maven.properties");
+		InputStream appPropsFile=Main.class.getClassLoader().getResourceAsStream("application.properties");
+		Properties mavenProps = new Properties();
+		Properties appProps = new Properties();
+		if(mavenPropsFile!=null) {			
+			try {
+				mavenProps.load(mavenPropsFile);
+			} catch (IOException e) {
+			}
+		}
+		if(appPropsFile!=null) {			
+			try {
+				appProps.load(appPropsFile);
+			} catch (IOException e) {
+			}
+		}
+		String versionProp = mavenProps.getProperty("project.version");
+		if(versionProp==null) {
+			versionProp=appProps.getProperty("project.version");
+		}if(versionProp!=null) {
+			VERSION=versionProp;
+		}
 	}
 
 	private static void parseCli(String[] args) throws IOException {

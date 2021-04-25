@@ -1,0 +1,30 @@
+name: "Test if JUnit tests are executed"
+on:
+    [push, pull_request]
+jobs:
+  test:
+    name: test_tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2.3.4    
+    - name: Make test folder
+      shell: bash
+      run: mkdir -p tmp/test
+    - name: Create test file
+      shell: bash
+      run: touch ./tmp/test/JUnitTestExecutionTestfile
+    - name: Set up Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '11'
+    - name: Test with Maven
+      env:
+        TEST_TEST_EXEC_FILE = ./tmp/test/JUnitTestExecutionTestfile
+      run: mvn clean test
+    - name: Check if new file exist
+      shell: bash
+      run: test -f ./tmp/test/JUnitTestExecutionTestfile.new
+    - name: Remove folder and files
+      shell: bash
+      run: rm -rf ./tmp

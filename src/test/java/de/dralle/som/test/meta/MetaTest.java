@@ -50,7 +50,7 @@ class MetaTest {
 	}
 
 	@Test
-	@EnabledIfEnvironmentVariable(named = "TEST_TEST_EXEC_FILE", matches = "*")
+	@EnabledIfEnvironmentVariable(named = "TEST_TEST_EXEC_FILE", matches = ".*")
 	void testTestExecution() { // this test is not to test the som implementation, but instead is used
 		// to test if tests are executed at all. It checks for a file created by an
 		// github action, and if it exists, creates a new one for which the action can

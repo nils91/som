@@ -26,7 +26,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-	public static final String VERSION = "0.0.2-SNAPSHOT";
+	public static String VERSION = "SNAPSHOT";
 
 	/**
 	 * @param args

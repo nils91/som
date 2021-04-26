@@ -30,6 +30,21 @@ public class SOMBitcodeRunner {
 		return isWriteHookEnabled(memSpace);
 	}
 	
+	public static boolean isWriteHookReadmode(byte[] memSpace) {
+		return false;
+		
+	}
+public static boolean isWriteHookWritemode(byte[] memSpace) {
+	return false;
+		
+	}
+public static boolean isWriteHookSelected(byte[] memSpace) {
+	return false;
+	
+}
+public static boolean isWriteHookSwitchmodeSelected(byte[] memSpace) {
+	return false;
+}
 	public static int getN(byte[] memSpace) {
 		int addressSizeBits=getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END+1, memSpace)+ADDRESS_SIZE_OFFSET;
 		return addressSizeBits;

@@ -127,7 +127,7 @@
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<junit.jupiter.version>5.4.0</junit.jupiter.version>
+		<junit.jupiter.version>5.7.1</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
 		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>

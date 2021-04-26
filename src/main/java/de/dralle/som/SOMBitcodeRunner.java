@@ -19,6 +19,22 @@ public class SOMBitcodeRunner {
 	public byte[] getMemSpace() {
 		return memSpace;
 	}
+	
+	public static int getN(byte[] memSpace) {
+		int addressSizeBits=getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END+1, memSpace)+ADDRESS_SIZE_OFFSET;
+		return addressSizeBits;
+	}
+	public int getN() {
+		return getN(memSpace);
+	}
+	public static int getStartAddress(byte[] memSpace) {
+		int addressSizeBits = getN(memSpace);
+		int startAddress=getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START+addressSizeBits, memSpace);
+		return startAddress;
+	}
+	public int getStartAddress() {
+		return getStartAddress(memSpace);
+	}
 
 	public SOMBitcodeRunner(int n,int startAddress) {
 		byte[] memSpace=initMemspaceFromAddressSizeAndStartAddress(n,startAddress);
@@ -45,8 +61,8 @@ public class SOMBitcodeRunner {
 	}
 
 	private byte[] initFromExistingPartialMemspace(byte[] memSpace) {
-		int addressSizeBits=getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END+1, memSpace)+ADDRESS_SIZE_OFFSET;
-		int startAddress=getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START+addressSizeBits, memSpace);
+		int addressSizeBits=getN(memSpace);
+		int startAddress=getStartAddress(memSpace);
 		byte[] origgMemSpace = memSpace;
 		memSpace=initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
 		for (int i = 0; i < origgMemSpace.length; i++) {

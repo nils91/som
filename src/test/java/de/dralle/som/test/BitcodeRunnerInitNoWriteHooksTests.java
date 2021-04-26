@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dralle.som.SOMBitcodeRunner;
 
-class BitcodeRunnerInitTest {
+class BitcodeRunnerInitNoWriteHooksTests {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {

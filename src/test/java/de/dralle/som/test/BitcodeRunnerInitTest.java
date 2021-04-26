@@ -104,4 +104,14 @@ class BitcodeRunnerInitTest {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011");
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
+	@Test
+	void testInitRunnerGetN() {
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
+		assertEquals(5,runner.getN());
+	}
+	@Test
+	void testInitRunnerGetStartAddress() {
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
+		assertEquals(11,runner.getStartAddress());
+	}
 }

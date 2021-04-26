@@ -239,4 +239,67 @@ class BitcodeRunnerInitNoWriteHooksTests {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011");
 		assertEquals(11, runner.getStartAddress());
 	}
+	@Test
+	void testInitMemspaceCheckWHEnabled() {
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
+		assertFalse(runner.isWriteHookEnabled());
+	}
+	@Test
+	void testInitWithMemspaceContentFullMemspaceProvidedCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(expected);
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitArrayFullMemspaceProvidedCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(new boolean[] { false, false, false, false, false, true, false,
+				true, false, true, true, false, false, false, false, false, false, false, false, false, false, false,
+				false, false, false, false, false, false, false, false, false, false });
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitStringFullMemspaceProvidedCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101011000000000000000000000");
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitStringWithSpacesFullMemspaceProvidedCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011 00 00000 00 00000 00 00000");
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentNoRight0BitsCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(new byte[] { expected[0], expected[1] });
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitArrayNoRight0BitsCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(
+				new boolean[] { false, false, false, false, false, true, false, true, false, true, true });
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitStringNoRight0BitsCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101011");
+		assertFalse(runner.isWriteHookEnabled());
+	}
+
+	@Test
+	void testInitWithMemspaceContentAsBitStringWithSpacesNoRight0BitsCheckWHEnabled() {
+		byte[] expected = new byte[] { 0x05, 0x60, 0x00, 0x00 };
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011");
+		assertFalse(runner.isWriteHookEnabled());
+	}
 }

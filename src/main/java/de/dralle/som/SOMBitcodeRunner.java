@@ -20,6 +20,16 @@ public class SOMBitcodeRunner {
 		return memSpace;
 	}
 	
+	public static boolean isWriteHookEnabled(byte[] memSpace) {
+		int addressSizeBits = getN(memSpace);
+		int startAddress=getStartAddress(memSpace);
+		return (START_ADDRESS_START+addressSizeBits)>startAddress;
+	}
+	
+	public boolean isWriteHookEnabled() {
+		return isWriteHookEnabled(memSpace);
+	}
+	
 	public static int getN(byte[] memSpace) {
 		int addressSizeBits=getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END+1, memSpace)+ADDRESS_SIZE_OFFSET;
 		return addressSizeBits;

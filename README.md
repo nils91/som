@@ -13,22 +13,15 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
 
 The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
 Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
-The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook communication bit (`WH_COM`), the next 2 (`WH0`and `WH1`) are the internal write hook number. 
+The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 2 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook selection bit (`WH_SEL`). 
 Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0.
 
 ### write hooks
 
-Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Which write hook is active is selected by setting `WH0` and `WH1`.
-
- `WH0` | `WH1` |Selected write hook |
- --- | --- |--- |
-0|0|WH 0|
-0|1|WH 1|
-1|0|WH 2|
-1|1|Page switch|
-
-Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the `WH_COM` is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, `WH_TRG` is set to 1 and `WH_COM` will contain the next data bit. If `WH_TRG` remains 0, there is no new data available.
-The 'Page switch' write hook is a special write hook, which is used to switch the runtime to another write hook page, so that more than 3 write hooks can be used. 'Page switch' is used like any other write hook. If 0 is sent through the `WH_COM` bit, it will switch to the previous page, while 1 means it will switch to the next one. When reading from 'Page switch', the content of `WH_COM` indicates whether the last page switch was successfull.
+Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Only 1 is loaded at any given time, but is it possible to change which write hook is loaded.
+Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the accumulator bit  is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, `WH_TRG` is then set to 1 and the accumulator will contain the next read data bit. If `WH_TRG` remains 0, there is no new data available.
+If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the the next write hook, writing 0 switches to the previous one.
+Reading in write hook selection mode from the accumulator will yield a value according to the success of the last write hook switch.
 
 ### Example
 

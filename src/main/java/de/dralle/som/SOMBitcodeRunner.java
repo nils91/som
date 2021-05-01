@@ -273,7 +273,12 @@ public class SOMBitcodeRunner {
 							boolean accumulatorValue = getBit(ACC_ADDRESS);
 							currentlySelectedWriteHook.write(accumulatorValue,this);
 						} else {
-							currentlySelectedWriteHook.read(this);
+							boolean hasData=currentlySelectedWriteHook.hasDataAvailable();
+							boolean newData = currentlySelectedWriteHook.read(this);
+							if(hasData) {
+								setBit(ACC_ADDRESS, newData);
+								setBit(getWriteHookTriggerAddress(), hasData);
+							}
 						}
 					}
 				} else {

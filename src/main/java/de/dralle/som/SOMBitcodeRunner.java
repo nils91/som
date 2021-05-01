@@ -20,22 +20,22 @@ public class SOMBitcodeRunner {
 	private static final int ADDRESS_SIZE_OFFSET = 4;
 	private byte[] memSpace;
 	private List<IWriteHook> writeHooks;
-	private int selectedWriteHook=0;
-	
+	private int selectedWriteHook = 0;
+
 	public void addWriteHook(IWriteHook writeHook) {
-		if(writeHooks==null) {
-			writeHooks=new ArrayList<>();
+		if (writeHooks == null) {
+			writeHooks = new ArrayList<>();
 		}
 		writeHooks.add(writeHook);
 	}
-	
+
 	private IWriteHook getSelectedWriteHook() {
-		if(writeHooks.size()>1&&selectedWriteHook>-1) {
+		if (writeHooks.size() > 1 && selectedWriteHook > -1) {
 			return writeHooks.get(selectedWriteHook);
 		}
 		return null;
 	}
-	
+
 	public byte[] getMemSpace() {
 		return memSpace;
 	}
@@ -58,7 +58,7 @@ public class SOMBitcodeRunner {
 	public static int getWriteHookSelectAddress(byte[] memSpace) {
 		return getWriteHookTriggerAddress(memSpace) + 1;
 	}
-	
+
 	public static boolean isWriteHookReadmode(byte[] memSpace) {
 		return !getBit(getWriteHookTriggerAddress(memSpace), memSpace);
 	}
@@ -218,26 +218,6 @@ public class SOMBitcodeRunner {
 	public static byte[] setBitsUnsigned(int lowerBound, int n, int value, byte[] memSpace) {
 		return setBitsUnsignedBounds(lowerBound, lowerBound + n, value, memSpace);
 	}
-	
-	public static byte[] setBit(int address, boolean bitValue, boolean checkWriteHook, byte[] memSpace) {
-		int byteAddress = address / 8;
-		int offset = 7 - address % 8;
-		byte bite = memSpace[byteAddress];
-		byte bitmask = (byte) (1 << offset);
-		if (!bitValue) {
-			bitmask = (byte) ~bitmask;
-			bite = (byte) (bite & bitmask);
-		} else {
-			bite = (byte) (bite | bitmask);
-		}
-		memSpace[byteAddress] = bite;
-		if(checkWriteHook) {
-			if(address==getWriteHookTriggerAddress(memSpace)) {
-				//TODO: Trigger write hook
-			}
-		}
-		return memSpace;
-	}
 
 	public static byte[] setBit(int address, boolean bitValue, byte[] memSpace) {
 		int byteAddress = address / 8;
@@ -277,5 +257,59 @@ public class SOMBitcodeRunner {
 
 	public static int getBitsUnsigned(int lowerBound, int n, byte[] memSpace) {
 		return getBitsUnsignedBounds(lowerBound, lowerBound + n, memSpace);
+	}
+
+	public byte[] setBit(int address, boolean bitValue, boolean checkWriteHook) {
+		memSpace = setBit(address, bitValue);
+		if (checkWriteHook) {
+			if (address == getWriteHookTriggerAddress()) {
+				boolean writeHookTrigger = getBit(getWriteHookTriggerAddress());
+				boolean writeHookSelectBit = getBit(getWriteHookSelectAddress());
+				if (writeHookSelectBit) {
+					IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+					if (currentlySelectedWriteHook != null) {
+						boolean readOrWrite = getBit(getWriteHookTriggerAddress());
+						if (readOrWrite) {
+							currentlySelectedWriteHook.write(this);
+						} else {
+							currentlySelectedWriteHook.read(this);
+						}
+					}
+				} else {
+					if (writeHookTrigger) {
+						// perform write hook wsitch and check
+						// switch currently selected writehook
+						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
+							boolean accumulatorValue = getBit(ACC_ADDRESS);
+							if (accumulatorValue) {
+								selectedWriteHook++;
+							} else {
+								selectedWriteHook--;
+							}
+							memSpace = setBit(ACC_ADDRESS, true);
+						} else {
+							memSpace = setBit(ACC_ADDRESS, false);
+						}
+					}
+				}
+			}
+		}
+		return memSpace;
+	}
+
+	public byte[] setBit(int address, boolean bitValue) {
+		return setBit(address, bitValue, memSpace);
+	}
+
+	public boolean getBit(int address) {
+		return getBit(address, memSpace);
+	}
+
+	public int getBitsUnsignedBounds(int lowerBound, int upperBound) {
+		return getBitsUnsignedBounds(lowerBound, upperBound, memSpace);
+	}
+
+	public int getBitsUnsigned(int lowerBound, int n) {
+		return getBitsUnsigned(lowerBound, n, memSpace);
 	}
 }

@@ -318,4 +318,61 @@ public class SOMBitcodeRunner {
 	public int getBitsUnsigned(int lowerBound, int n) {
 		return getBitsUnsigned(lowerBound, n, memSpace);
 	}
+	
+	public boolean execute() {
+		int addressSize=getN();
+		int startAddress=getStartAddress();
+		int opcodeSize=2;
+		int commandSize=addressSize+opcodeSize;
+		int programCounter=startAddress;
+		while(programCounter<Math.pow(2, addressSize)) {
+			//get next command
+			boolean[] nextCommand=new boolean[commandSize];
+			for (int i = 0; i < nextCommand.length; i++) {
+				nextCommand[i]=getBit(programCounter+i);
+			}
+			boolean[] opCode=new boolean[2];
+			for (int i = 0; i < opCode.length; i++) {
+				opCode[i]=nextCommand[i];
+			}
+			boolean[] tgtAddress=new boolean[addressSize];
+			for (int i = 0; i < tgtAddress.length; i++) {
+				tgtAddress[i]=nextCommand[i+opcodeSize];
+			}
+			programCounter+=commandSize;
+			Opcode op=null;
+			if (!opCode[0] && !opCode[1]) {// 00
+				op = Opcode.READ;
+			} else if (!opCode[0] && opCode[1]) {// 01
+				op = Opcode.WRITE;
+			} else if (opCode[0] && !opCode[1]) {// 10
+				op = Opcode.NAND;
+			} else if (opCode[0] && opCode[1]) {// 11
+				op = Opcode.CJMP;
+			}
+			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
+			boolean accumulatorValue = getBit(ACC_ADDRESS);
+			boolean tgtBitValue=getBit(tgtAddressValue);
+			switch (op) {
+			case CJMP:
+				if(accumulatorValue) {
+					programCounter=tgtAddressValue;
+				}
+				break;
+			case NAND:
+				setBit(ACC_ADDRESS, !(accumulatorValue&&tgtBitValue));
+				break;
+			case READ:
+				setBit(ACC_ADDRESS, tgtBitValue);
+				break;
+			case WRITE:
+				setBit(tgtAddressValue,accumulatorValue);
+				break;
+			default:
+				break;
+			}
+		}
+		return getBit(ACC_ADDRESS);
+		
+	}
 }

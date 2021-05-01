@@ -3,7 +3,10 @@
  */
 package de.dralle.som;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import de.dralle.som.writehooks.IWriteHook;
 
 /**
  * @author Nils Dralle
@@ -16,7 +19,23 @@ public class SOMBitcodeRunner {
 	private static final int ADDRESS_SIZE_START = 1;
 	private static final int ADDRESS_SIZE_OFFSET = 4;
 	private byte[] memSpace;
-
+	private List<IWriteHook> writeHooks;
+	private int selectedWriteHook=0;
+	
+	public void addWriteHook(IWriteHook writeHook) {
+		if(writeHooks==null) {
+			writeHooks=new ArrayList<>();
+		}
+		writeHooks.add(writeHook);
+	}
+	
+	private IWriteHook getSelectedWriteHook() {
+		if(writeHooks.size()>1&&selectedWriteHook>-1) {
+			return writeHooks.get(selectedWriteHook);
+		}
+		return null;
+	}
+	
 	public byte[] getMemSpace() {
 		return memSpace;
 	}

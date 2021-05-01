@@ -20,7 +20,7 @@ Each command is n+2 bits long. After a command is executed, execution will advan
 
 Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Only 1 is loaded at any given time, but is it possible to change which write hook is loaded.
 Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the accumulator bit  is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, `WH_TRG` is then set to 1 and the accumulator will contain the next read data bit. If `WH_TRG` remains 0, there is no new data available.
-If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the the next write hook, writing 0 switches to the previous one.
+If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the currently selected write hook. If the accumulator is 0, the previous write hook will be selected, while the next one will be selected if its 1. the accumuulator will then be set to the success of the last switch.
 Reading in write hook selection mode from the accumulator will yield a value according to the success of the last write hook switch.
 
 ### Example

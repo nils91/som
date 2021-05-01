@@ -18,6 +18,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
+        distribution: 'adopt'
     - name: Test with Maven
       env:
         TEST_TEST_EXEC_FILE: ./tmp/test/JUnitTestExecutionTestfile

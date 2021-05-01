@@ -43,7 +43,7 @@ public class SOMBitcodeRunner {
 	public static boolean isWriteHookEnabled(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
 		int startAddress = getStartAddress(memSpace);
-		return (START_ADDRESS_START + addressSizeBits) > startAddress;
+		return (START_ADDRESS_START + addressSizeBits) < startAddress;
 	}
 
 	public boolean isWriteHookEnabled() {

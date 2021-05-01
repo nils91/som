@@ -1,0 +1,1 @@
+Junit tests are in src/test/java

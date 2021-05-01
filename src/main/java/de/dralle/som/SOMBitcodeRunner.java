@@ -39,7 +39,7 @@ public class SOMBitcodeRunner {
 	public static int getWriteHookSelectAddress(byte[] memSpace) {
 		return getWriteHookTriggerAddress(memSpace) + 1;
 	}
-
+	
 	public static boolean isWriteHookReadmode(byte[] memSpace) {
 		return !getBit(getWriteHookTriggerAddress(memSpace), memSpace);
 	}
@@ -198,6 +198,26 @@ public class SOMBitcodeRunner {
 
 	public static byte[] setBitsUnsigned(int lowerBound, int n, int value, byte[] memSpace) {
 		return setBitsUnsignedBounds(lowerBound, lowerBound + n, value, memSpace);
+	}
+	
+	public static byte[] setBit(int address, boolean bitValue, boolean checkWriteHook, byte[] memSpace) {
+		int byteAddress = address / 8;
+		int offset = 7 - address % 8;
+		byte bite = memSpace[byteAddress];
+		byte bitmask = (byte) (1 << offset);
+		if (!bitValue) {
+			bitmask = (byte) ~bitmask;
+			bite = (byte) (bite & bitmask);
+		} else {
+			bite = (byte) (bite | bitmask);
+		}
+		memSpace[byteAddress] = bite;
+		if(checkWriteHook) {
+			if(address==getWriteHookTriggerAddress(memSpace)) {
+				//TODO: Trigger write hook
+			}
+		}
+		return memSpace;
 	}
 
 	public static byte[] setBit(int address, boolean bitValue, byte[] memSpace) {

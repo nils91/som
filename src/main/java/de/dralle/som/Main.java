@@ -132,82 +132,14 @@ public class Main {
 	}
 
 	private static void runProgramFromBitList(List<Boolean> bits, boolean verbose) {
-		int n = getAsUnsignedInt(bits.subList(1, 6))+4;
-		long memSpaceSize = (long) Math.pow(2, n);
-		if (verbose) {
-			System.out.println("Mem Address Size: " + n);
-			System.out.println("Mem Space Size (Bits): " + memSpaceSize);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(bits);
+		boolean execSuccess = runner.execute();
+		System.out.println("Program successfull: "+execSuccess);
+		if(execSuccess) {
+			System.exit(0);
+		}else {
+			System.exit(1);
 		}
-		int startAddress=getAsUnsignedInt(bits.subList(6, 6+n));
-		int opcodeSize = 2;
-		int commandSize = opcodeSize + n;
-		if (verbose) {
-			System.out.println("Opcode Size: " + opcodeSize);
-			System.out.println("Command Size: " + commandSize);
-			System.out.println("Program starts at: "+startAddress);
-		}
-		Boolean[] bitArray = bits.toArray(new Boolean[bits.size()]);
-		int ACC = 0;// accumulator address
-		int PC = startAddress;// program counter
-		int step = 0;
-		while (true) {
-			if (PC > bitArray.length - 1) {
-				break;
-			}
-			Boolean[] commandBits = Arrays.copyOfRange(bitArray, PC, PC + commandSize);
-			Boolean[] opcodeBits = Arrays.copyOfRange(commandBits, 0, opcodeSize);
-			Boolean[] addressBits = Arrays.copyOfRange(commandBits, opcodeSize, opcodeSize + n);
-			Opcode op = null;
-			int address = 0;
-			if (!opcodeBits[0] && !opcodeBits[1]) {// 00
-				op = Opcode.READ;
-			} else if (!opcodeBits[0] && opcodeBits[1]) {// 01
-				op = Opcode.WRITE;
-			} else if (opcodeBits[0] && !opcodeBits[1]) {// 10
-				op = Opcode.NAND;
-			} else if (opcodeBits[0] && opcodeBits[1]) {// 11
-				op = Opcode.CJMP;
-			}
-			address = getAsUnsignedInt(addressBits);
-			if (verbose) {
-				System.out.println("Accumulator: " + bitArray[ACC]);
-				System.out.println("Step: " + step);
-				System.out.println("PC: " + PC);
-				System.out.println("Opcode: " + op);
-				System.out.println("Address: " + address);
-			}
-			step++;
-			PC += commandSize;
-			switch (op) {
-			case READ:
-				bitArray[ACC] = bitArray[address];
-				break;
-			case WRITE:
-				bitArray[address] = bitArray[ACC];
-				break;
-			case NAND:
-				Boolean valueAtAddr = bitArray[address];
-				Boolean valueAcc = bitArray[ACC];
-				boolean newValueAcc = !(valueAtAddr && valueAcc);
-				bitArray[ACC] = newValueAcc;
-				break;
-			case CJMP:
-				if (bitArray[ACC]) {
-					PC = address; // Can be done here because execution advance is performed before switch/case
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		for (int i = 0; i < bitArray.length; i++) {
-			Boolean bit = bitArray[i];
-			if (bit) {
-				System.out.print("1");
-			} else {
-				System.out.print("0");
-			}
-		}		
 	}
 
 	private static int getAsUnsignedInt(List<Boolean> subList) {

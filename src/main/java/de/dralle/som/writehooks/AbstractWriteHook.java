@@ -18,6 +18,12 @@ public abstract class AbstractWriteHook implements IWriteHook{
 	}
 
 	@Override
+	public boolean hasDataAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public boolean write(boolean accumutlatorValue,SOMBitcodeRunner runner) {
 		// TODO Auto-generated method stub
 		return false;

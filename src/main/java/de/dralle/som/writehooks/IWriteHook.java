@@ -10,6 +10,7 @@ import de.dralle.som.SOMBitcodeRunner;
  *
  */
 public interface IWriteHook {
+	public boolean hasDataAvailable();
 	public boolean read(SOMBitcodeRunner runner);
 	public boolean write(boolean accumulatorValue,SOMBitcodeRunner runner);
 }

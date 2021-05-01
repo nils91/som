@@ -29,6 +29,11 @@ public class TestWriteHook extends AbstractWriteHook {
 	}
 
 	@Override
+	public boolean hasDataAvailable() {
+		return true;
+	}
+
+	@Override
 	public boolean write(boolean accumutlatorValue, SOMBitcodeRunner runner) {
 		writeTrgCnt++;
 		return false;

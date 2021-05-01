@@ -270,7 +270,8 @@ public class SOMBitcodeRunner {
 					if (currentlySelectedWriteHook != null) {
 						boolean readOrWrite = getBit(getWriteHookTriggerAddress());
 						if (readOrWrite) {
-							currentlySelectedWriteHook.write(this);
+							boolean accumulatorValue = getBit(ACC_ADDRESS);
+							currentlySelectedWriteHook.write(accumulatorValue,this);
 						} else {
 							currentlySelectedWriteHook.read(this);
 						}

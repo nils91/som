@@ -9,7 +9,7 @@ import de.dralle.som.SOMBitcodeRunner;
  * @author Nils Dralle
  *
  */
-public class AbstractWriteHook implements IWriteHook{
+public abstract class AbstractWriteHook implements IWriteHook{
 
 	@Override
 	public boolean read(SOMBitcodeRunner runner) {
@@ -18,7 +18,7 @@ public class AbstractWriteHook implements IWriteHook{
 	}
 
 	@Override
-	public boolean write(SOMBitcodeRunner runner) {
+	public boolean write(boolean accumutlatorValue,SOMBitcodeRunner runner) {
 		// TODO Auto-generated method stub
 		return false;
 	}

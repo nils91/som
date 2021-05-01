@@ -11,5 +11,5 @@ import de.dralle.som.SOMBitcodeRunner;
  */
 public interface IWriteHook {
 	public boolean read(SOMBitcodeRunner runner);
-	public boolean write(SOMBitcodeRunner runner);
+	public boolean write(boolean accumulatorValue,SOMBitcodeRunner runner);
 }

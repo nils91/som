@@ -241,7 +241,7 @@ class BitcodeRunnerInitWithWriteHookBits {
 	}
 	@Test
 	void testInitMemspaceCheckWHEnabled() {
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 11);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 13);
 		assertTrue(runner.isWriteHookEnabled());
 	}
 	@Test

@@ -9,10 +9,12 @@ updates:
 #update maven
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
+    target-branch: "develop"
     schedule:
       interval: "weekly"
 #update actions
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
+    target-branch: "develop"
     schedule:
       interval: "weekly"

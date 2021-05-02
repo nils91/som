@@ -366,7 +366,7 @@ public class SOMBitcodeRunner {
 				setBit(ACC_ADDRESS, tgtBitValue);
 				break;
 			case WRITE:
-				setBit(tgtAddressValue,accumulatorValue);
+				setBit(tgtAddressValue,accumulatorValue,true);
 				break;
 			default:
 				break;

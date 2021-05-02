@@ -30,7 +30,7 @@ public class SOMBitcodeRunner {
 	}
 
 	private IWriteHook getSelectedWriteHook() {
-		if (writeHooks.size() > 1 && selectedWriteHook > -1) {
+		if (writeHooks.size() > 0 && selectedWriteHook > -1) {
 			return writeHooks.get(selectedWriteHook);
 		}
 		return null;

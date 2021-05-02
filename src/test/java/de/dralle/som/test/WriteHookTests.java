@@ -79,4 +79,20 @@ class WriteHookTests {
 		assertEquals(1, testWriteHook.getReadTrgCnt());
 		assertEquals(0, testWriteHook.getWriteTrgCnt());
 	}
+	@Test
+	void testWriteHookReceiveBit() throws IOException {
+		String fContent=TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		runner.execute();
+		assertArrayEquals(new boolean[] {true}, testWriteHook.getWrittenBits());
+	}
+	@Test
+	void testWriteHookReceiveBitSeveralBits() throws IOException {
+		String fContent=TestUtil.readFileToString("test/fixtures/ab/test_write_hook_write_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		runner.execute();
+		assertArrayEquals(new boolean[] {true,false,true}, testWriteHook.getWrittenBits());
+	}
 }

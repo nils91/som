@@ -6,7 +6,7 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
  --- | --- |--- |
 00|`READ`|Reads a value from memory into accumulator.|
 01|`WRITE`|Write a value from accumulator to memory.|
-10|`AND`|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
+10|`NAND`|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
 11|`CJMP`|Conditional jump. If the accumulator has value 1, perform jump.|
 
 ## som bitcode

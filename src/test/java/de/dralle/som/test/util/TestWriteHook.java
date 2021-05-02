@@ -17,6 +17,22 @@ public class TestWriteHook extends AbstractWriteHook {
 	private boolean[] writtenBits = new boolean[0];
 	private boolean[] bitsProvidedForRead = new boolean[0];
 
+	public boolean[] getBitsProvidedForRead() {
+		return bitsProvidedForRead;
+	}
+
+	public void setBitsProvidedForRead(boolean[] bitsProvidedForRead) {
+		this.bitsProvidedForRead = bitsProvidedForRead;
+	}
+
+	public boolean[] getWrittenBits() {
+		return writtenBits;
+	}
+
+	public boolean isWasActualData() {
+		return wasActualData;
+	}
+
 	private boolean wasActualData = false;
 
 	public int getWriteTrgCnt() {

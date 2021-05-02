@@ -62,11 +62,21 @@ class WriteHookTests {
 		assertEquals(0, testWriteHook.getWriteTrgCnt());
 	}
 	@Test
-	void testWriteHookTriggerWrite() {
-		fail("Not yet implemented");
+	void testWriteHookTriggerWrite() throws IOException {
+		String fContent=TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		assertTrue(runner.execute());
+		assertEquals(1, testWriteHook.getWriteTrgCnt());
+		assertEquals(0, testWriteHook.getReadTrgCnt());
 	}
 	@Test
-	void testWriteHookTriggerRead() {
-		fail("Not yet implemented");
+	void testWriteHookTriggerRead() throws IOException {
+		String fContent=TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_read.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		assertTrue(runner.execute());
+		assertEquals(1, testWriteHook.getReadTrgCnt());
+		assertEquals(0, testWriteHook.getWriteTrgCnt());
 	}
 }

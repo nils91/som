@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.test.util.TestUtil;
 
 class BitcodeRunnerExecuteTests {
 
@@ -36,49 +37,19 @@ class BitcodeRunnerExecuteTests {
 
 	@Test
 	void testReturnCode0() throws IOException {
-		File f=new File("test/fixtures/ab/n4_minimal_return0.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/n4_minimal_return0.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 	}
 	@Test
 	void testReturnCode1() throws IOException {
-		File f=new File("test/fixtures/ab/n4_minimal_return1.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/n4_minimal_return1.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertFalse(runner.execute());
 	}
 	@Test
 	void testOpcodeREAD() throws IOException {
-		File f=new File("test/fixtures/ab/test_read.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_read.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 		//should have written accumulator to 1
@@ -86,17 +57,7 @@ class BitcodeRunnerExecuteTests {
 	}
 	@Test
 	void testOpcodeWRITE() throws IOException {
-		File f=new File("test/fixtures/ab/test_write.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_write.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 		//should have written bit 7 to 1
@@ -104,17 +65,7 @@ class BitcodeRunnerExecuteTests {
 	}
 	@Test
 	void testOpcodeNAND() throws IOException {
-		File f=new File("test/fixtures/ab/test_nand.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();		
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_nand.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		boolean accBefore = runner.getBit(0);
 		assertTrue(runner.execute());
@@ -124,17 +75,7 @@ class BitcodeRunnerExecuteTests {
 	}
 	@Test
 	void testOpcodeCJMP() throws IOException {
-		File f=new File("test/fixtures/ab/test_cjmp.ab");
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
-		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
-		br.close();
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_cjmp.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 		//if CJMP worked, it would´ve jumped over the command that set accumulator to 0

@@ -16,8 +16,8 @@ public class TestWriteHook extends AbstractWriteHook {
 
 	private boolean[] writtenBits = new boolean[0];
 	private boolean[] bitsProvidedForRead = new boolean[0];
-	
-	private boolean wasActualData=false;
+
+	private boolean wasActualData = false;
 
 	public int getWriteTrgCnt() {
 		return writeTrgCnt;
@@ -31,15 +31,16 @@ public class TestWriteHook extends AbstractWriteHook {
 	public boolean read(SOMBitcodeRunner runner) {
 		readTrgCnt++;
 		boolean bitToReturn = false;
+		boolean[] bitsProvidedForReadNew = bitsProvidedForRead;
 		if (bitsProvidedForRead.length > 0) {
+			bitsProvidedForReadNew = new boolean[bitsProvidedForRead.length - 1];
+			for (int i = 0; i < bitsProvidedForReadNew.length; i++) {
+				bitsProvidedForReadNew[i] = bitsProvidedForRead[i + 1];
+			}
 			bitToReturn = bitsProvidedForRead[0];
-			wasActualData=true;
-		}else {
-			wasActualData=false;
-		}
-		boolean[] bitsProvidedForReadNew = new boolean[bitsProvidedForRead.length - 1];
-		for (int i = 0; i < bitsProvidedForReadNew.length; i++) {
-			bitsProvidedForReadNew[i] = bitsProvidedForRead[i + 1];
+			wasActualData = true;
+		} else {
+			wasActualData = false;
 		}
 		bitsProvidedForRead = bitsProvidedForReadNew;
 		return bitToReturn;

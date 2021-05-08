@@ -21,6 +21,7 @@ public class SOMBitcodeRunner {
 	private byte[] memSpace;
 	private List<IWriteHook> writeHooks;
 	private int selectedWriteHook = 0;
+	private boolean lastWriteHookSwitchSuccess;
 
 	public void addWriteHook(IWriteHook writeHook) {
 		if (writeHooks == null) {
@@ -54,7 +55,7 @@ public class SOMBitcodeRunner {
 		int addressSizeBits = getN(memSpace);
 		return START_ADDRESS_START + addressSizeBits;
 	}
-	
+
 	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
 		return getWriteHookTriggerAddress(memSpace) + 1;
 	}
@@ -83,6 +84,10 @@ public class SOMBitcodeRunner {
 
 	public int getWriteHookTriggerAddress() {
 		return getWriteHookTriggerAddress(memSpace);
+	}
+
+	public int getWriteHookCommunicationAddress() {
+		return getWriteHookCommunicationAddress(memSpace);
 	}
 
 	public int getWriteHookSelectAddress() {
@@ -268,38 +273,43 @@ public class SOMBitcodeRunner {
 		if (checkWriteHook) {
 			if (address == getWriteHookTriggerAddress()) {
 				boolean writeHookTrigger = getBit(getWriteHookTriggerAddress());
+				boolean writeHookCom = getBit(getWriteHookCommunicationAddress());
 				boolean writeHookSelectBit = getBit(getWriteHookSelectAddress());
-				if (writeHookSelectBit) {
-					IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
-					if (currentlySelectedWriteHook != null) {
-						boolean readOrWrite = getBit(getWriteHookTriggerAddress());
-						if (readOrWrite) {
-							boolean accumulatorValue = getBit(ACC_ADDRESS);
-							currentlySelectedWriteHook.write(accumulatorValue,this);
-						} else {
-							boolean hasData=currentlySelectedWriteHook.hasDataAvailable();
-							boolean newData = currentlySelectedWriteHook.read(this);
-							if(hasData) {
-								setBit(ACC_ADDRESS, newData);
-								setBit(getWriteHookTriggerAddress(), hasData);
-							}
+				if (writeHookTrigger) {
+					// write mode
+					if (writeHookSelectBit) {
+						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						if (currentlySelectedWriteHook != null) {
+							currentlySelectedWriteHook.write(writeHookCom, this);
 						}
-					}
-				} else {
-					if (writeHookTrigger) {
-						// perform write hook wsitch and check
-						// switch currently selected writehook
+					} else {
+						// switch selected write hook
 						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
-							boolean accumulatorValue = getBit(ACC_ADDRESS);
-							if (accumulatorValue) {
+							boolean comValue = getBit(getWriteHookCommunicationAddress());
+							if (comValue) {
 								selectedWriteHook++;
 							} else {
 								selectedWriteHook--;
 							}
-							memSpace = setBit(ACC_ADDRESS, true);
+							lastWriteHookSwitchSuccess = true;
 						} else {
-							memSpace = setBit(ACC_ADDRESS, false);
+							lastWriteHookSwitchSuccess = false;
 						}
+					}
+				} else {
+					// read mode
+					if (writeHookSelectBit) {
+						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						if (currentlySelectedWriteHook != null) {
+							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
+							boolean readBit = currentlySelectedWriteHook.read(this);
+							setBit(getWriteHookCommunicationAddress(), readBit);
+							setBit(ACC_ADDRESS, hasNew);
+						}
+					} else {
+						// last switching success
+						setBit(getWriteHookCommunicationAddress(), lastWriteHookSwitchSuccess);
+						setBit(ACC_ADDRESS, true);
 					}
 				}
 			}
@@ -322,29 +332,29 @@ public class SOMBitcodeRunner {
 	public int getBitsUnsigned(int lowerBound, int n) {
 		return getBitsUnsigned(lowerBound, n, memSpace);
 	}
-	
+
 	public boolean execute() {
-		int addressSize=getN();
-		int startAddress=getStartAddress();
-		int opcodeSize=2;
-		int commandSize=addressSize+opcodeSize;
-		int programCounter=startAddress;
-		while(programCounter<Math.pow(2, addressSize)) {
-			//get next command
-			boolean[] nextCommand=new boolean[commandSize];
+		int addressSize = getN();
+		int startAddress = getStartAddress();
+		int opcodeSize = 2;
+		int commandSize = addressSize + opcodeSize;
+		int programCounter = startAddress;
+		while (programCounter < Math.pow(2, addressSize)) {
+			// get next command
+			boolean[] nextCommand = new boolean[commandSize];
 			for (int i = 0; i < nextCommand.length; i++) {
-				nextCommand[i]=getBit(programCounter+i);
+				nextCommand[i] = getBit(programCounter + i);
 			}
-			boolean[] opCode=new boolean[2];
+			boolean[] opCode = new boolean[2];
 			for (int i = 0; i < opCode.length; i++) {
-				opCode[i]=nextCommand[i];
+				opCode[i] = nextCommand[i];
 			}
-			boolean[] tgtAddress=new boolean[addressSize];
+			boolean[] tgtAddress = new boolean[addressSize];
 			for (int i = 0; i < tgtAddress.length; i++) {
-				tgtAddress[i]=nextCommand[i+opcodeSize];
+				tgtAddress[i] = nextCommand[i + opcodeSize];
 			}
-			programCounter+=commandSize;
-			Opcode op=null;
+			programCounter += commandSize;
+			Opcode op = null;
 			if (!opCode[0] && !opCode[1]) {// 00
 				op = Opcode.READ;
 			} else if (!opCode[0] && opCode[1]) {// 01
@@ -356,27 +366,27 @@ public class SOMBitcodeRunner {
 			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
 			boolean accumulatorValue = getBit(ACC_ADDRESS);
-			boolean tgtBitValue=getBit(tgtAddressValue);
+			boolean tgtBitValue = getBit(tgtAddressValue);
 			switch (op) {
 			case CJMP:
-				if(accumulatorValue) {
-					programCounter=tgtAddressValue;
+				if (accumulatorValue) {
+					programCounter = tgtAddressValue;
 				}
 				break;
 			case NAND:
-				setBit(ACC_ADDRESS, !(accumulatorValue&&tgtBitValue));
+				setBit(ACC_ADDRESS, !(accumulatorValue && tgtBitValue));
 				break;
 			case READ:
 				setBit(ACC_ADDRESS, tgtBitValue);
 				break;
 			case WRITE:
-				setBit(tgtAddressValue,accumulatorValue,true);
+				setBit(tgtAddressValue, accumulatorValue, true);
 				break;
 			default:
 				break;
 			}
 		}
 		return getBit(ACC_ADDRESS);
-		
+
 	}
 }

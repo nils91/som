@@ -13,7 +13,7 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
 
 The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
 Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
-The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 2 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook selection bit (`WH_SEL`). 
+The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 3 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook communication bit (`WH_COM`), 3rd is the write hook selection bit (`WH_SEL`). 
 Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0. If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
 
 ### write hooks
@@ -21,12 +21,10 @@ Each command is n+2 bits long. After a command is executed, execution will advan
 - General behaviour
 
 Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Only 1 is loaded at any given time, but is it possible to change which write hook is loaded.
-Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the accumulator bit  is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, `WH_TRG` is then set to 1 and the accumulator will contain the next read data bit. If `WH_TRG` remains 0, there is no new data available and the accumulator bit should be treated as random.
-If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the currently selected write hook. If the accumulator is 0, the previous write hook will be selected, while the next one will be selected if its 1. the accumuulator will then be set to the success of the last switch.
-Reading in write hook selection mode from the accumulator will yield a value according to the success of the last write hook switch.
+Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the `WH_COM` bit  is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, the next available bit is written to `WH_COM` and the accumulator is set to 1. If theres no new data available, the accumulator will be 0.
+If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the currently selected write hook. If `WH_COM` is 0, the previous write hook will be selected, while the next one will be selected if its 1. Writing 0 to `WH_TRG` while `WH_SEL` is 0, `WH_COM` will be set according to the success state of the last write hook switch and the accumulator will be 1.
 
 - Notes on implementation
-  - Write hooks, that have a potentially blocking `read()` should have their `hasDataAvailable()`always return `true`.
   
 ### Example
 

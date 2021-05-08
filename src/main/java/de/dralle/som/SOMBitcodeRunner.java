@@ -54,9 +54,13 @@ public class SOMBitcodeRunner {
 		int addressSizeBits = getN(memSpace);
 		return START_ADDRESS_START + addressSizeBits;
 	}
+	
+	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
+		return getWriteHookTriggerAddress(memSpace) + 1;
+	}
 
 	public static int getWriteHookSelectAddress(byte[] memSpace) {
-		return getWriteHookTriggerAddress(memSpace) + 1;
+		return getWriteHookTriggerAddress(memSpace) + 2;
 	}
 
 	public static boolean isWriteHookReadmode(byte[] memSpace) {

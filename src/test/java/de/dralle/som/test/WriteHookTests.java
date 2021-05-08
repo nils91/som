@@ -151,4 +151,28 @@ class WriteHookTests {
 
 		}
 	}
+	@Test
+	void testWriteHookReadNewDataAvailable101() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,true });
+		assertTrue(runner.execute());
+	}
+	@Test
+	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,false });
+		assertFalse(runner.execute());
+	}
+	@Test
+	void testWriteHookReadNewDataAvailable101WrongData001() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[] { false,false,true });
+		assertFalse(runner.execute());
+	}
 }

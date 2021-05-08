@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.test.util.TestUtil;
@@ -174,5 +175,43 @@ class WriteHookTests {
 		runner.addWriteHook(testWriteHook);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false,false,true });
 		assertFalse(runner.execute());
+	}
+	@Test
+	@Timeout(60)
+	void testWriteHookReadNewDataAvailableReadToDepletion() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_to_depletion.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[3]);
+		assertTrue(runner.execute());
+	}
+	@Test
+	@Timeout(60)
+	void testWriteHookReadNewDataAvailableReadToDepletionWriteHookEmpty() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_to_depletion.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[3]);
+		runner.execute();
+		assertEquals(0, testWriteHook.getBitsProvidedForRead().length);
+	}
+	@Test
+	@Timeout(60)
+	void testWriteHookReadNewDataAvailableReadToDepletionLong() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_to_depletion.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[10000]);
+		assertTrue(runner.execute());
+	}
+	@Test
+	@Timeout(60)
+	void testWriteHookReadNewDataAvailableReadToDepletionWriteHookEmptyLong() throws IOException {
+		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_to_depletion.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		runner.addWriteHook(testWriteHook);
+		testWriteHook.setBitsProvidedForRead(new boolean[10000]);
+		runner.execute();
+		assertEquals(0, testWriteHook.getBitsProvidedForRead().length);
 	}
 }

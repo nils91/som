@@ -29,11 +29,7 @@ public class TestWriteHook extends AbstractWriteHook {
 		return writtenBits;
 	}
 
-	public boolean isWasActualData() {
-		return wasActualData;
-	}
-
-	private boolean wasActualData = false;
+	
 
 	public int getWriteTrgCnt() {
 		return writeTrgCnt;
@@ -54,17 +50,14 @@ public class TestWriteHook extends AbstractWriteHook {
 				bitsProvidedForReadNew[i] = bitsProvidedForRead[i + 1];
 			}
 			bitToReturn = bitsProvidedForRead[0];
-			wasActualData = true;
-		} else {
-			wasActualData = false;
-		}
+		} 
 		bitsProvidedForRead = bitsProvidedForReadNew;
 		return bitToReturn;
 	}
 
 	@Override
 	public boolean hasDataAvailable() {
-		return wasActualData;
+		return bitsProvidedForRead.length>0;
 	}
 
 	@Override

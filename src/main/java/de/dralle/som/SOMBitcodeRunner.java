@@ -377,6 +377,6 @@ public class SOMBitcodeRunner {
 			}
 			programCounter+=commandSize;
 		} while (programCounter < Math.pow(2, addressSize));
-		return accumulator;
+		return getBit(ACC_ADDRESS);
 	}
 }

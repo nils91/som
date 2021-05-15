@@ -37,13 +37,13 @@ class BitcodeRunnerExecuteTests {
 
 	@Test
 	void testReturnCode0() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/n4_minimal_return0.ab");
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/minimal_return0.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 	}
 	@Test
 	void testReturnCode1() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/n5_minimal_return1.ab");
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/minimal_return1.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertFalse(runner.execute());
 	}

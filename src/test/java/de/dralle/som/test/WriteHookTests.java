@@ -95,6 +95,7 @@ class WriteHookTests {
 	}
 
 	@Test
+	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_write_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);

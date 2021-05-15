@@ -8,5 +8,5 @@ package de.dralle.som;
  *
  */
 public enum Opcode {
-READ,WRITE,NAND,CJMP;
+	NAR, NAW
 }

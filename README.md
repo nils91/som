@@ -11,8 +11,9 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
 
 The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
 Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
-The n bits after that are the startaddress (unsigned int, no offset). If there are bits left between the n startaddress bits and the startaddress itself, the next 3 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook communication bit (`WH_COM`), 3rd is the write hook selection bit (`WH_SEL`). 
-Each command is n+2 bits long. After a command is executed, execution will advance by n+2 and continue with the next command. If a jump is executed, execution will continue at the given address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(2+n) and make sure that the last 2+n bits are set to 0. If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
+The n bits after that are the address bits (unsigned int, no offset), followed by 1 bit, the `ADR_EVAL` bit. The next 3 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the global write hook communication bit (`WH_COM`), 3rd is the write hook selection bit (`WH_SEL`). 
+Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
+In order to perform a jump to a memory address, write the address to the address bits and set `ADR_EVAL` to 1. Don´t forget to clear `ADR_EVAL` after the jump.
 
 ### write hooks
 

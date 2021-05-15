@@ -1,0 +1,22 @@
+invert ACC:
+0 0
+or 
+1 0
+READ to ACC (from 1):
+1 2
+0 0
+1 2
+0 2 //ensure 1 in acc
+0 1
+0 0
+
+WRITE from ACC (to 1):
+1 1
+0 0
+1 1
+
+truth table NAND:
+00 1
+01 1
+10 1
+11 0

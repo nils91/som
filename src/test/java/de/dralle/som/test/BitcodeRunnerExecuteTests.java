@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.test.util.TestUtil;
@@ -48,8 +49,17 @@ class BitcodeRunnerExecuteTests {
 		assertFalse(runner.execute());
 	}
 	@Test
-	void testOpcodeREAD() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_read.ab");
+	@Timeout(10)
+	void testOpcodeNAR() throws IOException {
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_nar.ab");
+		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
+		assertTrue(runner.execute());
+		//should have written accumulator to 1
+		assertTrue(runner.getBit(0));
+	}
+	@Test
+	void testOpcodeNAW() throws IOException {
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_naw.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 		//should have written accumulator to 1

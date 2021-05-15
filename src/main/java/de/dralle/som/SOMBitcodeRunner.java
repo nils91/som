@@ -373,7 +373,7 @@ public class SOMBitcodeRunner {
 			{
 				setBit(ACC_ADDRESS, nand);
 			}else {
-				setBit(tgtAddressValue, nand);
+				setBit(tgtAddressValue, nand,true);
 			}
 			programCounter+=commandSize;
 		} while (programCounter < Math.pow(2, addressSize));

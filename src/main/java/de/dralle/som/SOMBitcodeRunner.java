@@ -52,8 +52,8 @@ public class SOMBitcodeRunner {
 	}
 
 	public static int getWriteHookTriggerAddress(byte[] memSpace) {
-		int addressEvalAddress=getAddressEvaluationBitAddress(memSpace);
-		return addressEvalAddress+1;
+		int addressEvalAddress = getAddressEvaluationBitAddress(memSpace);
+		return addressEvalAddress + 1;
 	}
 
 	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
@@ -130,10 +130,12 @@ public class SOMBitcodeRunner {
 	public int getAddressBits() {
 		return getAddressBits(memSpace);
 	}
+
 	public static int getAddressEvaluationBitAddress(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
 		return START_ADDRESS_START + addressSizeBits;
 	}
+
 	public int getAddressEvaluationBitAddress() {
 		return getAddressEvaluationBitAddress(memSpace);
 	}
@@ -341,63 +343,40 @@ public class SOMBitcodeRunner {
 	}
 
 	public boolean execute() {
+		int programCounter = 0;
+		boolean accumulator = false;
+		int addressSize = 0;
 		do {
-			
-		}while(true);
-		
-		int addressSize = getN();
-		int startAddress = getAddressBits();
-		int opcodeSize = 2;
-		int commandSize = addressSize + opcodeSize;
-		int programCounter = startAddress;
-		while (programCounter < Math.pow(2, addressSize)) {
+			accumulator = getBit(ACC_ADDRESS);
+			addressSize = getN();
+			int startAddress = getAddressBits();
+			boolean addressEval = getBit(getAddressEvaluationBitAddress());
+			int opcodeSize = 1;
+			int commandSize = addressSize + opcodeSize;
+			if (addressEval) {
+				programCounter = startAddress;
+			}
 			// get next command
 			boolean[] nextCommand = new boolean[commandSize];
 			for (int i = 0; i < nextCommand.length; i++) {
 				nextCommand[i] = getBit(programCounter + i);
 			}
-			boolean[] opCode = new boolean[2];
-			for (int i = 0; i < opCode.length; i++) {
-				opCode[i] = nextCommand[i];
-			}
+			boolean opCode = nextCommand[0];
 			boolean[] tgtAddress = new boolean[addressSize];
 			for (int i = 0; i < tgtAddress.length; i++) {
 				tgtAddress[i] = nextCommand[i + opcodeSize];
 			}
-			programCounter += commandSize;
-			Opcode op = null;
-			if (!opCode[0] && !opCode[1]) {// 00
-				op = Opcode.READ;
-			} else if (!opCode[0] && opCode[1]) {// 01
-				op = Opcode.WRITE;
-			} else if (opCode[0] && !opCode[1]) {// 10
-				op = Opcode.NAND;
-			} else if (opCode[0] && opCode[1]) {// 11
-				op = Opcode.CJMP;
-			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
-			boolean accumulatorValue = getBit(ACC_ADDRESS);
 			boolean tgtBitValue = getBit(tgtAddressValue);
-			switch (op) {
-			case CJMP:
-				if (accumulatorValue) {
-					programCounter = tgtAddressValue;
-				}
-				break;
-			case NAND:
-				setBit(ACC_ADDRESS, !(accumulatorValue && tgtBitValue));
-				break;
-			case READ:
-				setBit(ACC_ADDRESS, tgtBitValue);
-				break;
-			case WRITE:
-				setBit(tgtAddressValue, accumulatorValue, true);
-				break;
-			default:
-				break;
+			boolean nand=!(accumulator&&tgtBitValue);
+			if(!opCode)//NAR
+			{
+				setBit(ACC_ADDRESS, nand);
+			}else {
+				setBit(tgtAddressValue, nand);
 			}
-		}
-		return getBit(ACC_ADDRESS);
-
+			programCounter+=commandSize;
+		} while (programCounter < Math.pow(2, addressSize));
+		return accumulator;
 	}
 }

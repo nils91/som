@@ -1,13 +1,11 @@
 # som
 
-Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. There is only one memory space for both program AND data. The opcode of each command is just 2 bits long, meaning there are 4 different opcodes available:
+Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. The opcode of each command is just 1 bit long, meaning there are 2 different opcodes available:
 
  opcode | letter code |Description |
  --- | --- |--- |
-00|`READ`|Reads a value from memory into accumulator.|
-01|`WRITE`|Write a value from accumulator to memory.|
-10|`NAND`|Perform a logical NAND operation with the accumulator and the given memory value and write the result to the accumulator.|
-11|`CJMP`|Conditional jump. If the accumulator has value 1, perform jump.|
+0|`NAR`|Perform a logical NAND operation with the accumulator and the given memory addresses´ value and write the result to the accumulator.|
+1|`NAW`|Perform a logical NAND operation with the accumulator and the given memory addresses´ value and write the result to the given memory address.|
 
 ## som bitcode
 

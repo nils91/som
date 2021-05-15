@@ -15,6 +15,18 @@ The n bits after that are the address bits (unsigned int, no offset), followed b
 Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
 In order to perform a jump to a memory address, write the address to the address bits and set `ADR_EVAL` to 1. Don´t forget to clear `ADR_EVAL` after the jump.
 
+### basic memory layout
+
+bit | name | code |
+--- | --- | --- |
+0|accumulator|`ACC`|
+1-5|n|`N_[0-5]`|
+6-(6+n)|address bits|`ADR_[0-(N-1)]`|
+7+n|address evaluation bit|`ADR_EVAL`|
+8+n|writehook trigger|`WH_TRG`|
+9+n|writehook communication|`WH_COM`|
+10+n|writehook select|`WH_SEL`|
+
 ### write hooks
 
 - General behaviour

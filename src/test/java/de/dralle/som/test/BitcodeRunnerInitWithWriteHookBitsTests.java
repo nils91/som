@@ -119,7 +119,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	@Test
 	void testInitRunnerGetStartAddress() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 13);
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -133,7 +133,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitWithMemspaceContentFullMemspaceProvidedGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(expected);
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -151,7 +151,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(new boolean[] { false, false, false, false, false, true, false,
 				true, true, false, true, false, false, false, false, false, false, false, false, false, false, false,
 				false, false, false, false, false, false, false, false, false, false });
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -165,7 +165,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitRunnerContentAsBitStringFullMemspaceProvidedGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101101000000000000000000000");
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -179,7 +179,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitRunnerContentAsBitStringWithSpacesFullMemspaceProvidedGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01101 00 00000 00 00000 00 00000");
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -193,7 +193,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitRunnerContentNoRight0BitsGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(new byte[] { expected[0], expected[1] });
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -209,7 +209,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(
 				new boolean[] { false, false, false, false, false, true, false, true, true, false, true });
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitRunnerContentAsBitStringNoRight0BitsGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101101");
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 
 	@Test
@@ -237,7 +237,7 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 	void testInitRunnerContentAsBitStringWithSpacesNoRight0BitsGetStartAddress() {
 		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01101");
-		assertEquals(13, runner.getStartAddress());
+		assertEquals(13, runner.getAddressBits());
 	}
 	@Test
 	void testInitMemspaceCheckWHEnabled() {

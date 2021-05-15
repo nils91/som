@@ -43,7 +43,7 @@ public class SOMBitcodeRunner {
 
 	public static boolean isWriteHookEnabled(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
-		int startAddress = getStartAddress(memSpace);
+		int startAddress = getAddressBits(memSpace);
 		return (START_ADDRESS_START + addressSizeBits) < startAddress;
 	}
 
@@ -52,8 +52,8 @@ public class SOMBitcodeRunner {
 	}
 
 	public static int getWriteHookTriggerAddress(byte[] memSpace) {
-		int addressSizeBits = getN(memSpace);
-		return START_ADDRESS_START + addressSizeBits;
+		int addressEvalAddress=getAddressEvaluationBitAddress(memSpace);
+		return addressEvalAddress+1;
 	}
 
 	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
@@ -121,14 +121,21 @@ public class SOMBitcodeRunner {
 		return getN(memSpace);
 	}
 
-	public static int getStartAddress(byte[] memSpace) {
+	public static int getAddressBits(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
 		int startAddress = getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits, memSpace);
 		return startAddress;
 	}
 
-	public int getStartAddress() {
-		return getStartAddress(memSpace);
+	public int getAddressBits() {
+		return getAddressBits(memSpace);
+	}
+	public static int getAddressEvaluationBitAddress(byte[] memSpace) {
+		int addressSizeBits = getN(memSpace);
+		return START_ADDRESS_START + addressSizeBits;
+	}
+	public int getAddressEvaluationBitAddress() {
+		return getAddressEvaluationBitAddress(memSpace);
 	}
 
 	public SOMBitcodeRunner(int n, int startAddress) {
@@ -160,7 +167,7 @@ public class SOMBitcodeRunner {
 
 	private byte[] initFromExistingPartialMemspace(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
-		int startAddress = getStartAddress(memSpace);
+		int startAddress = getAddressBits(memSpace);
 		byte[] origgMemSpace = memSpace;
 		memSpace = initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
 		for (int i = 0; i < origgMemSpace.length; i++) {
@@ -334,8 +341,12 @@ public class SOMBitcodeRunner {
 	}
 
 	public boolean execute() {
+		do {
+			
+		}while(true);
+		
 		int addressSize = getN();
-		int startAddress = getStartAddress();
+		int startAddress = getAddressBits();
 		int opcodeSize = 2;
 		int commandSize = addressSize + opcodeSize;
 		int programCounter = startAddress;

@@ -55,13 +55,17 @@ public class SOMBitcodeRunner {
 		int addressEvalAddress = getAddressEvaluationBitAddress(memSpace);
 		return addressEvalAddress + 1;
 	}
-
-	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
+	
+	public static int getWriteHookDirectionAddress(byte[] memSpace) {
 		return getWriteHookTriggerAddress(memSpace) + 1;
 	}
 
-	public static int getWriteHookSelectAddress(byte[] memSpace) {
+	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
 		return getWriteHookTriggerAddress(memSpace) + 2;
+	}
+
+	public static int getWriteHookSelectAddress(byte[] memSpace) {
+		return getWriteHookTriggerAddress(memSpace) + 3;
 	}
 
 	public static boolean isWriteHookReadmode(byte[] memSpace) {
@@ -84,6 +88,10 @@ public class SOMBitcodeRunner {
 
 	public int getWriteHookTriggerAddress() {
 		return getWriteHookTriggerAddress(memSpace);
+	}
+	
+	public int getWriteHookDirectionAddress() {
+		return getWriteHookDirectionAddress(memSpace);
 	}
 
 	public int getWriteHookCommunicationAddress() {

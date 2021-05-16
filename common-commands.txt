@@ -15,7 +15,44 @@ WRITE from ACC (to 1):
 0 0
 1 1
 
+GET1 in ACC:
+1 2
+0 0
+1 2
+0 2 //ensure 1 in acc
+
+AND:
+0 1
+0 0
+
+OR: (a|b=! !a&!b)
+0 0
+WRITE 2
+READ 1
+0 0
+0 2
+
+XOR:
+
 truth table NAND:
+00 1
+01 1
+10 1
+11 0
+
+truth table or
+00 0
+01 1
+10 1
+11 1
+
+truth table ! !a&!b
+00 0
+01 1
+10 1
+11 1
+
+truth table ! a&b
 00 1
 01 1
 10 1

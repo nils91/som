@@ -357,7 +357,7 @@ public class SOMBitcodeRunner {
 							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
 							boolean readBit = currentlySelectedWriteHook.read(this);
 							setBit(getWriteHookCommunicationAddress(), readBit);
-							setBit(ACC_ADDRESS, hasNew);
+							setBit(getWriteHookDirectionAddress(), !hasNew);
 						}
 					}
 				}else {
@@ -378,7 +378,7 @@ public class SOMBitcodeRunner {
 					}else {
 						// last switching success
 						setBit(getWriteHookCommunicationAddress(), lastWriteHookSwitchSuccess);
-						setBit(ACC_ADDRESS, true);
+						setBit(getWriteHookDirectionAddress(), false);
 					}
 				}
 			}

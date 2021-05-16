@@ -285,55 +285,6 @@ public class SOMBitcodeRunner {
 		return getBitsUnsignedBounds(lowerBound, lowerBound + n, memSpace);
 	}
 
-	public byte[] setBit(int address, boolean bitValue, boolean checkWriteHook) {
-		memSpace = setBit(address, bitValue);
-		if (checkWriteHook) {
-			if (address == getWriteHookEnabledAddress()) {
-				boolean writeHookTrigger = getBit(getWriteHookEnabledAddress());
-				boolean writeHookCom = getBit(getWriteHookCommunicationAddress());
-				boolean writeHookSelectBit = getBit(getWriteHookSelectAddress());
-				if (writeHookTrigger) {
-					// write mode
-					if (writeHookSelectBit) {
-						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
-						if (currentlySelectedWriteHook != null) {
-							currentlySelectedWriteHook.write(writeHookCom, this);
-						}
-					} else {
-						// switch selected write hook
-						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
-							boolean comValue = getBit(getWriteHookCommunicationAddress());
-							if (comValue) {
-								selectedWriteHook++;
-							} else {
-								selectedWriteHook--;
-							}
-							lastWriteHookSwitchSuccess = true;
-						} else {
-							lastWriteHookSwitchSuccess = false;
-						}
-					}
-				} else {
-					// read mode
-					if (writeHookSelectBit) {
-						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
-						if (currentlySelectedWriteHook != null) {
-							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
-							boolean readBit = currentlySelectedWriteHook.read(this);
-							setBit(getWriteHookCommunicationAddress(), readBit);
-							setBit(ACC_ADDRESS, hasNew);
-						}
-					} else {
-						// last switching success
-						setBit(getWriteHookCommunicationAddress(), lastWriteHookSwitchSuccess);
-						setBit(ACC_ADDRESS, true);
-					}
-				}
-			}
-		}
-		return memSpace;
-	}
-
 	public byte[] setBit(int address, boolean bitValue) {
 		return setBit(address, bitValue, memSpace);
 	}
@@ -381,8 +332,57 @@ public class SOMBitcodeRunner {
 			{
 				setBit(ACC_ADDRESS, nand);
 			}else {
-				setBit(tgtAddressValue, nand,true);
+				setBit(tgtAddressValue, nand);
 			}
+			//get write hook bits
+			boolean whEn=getBit(getWriteHookEnabledAddress());
+			boolean whDir=getBit(getWriteHookDirectionAddress());
+			boolean whCom=getBit(getWriteHookCommunicationAddress());
+			boolean whSel=getBit(getWriteHookSelectAddress());
+			
+			if(whEn) {
+				//enabled
+				if(whSel) {
+					//write hook selected
+					if(whDir) {
+						//write
+						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						if (currentlySelectedWriteHook != null) {
+							currentlySelectedWriteHook.write(whCom, this);
+						}
+					}else {
+						//read
+						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						if (currentlySelectedWriteHook != null) {
+							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
+							boolean readBit = currentlySelectedWriteHook.read(this);
+							setBit(getWriteHookCommunicationAddress(), readBit);
+							setBit(ACC_ADDRESS, hasNew);
+						}
+					}
+				}else {
+					//wh switch mode
+					if(whDir) {
+						// switch selected write hook
+						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
+							boolean comValue = getBit(getWriteHookCommunicationAddress());
+							if (comValue) {
+								selectedWriteHook++;
+							} else {
+								selectedWriteHook--;
+							}
+							lastWriteHookSwitchSuccess = true;
+						} else {
+							lastWriteHookSwitchSuccess = false;
+						}
+					}else {
+						// last switching success
+						setBit(getWriteHookCommunicationAddress(), lastWriteHookSwitchSuccess);
+						setBit(ACC_ADDRESS, true);
+					}
+				}
+			}
+			
 			programCounter+=commandSize;
 		} while (programCounter < Math.pow(2, addressSize));
 		return getBit(ACC_ADDRESS);

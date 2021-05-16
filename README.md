@@ -23,7 +23,7 @@ bit | name | code |
 1-5|n|`N_[0-4]`|
 6-(6+(n-1))|address bits|`ADR_[0-(N-1)]`|
 7+n|address evaluation bit|`ADR_EVAL`|
-8+n|writehook trigger|`WH_TRG`|
+8+n|writehook enabled|`WH_EN`|
 9+n|writehook direction|`WH_DIR`|
 9+n|writehook communication|`WH_COM`|
 10+n|writehook select|`WH_SEL`|
@@ -33,8 +33,8 @@ bit | name | code |
 - General behaviour
 
 Write hooks are how SOM interacts with external ressources (`stdout` etc.). They are small programs provided by the runtime. Only 1 is loaded at any given time, but is it possible to change which write hook is loaded.
-Writing to `WH_TRG` will evaluate all `WH` bits. If `WH_TRG` is 1, the write hook will be triggered in write mode and the `WH_COM` bit  is sent to the write hook. If `WH_TRG` is 0, the write hook will be triggered in read mode. If the write hook has data available, the next available bit is written to `WH_COM` and the accumulator is set to 1. If theres no new data available, the accumulator will be 0.
-If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. Writing 1 to `WH_TRG` while `WH_SEL` is 0 will switch the currently selected write hook. If `WH_COM` is 0, the previous write hook will be selected, while the next one will be selected if its 1. Writing 0 to `WH_TRG` while `WH_SEL` is 0, `WH_COM` will be set according to the success state of the last write hook switch and the accumulator will be 1.
+If `WH_EN` is set, all write hook bits will be evaluated. If `WH_DIR` is 1, the write hook will be triggered in write mode and the `WH_COM` bit  is sent to the write hook. If `WH_DIR` is 0, the write hook will be triggered in read mode. If the write hook has data available, the next available bit is written to `WH_COM` and the `WH_DIR` remains 0. If theres no new data available, the `WH_DIR` will be 1.
+If `WH_SEL` is one, when the write hook is triggered, the currently loaded write hook will be triggered. If `WH_SEL` is 0 that means write hook selection mode. If `WH_DIR` is 1 while `WH_SEL` is 0 it will switch the currently selected write hook. If `WH_COM` is 0, the previous write hook will be selected, while the next one will be selected if its 1. If `WH_DIR` is 0 while `WH_SEL` is 0, `WH_COM` will be set according to the success state of the last write hook switch.
 
 - Notes on implementation
   

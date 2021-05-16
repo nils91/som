@@ -51,29 +51,29 @@ public class SOMBitcodeRunner {
 		return isWriteHookEnabled(memSpace);
 	}
 
-	public static int getWriteHookTriggerAddress(byte[] memSpace) {
+	public static int getWriteHookEnabledAddress(byte[] memSpace) {
 		int addressEvalAddress = getAddressEvaluationBitAddress(memSpace);
 		return addressEvalAddress + 1;
 	}
 	
 	public static int getWriteHookDirectionAddress(byte[] memSpace) {
-		return getWriteHookTriggerAddress(memSpace) + 1;
+		return getWriteHookEnabledAddress(memSpace) + 1;
 	}
 
 	public static int getWriteHookCommunicationAddress(byte[] memSpace) {
-		return getWriteHookTriggerAddress(memSpace) + 2;
+		return getWriteHookEnabledAddress(memSpace) + 2;
 	}
 
 	public static int getWriteHookSelectAddress(byte[] memSpace) {
-		return getWriteHookTriggerAddress(memSpace) + 3;
+		return getWriteHookEnabledAddress(memSpace) + 3;
 	}
 
 	public static boolean isWriteHookReadmode(byte[] memSpace) {
-		return !getBit(getWriteHookTriggerAddress(memSpace), memSpace);
+		return !getBit(getWriteHookEnabledAddress(memSpace), memSpace);
 	}
 
 	public static boolean isWriteHookWritemode(byte[] memSpace) {
-		return getBit(getWriteHookTriggerAddress(memSpace), memSpace);
+		return getBit(getWriteHookEnabledAddress(memSpace), memSpace);
 
 	}
 
@@ -86,8 +86,8 @@ public class SOMBitcodeRunner {
 		return !getBit(getWriteHookSelectAddress(memSpace), memSpace);
 	}
 
-	public int getWriteHookTriggerAddress() {
-		return getWriteHookTriggerAddress(memSpace);
+	public int getWriteHookEnabledAddress() {
+		return getWriteHookEnabledAddress(memSpace);
 	}
 	
 	public int getWriteHookDirectionAddress() {
@@ -288,8 +288,8 @@ public class SOMBitcodeRunner {
 	public byte[] setBit(int address, boolean bitValue, boolean checkWriteHook) {
 		memSpace = setBit(address, bitValue);
 		if (checkWriteHook) {
-			if (address == getWriteHookTriggerAddress()) {
-				boolean writeHookTrigger = getBit(getWriteHookTriggerAddress());
+			if (address == getWriteHookEnabledAddress()) {
+				boolean writeHookTrigger = getBit(getWriteHookEnabledAddress());
 				boolean writeHookCom = getBit(getWriteHookCommunicationAddress());
 				boolean writeHookSelectBit = getBit(getWriteHookSelectAddress());
 				if (writeHookTrigger) {

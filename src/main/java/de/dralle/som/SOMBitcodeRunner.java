@@ -17,7 +17,7 @@ public class SOMBitcodeRunner {
 	private static final int START_ADDRESS_START = 9;
 	private static final int ADDRESS_SIZE_END = 7;
 	private static final int ADDRESS_SIZE_START = 1;
-	private static final int ADR_EVAL_ADDRESS=8;
+	private static final int ADR_EVAL_ADDRESS = 8;
 	private byte[] memSpace;
 	private List<IWriteHook> writeHooks;
 	private int selectedWriteHook = 0;
@@ -31,7 +31,7 @@ public class SOMBitcodeRunner {
 	}
 
 	private IWriteHook getSelectedWriteHook() {
-		if (writeHooks!=null&& writeHooks.size() > 0 && selectedWriteHook > -1) {
+		if (writeHooks != null && writeHooks.size() > 0 && selectedWriteHook > -1) {
 			return writeHooks.get(selectedWriteHook);
 		}
 		return null;
@@ -42,9 +42,9 @@ public class SOMBitcodeRunner {
 	}
 
 	public static int getWriteHookEnabledAddress(byte[] memSpace) {
-		return ADR_EVAL_ADDRESS+getN(memSpace)+1;
-				}
-	
+		return ADR_EVAL_ADDRESS + getN(memSpace) + 1;
+	}
+
 	public static int getWriteHookDirectionAddress(byte[] memSpace) {
 		return getWriteHookEnabledAddress(memSpace) + 1;
 	}
@@ -78,7 +78,7 @@ public class SOMBitcodeRunner {
 	public int getWriteHookEnabledAddress() {
 		return getWriteHookEnabledAddress(memSpace);
 	}
-	
+
 	public int getWriteHookDirectionAddress() {
 		return getWriteHookDirectionAddress(memSpace);
 	}
@@ -117,16 +117,28 @@ public class SOMBitcodeRunner {
 		return getN(memSpace);
 	}
 
+	/**
+	 * Address bits. If ADR_EVAL is set, these contain the next memory address, from
+	 * which execution will continue.
+	 * 
+	 * @return
+	 */
 	public static int getAddressBits(byte[] memSpace) {
 		int addressSizeBits = getN(memSpace);
 		int startAddress = getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits, memSpace);
 		return startAddress;
 	}
 
+	/**
+	 * Address bits. If ADR_EVAL is set, these contain the next memory address, from
+	 * which execution will continue.
+	 * 
+	 * @return
+	 */
 	public int getAddressBits() {
 		return getAddressBits(memSpace);
 	}
-	
+
 	public SOMBitcodeRunner(int n, int startAddress) {
 		byte[] memSpace = initMemspaceFromAddressSizeAndStartAddress(n, startAddress);
 		this.memSpace = memSpace;
@@ -142,8 +154,7 @@ public class SOMBitcodeRunner {
 
 	private byte[] initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
 			byte[] memSpace) {
-		memSpace = setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1,
-				addressSizeBits, memSpace);
+		memSpace = setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1, addressSizeBits, memSpace);
 		memSpace = setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits, startAddress,
 				memSpace);
 		return memSpace;
@@ -306,31 +317,31 @@ public class SOMBitcodeRunner {
 			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
 			boolean tgtBitValue = getBit(tgtAddressValue);
-			boolean nand=!(accumulator&&tgtBitValue);
-			if(!opCode)//NAR
+			boolean nand = !(accumulator && tgtBitValue);
+			if (!opCode)// NAR
 			{
 				setBit(ACC_ADDRESS, nand);
-			}else {
+			} else {
 				setBit(tgtAddressValue, nand);
 			}
-			//get write hook bits
-			boolean whEn=getBit(getWriteHookEnabledAddress());
-			boolean whDir=getBit(getWriteHookDirectionAddress());
-			boolean whCom=getBit(getWriteHookCommunicationAddress());
-			boolean whSel=getBit(getWriteHookSelectAddress());
-			
-			if(whEn) {
-				//enabled
-				if(whSel) {
-					//write hook selected
-					if(whDir) {
-						//write
+			// get write hook bits
+			boolean whEn = getBit(getWriteHookEnabledAddress());
+			boolean whDir = getBit(getWriteHookDirectionAddress());
+			boolean whCom = getBit(getWriteHookCommunicationAddress());
+			boolean whSel = getBit(getWriteHookSelectAddress());
+
+			if (whEn) {
+				// enabled
+				if (whSel) {
+					// write hook selected
+					if (whDir) {
+						// write
 						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
 						if (currentlySelectedWriteHook != null) {
 							currentlySelectedWriteHook.write(whCom, this);
 						}
-					}else {
-						//read
+					} else {
+						// read
 						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
 						if (currentlySelectedWriteHook != null) {
 							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
@@ -339,9 +350,9 @@ public class SOMBitcodeRunner {
 							setBit(getWriteHookDirectionAddress(), !hasNew);
 						}
 					}
-				}else {
-					//wh switch mode
-					if(whDir) {
+				} else {
+					// wh switch mode
+					if (whDir) {
 						// switch selected write hook
 						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
 							boolean comValue = getBit(getWriteHookCommunicationAddress());
@@ -354,15 +365,15 @@ public class SOMBitcodeRunner {
 						} else {
 							lastWriteHookSwitchSuccess = false;
 						}
-					}else {
+					} else {
 						// last switching success
 						setBit(getWriteHookCommunicationAddress(), lastWriteHookSwitchSuccess);
 						setBit(getWriteHookDirectionAddress(), false);
 					}
 				}
 			}
-			
-			programCounter+=commandSize;
+
+			programCounter += commandSize;
 		} while (programCounter < Math.pow(2, addressSize));
 		return getBit(ACC_ADDRESS);
 	}

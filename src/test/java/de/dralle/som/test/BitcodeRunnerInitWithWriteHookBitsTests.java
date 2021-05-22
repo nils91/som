@@ -46,8 +46,9 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 
 	@Test
 	void testInitMemspaceContent() {
+		// 0 0000101 0 01101 00
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(5, 13);
-		byte[] expected = new byte[] { 0x05, (byte) 0xB4, 0x00, 0x00 };
+		byte[] expected = new byte[] { 0x05, (byte) 0x34, 0x00, 0x00 };
 		assertArrayEquals(expected, runner.getMemSpace());
 	}
 

@@ -155,7 +155,7 @@ public class SOMBitcodeRunner {
 	private byte[] initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
 			byte[] memSpace) {
 		memSpace = setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1, addressSizeBits, memSpace);
-		memSpace = setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits, startAddress,
+		memSpace = setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits , startAddress,
 				memSpace);
 		return memSpace;
 	}

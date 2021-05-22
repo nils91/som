@@ -53,7 +53,7 @@ class BitcodeRunnerExecuteTests {
 	void testOpcodeNAR() throws IOException {
 		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_nar.ab");
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
-		assertTrue(runner.execute());
+		runner.execute();
 		//should have written accumulator to 1
 		assertTrue(runner.getBit(0));
 	}

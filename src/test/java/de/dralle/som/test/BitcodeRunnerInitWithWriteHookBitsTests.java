@@ -148,7 +148,6 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 
 	@Test
 	void testInitRunnerContentAsBitArrayFullMemspaceProvidedGetStartAddress() {
-		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(new boolean[] { false, false, false, false, false, true, false,		true, 
 				true, false, true, true, false, true, false, false, false, false, false, false, false, false,
 				false, false, false, false, false, false, false, false, false, false });
@@ -207,7 +206,6 @@ class BitcodeRunnerInitWithWriteHookBitsTests {
 
 	@Test
 	void testInitRunnerContentAsBitArrayNoRight0BitsGetStartAddress() {
-		byte[] expected = new byte[] { 0x05, (byte) 0xA0, 0x00, 0x00 };
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(
 				new boolean[] { false, false, false, false, false, true, false, true, true, false, true ,true,false,true});
 		assertEquals(13, runner.getAddressBits());

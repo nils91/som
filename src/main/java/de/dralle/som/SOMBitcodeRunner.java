@@ -14,10 +14,10 @@ import de.dralle.som.writehooks.IWriteHook;
  */
 public class SOMBitcodeRunner {
 	private static final int ACC_ADDRESS = 0;
-	private static final int START_ADDRESS_START = 6;
-	private static final int ADDRESS_SIZE_END = 5;
+	private static final int START_ADDRESS_START = 9;
+	private static final int ADDRESS_SIZE_END = 7;
 	private static final int ADDRESS_SIZE_START = 1;
-	private static final int ADDRESS_SIZE_OFFSET = 4;
+	private static final int ADR_EVAL_ADDRESS=8;
 	private byte[] memSpace;
 	private List<IWriteHook> writeHooks;
 	private int selectedWriteHook = 0;
@@ -42,9 +42,8 @@ public class SOMBitcodeRunner {
 	}
 
 	public static int getWriteHookEnabledAddress(byte[] memSpace) {
-		int addressEvalAddress = getAddressEvaluationBitAddress(memSpace);
-		return addressEvalAddress + 1;
-	}
+		return ADR_EVAL_ADDRESS+getN(memSpace)+1;
+				}
 	
 	public static int getWriteHookDirectionAddress(byte[] memSpace) {
 		return getWriteHookEnabledAddress(memSpace) + 1;
@@ -59,11 +58,11 @@ public class SOMBitcodeRunner {
 	}
 
 	public static boolean isWriteHookReadmode(byte[] memSpace) {
-		return !getBit(getWriteHookEnabledAddress(memSpace), memSpace);
+		return !getBit(getWriteHookDirectionAddress(memSpace), memSpace);
 	}
 
 	public static boolean isWriteHookWritemode(byte[] memSpace) {
-		return getBit(getWriteHookEnabledAddress(memSpace), memSpace);
+		return getBit(getWriteHookDirectionAddress(memSpace), memSpace);
 
 	}
 
@@ -110,8 +109,7 @@ public class SOMBitcodeRunner {
 	}
 
 	public static int getN(byte[] memSpace) {
-		int addressSizeBits = getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1, memSpace)
-				+ ADDRESS_SIZE_OFFSET;
+		int addressSizeBits = getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1, memSpace);
 		return addressSizeBits;
 	}
 
@@ -128,16 +126,7 @@ public class SOMBitcodeRunner {
 	public int getAddressBits() {
 		return getAddressBits(memSpace);
 	}
-
-	public static int getAddressEvaluationBitAddress(byte[] memSpace) {
-		int addressSizeBits = getN(memSpace);
-		return START_ADDRESS_START + addressSizeBits;
-	}
-
-	public int getAddressEvaluationBitAddress() {
-		return getAddressEvaluationBitAddress(memSpace);
-	}
-
+	
 	public SOMBitcodeRunner(int n, int startAddress) {
 		byte[] memSpace = initMemspaceFromAddressSizeAndStartAddress(n, startAddress);
 		this.memSpace = memSpace;
@@ -154,7 +143,7 @@ public class SOMBitcodeRunner {
 	private byte[] initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
 			byte[] memSpace) {
 		memSpace = setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1,
-				addressSizeBits - ADDRESS_SIZE_OFFSET, memSpace);
+				addressSizeBits, memSpace);
 		memSpace = setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + addressSizeBits, startAddress,
 				memSpace);
 		return memSpace;
@@ -299,7 +288,7 @@ public class SOMBitcodeRunner {
 			accumulator = getBit(ACC_ADDRESS);
 			addressSize = getN();
 			int startAddress = getAddressBits();
-			boolean addressEval = getBit(getAddressEvaluationBitAddress());
+			boolean addressEval = getBit(ADR_EVAL_ADDRESS);
 			int opcodeSize = 1;
 			int commandSize = addressSize + opcodeSize;
 			if (addressEval) {

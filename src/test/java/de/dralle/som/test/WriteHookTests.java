@@ -105,6 +105,7 @@ class WriteHookTests {
 	}
 
 	@Test
+	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
@@ -113,6 +114,7 @@ class WriteHookTests {
 	}
 
 	@Test
+	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);

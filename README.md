@@ -9,9 +9,9 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
 
 ## som bitcode
 
-The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is 0.
-Bits 1-5 contain n as an unsigned int, but offset by 4, 00000 means 4, 00001 means 5 and so on. 11111 means 35.
-The n bits after that are the address bits (unsigned int, no offset), followed by 1 bit, the `ADR_EVAL` bit. The next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the write hook direction bit `WH_DIR`, 3rd is the global write hook communication bit (`WH_COM`), 4th is the write hook selection bit (`WH_SEL`). 
+The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is always 0.
+Bits 1-7 contain n as an unsigned int. The next bit is the `ADR_EVAL` bit, followed by n address bits. If the `ADR_EVAL` bit is set, the address bits will be evaluated and execution will continue at that address.
+The next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the write hook direction bit `WH_DIR`, 3rd is the global write hook communication bit (`WH_COM`), 4th is the write hook selection bit (`WH_SEL`). 
 Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
 In order to perform a jump to a memory address, write the address to the address bits and set `ADR_EVAL` to 1. Don´t forget to clear `ADR_EVAL` after the jump.
 
@@ -20,13 +20,13 @@ In order to perform a jump to a memory address, write the address to the address
 bit | name | code |
 --- | --- | --- |
 0|accumulator|`ACC`|
-1-5|n|`N_[0-4]`|
-6-(6+(n-1))|address bits|`ADR_[0-(N-1)]`|
-7+n|address evaluation bit|`ADR_EVAL`|
-8+n|writehook enabled|`WH_EN`|
-9+n|writehook direction|`WH_DIR`|
-9+n|writehook communication|`WH_COM`|
-10+n|writehook select|`WH_SEL`|
+1-7|n|`N_[0-6]`|
+8|address evaluation bit|`ADR_EVAL`|
+9-(9+(n-1))|address bits|`ADR_[0-(N-1)]`|
+9+n|writehook enabled|`WH_EN`|
+10+n|writehook direction|`WH_DIR`|
+11+n|writehook communication|`WH_COM`|
+12+n|writehook select|`WH_SEL`|
 
 ### write hooks
 

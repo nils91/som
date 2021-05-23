@@ -136,4 +136,100 @@ class BooleanArrayMemspaceTests {
 		memSpace.setN(n);
 		assertEquals(12 + n, memSpace.getWriteHookSelectAddress());
 	}
+
+	@Test
+	void testSetN() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		String nBin = Integer.toBinaryString(n);
+		while(nBin.length()<7) {
+			nBin='0'+nBin;
+		}
+		for (int i = 0; i < nBin.toCharArray().length; i++) {
+			switch (nBin.toCharArray()[i]) {
+			case '0':
+				assertFalse(memSpace.getBit(1 + i));
+				break;
+			case '1':
+				assertTrue(memSpace.getBit(1 + i));
+				break;
+			default:
+				fail();
+				break;
+			}
+		}
+	}
+	@Test
+	void testGetN() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		String nBin = Integer.toBinaryString(n);
+		while(nBin.length()<7) {
+			nBin='0'+nBin;
+		}
+		for (int i = 0; i < nBin.toCharArray().length; i++) {
+			switch (nBin.toCharArray()[i]) {
+			case '0':
+				memSpace.setBit(1+i, false);
+				break;
+			case '1':
+				memSpace.setBit(1+i, true);
+				break;
+			default:
+				break;
+			}
+		}
+		assertEquals(n, memSpace.getN());
+	}
+	@Test
+	void testSetNAddress() {
+		int n = 7;
+		int address=7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		memSpace.setNextAddress(address);
+		String addressBin = Integer.toBinaryString(address);
+		while(addressBin.length()<n) {
+			addressBin='0'+addressBin;
+		}
+		for (int i = 0; i < addressBin.toCharArray().length; i++) {
+			switch (addressBin.toCharArray()[i]) {
+			case '0':
+				assertFalse(memSpace.getBit(memSpace.getAdrEvalAddress()+1+i));
+				break;
+			case '1':
+				assertTrue(memSpace.getBit(memSpace.getAdrEvalAddress()+1+i));
+				break;
+			default:
+				fail();
+				break;
+			}
+		}
+	}
+	@Test
+	void testGetNAddress() {
+		int n = 7;
+		int address=7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		
+		String nAdressBin = Integer.toBinaryString(n);
+		while(nAdressBin.length()<n) {
+			nAdressBin='0'+nAdressBin;
+		}
+		for (int i = 0; i < nAdressBin.toCharArray().length; i++) {
+			switch (nAdressBin.toCharArray()[i]) {
+			case '0':
+				memSpace.setBit(memSpace.getAdrEvalAddress()+1+i, false);
+				break;
+			case '1':
+				memSpace.setBit(memSpace.getAdrEvalAddress()+1+i, true);
+				break;
+			default:
+				break;
+			}
+		}
+		assertEquals(address, memSpace.getNextAddress());
+	}
 }

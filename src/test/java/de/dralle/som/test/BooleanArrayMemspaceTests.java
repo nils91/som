@@ -77,4 +77,15 @@ class BooleanArrayMemspaceTests {
 			assertEquals(i%2==0,memSpace.getBit(i));
 		}
 	}
+	@Test
+	void testSweepSetAlternatingSporadic() {
+		int alternatingDistance=97;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
+		for (int i = 0; i < 65535; i++) {
+			memSpace.setBit(i, i%alternatingDistance==0);
+		}
+		for (int i = 0; i < 65535; i++) {
+			assertEquals(i%alternatingDistance==0,memSpace.getBit(i));
+		}
+	}
 }

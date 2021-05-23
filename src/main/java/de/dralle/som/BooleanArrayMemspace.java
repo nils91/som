@@ -12,7 +12,7 @@ public class BooleanArrayMemspace extends AbstractSomMemspace {
 	private boolean[] memory;
 	
 	/**
-	 * Creates a new memory space.
+	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
 	 * @param size Size of the new memory space in bits.
 	 */
 	public BooleanArrayMemspace(int size) {

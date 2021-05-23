@@ -57,6 +57,7 @@ class BooleanArrayMemspaceTests {
 			assertFalse(memSpace.getBit(i));
 		}
 	}
+
 	@Test
 	void testSweepSet1() {
 		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
@@ -67,25 +68,72 @@ class BooleanArrayMemspaceTests {
 			assertTrue(memSpace.getBit(i));
 		}
 	}
+
 	@Test
 	void testSweepSetAlternating() {
 		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
 		for (int i = 0; i < 65535; i++) {
-			memSpace.setBit(i, i%2==0);
+			memSpace.setBit(i, i % 2 == 0);
 		}
 		for (int i = 0; i < 65535; i++) {
-			assertEquals(i%2==0,memSpace.getBit(i));
+			assertEquals(i % 2 == 0, memSpace.getBit(i));
 		}
 	}
+
 	@Test
 	void testSweepSetAlternatingSporadic() {
-		int alternatingDistance=97;
+		int alternatingDistance = 97;
 		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
 		for (int i = 0; i < 65535; i++) {
-			memSpace.setBit(i, i%alternatingDistance==0);
+			memSpace.setBit(i, i % alternatingDistance == 0);
 		}
 		for (int i = 0; i < 65535; i++) {
-			assertEquals(i%alternatingDistance==0,memSpace.getBit(i));
+			assertEquals(i % alternatingDistance == 0, memSpace.getBit(i));
 		}
+	}
+
+	@Test
+	void testGetAccAddress() {
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
+		assertEquals(0, memSpace.getAccumulatorAddress());
+	}
+
+	@Test
+	void testAdrEvalAddress() {
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
+		assertEquals(8, memSpace.getAdrEvalAddress());
+	}
+
+	@Test
+	void testWhEnAddress() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		assertEquals(9 + n, memSpace.getWriteHookEnabledAddress());
+	}
+
+	@Test
+	void testWhDirAddress() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		assertEquals(10 + n, memSpace.getWriteHookDirectionAddress());
+	}
+
+	@Test
+	void testWhComAddress() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		assertEquals(11 + n, memSpace.getWriteHookCommunicationAddress());
+	}
+
+	@Test
+	void testWhSelAddress() {
+		int n = 7;
+		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+		memSpace.setN(n);
+		memSpace.setN(n);
+		assertEquals(12 + n, memSpace.getWriteHookSelectAddress());
 	}
 }

@@ -30,7 +30,15 @@ public interface ISomMemspace extends IMemspace{
 	void setAdrEval();
 	void clearAdrEval();
 	
+	boolean isWriteHookEnabled();
+	
+	boolean getWriteHookCommunicationBit();
+	
+	void setWriteHookCommunicationBit(boolean value);
+	
 	boolean isWriteHookReadmode();
+	
+	void setWriteHookDirectionBit(boolean value);
 
 	boolean isWriteHookWritemode();
 

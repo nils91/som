@@ -18,4 +18,5 @@ public interface IMemspace extends Cloneable{
 	void resize(int newSize,boolean copyContent);
 	IMemspace clone();
 	void copy(IMemspace from);
+	boolean equalContent(IMemspace mem);
 }

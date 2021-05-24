@@ -21,8 +21,23 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
-	public abstract ISomMemspace clone();
+	public abstract AbstractSomMemspace clone();
 		
+	public boolean equalContent(IMemspace obj) {
+		if(obj instanceof IMemspace) {
+			IMemspace cTo = (IMemspace)obj;
+			if(getSize()==cTo.getSize()) {
+				for (int i = 0; i < getSize(); i++) {
+					if(getBit(i)!=cTo.getBit(i)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void copy(IMemspace from) {
 		for (int i = 0; i < from.getSize(); i++) {

@@ -57,4 +57,13 @@ public class BooleanArrayMemspace extends AbstractSomMemspace {
 		newmemSpace.copy(this);
 		return newmemSpace;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof BooleanArrayMemspace) {
+			BooleanArrayMemspace cTo = (BooleanArrayMemspace)obj;
+			return equalContent(cTo);
+		}
+		return false;
+	}
 }

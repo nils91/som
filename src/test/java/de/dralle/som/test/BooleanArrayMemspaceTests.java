@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import de.dralle.som.BooleanArrayMemspace;
@@ -309,5 +310,50 @@ class BooleanArrayMemspaceTests {
 			}
 		}
 		assertEquals(address, memSpace.getNextAddress());
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContent(ISomMemspace memSpace,int n) {
+		Random r=new Random();
+		memSpace.setN(n);
+		//fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		for (int i = 0; i < memSpace.getSize(); i++) {
+			assertEquals(memSpace.getBit(i), clone.getBit(i));
+		}
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace,int n) {
+		Random r=new Random();
+		memSpace.setN(n);
+		//fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		assertTrue(memSpace.equalContent(clone));
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace,int n) {
+		Random r=new Random();
+		memSpace.setN(n);
+		//fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		assertEquals(memSpace, clone);
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceClone(ISomMemspace memSpace,int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertNotNull(clone);
 	}
 }

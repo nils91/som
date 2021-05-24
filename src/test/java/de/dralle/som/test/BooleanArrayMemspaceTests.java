@@ -10,8 +10,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import de.dralle.som.BooleanArrayMemspace;
+import de.dralle.som.ISomMemspace;
 
 /**
  * @author Nils Dralle
@@ -19,6 +27,38 @@ import de.dralle.som.BooleanArrayMemspace;
  */
 class BooleanArrayMemspaceTests {
 
+	//argument source
+	static int[] sweepN() {
+		int[] allNForTesting=new int[8-4];
+		for (int i = 0; i < allNForTesting.length; i++) {
+			allNForTesting[i]=i+4;
+		}
+		return allNForTesting;
+	}
+	static int[] sweepAddresses(int n) {
+		int[] addressesForTesting=new int[(int) Math.pow(2, n)];
+		for (int i = 0; i < addressesForTesting.length; i++) {
+			addressesForTesting[i]=i;
+		}
+		return addressesForTesting;
+	}
+	static List<ISomMemspace> getMemspacesForTesting(int size){
+		List<ISomMemspace> memspacesForTesting = new ArrayList<>();
+		memspacesForTesting.add(new BooleanArrayMemspace(size));
+		return memspacesForTesting;
+	}
+	static Stream<Arguments> matrixMemSpaceAndN(){
+		Stream<Arguments> testArguments=Stream.empty();
+		int[] allNForTesting = sweepN();
+		for (int i = 0; i < allNForTesting.length; i++) {
+			List<ISomMemspace> memspaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
+			for (ISomMemspace memspace : memspaces) {
+				testArguments=Stream.concat(testArguments, Stream.of(Arguments.of(memspace,allNForTesting[i])));
+			}			
+		}
+		return testArguments;
+	}
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -47,13 +87,14 @@ class BooleanArrayMemspaceTests {
 	void tearDown() throws Exception {
 	}
 
-	@Test
-	void testSweepSet0() {
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
-		for (int i = 0; i < 65535; i++) {
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSweepSet0(ISomMemspace memSpace,int n) {
+		int memSpaceSize=(int) Math.pow(2, n);
+		for (int i = 0; i < memSpaceSize; i++) {
 			memSpace.setBit(i, false);
 		}
-		for (int i = 0; i < 65535; i++) {
+		for (int i = 0; i < memSpaceSize; i++) {
 			assertFalse(memSpace.getBit(i));
 		}
 	}

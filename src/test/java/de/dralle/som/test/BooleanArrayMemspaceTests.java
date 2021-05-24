@@ -45,8 +45,13 @@ class BooleanArrayMemspaceTests {
 		return addressesForTesting;
 	}
 
-	static ISomMemspace[] getMemspacesForTesting(int size) {
-		ISomMemspace[] memspacesForTesting = new ISomMemspace[] {new BooleanArrayMemspace(size)};
+	/**
+	 * Get Instances for all memspace types to be used with this test.
+	 * 
+	 * @return
+	 */
+	static ISomMemspace[] getMemspacesForTesting() {
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[] { new BooleanArrayMemspace() };
 		return memspacesForTesting;
 	}
 
@@ -55,13 +60,14 @@ class BooleanArrayMemspaceTests {
 	 * 
 	 * @return
 	 */
-	static ISomMemspace[] getMemspacesForTesting() {
+	static ISomMemspace[] getMemspacesSizePresetForTesting() {
 		int[] allNForTesting = sweepN();
-		ISomMemspace[] memspacesForTesting = new ISomMemspace[allNForTesting.length*getMemspacesForTesting(0).length];
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[allNForTesting.length * getMemspacesForTesting().length];
 		for (int i = 0; i < allNForTesting.length; i++) {
-			ISomMemspace[] memSpaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
+			ISomMemspace[] memSpaces = getMemspacesForTesting();
 			for (int j = 0; j < memSpaces.length; j++) {
-				memspacesForTesting[i*memSpaces.length+j]=memSpaces[j];
+				memSpaces[j].resize((int) Math.pow(2, allNForTesting[i]), false);
+				memspacesForTesting[i * memSpaces.length + j] = memSpaces[j];
 			}
 		}
 		return memspacesForTesting;
@@ -69,11 +75,12 @@ class BooleanArrayMemspaceTests {
 
 	static Arguments[] matrixMemSpaceAndN() {
 		int[] allNForTesting = sweepN();
-		Arguments[] testArguments = new Arguments[allNForTesting.length*getMemspacesForTesting(0).length];		
+		Arguments[] testArguments = new Arguments[allNForTesting.length * getMemspacesForTesting().length];
 		for (int i = 0; i < allNForTesting.length; i++) {
-			ISomMemspace[] memspaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
+			ISomMemspace[] memspaces = getMemspacesForTesting();
 			for (int j = 0; j < memspaces.length; j++) {
-				testArguments[i*memspaces.length+j]=Arguments.of(memspaces[j],allNForTesting[i]);				
+				memspaces[j].resize((int) Math.pow(2, allNForTesting[i]), false);
+				testArguments[i * memspaces.length + j] = Arguments.of(memspaces[j], allNForTesting[i]);
 			}
 		}
 		return testArguments;
@@ -81,7 +88,7 @@ class BooleanArrayMemspaceTests {
 
 	static Arguments[] matrixMemSpaceAndNAndAddress() {
 		Arguments[] memSpaceAndNArgStream = matrixMemSpaceAndN();
-		List<Arguments> testArguments = new ArrayList<>();		
+		List<Arguments> testArguments = new ArrayList<>();
 		for (int i = 0; i < memSpaceAndNArgStream.length; i++) {
 			Arguments testArgs = memSpaceAndNArgStream[i];
 			ISomMemspace memspace = (ISomMemspace) testArgs.get()[0];

@@ -125,90 +125,75 @@ class BooleanArrayMemspaceTests {
 			assertFalse(memSpace.getBit(i));
 		}
 	}
-
-	@Test
-	void testSweepSet1() {
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
-		for (int i = 0; i < 65535; i++) {
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSweepSet1(ISomMemspace memSpace,int n) {int memSpaceSize=(int) Math.pow(2, n);
+		for (int i = 0; i < memSpaceSize; i++) {
 			memSpace.setBit(i, true);
 		}
-		for (int i = 0; i < 65535; i++) {
+		for (int i = 0; i < memSpaceSize; i++) {
 			assertTrue(memSpace.getBit(i));
 		}
 	}
-
-	@Test
-	void testSweepSetAlternating() {
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
-		for (int i = 0; i < 65535; i++) {
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSweepSetAlternating(ISomMemspace memSpace,int n) {int memSpaceSize=(int) Math.pow(2, n);
+		for (int i = 0; i < memSpaceSize; i++) {
 			memSpace.setBit(i, i % 2 == 0);
 		}
-		for (int i = 0; i < 65535; i++) {
+		for (int i = 0; i < memSpaceSize; i++) {
 			assertEquals(i % 2 == 0, memSpace.getBit(i));
 		}
 	}
-
-	@Test
-	void testSweepSetAlternatingSporadic() {
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSweepSetAlternatingSporadic(ISomMemspace memSpace,int n) {int memSpaceSize=(int) Math.pow(2, n);
 		int alternatingDistance = 97;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
-		for (int i = 0; i < 65535; i++) {
+		for (int i = 0; i < memSpaceSize; i++) {
 			memSpace.setBit(i, i % alternatingDistance == 0);
 		}
-		for (int i = 0; i < 65535; i++) {
+		for (int i = 0; i < memSpaceSize; i++) {
 			assertEquals(i % alternatingDistance == 0, memSpace.getBit(i));
 		}
 	}
-
-	@Test
-	void testGetAccAddress() {
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
+	@ParameterizedTest
+	@MethodSource("getMemspacesForTesting")
+	void testGetAccAddress(ISomMemspace memSpace) {
 		assertEquals(0, memSpace.getAccumulatorAddress());
 	}
-
-	@Test
-	void testAdrEvalAddress() {
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace(65535);
+	@ParameterizedTest
+	@MethodSource("getMemspacesForTesting")
+	void testAdrEvalAddress(ISomMemspace memSpace) {
 		assertEquals(8, memSpace.getAdrEvalAddress());
 	}
-
-	@Test
-	void testWhEnAddress() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testWhEnAddress(ISomMemspace memSpace,int n) {
 		memSpace.setN(n);
 		assertEquals(9 + n, memSpace.getWriteHookEnabledAddress());
 	}
-
-	@Test
-	void testWhDirAddress() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testWhDirAddress(ISomMemspace memSpace,int n) {
 		memSpace.setN(n);
 		assertEquals(10 + n, memSpace.getWriteHookDirectionAddress());
 	}
-
-	@Test
-	void testWhComAddress() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testWhComAddress(ISomMemspace memSpace,int n) {
 		memSpace.setN(n);
 		assertEquals(11 + n, memSpace.getWriteHookCommunicationAddress());
 	}
-
-	@Test
-	void testWhSelAddress() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testWhSelAddress(ISomMemspace memSpace,int n) {
 		memSpace.setN(n);
 		memSpace.setN(n);
 		assertEquals(12 + n, memSpace.getWriteHookSelectAddress());
 	}
-
-	@Test
-	void testSetN() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSetN(ISomMemspace memSpace,int n) {
 		memSpace.setN(n);
 		String nBin = Integer.toBinaryString(n);
 		while(nBin.length()<7) {
@@ -228,10 +213,9 @@ class BooleanArrayMemspaceTests {
 			}
 		}
 	}
-	@Test
-	void testGetN() {
-		int n = 7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testGetN(ISomMemspace memSpace,int n) {
 		String nBin = Integer.toBinaryString(n);
 		while(nBin.length()<7) {
 			nBin='0'+nBin;
@@ -273,13 +257,10 @@ class BooleanArrayMemspaceTests {
 			}
 		}
 	}
-	@Test
-	void testGetNAddress() {
-		int n = 7;
-		int address=7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
-		memSpace.setN(n);
-		
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndNAndAddress")
+	void testGetNAddress(ISomMemspace memSpace,int n,int address) {
+		memSpace.setN(n);		
 		String nAdressBin = Integer.toBinaryString(n);
 		while(nAdressBin.length()<n) {
 			nAdressBin='0'+nAdressBin;

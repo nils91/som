@@ -21,7 +21,7 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
-	public abstract AbstractSomMemspace clone();
+	public abstract ISomMemspace clone();
 		
 	@Override
 	public void copy(IMemspace from) {

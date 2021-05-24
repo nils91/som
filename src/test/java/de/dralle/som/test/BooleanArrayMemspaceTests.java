@@ -45,9 +45,8 @@ class BooleanArrayMemspaceTests {
 		return addressesForTesting;
 	}
 
-	static List<ISomMemspace> getMemspacesForTesting(int size) {
-		List<ISomMemspace> memspacesForTesting = new ArrayList<>();
-		memspacesForTesting.add(new BooleanArrayMemspace(size));
+	static ISomMemspace[] getMemspacesForTesting(int size) {
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[] {new BooleanArrayMemspace(size)};
 		return memspacesForTesting;
 	}
 
@@ -56,11 +55,14 @@ class BooleanArrayMemspaceTests {
 	 * 
 	 * @return
 	 */
-	static List<ISomMemspace> getMemspacesForTesting() {
+	static ISomMemspace[] getMemspacesForTesting() {
 		int[] allNForTesting = sweepN();
-		List<ISomMemspace> memspacesForTesting = new ArrayList<>();
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[allNForTesting.length*getMemspacesForTesting(0).length];
 		for (int i = 0; i < allNForTesting.length; i++) {
-			memspacesForTesting.addAll(getMemspacesForTesting((int) Math.pow(2, allNForTesting[i])));
+			ISomMemspace[] memSpaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
+			for (int j = 0; j < memSpaces.length; j++) {
+				memspacesForTesting[i*memSpaces.length+j]=memSpaces[j];
+			}
 		}
 		return memspacesForTesting;
 	}
@@ -69,7 +71,7 @@ class BooleanArrayMemspaceTests {
 		Stream<Arguments> testArguments = Stream.empty();
 		int[] allNForTesting = sweepN();
 		for (int i = 0; i < allNForTesting.length; i++) {
-			List<ISomMemspace> memspaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
+			ISomMemspace[] memspaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
 			for (ISomMemspace memspace : memspaces) {
 				testArguments = Stream.concat(testArguments, Stream.of(Arguments.of(memspace, allNForTesting[i])));
 			}

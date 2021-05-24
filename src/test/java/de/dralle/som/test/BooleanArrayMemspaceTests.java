@@ -30,7 +30,7 @@ class BooleanArrayMemspaceTests {
 
 	// argument source
 	static int[] sweepN() {
-		int[] allNForTesting = new int[8 - 4];
+		int[] allNForTesting = new int[12 - 4];
 		for (int i = 0; i < allNForTesting.length; i++) {
 			allNForTesting[i] = i + 4;
 		}

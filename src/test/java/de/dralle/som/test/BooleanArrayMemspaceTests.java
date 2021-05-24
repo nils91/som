@@ -67,13 +67,13 @@ class BooleanArrayMemspaceTests {
 		return memspacesForTesting;
 	}
 
-	static Stream<Arguments> matrixMemSpaceAndN() {
-		Stream<Arguments> testArguments = Stream.empty();
+	static Arguments[] matrixMemSpaceAndN() {
 		int[] allNForTesting = sweepN();
+		Arguments[] testArguments = new Arguments[allNForTesting.length*getMemspacesForTesting(0).length];		
 		for (int i = 0; i < allNForTesting.length; i++) {
 			ISomMemspace[] memspaces = getMemspacesForTesting((int) Math.pow(2, allNForTesting[i]));
-			for (ISomMemspace memspace : memspaces) {
-				testArguments = Stream.concat(testArguments, Stream.of(Arguments.of(memspace, allNForTesting[i])));
+			for (int j = 0; j < memspaces.length; j++) {
+				testArguments[i*memspaces.length+j]=Arguments.of(memspaces[j],allNForTesting[i]);				
 			}
 		}
 		return testArguments;
@@ -81,14 +81,13 @@ class BooleanArrayMemspaceTests {
 
 	static Stream<Arguments> matrixMemSpaceAndNAndAddress() {
 		Stream<Arguments> testArguments = Stream.empty();
-		Stream<Arguments> memSpaceAndNArgStream = matrixMemSpaceAndN();
-		Iterator<Arguments> streamIterator = memSpaceAndNArgStream.iterator();
-		while (streamIterator.hasNext()) {
-			Arguments testArgs = (Arguments) streamIterator.next();
+		Arguments[] memSpaceAndNArgStream = matrixMemSpaceAndN();
+		for (int i = 0; i < memSpaceAndNArgStream.length; i++) {
+			Arguments testArgs = memSpaceAndNArgStream[i];
 			ISomMemspace memspace = (ISomMemspace) testArgs.get()[0];
 			int n = (int) testArgs.get()[1];
 			int[] testAddresses = sweepAddresses(n);
-			for (int i = 0; i < testAddresses.length; i++) {
+			for (int j = 0; j < testAddresses.length; j++) {
 				testArguments = Stream.concat(testArguments, Stream.of(Arguments.of(memspace, n, testAddresses[i])));
 			}
 		}

@@ -47,6 +47,18 @@ class BooleanArrayMemspaceTests {
 		memspacesForTesting.add(new BooleanArrayMemspace(size));
 		return memspacesForTesting;
 	}
+	/**
+	 * get memspace instances for all n tested.
+	 * @return
+	 */
+	static List<ISomMemspace> getMemspacesForTesting(){
+		int[] allNForTesting = sweepN();
+		List<ISomMemspace> memspacesForTesting = new ArrayList<>();
+		for (int i = 0; i < allNForTesting.length; i++) {
+			memspacesForTesting.addAll(getMemspacesForTesting((int) Math.pow(2, allNForTesting[i])));
+		}
+		return memspacesForTesting;
+	}
 	static Stream<Arguments> matrixMemSpaceAndN(){
 		Stream<Arguments> testArguments=Stream.empty();
 		int[] allNForTesting = sweepN();

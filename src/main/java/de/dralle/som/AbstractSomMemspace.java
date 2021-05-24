@@ -21,6 +21,18 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
+	public abstract AbstractSomMemspace clone();
+		
+	@Override
+	public void copy(IMemspace from) {
+		for (int i = 0; i < from.getSize(); i++) {
+			if(i<getSize()) {
+				setBit(i, from.getBit(i));
+			}
+		}		
+	}
+
+	@Override
 	public int getAdrEvalAddress() {
 		return ADR_EVAL_ADDRESS;
 	}

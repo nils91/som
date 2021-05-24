@@ -72,4 +72,7 @@ public interface ISomMemspace extends IMemspace{
 	
 	void setBitsUnsigned(int lowerBound, int n, int value) ;
 
+	@Override
+	ISomMemspace clone();
+
 }

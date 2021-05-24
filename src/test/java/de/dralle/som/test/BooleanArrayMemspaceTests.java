@@ -79,19 +79,19 @@ class BooleanArrayMemspaceTests {
 		return testArguments;
 	}
 
-	static Stream<Arguments> matrixMemSpaceAndNAndAddress() {
-		Stream<Arguments> testArguments = Stream.empty();
+	static Arguments[] matrixMemSpaceAndNAndAddress() {
 		Arguments[] memSpaceAndNArgStream = matrixMemSpaceAndN();
+		List<Arguments> testArguments = new ArrayList<>();		
 		for (int i = 0; i < memSpaceAndNArgStream.length; i++) {
 			Arguments testArgs = memSpaceAndNArgStream[i];
 			ISomMemspace memspace = (ISomMemspace) testArgs.get()[0];
 			int n = (int) testArgs.get()[1];
 			int[] testAddresses = sweepAddresses(n);
 			for (int j = 0; j < testAddresses.length; j++) {
-				testArguments = Stream.concat(testArguments, Stream.of(Arguments.of(memspace, n, testAddresses[i])));
+				testArguments.add(Arguments.of(memspace, n, testAddresses[i]));
 			}
 		}
-		return testArguments;
+		return testArguments.toArray(new Arguments[testArguments.size()]);
 	}
 
 	/**

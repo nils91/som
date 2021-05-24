@@ -30,7 +30,7 @@ class BooleanArrayMemspaceTests {
 
 	// argument source
 	static int[] sweepN() {
-		int[] allNForTesting = new int[12 - 4];
+		int[] allNForTesting = new int[15 - 4];
 		for (int i = 0; i < allNForTesting.length; i++) {
 			allNForTesting[i] = i + 4;
 		}
@@ -88,7 +88,7 @@ class BooleanArrayMemspaceTests {
 			int n = (int) testArgs.get()[1];
 			int[] testAddresses = sweepAddresses(n);
 			for (int j = 0; j < testAddresses.length; j++) {
-				testArguments.add(Arguments.of(memspace, n, testAddresses[i]));
+				testArguments.add(Arguments.of(memspace, n, testAddresses[j]));
 			}
 		}
 		return testArguments.toArray(new Arguments[testArguments.size()]);

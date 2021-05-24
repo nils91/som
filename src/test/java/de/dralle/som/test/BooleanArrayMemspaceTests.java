@@ -250,11 +250,9 @@ class BooleanArrayMemspaceTests {
 		}
 		assertEquals(n, memSpace.getN());
 	}
-	@Test
-	void testSetNAddress() {
-		int n = 7;
-		int address=7;
-		BooleanArrayMemspace memSpace = new BooleanArrayMemspace((int) Math.pow(2, n));
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndNAndAddress")
+	void testSetNAddress(ISomMemspace memSpace,int n,int address) {
 		memSpace.setN(n);
 		memSpace.setNextAddress(address);
 		String addressBin = Integer.toBinaryString(address);

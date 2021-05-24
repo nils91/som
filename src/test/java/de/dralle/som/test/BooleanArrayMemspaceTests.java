@@ -311,12 +311,13 @@ class BooleanArrayMemspaceTests {
 		}
 		assertEquals(address, memSpace.getNextAddress());
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContent(ISomMemspace memSpace,int n) {
-		Random r=new Random();
+	void testMemspaceCloneSameContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
 		memSpace.setN(n);
-		//fill with random crap
+		// fill with random crap
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}
@@ -325,35 +326,169 @@ class BooleanArrayMemspaceTests {
 			assertEquals(memSpace.getBit(i), clone.getBit(i));
 		}
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace,int n) {
-		Random r=new Random();
+	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
 		memSpace.setN(n);
-		//fill with random crap
+		// fill with random crap
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}
 		ISomMemspace clone = memSpace.clone();
 		assertTrue(memSpace.equalContent(clone));
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace,int n) {
-		Random r=new Random();
+	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace, int n) {
+		Random r = new Random();
 		memSpace.setN(n);
-		//fill with random crap
+		// fill with random crap
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}
 		ISomMemspace clone = memSpace.clone();
 		assertEquals(memSpace, clone);
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceClone(ISomMemspace memSpace,int n) {
+	void testMemspaceClone(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
 		ISomMemspace clone = memSpace.clone();
 		assertNotNull(clone);
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneNotSameRef(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertFalse(memSpace==clone);
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneNotSameRefBitSet(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		memSpace.setBit(0, false);
+		clone.setBit(0, true);
+		assertNotEquals(memSpace.getBit(0), clone.getBit(0));
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameSize(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertEquals(memSpace.getSize(), clone.getSize());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmaller(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, false);
+			assertEquals(newSize, memSpace.getSize());
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBigger(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, false);
+		assertEquals(newSize, memSpace.getSize());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmallerSetBits(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, false);
+			for (int i = 8; i < newSize; i++) {
+				memSpace.setBit(i, true);
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBiggerSetBits(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, false);
+		for (int i = 8; i < newSize; i++) {
+			memSpace.setBit(i, true);
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmallerRetainContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace oldMemspace = memSpace.clone();
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, true);
+			for (int i = 0; i < newSize; i++) {
+				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBiggerRetainContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace oldMemspace = memSpace.clone();
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, true);
+		for (int i = 0; i < newSize; i++) {
+			if(i<oldMemspace.getSize()) {
+				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
+			}
+		}
+	}
+	
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCopy(ISomMemspace memSpace, int n) {
+		ISomMemspace clone = memSpace.clone();
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		clone.copy(memSpace);
+		assertTrue(memSpace.equalContent(clone));
+	}
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceNoCopy(ISomMemspace memSpace, int n) {
+		ISomMemspace clone = memSpace.clone();
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		assertFalse(memSpace.equalContent(clone));
 	}
 }

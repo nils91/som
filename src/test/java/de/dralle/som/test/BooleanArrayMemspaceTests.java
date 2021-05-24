@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -70,7 +71,21 @@ class BooleanArrayMemspaceTests {
 		}
 		return testArguments;
 	}
-	
+	static Stream<Arguments> matrixMemSpaceAndNAndAddress(){
+		Stream<Arguments> testArguments=Stream.empty();
+		Stream<Arguments> memSpaceAndNArgStream = matrixMemSpaceAndN();
+		Iterator<Arguments> streamIterator = memSpaceAndNArgStream.iterator();
+		while (streamIterator.hasNext()) {
+			Arguments testArgs = (Arguments) streamIterator.next();
+			ISomMemspace memspace=(ISomMemspace) testArgs.get()[0];
+			int n=(int) testArgs.get()[1];
+			int[] testAddresses = sweepAddresses(n);
+			for (int i = 0; i < testAddresses.length; i++) {
+				testArguments=Stream.concat(testArguments, Stream.of(Arguments.of(memspace,n,testAddresses[i])));
+			}
+		}
+		return testArguments;
+	}
 	/**
 	 * @throws java.lang.Exception
 	 */

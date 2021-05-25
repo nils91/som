@@ -194,7 +194,7 @@ class BitcodeRunnerInitTests {
 	@Test
 	void testInitRunnerContentAsBitArrayNoRight0BitsGetN() {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(
-				new boolean[] { false, false, false, false, false, true, false, true, false, true, true });
+				new boolean[] { false, false, false, false, false, true, false, true,true, false, false, false,false,false });
 		assertEquals(5, runner.getMemspace().getN());
 	}
 
@@ -207,7 +207,7 @@ class BitcodeRunnerInitTests {
 
 	@Test
 	void testInitRunnerContentAsBitStringNoRight0BitsGetN() {
-		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101011");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("00000101100000");
 		assertEquals(5, runner.getMemspace().getN());
 	}
 
@@ -219,7 +219,7 @@ class BitcodeRunnerInitTests {
 
 	@Test
 	void testInitRunnerContentAsBitStringWithSpacesNoRight0BitsGetN() {
-		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 00001 01011");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner("0 0000101 1 00000");
 		assertEquals(5, runner.getMemspace().getN());
 	}
 

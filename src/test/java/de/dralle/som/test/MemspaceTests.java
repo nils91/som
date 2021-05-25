@@ -27,7 +27,7 @@ import de.dralle.som.ISomMemspace;
  * @author Nils Dralle
  *
  */
-class BooleanArrayMemspaceTests {
+class MemspaceTests {
 
 	// argument source
 	static int[] sweepN() {

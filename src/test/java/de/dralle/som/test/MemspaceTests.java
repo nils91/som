@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import de.dralle.som.BooleanArrayMemspace;
+import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.ISomMemspace;
 
 /**
@@ -52,7 +53,7 @@ class MemspaceTests {
 	 * @return
 	 */
 	static ISomMemspace[] getMemspacesForTesting() {
-		ISomMemspace[] memspacesForTesting = new ISomMemspace[] { new BooleanArrayMemspace() };
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[] { new BooleanArrayMemspace(),new ByteArrayMemspace() };
 		return memspacesForTesting;
 	}
 
@@ -317,7 +318,7 @@ class MemspaceTests {
 	void testMemspaceCloneSameContent(ISomMemspace memSpace, int n) {
 		Random r = new Random();
 		memSpace.setN(n);
-		// fill with random crap
+		// fill entire memspace with random bits
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}
@@ -332,7 +333,7 @@ class MemspaceTests {
 	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace, int n) {
 		Random r = new Random();
 		memSpace.setN(n);
-		// fill with random crap
+		// fill entire memspace with random bits
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}
@@ -345,7 +346,7 @@ class MemspaceTests {
 	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace, int n) {
 		Random r = new Random();
 		memSpace.setN(n);
-		// fill with random crap
+		// fill entire memspace with random bits
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, r.nextBoolean());
 		}

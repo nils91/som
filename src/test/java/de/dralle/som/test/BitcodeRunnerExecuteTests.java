@@ -55,7 +55,7 @@ class BitcodeRunnerExecuteTests {
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		runner.execute();
 		//should have written accumulator to 1
-		assertTrue(runner.getBit(0));
+		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
 	@Test
 	@Timeout(10)
@@ -64,6 +64,6 @@ class BitcodeRunnerExecuteTests {
 		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
 		assertTrue(runner.execute());
 		//should have written accumulator to 1
-		assertTrue(runner.getBit(0));
+		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
 }

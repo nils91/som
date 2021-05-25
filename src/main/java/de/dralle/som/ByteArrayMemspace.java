@@ -9,14 +9,18 @@ package de.dralle.som;
  */
 public class ByteArrayMemspace extends AbstractSomMemspace {
 
-	private boolean[] memory;
+	private byte[] memory;
 	
 	/**
 	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
 	 * @param size Size of the new memory space in bits.
 	 */
 	public ByteArrayMemspace(int size) {
-		memory=new boolean[size];
+		int sizeBytes = size/8;
+		if(size%8!=0) {
+			sizeBytes++;
+		}
+		memory=new byte[sizeBytes];
 	}
 	
 	/**
@@ -24,22 +28,51 @@ public class ByteArrayMemspace extends AbstractSomMemspace {
 	 * @param size Size of the new memory space in bits.
 	 */
 	public ByteArrayMemspace() {
-		memory=new boolean[0];
+		memory=new byte[0];
 	}
 	
 	@Override
 	public void setBit(int address, boolean bitValue) {
-		memory[address]=bitValue;
+		int byteAddress = address / 8;
+		int offset = 7 - address % 8;
+		byte bite = memory[byteAddress];
+		byte bitmask = (byte) (1 << offset);
+		if (!bitValue) {
+			bitmask = (byte) ~bitmask;
+			bite = (byte) (bite & bitmask);
+		} else {
+			bite = (byte) (bite | bitmask);
+		}
+		memory[byteAddress] = bite;
 	}
 
 	@Override
 	public boolean getBit(int address) {
-		return memory[address];
+		int byteAddress = address / 8;
+		int offset = 7 - address % 8;
+		byte bite = memory[byteAddress];
+		byte bitmask = (byte) (1 << offset);
+		boolean bitValue = (bite & bitmask) != 0;
+		return bitValue;
 	}
 
 	@Override
 	public int getSize() {
-		return memory.length;
+		return memory.length*8;
+	}
+
+	@Override
+	public void copy(IMemspace from) {
+		if(from instanceof ByteArrayMemspace) {
+			ByteArrayMemspace fromByteArrayMemspace = (ByteArrayMemspace)from;
+			for (int i = 0; i < memory.length; i++) {
+				if(i*8<fromByteArrayMemspace.getSize()) {
+					memory[i]=fromByteArrayMemspace.memory[i];
+				}
+			}
+		}else {
+			super.copy(from);
+		}		
 	}
 
 	@Override

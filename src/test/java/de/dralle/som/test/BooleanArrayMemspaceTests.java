@@ -391,7 +391,7 @@ class BooleanArrayMemspaceTests {
 		if (n > 4) {
 			int newSize = (int) Math.pow(2, n - 1);
 			memSpace.resize(newSize, false);
-			assertEquals(newSize, memSpace.getSize());
+			assertTrue(newSize<= memSpace.getSize());
 		}
 	}
 
@@ -401,7 +401,7 @@ class BooleanArrayMemspaceTests {
 		memSpace.setN(n);
 		int newSize = (int) Math.pow(2, n + 1);
 		memSpace.resize(newSize, false);
-		assertEquals(newSize, memSpace.getSize());
+		assertTrue(newSize<= memSpace.getSize());
 	}
 
 	@ParameterizedTest

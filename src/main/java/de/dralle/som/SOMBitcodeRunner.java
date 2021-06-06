@@ -14,6 +14,7 @@ import de.dralle.som.writehooks.IWriteHook;
  */
 public class SOMBitcodeRunner {
 	private ISomMemspace memspace;
+	private WriteHookManager writeHookManager=new WriteHookManager();
 	public ISomMemspace getMemspace() {
 		return memspace;
 	}
@@ -21,26 +22,10 @@ public class SOMBitcodeRunner {
 	public void setMemspace(ISomMemspace memspace) {
 		this.memspace = memspace;
 	}
-	private List<IWriteHook> writeHooks;
-	private int selectedWriteHook = 0;
-	private boolean lastWriteHookSwitchSuccess;
-
-	public void addWriteHook(IWriteHook writeHook) {
-		if (writeHooks == null) {
-			writeHooks = new ArrayList<>();
-		}
-		writeHooks.add(writeHook);
-	}
-
-	private IWriteHook getSelectedWriteHook() {
-		if (writeHooks != null && writeHooks.size() > 0 && selectedWriteHook > -1) {
-			return writeHooks.get(selectedWriteHook);
-		}
-		return null;
-	}
-
+	
 	
 
+	
 	public SOMBitcodeRunner(int n, int startAddress) {
 		ISomMemspace memSpace = initMemspaceFromAddressSizeAndStartAddress(n, startAddress);
 		this.memspace = memSpace;
@@ -157,13 +142,13 @@ public class SOMBitcodeRunner {
 					// write hook selected
 					if (whDir) {
 						// write
-						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						IWriteHook currentlySelectedWriteHook = writeHookManager.getSelectedWriteHook();
 						if (currentlySelectedWriteHook != null) {
 							currentlySelectedWriteHook.write(whCom, this);
 						}
 					} else {
 						// read
-						IWriteHook currentlySelectedWriteHook = getSelectedWriteHook();
+						IWriteHook currentlySelectedWriteHook = writeHookManager.getSelectedWriteHook();
 						if (currentlySelectedWriteHook != null) {
 							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
 							boolean readBit = currentlySelectedWriteHook.read(this);
@@ -177,20 +162,15 @@ public class SOMBitcodeRunner {
 					// wh switch mode
 					if (whDir) {
 						// switch selected write hook
-						if (selectedWriteHook > 0 && selectedWriteHook < writeHooks.size() - 1) {
 							boolean comValue = memspace.getWriteHookCommunicationBit();
 							if (comValue) {
-								selectedWriteHook++;
+								writeHookManager.switchToNextWriteHook();
 							} else {
-								selectedWriteHook--;
+								writeHookManager.switchToPreviousWriteHook();
 							}
-							lastWriteHookSwitchSuccess = true;
-						} else {
-							lastWriteHookSwitchSuccess = false;
-						}
 					} else {
 						// last switching success
-						memspace.setWriteHookCommunicationBit(lastWriteHookSwitchSuccess);
+						memspace.setWriteHookCommunicationBit(writeHookManager.isLastSwitchSuccess());
 						memspace.setWriteHookDirectionBit(false);
 					}
 				}

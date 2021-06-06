@@ -169,6 +169,8 @@ public class SOMBitcodeRunner {
 							boolean readBit = currentlySelectedWriteHook.read(this);
 							memspace.setWriteHookCommunicationBit(readBit);
 							memspace.setWriteHookDirectionBit(!hasNew);
+						}else {
+							memspace.setWriteHookDirectionBit(true);
 						}
 					}
 				} else {

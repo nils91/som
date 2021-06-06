@@ -8,7 +8,7 @@
 	<artifactId>som-java</artifactId>
 	<packaging>jar</packaging>
 	<name>som-java</name>
-	<version>0.0.7</version>
+	<version>0.0.8-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.WriteHookManager;
 import de.dralle.som.test.util.TestUtil;
 import de.dralle.som.test.util.TestWriteHook;
 
@@ -23,7 +24,7 @@ import de.dralle.som.test.util.TestWriteHook;
  *
  */
 class WriteHookTests {
-
+	private WriteHookManager testWriteHookManager;
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -45,7 +46,9 @@ class WriteHookTests {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		testWriteHook = new TestWriteHook();
+		testWriteHook=new TestWriteHook();
+		testWriteHookManager=new WriteHookManager();
+		testWriteHookManager.registerWriteHook(0, testWriteHook);
 	}
 
 	/**
@@ -59,7 +62,7 @@ class WriteHookTests {
 	void testWriteHookTriggerNoTrig() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_not_triggered.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(0, testWriteHook.getReadTrgCnt());
 		assertEquals(0, testWriteHook.getWriteTrgCnt());
@@ -69,7 +72,7 @@ class WriteHookTests {
 	void testWriteHookTriggerWrite() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(1, testWriteHook.getWriteTrgCnt());
 		assertEquals(0, testWriteHook.getReadTrgCnt());
@@ -79,7 +82,7 @@ class WriteHookTests {
 	void testWriteHookTriggerRead() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_read.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(1, testWriteHook.getReadTrgCnt());
 		assertEquals(0, testWriteHook.getWriteTrgCnt());
@@ -89,7 +92,7 @@ class WriteHookTests {
 	void testWriteHookReceiveBit() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
 		assertArrayEquals(new boolean[] { true }, testWriteHook.getWrittenBits());
 	}
@@ -99,7 +102,7 @@ class WriteHookTests {
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_write_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
 		assertArrayEquals(new boolean[] { true, false, true }, testWriteHook.getWrittenBits());
 	}
@@ -109,7 +112,7 @@ class WriteHookTests {
 	void testWriteHookReadNoNewData() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 	}
 
@@ -118,7 +121,7 @@ class WriteHookTests {
 	void testWriteHookReadNoNewDataFail() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
 		try {
 			assertFalse(runner.execute());
@@ -130,7 +133,7 @@ class WriteHookTests {
 	void testWriteHookReadNewDataAvailable0() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
 		assertTrue(runner.execute());
 	}
@@ -139,7 +142,7 @@ class WriteHookTests {
 	void testWriteHookReadNewDataAvailable1() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
 		assertTrue(runner.execute());
 	}
@@ -148,7 +151,7 @@ class WriteHookTests {
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		try {
 			assertFalse(runner.execute());
 		} catch (Exception e) {
@@ -159,7 +162,7 @@ class WriteHookTests {
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,true });
 		assertTrue(runner.execute());
 	}
@@ -167,7 +170,7 @@ class WriteHookTests {
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
 		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
-		runner.addWriteHook(testWriteHook);
+		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,false });
 		assertFalse(runner.execute());
 	}

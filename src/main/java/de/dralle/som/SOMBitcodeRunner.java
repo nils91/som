@@ -15,6 +15,14 @@ import de.dralle.som.writehooks.IWriteHook;
 public class SOMBitcodeRunner {
 	private ISomMemspace memspace;
 	private WriteHookManager writeHookManager=new WriteHookManager();
+	public WriteHookManager getWriteHookManager() {
+		return writeHookManager;
+	}
+
+	public void setWriteHookManager(WriteHookManager writeHookManager) {
+		this.writeHookManager = writeHookManager;
+	}
+
 	public ISomMemspace getMemspace() {
 		return memspace;
 	}

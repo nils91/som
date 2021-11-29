@@ -126,7 +126,7 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<junit.jupiter.version>5.7.2</junit.jupiter.version>
+		<junit.jupiter.version>5.8.2</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
 		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>

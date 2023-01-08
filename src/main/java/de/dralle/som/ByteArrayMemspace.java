@@ -24,6 +24,12 @@ public class ByteArrayMemspace extends AbstractSomMemspace {
 	}
 	
 	/**
+	 * Creates a new memory space from a given byte array.vNote that this does not check if N and the size of the byte array match up.
+	 */
+	public ByteArrayMemspace(byte[] memory) {
+		this.memory=memory;
+	}
+	/**
 	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
 	 * @param size Size of the new memory space in bits.
 	 */

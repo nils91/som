@@ -1,5 +1,5 @@
-1 000 0101
-1 11010
-0000
+1 000 0101 //ACC is one, N is 5
+1 11010 //ADR_EVAL is one, Address is 26
+0000 //Writehooks will not be used
 00000 000
-1 01000
+1 01000 //start here, NAW 8 (reset  ADR_EVAL to not loop)

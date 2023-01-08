@@ -62,7 +62,7 @@ SOM bitcode can be used in several formats.
 
 ### Ascii binary (.ab)
 
-The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example, minus the comments, is a valid program in ascii binary.
+The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example, minus the comments, is a valid program in ascii binary (its outdated).  Comments are not really supported, but since all charachters other than 0 or 1 are ignored, it is still possible to comment as long the 0 or 1 carachters are not used.
 
 ### Binary (.bin)
 

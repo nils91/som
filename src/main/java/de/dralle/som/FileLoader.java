@@ -39,17 +39,21 @@ public class FileLoader {
 		m.resize((int) Math.pow(2, n), true);
 		return m;
 	}
-	public void writeBinaryFile(IMemspace memspace,String path)  {
+	public void writeBinaryFile(IMemspace memspace,String path) throws IOException  {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		int newMemArraySize=memspace.getSize()/8;
-		if(memspace.getSize()%8!=0) {
-			newMemArraySize++;
+		
+		ByteArrayMemspace helper=new ByteArrayMemspace();
+		if(memspace instanceof ByteArrayMemspace) {
+			helper=(ByteArrayMemspace) memspace;
+		}else {
+			helper.resize(memspace.getSize(), false);
+			for (int i = 0; i <memspace.getSize(); i++) {
+				helper.setBit(i, memspace.getBit(i));
+			}
 		}
-		byte[] arr=new byte[newMemArraySize];
-		for (int i = 0; i < memspace.getSize(); i++) {
-			byte b=0;
-		}
+		bis.write(helper.getUnderlyingByteArray());
+		bis.close();
 	}
 }

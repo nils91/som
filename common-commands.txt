@@ -16,10 +16,15 @@ WRITE from ACC (to 1):
 1 1
 
 GET1 in ACC:
-1 2
+1 2                   
 0 0
 1 2
 0 2 //ensure 1 in acc
+
+00 01 11 10 11 -> 1 in ACC
+01 01 11 10 11 -> 1 in ACC
+10 11 01 01 11 -> 1 in ACC
+11 10 00 01 11 -> 1 in ACC
 
 AND:
 0 1

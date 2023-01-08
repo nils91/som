@@ -61,13 +61,13 @@ public class TestWriteHook extends AbstractWriteHook {
 	}
 
 	@Override
-	public boolean write(boolean accumutlatorValue, SOMBitcodeRunner runner) {
+	public boolean write(boolean accumulatorValue, SOMBitcodeRunner runner) {
 		writeTrgCnt++;
 		boolean[] writtenBitsNew = new boolean[writtenBits.length + 1];
 		for (int i = 0; i < writtenBits.length; i++) {
 			writtenBitsNew[i] = writtenBits[i];
 		}
-		writtenBitsNew[writtenBitsNew.length - 1] = accumutlatorValue;
+		writtenBitsNew[writtenBitsNew.length - 1] = accumulatorValue;
 		writtenBits = writtenBitsNew;
 		return false;
 	}

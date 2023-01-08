@@ -20,9 +20,9 @@ In order to perform a jump to a memory address, write the address to the address
 bit | name | code |
 --- | --- | --- |
 0|accumulator|`ACC`|
-1-7|n|`N_[0-6]`|
+1-7|n|`N[[0-6]]`|
 8|address evaluation bit|`ADR_EVAL`|
-9-(9+(n-1))|address bits|`ADR_[0-(N-1)]`|
+9-(9+(n-1))|address bits|`ADR[[0-(N-1)]]`|
 9+n|writehook enabled|`WH_EN`|
 10+n|writehook direction|`WH_DIR`|
 11+n|writehook communication|`WH_COM`|

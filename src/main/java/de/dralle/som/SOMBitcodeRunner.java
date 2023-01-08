@@ -62,9 +62,9 @@ public class SOMBitcodeRunner {
 	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {
 		int addressSizeBits =memSpace.getN();
 		int startAddress = memSpace.getNextAddress();
-		ISomMemspace origgMemSpace = memSpace.clone();
+		ISomMemspace origMemSpace = memSpace.clone();
 		memSpace = initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
-		memSpace.copy(origgMemSpace);
+		memSpace.copy(origMemSpace);
 		return memSpace;
 	}
 

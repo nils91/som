@@ -57,7 +57,12 @@ public class FileLoader {
 		bis.write(helper.getUnderlyingByteArray());
 		bis.close();
 	}
-
+/**
+ * Will use the file extension as format. Throws UnsupportedOperationException if unknown or not implemented yet.
+ * @param path
+ * @return
+ * @throws IOException
+ */
 	public IMemspace loadFile(String path) throws IOException {
 		File f = new File(path);
 		String name = f.getName();
@@ -66,7 +71,7 @@ public class FileLoader {
 				return loadFile(format, path);
 			}
 		}
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Unknown format");
 	}
 
 	public IMemspace loadFile(SOMFormats format, String path) throws IOException {
@@ -75,7 +80,7 @@ public class FileLoader {
 			return loadBinaryFile(path);
 
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Format "+format+" not implemented yet");
 		}
 		// return null;
 	}

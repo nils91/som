@@ -105,4 +105,8 @@ public class ByteArrayMemspace extends AbstractSomMemspace {
 		}
 		return false;
 	}
+	
+	public byte[] getUnderlyingByteArray() {
+		return memory;
+	}
 }

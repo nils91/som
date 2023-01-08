@@ -28,7 +28,7 @@ public class FileLoader {
 		while ((b = bis.read()) != -1) {
 			bytes.add((byte) b);
 		}
-		
+
 		bis.close();
 		byte[] byteArray = new byte[bytes.size()];
 		for (int i = 0; i < byteArray.length; i++) {
@@ -39,21 +39,44 @@ public class FileLoader {
 		m.resize((int) Math.pow(2, n), true);
 		return m;
 	}
-	public void writeBinaryFile(IMemspace memspace,String path) throws IOException  {
+
+	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		
-		ByteArrayMemspace helper=new ByteArrayMemspace();
-		if(memspace instanceof ByteArrayMemspace) {
-			helper=(ByteArrayMemspace) memspace;
-		}else {
+
+		ByteArrayMemspace helper = new ByteArrayMemspace();
+		if (memspace instanceof ByteArrayMemspace) {
+			helper = (ByteArrayMemspace) memspace;
+		} else {
 			helper.resize(memspace.getSize(), false);
-			for (int i = 0; i <memspace.getSize(); i++) {
+			for (int i = 0; i < memspace.getSize(); i++) {
 				helper.setBit(i, memspace.getBit(i));
 			}
 		}
 		bis.write(helper.getUnderlyingByteArray());
 		bis.close();
+	}
+
+	public IMemspace loadFile(String path) throws IOException {
+		File f = new File(path);
+		String name = f.getName();
+		for (SOMFormats format : SOMFormats.values()) {
+			if (name.endsWith(format.getFileExtensionString())) {
+				return loadFile(format, path);
+			}
+		}
+		throw new UnsupportedOperationException();
+	}
+
+	public IMemspace loadFile(SOMFormats format, String path) throws IOException {
+		switch (format) {
+		case BIN:
+			return loadBinaryFile(path);
+
+		default:
+			throw new UnsupportedOperationException();
+		}
+		// return null;
 	}
 }

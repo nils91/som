@@ -17,7 +17,7 @@ jobs:
     - name: Copy
       run: cp ./target/som-java*.jar .
     - name: Rename
-      run: mv ./som-java*.jar ./som-java.jar
+      run: mv ./som-java*.jar som-java.jar
     - name: Run and show version
       run: java -jar ./som-java.jar --version
     - name: Run and show version (verbose)

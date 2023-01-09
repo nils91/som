@@ -136,7 +136,7 @@
 		
 		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH.mm.ss Z</maven.build.timestamp.format>
-		<project.build.system>Manual/Maven</project.build.system>
+		<project.build.system>Maven</project.build.system>
 		<project.build.type>Manual</project.build.type>
 		<project.build.commit></project.build.commit>
 		<project.repository>https://github.com/nils91/som</project.repository>

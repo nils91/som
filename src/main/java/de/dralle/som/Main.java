@@ -28,45 +28,14 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-	public static String VERSION = "SNAPSHOT";
-	public static String REPOSITORY="none";
-	public static String COMMIT_HASH="";
-	public static String BUILD_SYSTEM="Maven";
-	public static String BUILD_TYPE="Manual";
-	public static String TIME_OF_BUILD="";
+	
 
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		setupVersionInformation();
 		parseCli(args);
-	}
-
-	private static void setupVersionInformation() {
-		InputStream mavenPropsFile = Main.class.getClassLoader().getResourceAsStream("maven.properties");
-		InputStream appPropsFile=Main.class.getClassLoader().getResourceAsStream("application.properties");
-		Properties mavenProps = new Properties();
-		Properties appProps = new Properties();
-		if(mavenPropsFile!=null) {			
-			try {
-				mavenProps.load(mavenPropsFile);
-			} catch (IOException e) {
-			}
-		}
-		if(appPropsFile!=null) {			
-			try {
-				appProps.load(appPropsFile);
-			} catch (IOException e) {
-			}
-		}
-		String versionProp = mavenProps.getProperty("project.version");
-		if(versionProp==null) {
-			versionProp=appProps.getProperty("project.version");
-		}if(versionProp!=null) {
-			VERSION=versionProp;
-		}
 	}
 
 	private static void parseCli(String[] args) throws IOException {
@@ -112,13 +81,14 @@ public class Main {
 	}
 
 	private static void printVersion(boolean verbose) {
-		System.out.println(VERSION);
+		VersionHelper vh = new VersionHelper();
+		System.out.println(vh.getVersion());
 		if(verbose) {
-			System.out.println(String.format("Repository: %s", REPOSITORY));
-			System.out.println(String.format("Commit/Revision: %s", COMMIT_HASH));
-			System.out.println(String.format("Build system: %s", BUILD_SYSTEM));
-			System.out.println(String.format("Build type: %s", BUILD_TYPE));
-			System.out.println(String.format("Time of build: %s", TIME_OF_BUILD));
+			System.out.println(String.format("Repository: %s", vh.getRepositoryName()));
+			System.out.println(String.format("Commit/Revision: %s", vh.getCommitHash()));
+			System.out.println(String.format("Build system: %s", vh.getBuildSystemName()));
+			System.out.println(String.format("Build type: %s", vh.getBuildType()));
+			System.out.println(String.format("Time of build: %s", vh.getBuildTime()));
 		}
 	}
 

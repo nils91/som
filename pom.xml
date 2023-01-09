@@ -133,5 +133,11 @@
 		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
+		
+		<maven.build.timestamp>${maven.build.timestamp}</maven.build.timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH.mm.ss Z</maven.build.timestamp.format>
+		<project.build.system>Manual/Maven</project.build.system>
+		<project.build.type>Manual</project.build.type>
+		<project.build.commit></project.build.commit>
 	</properties>
 </project>

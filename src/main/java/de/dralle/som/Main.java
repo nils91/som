@@ -31,6 +31,8 @@ public class Main {
 	public static String VERSION = "SNAPSHOT";
 	public static String REPOSITORY="none";
 	public static String COMMIT_HASH="";
+	public static String BUILD_SYSTEM="Maven";
+	public static String BUILD_TYPE="Manual";
 	public static String TIME_OF_BUILD="";
 
 	/**
@@ -114,6 +116,8 @@ public class Main {
 		if(verbose) {
 			System.out.println(String.format("Repository: %s", REPOSITORY));
 			System.out.println(String.format("Commit/Revision: %s", COMMIT_HASH));
+			System.out.println(String.format("Build system: %s", BUILD_SYSTEM));
+			System.out.println(String.format("Build type: %s", BUILD_TYPE));
 			System.out.println(String.format("Time of build: %s", TIME_OF_BUILD));
 		}
 	}

@@ -1,0 +1,26 @@
+name: "Build, run and show version"
+on:
+    [push, pull_request]
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest        
+    steps:
+    - uses: actions/checkout@v3.3.0
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+    - name: Copy
+      run: cp ./target/som-java-*-shaded.jar .
+    - name: Rename
+      run: mv ./som-java-*-shaded.jar som-java.jar
+    - name: Run and show version
+      run: java -jar ./som-java.jar --version
+    - name: Run and show version (verbose)
+      run: java -jar ./som-java.jar --version --verbose
+    - name: Clean up
+      run: rm ./som-java.jar

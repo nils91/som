@@ -13,7 +13,9 @@
 *.class
 
 #maven
+/dependency-reduced-pom.xml
 /target/
 
 #other
 *.bak
+

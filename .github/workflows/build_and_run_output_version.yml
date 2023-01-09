@@ -1,4 +1,4 @@
-name: "Build"
+name: "Build, run and show version"
 on:
     [push, pull_request]
 jobs:
@@ -22,3 +22,5 @@ jobs:
       run: java -jar ./som-java.jar --version
     - name: Run and show version (verbose)
       run: java -jar ./som-java.jar --version --verbose
+    - name: Clean up
+      run: rm ./som-java.jar

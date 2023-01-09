@@ -29,6 +29,9 @@ import org.apache.commons.cli.ParseException;
 public class Main {
 
 	public static String VERSION = "SNAPSHOT";
+	public static String REPOSITORY="none";
+	public static String COMMIT_HASH="";
+	public static String TIME_OF_BUILD="";
 
 	/**
 	 * @param args
@@ -73,10 +76,7 @@ public class Main {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		if (cmd.hasOption("version")) {
-			System.out.println(VERSION);
-		}
+		}		
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("som-java", options);
@@ -84,6 +84,9 @@ public class Main {
 		boolean verbose = false;
 		if (cmd.hasOption("verbose")) {
 			verbose = true;
+		}
+		if (cmd.hasOption("version")) {
+			printVersion(verbose);
 		}
 		String infile = null;
 		if (cmd.hasOption("infile")) {
@@ -103,6 +106,15 @@ public class Main {
 		}
 		if (cmd.hasOption("run")) {
 			runProgramFromFile(infile, verbose);
+		}
+	}
+
+	private static void printVersion(boolean verbose) {
+		System.out.println(VERSION);
+		if(verbose) {
+			System.out.println(String.format("Repository: %s", REPOSITORY));
+			System.out.println(String.format("Commit/Revision: %s", COMMIT_HASH));
+			System.out.println(String.format("Time of build: %s", TIME_OF_BUILD));
 		}
 	}
 

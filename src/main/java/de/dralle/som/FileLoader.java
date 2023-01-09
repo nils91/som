@@ -5,10 +5,14 @@ package de.dralle.som;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,12 +61,58 @@ public class FileLoader {
 		bis.write(helper.getUnderlyingByteArray());
 		bis.close();
 	}
-/**
- * Will use the file extension as format. Throws UnsupportedOperationException if unknown or not implemented yet.
- * @param path
- * @return
- * @throws IOException
- */
+
+	public ISomMemspace loadAsciiBinaryFile(String path) throws IOException {
+		File f = new File(path);
+		FileReader fis = new FileReader(f);
+		BufferedReader bis = new BufferedReader(fis);
+		List<Boolean> bits = new ArrayList<>();
+		String nxtLine;
+		while ((nxtLine = bis.readLine()) != null) {
+			char[] chars = nxtLine.toCharArray();
+			for (int i = 0; i < chars.length; i++) {
+				switch (chars[i]) {
+				case '0':
+					bits.add(false);
+					break;
+				case '1':
+					bits.add(true);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		bis.close();
+		ISomMemspace m = new BooleanArrayMemspace(bits.size());
+		for (int i = 0; i < bits.size(); i++) {
+			m.setBit(i, bits.get(i));
+		}
+		int n = m.getN();
+		m.resize((int) Math.pow(2, n), true);
+		return m;
+	}
+
+	public void writeAsciiBinaryFile(IMemspace memspace, String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+
+		for (int i = 0; i <memspace.getSize(); i++) {
+			bis.write(memspace.getBit(i)?'1':'0');
+		}
+		bis.close();
+	}
+
+	/**
+	 * Will use the file extension as format. Throws UnsupportedOperationException
+	 * if unknown or not implemented yet.
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
 	public IMemspace loadFile(String path) throws IOException {
 		File f = new File(path);
 		String name = f.getName();
@@ -78,9 +128,10 @@ public class FileLoader {
 		switch (format) {
 		case BIN:
 			return loadBinaryFile(path);
-
+		case AB:
+			return loadAsciiBinaryFile(path);
 		default:
-			throw new UnsupportedOperationException("Format "+format+" not implemented yet");
+			throw new UnsupportedOperationException("Format " + format + " not implemented yet");
 		}
 		// return null;
 	}

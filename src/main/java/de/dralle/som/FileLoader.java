@@ -23,7 +23,11 @@ import java.util.List;
  *
  */
 public class FileLoader {
-	public ISomMemspace loadBinaryFile(String path) throws IOException {
+	private Compiler c;
+	public FileLoader() {
+		c=new Compiler();
+	}
+	public IMemspace loadBinaryFile(String path) throws IOException {
 		File f = new File(path);
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);
@@ -32,37 +36,19 @@ public class FileLoader {
 		while ((b = bis.read()) != -1) {
 			bytes.add((byte) b);
 		}
-
-		bis.close();
-		byte[] byteArray = new byte[bytes.size()];
-		for (int i = 0; i < byteArray.length; i++) {
-			byteArray[i] = bytes.get(i);
-		}
-		ISomMemspace m = new ByteArrayMemspace(byteArray);
-		int n = m.getN();
-		m.resize((int) Math.pow(2, n), true);
+		bis.close();		
+		IMemspace m = c.byteListToMemspace(bytes);
 		return m;
 	}
-
 	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-
-		ByteArrayMemspace helper = new ByteArrayMemspace();
-		if (memspace instanceof ByteArrayMemspace) {
-			helper = (ByteArrayMemspace) memspace;
-		} else {
-			helper.resize(memspace.getSize(), false);
-			for (int i = 0; i < memspace.getSize(); i++) {
-				helper.setBit(i, memspace.getBit(i));
-			}
-		}
-		bis.write(helper.getUnderlyingByteArray());
+		bis.write(c.memspaceToByteArray(memspace));
 		bis.close();
 	}
 
-	public ISomMemspace loadAsciiBinaryFile(String path) throws IOException {
+	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
 		File f = new File(path);
 		FileReader fis = new FileReader(f);
 		BufferedReader bis = new BufferedReader(fis);
@@ -83,16 +69,12 @@ public class FileLoader {
 				}
 			}
 		}
-
 		bis.close();
-		ISomMemspace m = new BooleanArrayMemspace(bits.size());
-		for (int i = 0; i < bits.size(); i++) {
-			m.setBit(i, bits.get(i));
-		}
-		int n = m.getN();
-		m.resize((int) Math.pow(2, n), true);
+		IMemspace m = c.booleanListToMemspace(bits);
 		return m;
 	}
+
+	
 
 	public void writeAsciiBinaryFile(IMemspace memspace, String path) throws IOException {
 		File f = new File(path);

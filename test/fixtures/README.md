@@ -1,1 +1,1 @@
-Files in this folder are used by tests
+Files in this folder are used by tests. Some of the tests have a timeout, so try and keep the files in here small and fast to execute.

@@ -1,7 +1,6 @@
-1
-00001
-01110 1
-00
-1 01011
-0 00000
-1 01101
+0 000 0101 //ACC is one, N is 5
+1 10100//ADR_EVAL is one, Address is twenty
+0000//Writehooks will not be used
+00//not used
+1 01000 //NAW 8 (reset ADR_EVAL)
+0 00000 //NAR zero (invert ACC)

@@ -15,11 +15,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import de.dralle.som.Compiler;
+import de.dralle.som.IMemspace;
+import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.test.util.TestUtil;
 
 class BitcodeRunnerExecuteTests {
 
+	private Compiler c;
+	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}
@@ -30,6 +35,7 @@ class BitcodeRunnerExecuteTests {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		c=new  Compiler();
 	}
 
 	@AfterEach
@@ -39,20 +45,21 @@ class BitcodeRunnerExecuteTests {
 	@Test
 	void testReturnCode0() throws IOException {
 		String entireFile=TestUtil.readFileToString("test/fixtures/ab/minimal_return0.ab");
-		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
+		IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 	@Test
 	void testReturnCode1() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/minimal_return1.ab");
-		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/minimal_return1.ab");IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_nar.ab");
-		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_nar.ab");IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
 		//should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
@@ -60,8 +67,8 @@ class BitcodeRunnerExecuteTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_naw.ab");
-		SOMBitcodeRunner runner=new SOMBitcodeRunner(entireFile);
+		String entireFile=TestUtil.readFileToString("test/fixtures/ab/test_naw.ab");IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		//should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());

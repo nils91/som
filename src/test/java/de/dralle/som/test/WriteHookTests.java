@@ -14,6 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import de.dralle.som.Compiler;
+import de.dralle.som.FileLoader;
+import de.dralle.som.IMemspace;
+import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.WriteHookManager;
 import de.dralle.som.test.util.TestUtil;
@@ -24,6 +28,7 @@ import de.dralle.som.test.util.TestWriteHook;
  *
  */
 class WriteHookTests {
+	private FileLoader f;
 	private WriteHookManager testWriteHookManager;
 	/**
 	 * @throws java.lang.Exception
@@ -45,7 +50,7 @@ class WriteHookTests {
 	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() throws Exception {f=new FileLoader();
 		testWriteHook=new TestWriteHook();
 		testWriteHookManager=new WriteHookManager();
 		testWriteHookManager.registerWriteHook(0, testWriteHook);
@@ -60,8 +65,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_not_triggered.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_not_triggered.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(0, testWriteHook.getReadTrgCnt());
@@ -70,8 +75,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(1, testWriteHook.getWriteTrgCnt());
@@ -80,8 +85,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_read.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_read.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 		assertEquals(1, testWriteHook.getReadTrgCnt());
@@ -90,8 +95,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_triggered_write.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
 		assertArrayEquals(new boolean[] { true }, testWriteHook.getWrittenBits());
@@ -100,8 +105,8 @@ class WriteHookTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_write_101.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_write_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
 		assertArrayEquals(new boolean[] { true, false, true }, testWriteHook.getWrittenBits());
@@ -110,8 +115,8 @@ class WriteHookTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_nonew.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
 	}
@@ -119,8 +124,8 @@ class WriteHookTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_nonew.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_nonew.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
 		try {
@@ -131,8 +136,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
 		assertTrue(runner.execute());
@@ -140,8 +145,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
 		assertTrue(runner.execute());
@@ -149,8 +154,8 @@ class WriteHookTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_newdata.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
 			assertFalse(runner.execute());
@@ -160,16 +165,16 @@ class WriteHookTests {
 	}
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,true });
 		assertTrue(runner.execute());
 	}
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
-		String fContent = TestUtil.readFileToString("test/fixtures/ab/test_write_hook_read_101.ab");
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(fContent);
+		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,false });
 		assertFalse(runner.execute());

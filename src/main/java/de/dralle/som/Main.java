@@ -118,7 +118,9 @@ public class Main {
 	}
 
 	private static void runProgramFromBitList(List<Boolean> bits, boolean verbose) {
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(bits);
+		Compiler c=new Compiler();
+		IMemspace memspace = c.booleanListToMemspace(bits);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		boolean execSuccess = runner.execute();
 		System.out.println("Program successfull: "+execSuccess);
 		if(execSuccess) {

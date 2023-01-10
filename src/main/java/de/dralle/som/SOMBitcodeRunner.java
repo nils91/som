@@ -33,15 +33,9 @@ public class SOMBitcodeRunner {
 	
 	
 
-	
-	public SOMBitcodeRunner(int n, int startAddress) {
-		ISomMemspace memSpace = initMemspaceFromAddressSizeAndStartAddress(n, startAddress);
-		this.memspace = memSpace;
-	}
-
 	private ISomMemspace initMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress) {
 		int bitCnt = (int) Math.pow(2, addressSizeBits);
-		ISomMemspace memSpace = new BooleanArrayMemspace(bitCnt);
+		ISomMemspace memSpace = new ByteArrayMemspace(bitCnt);
 		memSpace = initEmptyMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress, memSpace);
 		return memSpace;
 	}
@@ -68,43 +62,8 @@ public class SOMBitcodeRunner {
 		return memSpace;
 	}
 
-	public SOMBitcodeRunner(boolean[] bits) {
-		ISomMemspace memSpace = initFromBooleanArray(bits);
-		this.memspace = memSpace;
-	}
-
-	private ISomMemspace initFromBooleanArray(boolean[] bits) {
-		ISomMemspace memSpace = new BooleanArrayMemspace(bits.length);
-		for (int i = 0; i < bits.length; i++) {
-			boolean b = bits[i];
-			memSpace.setBit(i, b);
-		}
-		memSpace = initFromExistingPartialMemspace(memSpace);
-		return memSpace;
-	}
-
-	private ISomMemspace initFromBooleanArray(Boolean[] bits) {
-		boolean[] realBooleanArray = new boolean[bits.length];
-		for (int i = 0; i < realBooleanArray.length; i++) {
-			realBooleanArray[i] = bits[i];
-		}
-		return initFromBooleanArray(realBooleanArray);
-	}
-
-	public SOMBitcodeRunner(List<Boolean> bits) {
-		ISomMemspace memSpace = initFromBooleanArray(bits.toArray(new Boolean[bits.size()]));
-		this.memspace = memSpace;
-	}
-
-	public SOMBitcodeRunner(String bits) {
-		bits = bits.replaceAll("[^0-1]", "");
-		boolean[] boolArr = new boolean[bits.length()];
-		for (int i = 0; i < bits.length(); i++) {
-			boolean b = bits.charAt(i) != '0';
-			boolArr[i] = b;
-		}
-		this.memspace = initFromBooleanArray(boolArr);
-	}
+	
+	
 	public boolean execute() {
 		int programCounter = 0;
 		boolean accumulator = false;

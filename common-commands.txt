@@ -69,3 +69,39 @@ truth table XOR:
 01 1
 10 1
 00 0
+
+invert a bit:
+start states:
+ACC B
+0	0
+0	1
+1	0
+1	1
+command sequence:
+NAR B
+NAW B
+NAR B
+NAW B
+for start states:
+00 -> 10 -> 11 -> 01 -> 01  
+01 -> 11 -> 10 -> 10 -> 11
+10 -> 10 -> 11 -> 01 -> 01
+11 -> 01 -> 01 -> 11 -> 10
+
+invert acc:
+start states:
+ACC B
+0	0
+0	1
+1	0
+1	1
+command sequence:
+NAW B
+NAR B
+NAW B
+NAR B
+for start states:
+00 -> 01 -> 11 -> 10 -> 10
+01 -> 01 -> 11 -> 10 -> 10
+10 -> 11 -> 01 -> 01 -> 11
+11 -> 10 -> 11 -> 10 -> 10

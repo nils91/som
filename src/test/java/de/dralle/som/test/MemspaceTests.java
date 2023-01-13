@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.BooleanArrayMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.ISomMemspace;
@@ -32,9 +33,9 @@ class MemspaceTests {
 
 	// argument source
 	static int[] sweepN() {
-		int[] allNForTesting = new int[15 - 4];
+		int[] allNForTesting = new int[11 - ISomMemspace.MINIMUM_ADDRESS_SIZE]; //cutoff for tests to not take forever
 		for (int i = 0; i < allNForTesting.length; i++) {
-			allNForTesting[i] = i + 4;
+			allNForTesting[i] = i + ISomMemspace.MINIMUM_ADDRESS_SIZE;
 		}
 		return allNForTesting;
 	}
@@ -183,34 +184,34 @@ class MemspaceTests {
 	@ParameterizedTest
 	@MethodSource("getMemspacesForTesting")
 	void testGetAccAddress(ISomMemspace memSpace) {
-		assertEquals(0, memSpace.getAccumulatorAddress());
+		assertEquals(ISomMemspace.ACC_ADDRESS, memSpace.getAccumulatorAddress());
 	}
 
 	@ParameterizedTest
 	@MethodSource("getMemspacesForTesting")
 	void testAdrEvalAddress(ISomMemspace memSpace) {
-		assertEquals(8, memSpace.getAdrEvalAddress());
+		assertEquals(ISomMemspace.ADR_EVAL_ADDRESS, memSpace.getAdrEvalAddress());
 	}
 
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testWhEnAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		assertEquals(9 + n, memSpace.getWriteHookEnabledAddress());
+		assertEquals(ISomMemspace.WH_EN, memSpace.getWriteHookEnabledAddress());
 	}
 
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testWhDirAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		assertEquals(10 + n, memSpace.getWriteHookDirectionAddress());
+		assertEquals(ISomMemspace.WH_DIR, memSpace.getWriteHookDirectionAddress());
 	}
 
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testWhComAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		assertEquals(11 + n, memSpace.getWriteHookCommunicationAddress());
+		assertEquals(ISomMemspace.WH_COM, memSpace.getWriteHookCommunicationAddress());
 	}
 
 	@ParameterizedTest
@@ -218,24 +219,24 @@ class MemspaceTests {
 	void testWhSelAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
 		memSpace.setN(n);
-		assertEquals(12 + n, memSpace.getWriteHookSelectAddress());
+		assertEquals(ISomMemspace.WH_SEL, memSpace.getWriteHookSelectAddress());
 	}
 
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testSetN(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		String nBin = Integer.toBinaryString(n);
-		while (nBin.length() < 7) {
+		String nBin = Integer.toBinaryString(n-ISomMemspace.ADDRESS_SIZE_OFFSET);
+		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
 			nBin = '0' + nBin;
 		}
 		for (int i = 0; i < nBin.toCharArray().length; i++) {
 			switch (nBin.toCharArray()[i]) {
 			case '0':
-				assertFalse(memSpace.getBit(1 + i));
+				assertFalse(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
 				break;
 			case '1':
-				assertTrue(memSpace.getBit(1 + i));
+				assertTrue(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
 				break;
 			default:
 				fail();
@@ -247,17 +248,17 @@ class MemspaceTests {
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testGetN(ISomMemspace memSpace, int n) {
-		String nBin = Integer.toBinaryString(n);
-		while (nBin.length() < 7) {
+		String nBin = Integer.toBinaryString(n-ISomMemspace.ADDRESS_SIZE_OFFSET);
+		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
 			nBin = '0' + nBin;
 		}
 		for (int i = 0; i < nBin.toCharArray().length; i++) {
 			switch (nBin.toCharArray()[i]) {
 			case '0':
-				memSpace.setBit(1 + i, false);
+				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, false);
 				break;
 			case '1':
-				memSpace.setBit(1 + i, true);
+				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, true);
 				break;
 			default:
 				break;
@@ -278,10 +279,10 @@ class MemspaceTests {
 		for (int i = 0; i < addressBin.toCharArray().length; i++) {
 			switch (addressBin.toCharArray()[i]) {
 			case '0':
-				assertFalse(memSpace.getBit(memSpace.getAdrEvalAddress() + 1 + i));
+				assertFalse(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
 				break;
 			case '1':
-				assertTrue(memSpace.getBit(memSpace.getAdrEvalAddress() + 1 + i));
+				assertTrue(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
 				break;
 			default:
 				fail();
@@ -301,10 +302,10 @@ class MemspaceTests {
 		for (int i = 0; i < nAdressBin.toCharArray().length; i++) {
 			switch (nAdressBin.toCharArray()[i]) {
 			case '0':
-				memSpace.setBit(memSpace.getAdrEvalAddress() + 1 + i, false);
+				memSpace.setBit(ISomMemspace.START_ADDRESS_START+i, false);
 				break;
 			case '1':
-				memSpace.setBit(memSpace.getAdrEvalAddress() + 1 + i, true);
+				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, true);
 				break;
 			default:
 				break;

@@ -8,6 +8,20 @@ package de.dralle.som;
  *
  */
 public interface ISomMemspace extends IMemspace{
+	
+	static final int ACC_ADDRESS = 0;
+	static final int START_ADDRESS_START = 11;
+	static final int ADDRESS_SIZE_BIT_COUNT = 5;
+	public static final int ADDRESS_SIZE_START = 3;
+	public static final int ADDRESS_SIZE_OFFSET=4;
+	public static final int WH_EN=2;
+	public static final int WH_COM=8;
+	public static final int WH_SEL=10;
+	public static final int WH_DIR=9;
+	public static final int ADR_EVAL_ADDRESS = 1;
+	public static final int MINIMUM_ADDRESS_SIZE=ADDRESS_SIZE_OFFSET;
+	public static final int MAXIMUM_ADDRESS_SIZE=(int) (Math.pow(2, ADDRESS_SIZE_BIT_COUNT)+ADDRESS_SIZE_OFFSET);
+	
 	int getAccumulatorAddress();
 	
 	int getAdrEvalAddress();

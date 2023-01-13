@@ -82,8 +82,28 @@ class BitcodeRunnerExecuteTests {
 	
 	@Test
 	@Timeout(10)
-	void testNANDExample() throws IOException {
+	void testNANDExampleInvert() throws IOException {
 		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_invert_with_nand.ab");
+		IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+	@Test
+	@Timeout(10)
+	void testNANDExampleRead() throws IOException {
+		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_read_with_nand.ab");
+		IMemspace memspace = c.abStringToMemspace(entireFile);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+	@Test
+	@Timeout(10)
+	void testNANDExampleWrite() throws IOException {
+		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_write_with_nand.ab");
 		IMemspace memspace = c.abStringToMemspace(entireFile);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());

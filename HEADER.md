@@ -1,4 +1,4 @@
-Each file in either binary or ascii binary has header bits. Their meaning is constants and they exist in every program. The first 12 bits (0-11) are fixed in position, the n bits after that are the address bits, which are utilized to set the start address and jump. The program counter itsself is not part of the memspace, the address bits, if read, do not contain the current position in code.
+Each file in either binary or ascii binary has header bits. Their meaning is constant and they exist in every program. The first 12 bits (0-11) are fixed in position, the n bits after that are the address bits, which are utilized to set the start address and jump. The program counter itsself is not part of the memspace, the address bits, if read, do not contain the current position in code.
 
 bit | name | code |
 --- | --- | --- |

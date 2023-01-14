@@ -88,6 +88,7 @@ class WriteHookTests {
 		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_read.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
+		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
 		assertTrue(runner.execute());
 		assertEquals(1, testWriteHook.getReadTrgCnt());
 		assertEquals(0, testWriteHook.getWriteTrgCnt());

@@ -1,3 +1,4 @@
-package de.dralle.som.languages.hra.generated;
-
 grammar HRAGrammar;
+main:.*;
+
+WS : (' ' | '\t' | '\r' | '\n')+ -> skip ;

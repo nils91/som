@@ -1,6 +1,15 @@
 # som
 
-Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. The opcode of each command is just 1 bit long, meaning there are 2 different opcodes available:
+Som is a programming language/(simulated) computer architecture with bit-level, not byte-level, addressing, meaning all bits can be individually addressed. Each bit is binary, it can have 2 values, denoted as 0 in 1 in this document. Each command is made up of the opcode and the address. The only operation possible is the NAND (not and) between two bits.
+
+| A | B | NAND(A, B) |
+|:-:|:-:|----:|
+| 0 | 0 |  1  |
+| 0 | 1 |  1  |
+| 1 | 0 |  1  |
+| 1 | 1 |  0  |
+
+One of the bits is fixed (its always at position 0 and called the accumulator), the other one is given by the address and the opcode specifies which one the result is written to. The opcode of each command is 1 bit long, meaning there are 2 different opcodes available:
 
  opcode | letter code |Description |
  --- | --- |--- |
@@ -9,7 +18,8 @@ Som is a programming language/(simulated) computer architecture with bit-level, 
 
 ## som bitcode
 
-The opcode is followed by n bits denoting the memory address (or jump target address) to make one command. The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is always 0.
+The opcode is followed by n bits denoting the memory address to make one command. Once the execution of one command is complete, execution will resume at the next command.
+The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is always 0.
 Bits 1-7 contain n as an unsigned int. The next bit is the `ADR_EVAL` bit, followed by n address bits. If the `ADR_EVAL` bit is set, the address bits will be evaluated and execution will continue at that address.
 The next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the write hook direction bit `WH_DIR`, 3rd is the global write hook communication bit (`WH_COM`), 4th is the write hook selection bit (`WH_SEL`). 
 Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
@@ -20,13 +30,13 @@ In order to perform a jump to a memory address, write the address to the address
 bit | name | code |
 --- | --- | --- |
 0|accumulator|`ACC`|
-1-7|n|`N[[0-6]]`|
-8|address evaluation bit|`ADR_EVAL`|
-9-(9+(n-1))|address bits|`ADR[[0-(N-1)]]`|
-9+n|writehook enabled|`WH_EN`|
-10+n|writehook direction|`WH_DIR`|
-11+n|writehook communication|`WH_COM`|
-12+n|writehook select|`WH_SEL`|
+1|address evaluation bit|`ADR_EVAL`|
+2|writehook enable bit|`WH_EN`|
+3-7|N (address size)|`N[[0-4]]`|
+8|writehook communication bit|`WH_COM`|
+9|writehook direction|`WH_DIR`|
+10|writehook select|`WH_SEL`|
+11+|next jump target address|`ADR[[0-(N-1)]]`
 
 ### write hooks
 
@@ -52,7 +62,7 @@ Note: For readability each command is written as a new line and commented. Comme
 
 Each bit not explicitly written in the file is 0. The file is 2^n bits in size.
 
-## SOM language
+## SOM language (possibly outdated)
 
 SOM language comes in different flavors, .hra, .hrb and .hrc. .hra is just as slightly more human readable version of the bitcode, while .hrb and .hrc are human readable assembly languages. .hrc is a more complex version of .hrb. .hrb programs can also be interpreted as .hrc.
 
@@ -62,7 +72,7 @@ SOM bitcode can be used in several formats.
 
 ### Ascii binary (.ab)
 
-The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example, minus the comments, is a valid program in ascii binary (its outdated).  Comments are not really supported, but since all charachters other than 0 or 1 are ignored, it is still possible to comment as long the 0 or 1 carachters are not used.
+The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example is a valid program in ascii binary (its outdated).  Comments are not really supported, but since all characters other than 0 or 1 are ignored, it is still possible to comment as long the 0 or 1 characters are not used.
 
 ### Binary (.bin)
 

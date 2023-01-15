@@ -240,16 +240,7 @@ public void setNextCommandAddress(int nextCommandAddress) {
 		for (Entry<Integer, Command> c : commands.entrySet()) {
 			Integer address = c.getKey();
 			Command command = c.getValue();
-			switch (command.getOp()) {
-			case NAR:
-				mem.setBit(address.intValue(), false);
-				break;
-			case NAW:
-				mem.setBit(address.intValue(), true);
-				break;
-			default:
-				break;
-			}
+			mem.setBit(address.intValue(), command.getOp().getBitValue());
 			mem.setBitsUnsignedBounds(address.intValue() + 1, recalculateN(), getCommandTargetAddress(command));
 		}
 		mem.setAccumulatorValue(true);

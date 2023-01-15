@@ -26,4 +26,7 @@ public enum Opcode {
 			return '0';
 		}
 	}
+	public boolean getBitValue() {
+		return bit;
+	}
 }

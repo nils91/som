@@ -19,6 +19,15 @@ public class Command {
 		return op;
 	}
 	private String tgtSymbol;
+	public void setOp(Opcode op) {
+		this.op = op;
+	}
+	public void setAddressOffset(int addressOffset) {
+		this.addressOffset = addressOffset;
+	}
+	public void setTgtSymbol(String tgtSymbol) {
+		this.tgtSymbol = tgtSymbol;
+	}
 	public String getTgtSymbol() {
 		return tgtSymbol;
 	}
@@ -32,5 +41,8 @@ public class Command {
 		this.op = op;
 		this.tgtSymbol = tgtSymbol;
 		this.addressOffset= offset;
+	}
+	public Command() {
+		super();
 	}
 }

@@ -22,6 +22,26 @@ public class HRAModel {
 	}
 	private int n;
 	private int startAdress;
+	boolean startAddressExplicit;
+	public boolean isStartAddressExplicit() {
+		return startAddressExplicit;
+	}
+	public void setStartAddressExplicit(boolean startAddressExplicit) {
+		this.startAddressExplicit = startAddressExplicit;
+	}
+	public int getStartAddress() {
+		if(startAddressExplicit) {
+			return startAdress;
+		}
+		return getFixedBitCount()+symbols.size();
+	}
+	public int getHeapSize() {
+		int minHeap=(int) (Math.pow(2, n))-getFixedBitCount()-getCommandBits();
+		if(heap<minHeap) {
+			heap=minHeap;
+		}
+		return heap;
+	}
 	private int heap;
 	private Map<String,Integer> symbols;
 	private Map<String,Integer> builtins;
@@ -50,14 +70,40 @@ public class HRAModel {
 		}
 		return n;
 	}
+	private boolean checkN() {
+		int minBitCount = getFixedBitCount()+symbols.size()+getCommandBits()+heap;
+		 if(minBitCount<getHighestTgtAddress()+1) {
+			 minBitCount=getHighestTgtAddress()+1;
+		 }
+		 return Math.pow(2, n) <=minBitCount;
+	}
 	private int getHighestTgtAddress(){
 		int high=0;
 		for (Command command : commands) {
-			if(command.getTgtAddress()>high) {
-				high=command.getTgtAddress();
+			if(getCommandAddress(command)>high) {
+				getCommandAddress(command);
 			}
 		}
 		return high;
+	}
+	private int getCommandAddress(Command c) {
+		int tgtAdddress = resolveSymbolToAddress(c.getTgtSymbol());
+		return tgtAdddress+c.getAddressOffset();
+	}
+	private int resolveSymbolToAddress(String symbol) {
+		Integer target = builtins.get(symbol);
+		if(target!=null) {
+			return target.intValue();
+		}
+		target=symbols.get(symbol);
+		if(target!=null) {
+			return target.intValue();
+		}
+		target=Integer.parseInt(symbol);
+		if(target!=null) {
+			return target.intValue();
+		}
+		return 0;
 	}
 	private int getCommandBits() {
 		int commandSize=getCommandSize();

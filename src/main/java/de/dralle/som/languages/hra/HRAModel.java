@@ -95,9 +95,15 @@ public class HRAModel {
 
 	private int getHighestTgtAddress() {
 		int high = 0;
-		for (Command command : commands) {
-			if (getCommandTargetAddress(command) > high) {
-				getCommandTargetAddress(command);
+		for (Entry<Integer, Command> commandEntry : commands.entrySet()) {
+			int commandAddress = commandEntry.getKey().intValue();
+			Command command = commandEntry.getValue();
+			int commandTargetAddress = getCommandTargetAddress(command);
+			if(commandAddress>high) {
+				high=commandAddress;
+			}
+			if(commandTargetAddress>high) {
+				high=commandTargetAddress;
 			}
 		}
 		return high;

@@ -5,6 +5,7 @@ package de.dralle.som.languages.hra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,8 +26,26 @@ public class HRAModel {
 	public HRAModel() {
 		setupBuiltins();
 	}
+private int nextCommandAddress;
+	public int getNextCommandAddress() {
+	return nextCommandAddress;
+}
 
+public void setNextCommandAddress(int nextCommandAddress) {
+	this.nextCommandAddress = nextCommandAddress;
+}
 	private int n;
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public void setStartAdress(int startAdress) {
+		this.startAdress = startAdress;
+	}
+
+	public void setHeap(int heap) {
+		this.heap = heap;
+	}
 	private int startAdress;
 	boolean startAddressExplicit;
 
@@ -58,7 +77,20 @@ public class HRAModel {
 	private Map<String, Integer> symbols;
 	private Map<String, Integer> builtins;
 	private Map<Integer, Command> commands;
-
+	
+	public void addSymbol(String name,int value) {
+		if(symbols==null) {
+			symbols=new LinkedHashMap<>();
+		}
+		symbols.put(name, value);
+	}
+	public void addCommand(Command c) {
+		if(commands==null) {
+			commands=new LinkedHashMap<>();
+		}
+		commands.put(nextCommandAddress, c);
+		nextCommandAddress+=getCommandSize();
+	}
 	private void setupBuiltins() {
 		builtins = new HashMap<>();
 		builtins.put("ACC", AbstractSomMemspace.ACC_ADDRESS);

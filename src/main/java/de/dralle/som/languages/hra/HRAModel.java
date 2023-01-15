@@ -17,6 +17,9 @@ import de.dralle.som.languages.hra.model.Command;
  *
  */
 public class HRAModel {
+	public HRAModel() {
+		setupBuiltins();
+	}
 	private int n;
 	private int startAdress;
 	private int heap;

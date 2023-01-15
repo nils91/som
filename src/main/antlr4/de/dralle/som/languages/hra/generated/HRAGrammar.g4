@@ -12,7 +12,7 @@ int_or_symbol:(INT|SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
-builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|BI_N|EXIT;
+builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|BI_N;
 
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
@@ -23,7 +23,6 @@ WH_COM:'WH_COM';
 WH_DIR:'WH_DIR';
 WH_SEL:'WH_SEL';
 ADR:'ADR';
-EXIT:'EXIT';
 NAR:'NAR';
 NAW:'NAW';
 HEAP:'heap';

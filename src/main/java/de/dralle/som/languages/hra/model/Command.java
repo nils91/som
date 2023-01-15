@@ -14,13 +14,10 @@ public class Command {
 	public Opcode getOp() {
 		return op;
 	}
-	public int getTgtAddress() {
-		return tgtAddress;
-	}
-	private int tgtAddress;
-	public Command(Opcode op, int tgtAddress) {
+	private String tgtSymbol;
+	public Command(Opcode op, String tgtSymbol) {
 		super();
 		this.op = op;
-		this.tgtAddress = tgtAddress;
+		this.tgtSymbol = tgtSymbol;
 	}
 }

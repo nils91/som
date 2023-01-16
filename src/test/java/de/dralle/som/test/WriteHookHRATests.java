@@ -20,6 +20,7 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.WriteHookManager;
+import de.dralle.som.languages.hra.model.HRAModel;
 import de.dralle.som.test.util.TestUtil;
 import de.dralle.som.test.util.TestWriteHook;
 
@@ -30,6 +31,7 @@ import de.dralle.som.test.util.TestWriteHook;
 class WriteHookHRATests {
 	private FileLoader f;
 	private WriteHookManager testWriteHookManager;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -45,14 +47,17 @@ class WriteHookHRATests {
 	}
 
 	private TestWriteHook testWriteHook;
+	private Compiler c;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {f=new FileLoader();
-		testWriteHook=new TestWriteHook();
-		testWriteHookManager=new WriteHookManager();
+	void setUp() throws Exception {
+		f = new FileLoader();
+		c = new Compiler();
+		testWriteHook = new TestWriteHook();
+		testWriteHookManager = new WriteHookManager();
 		testWriteHookManager.registerWriteHook(0, testWriteHook);
 	}
 
@@ -65,7 +70,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_not_triggered.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_not_triggered.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -75,7 +81,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_triggered_write.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -85,7 +92,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_read.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_triggered_read.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -96,7 +104,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_triggered_write.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_triggered_write.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -106,7 +115,8 @@ class WriteHookHRATests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_write_101.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_write_101.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -116,7 +126,8 @@ class WriteHookHRATests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_nonew.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_nonew.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -125,7 +136,8 @@ class WriteHookHRATests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_nonew.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_nonew.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -137,7 +149,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_newdata.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -146,7 +159,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_newdata.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
@@ -155,7 +169,8 @@ class WriteHookHRATests {
 
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_newdata.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_newdata.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
@@ -164,20 +179,24 @@ class WriteHookHRATests {
 
 		}
 	}
+
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_101.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
-		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,true });
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
 		assertTrue(runner.execute());
 	}
+
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
-		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
+		HRAModel model = f.readHRAFile("test/fixtures/hra/test_write_hook_read_101.hra");
+		IMemspace m = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
-		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,false });
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });
 		assertFalse(runner.execute());
 	}
 }

@@ -1,0 +1,10 @@
+#ACC is set, ADR-EVAL is set, WH will not be used, N is 5 (offset of 4)
+;n=5
+#1 100 0001 //
+#WH bits will not be used, address is 26
+;start=26
+#000 1 1010 //WH bits will not be used, address is 26
+#0000 0000
+#00
+#1 0 0001 //start here, NAW one (reset  ADR_EVAL to not loop)
+NAW ADR_EVAL

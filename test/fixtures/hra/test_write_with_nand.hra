@@ -1,0 +1,10 @@
+1 100 0010 //ACC is set, ADR-EVAL is set, WH will not be used, N is 6 (offset of 4)
+000 0 11 10 //WH bits will not be used, address is 29
+1 
+0 //this bit will be written to (I7, IOO OOI)
+00000000000 //filler bits
+1 000 001 //reset ADR_EVAL
+1 100 001
+0 000 000
+1 100 001
+0 000 000 //invert acc for exit

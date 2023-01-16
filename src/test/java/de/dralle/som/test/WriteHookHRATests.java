@@ -27,7 +27,7 @@ import de.dralle.som.test.util.TestWriteHook;
  * @author Nils Dralle
  *
  */
-class WriteHookTests {
+class WriteHookHRATests {
 	private FileLoader f;
 	private WriteHookManager testWriteHookManager;
 	/**

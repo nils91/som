@@ -21,7 +21,7 @@ import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.test.util.TestUtil;
 
-class BitcodeRunnerExecuteTests {
+class BitcodeRunnerExecuteABTests {
 
 	private Compiler c;
 

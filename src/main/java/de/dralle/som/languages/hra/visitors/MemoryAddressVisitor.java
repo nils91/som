@@ -27,9 +27,9 @@ public class MemoryAddressVisitor extends HRAGrammarBaseVisitor<MemoryAddress> {
 	@Override
 	public MemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
 		if (ctx.NEG_INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.NEG_INT().toString()));
+			address.setAddressOffset(Integer.parseInt(ctx.NEG_INT().getText()));
 		} else if (ctx.INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.INT().toString()));
+			address.setAddressOffset(Integer.parseInt(ctx.INT().getText()));
 		}
 		return address;
 	}
@@ -41,7 +41,7 @@ public class MemoryAddressVisitor extends HRAGrammarBaseVisitor<MemoryAddress> {
 			ctx.offset_specify().accept(this);
 		}
 		if (ctx.getChild(0) != null) {
-			address.setSymbol(ctx.getChild(0).toString());
+			address.setSymbol(ctx.getChild(0).getText());
 			return address;
 		}
 		return null;

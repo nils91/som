@@ -60,6 +60,8 @@ public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
 			model.setHeap(address.resolve(model));
 		}else if (ctx.START()!=null) {
 			model.setStartAdress(address.resolve(model));
+			model.setStartAddressExplicit(true);
+			model.setNextCommandAddress(model.getStartAddress());
 		}else if(ctx.CONT()!=null) {
 			model.setNextCommandAddress(address.resolve(model));
 		}

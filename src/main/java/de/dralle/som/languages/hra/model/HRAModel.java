@@ -24,6 +24,7 @@ import de.dralle.som.SOMBitcodeRunner;
 public class HRAModel {
 	public HRAModel() {
 		setupBuiltins();
+		symbols=new LinkedHashMap<>();
 	}
 private int nextCommandAddress;
 	public int getNextCommandAddress() {
@@ -150,7 +151,9 @@ public void setNextCommandAddress(int nextCommandAddress) {
 		if (target != null) {
 			return target.intValue();
 		}
-		target = symbols.get(symbol);
+		if(symbols!=null) {
+			target = symbols.get(symbol);
+		}		
 		if (target != null) {
 			return target.intValue();
 		}
@@ -240,8 +243,9 @@ public void setNextCommandAddress(int nextCommandAddress) {
 		for (Entry<Integer, Command> c : commands.entrySet()) {
 			Integer address = c.getKey();
 			Command command = c.getValue();
+			int cTgtAddress = getCommandTargetAddress(command);
 			mem.setBit(address.intValue(), command.getOp().getBitValue());
-			mem.setBitsUnsignedBounds(address.intValue() + 1, recalculateN(), getCommandTargetAddress(command));
+			mem.setBitsUnsigned(address.intValue() + 1, recalculateN(), cTgtAddress);
 		}
 		mem.setAccumulatorValue(true);
 		mem.setAdrEval(true);

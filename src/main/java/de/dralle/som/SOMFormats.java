@@ -8,7 +8,7 @@ package de.dralle.som;
  *
  */
 public enum SOMFormats {
-	AB("ascii binary","ab"),BIN("binary","bin");
+	AB("ascii binary","ab"),BIN("binary","bin"),HRA("human readable SOM Type A","hra");
 
 	private String friendlyName;
 	private String fileExtension;

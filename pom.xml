@@ -158,7 +158,7 @@
 		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
-		<antlr.version>4.3</antlr.version>
+		<antlr.version>4.11.1</antlr.version>
 		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH.mm.ss Z</maven.build.timestamp.format>
 		<project.build.system>Maven</project.build.system>

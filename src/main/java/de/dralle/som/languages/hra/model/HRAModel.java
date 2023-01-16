@@ -141,8 +141,8 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	}
 
 	private int getCommandTargetAddress(Command c) {
-		int tgtAdddress = resolveSymbolToAddress(c.getTgtSymbol());
-		return tgtAdddress + c.getAddressOffset();
+		int tgtAdddress = c.getAddress().resolve(this);
+		return tgtAdddress;
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
@@ -207,8 +207,9 @@ public void setNextCommandAddress(int nextCommandAddress) {
 		for (Entry<Integer, Command> c : commands.entrySet()) {
 			Integer address = c.getKey();
 			Command command = c.getValue();
+			MemoryAddress cooamndTgtAddress = command.getAddress();
 			tmp.add(String.format("%s%s%s %s[%d]", getContinueDirective(address.intValue()), System.lineSeparator(),
-					command.getOp(), command.getTgtSymbol(), command.getAddressOffset()));
+					command.getOp(), cooamndTgtAddress.getSymbol(), cooamndTgtAddress.getAddressOffset()));
 		}
 		return tmp;
 	}

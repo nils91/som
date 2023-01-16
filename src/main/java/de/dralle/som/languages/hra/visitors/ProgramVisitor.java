@@ -9,7 +9,9 @@ import de.dralle.som.languages.hra.generated.HRAGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.LineContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.Symbol_decContext;
+import de.dralle.som.languages.hra.model.Command;
 import de.dralle.som.languages.hra.model.HRAModel;
+import de.dralle.som.languages.hra.model.MemoryAddress;
 
 /**
  * @author Nils
@@ -26,15 +28,16 @@ public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
 		}else if(ctx.directive()!=null) {
 			ctx.directive().accept(this);
 		}else if(ctx.command()!=null) {
-			ctx.command().accept(new CommandVisitor());
+			Command c = ctx.command().accept(new CommandVisitor());
+			model.addCommand(c);
 		}
 		return model;
 	}
 
 	@Override
 	public HRAModel visitSymbol_dec(Symbol_decContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitSymbol_dec(ctx);
+		model.addSymbol(ctx.SYMBOL().toString(), ctx.int_or_symbol().accept(new MemoryAddressVisitor()).resolve(model));
+		return model;
 	}
 
 	@Override
@@ -46,16 +49,21 @@ public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
 		return model;
 	}
 
-	@Override
-	public HRAModel visitCommand(CommandContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCommand(ctx);
-	}
+
 
 	@Override
 	public HRAModel visitDirective(DirectiveContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitDirective(ctx);
+		MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
+		if(ctx.D_N()!=null) {
+			model.setN(address.resolve(model));
+		}else if(ctx.HEAP()!=null) {
+			model.setHeap(address.resolve(model));
+		}else if (ctx.START()!=null) {
+			model.setStartAdress(address.resolve(model));
+		}else if(ctx.CONT()!=null) {
+			model.setNextCommandAddress(address.resolve(model));
+		}
+		return model;
 	}
 
 }

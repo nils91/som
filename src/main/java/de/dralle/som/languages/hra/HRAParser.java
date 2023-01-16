@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hra;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -17,10 +18,9 @@ import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
  *
  */
 public class HRAParser {
-	public void parse(InputStream is) {
+	public void parse(InputStream is) throws IOException {
 		HRAGrammarLexer lexer = new HRAGrammarLexer(new ANTLRInputStream(is));
 		HRAGrammarParser parser = new HRAGrammarParser(new CommonTokenStream(lexer));
 		ProgramContext pt = parser.program();
-		AtHousenumberData addressData = pt.accept(new AtAddressDataParseVisitor());
 	}	
 }

@@ -23,28 +23,6 @@ public class CommandVisitor extends HRAGrammarBaseVisitor<Command> {
 	private Command c;
 
 	@Override
-	public Command visitOffset_specify(Offset_specifyContext ctx) {
-		if (ctx.NEG_INT() != null) {
-			c.setAddressOffset(Integer.parseInt(ctx.NEG_INT().toString()));
-		} else if (ctx.INT() != null) {
-			c.setAddressOffset(Integer.parseInt(ctx.INT().toString()));
-		}
-		return c;
-	}
-
-	@Override
-	public Command visitInt_or_symbol(Int_or_symbolContext ctx) {
-		if (ctx.offset_specify() != null) {
-			ctx.offset_specify().accept(this);
-		}
-		if (ctx.getChild(0) != null) {
-			c.setTgtSymbol(ctx.getChild(0).toString());
-			return c;
-		}
-		return null;
-	}
-
-	@Override
 	public Command visitCommand(CommandContext ctx) {
 		c = new Command();
 		if (ctx.NAR() != null) {
@@ -53,7 +31,8 @@ public class CommandVisitor extends HRAGrammarBaseVisitor<Command> {
 			c.setOp(Opcode.NAW);
 		}
 		if (ctx.int_or_symbol() != null) {
-			return ctx.int_or_symbol().accept(this);
+			c.setAddress(ctx.int_or_symbol().accept(new MemoryAddressVisitor()));
+			return c;
 		}
 		return null;
 	}

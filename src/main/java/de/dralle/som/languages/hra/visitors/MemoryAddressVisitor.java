@@ -14,48 +14,39 @@ import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hra.model.Command;
 import de.dralle.som.languages.hra.model.HRAModel;
+import de.dralle.som.languages.hra.model.MemoryAddress;
 
 /**
  * @author Nils
  *
  */
-public class CommandVisitor extends HRAGrammarBaseVisitor<Command> {
-	private Command c;
+public class MemoryAddressVisitor extends HRAGrammarBaseVisitor<MemoryAddress> {
+
+	private MemoryAddress address;
 
 	@Override
-	public Command visitOffset_specify(Offset_specifyContext ctx) {
+	public MemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
 		if (ctx.NEG_INT() != null) {
-			c.setAddressOffset(Integer.parseInt(ctx.NEG_INT().toString()));
+			address.setAddressOffset(Integer.parseInt(ctx.NEG_INT().toString()));
 		} else if (ctx.INT() != null) {
-			c.setAddressOffset(Integer.parseInt(ctx.INT().toString()));
+			address.setAddressOffset(Integer.parseInt(ctx.INT().toString()));
 		}
-		return c;
+		return address;
 	}
 
 	@Override
-	public Command visitInt_or_symbol(Int_or_symbolContext ctx) {
+	public MemoryAddress visitInt_or_symbol(Int_or_symbolContext ctx) {
+		address = new MemoryAddress();
 		if (ctx.offset_specify() != null) {
 			ctx.offset_specify().accept(this);
 		}
 		if (ctx.getChild(0) != null) {
-			c.setTgtSymbol(ctx.getChild(0).toString());
-			return c;
+			address.setSymbol(ctx.getChild(0).toString());
+			return address;
 		}
 		return null;
 	}
 
-	@Override
-	public Command visitCommand(CommandContext ctx) {
-		c = new Command();
-		if (ctx.NAR() != null) {
-			c.setOp(Opcode.NAR);
-		} else if (ctx.NAW() != null) {
-			c.setOp(Opcode.NAW);
-		}
-		if (ctx.int_or_symbol() != null) {
-			return ctx.int_or_symbol().accept(this);
-		}
-		return null;
-	}
+	
 
 }

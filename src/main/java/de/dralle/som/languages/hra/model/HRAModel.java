@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dralle.som.languages.hra;
+package de.dralle.som.languages.hra.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,6 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
-import de.dralle.som.languages.hra.model.Command;
 
 /**
  * @author Nils
@@ -146,7 +145,7 @@ public void setNextCommandAddress(int nextCommandAddress) {
 		return tgtAdddress + c.getAddressOffset();
 	}
 
-	private int resolveSymbolToAddress(String symbol) {
+	public int resolveSymbolToAddress(String symbol) {
 		Integer target = builtins.get(symbol);
 		if (target != null) {
 			return target.intValue();

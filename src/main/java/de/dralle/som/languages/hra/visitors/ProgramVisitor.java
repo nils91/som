@@ -3,13 +3,13 @@
  */
 package de.dralle.som.languages.hra.visitors;
 
-import de.dralle.som.languages.hra.HRAModel;
 import de.dralle.som.languages.hra.generated.HRAGrammarBaseVisitor;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.CommandContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.LineContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.Symbol_decContext;
+import de.dralle.som.languages.hra.model.HRAModel;
 
 /**
  * @author Nils

@@ -57,8 +57,8 @@ class BitcodeRunnerExecuteHRATests {
 
 	@Test
 	void testReturnCode1() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/minimal_return1.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model = f.readHRAFile("test/fixtures/hra/minimal_return1.hra");
+		IMemspace memspace = c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
@@ -66,8 +66,8 @@ class BitcodeRunnerExecuteHRATests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_nar.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model =f.readHRAFile("test/fixtures/hra/test_nar.hra");
+		IMemspace memspace=c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
 		// should have written accumulator to 1
@@ -77,8 +77,8 @@ class BitcodeRunnerExecuteHRATests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_naw.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model =f.readHRAFile("test/fixtures/hra/test_naw.hra");
+		IMemspace memspace=c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -88,8 +88,8 @@ class BitcodeRunnerExecuteHRATests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_invert_with_nand.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model =f.readHRAFile("test/fixtures/hra/test_invert_with_nand.hra");
+		IMemspace memspace=c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -98,8 +98,8 @@ class BitcodeRunnerExecuteHRATests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_read_with_nand.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model =f.readHRAFile("test/fixtures/hra/test_read_with_nand.hra");
+		IMemspace memspace=c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -108,8 +108,8 @@ class BitcodeRunnerExecuteHRATests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {
-		String entireFile = TestUtil.readFileToString("test/fixtures/ab/test_write_with_nand.ab");
-		IMemspace memspace = c.abStringToMemspace(entireFile);
+		HRAModel model =f.readHRAFile("test/fixtures/hra/test_write_with_nand.hra");
+		IMemspace memspace=c.compileHRAtoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1

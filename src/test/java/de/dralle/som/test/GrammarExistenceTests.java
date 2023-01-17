@@ -50,11 +50,11 @@ class GrammarExistenceTests {
 
 	@Test
 	void testHRAVisitorExistence() {
-		assertNotNull(HRAGrammarBaseVisitor.class);
+		assertNotNull(HRASGrammarBaseVisitor.class);
 	}
 	@Test
 	void testHRAParserExistence() {
-		assertNotNull(HRAGrammarParser.class);
+		assertNotNull(HRASGrammarParser.class);
 	}
 
 }

@@ -24,7 +24,7 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.test.util.TestUtil;
 
-class BitcodeRunnerExecuteHRATests {
+class BitcodeRunnerExecuteHRASTests {
 
 	private Compiler c;
 	private FileLoader f;

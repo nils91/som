@@ -29,6 +29,10 @@ public String asHRASCode() {
 	return String.format("%s %s", op,address.asHRASCode());
 }
 	
+	@Override
+public String toString() {
+	return asHRASCode();
+}
 	public Command() {
 		super();
 	}

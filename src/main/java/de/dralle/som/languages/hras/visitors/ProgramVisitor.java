@@ -55,7 +55,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 			if (ctx.START() != null) {
 				model.setStartAdress(address);
 				model.setStartAddressExplicit(true);
-				model.setNextCommandAddress(model.getStartAdress());
+				model.setNextCommandAddress(address.clone());
 			} else if (ctx.CONT() != null) {
 				model.setNextCommandAddress(address);
 			}

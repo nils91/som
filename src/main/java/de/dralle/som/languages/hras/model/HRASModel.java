@@ -77,7 +77,7 @@ public class HRASModel {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		commands.put(nextCommandAddress, c);
+		commands.put(nextCommandAddress.clone(), c);
 		Integer currentOffset=nextCommandAddress.getAddressOffset();
 		if(currentOffset!=null) {
 			currentOffset=currentOffset.intValue()+getCommandSize();
@@ -224,5 +224,10 @@ public class HRASModel {
 		mem.setAccumulatorValue(true);
 		mem.setAdrEval(true);
 		return mem;
+	}
+
+	@Override
+	public String toString() {
+		return asCode();
 	}
 }

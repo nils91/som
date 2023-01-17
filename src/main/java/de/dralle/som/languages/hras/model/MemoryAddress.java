@@ -7,7 +7,7 @@ package de.dralle.som.languages.hras.model;
  * @author Nils
  *
  */
-public class MemoryAddress {
+public class MemoryAddress implements Cloneable{
 	private String symbol;
 
 	public MemoryAddress(int accAddress) {
@@ -62,6 +62,21 @@ public class MemoryAddress {
 			return equal;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return asHRASCode();
+	}
+
+	@Override
+	public MemoryAddress clone() {
+		MemoryAddress copy = new MemoryAddress();
+		copy.symbol=symbol;
+		if(addressOffset!=null) { 
+			copy.addressOffset=addressOffset.intValue();
+		}		
+		return copy;
 	}
 
 	public String asHRASCode() {

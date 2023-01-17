@@ -9,16 +9,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import de.dralle.som.languages.hras.HRAParser;
+import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
@@ -34,7 +32,7 @@ public class FileLoader {
 		File f = new File(path);
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);
-		HRAParser hp=new HRAParser();
+		HRASParser hp=new HRASParser();
 		HRASModel m = hp.parse(bis);
 		bis.close();
 		return m;

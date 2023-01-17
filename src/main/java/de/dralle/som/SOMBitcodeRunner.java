@@ -3,9 +3,6 @@
  */
 package de.dralle.som;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.dralle.som.writehooks.IWriteHook;
 
 /**

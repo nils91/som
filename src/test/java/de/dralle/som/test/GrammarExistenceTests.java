@@ -3,7 +3,7 @@
  */
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dralle.som.languages.hras.generated.HRAGrammarBaseVisitor;
-import de.dralle.som.languages.hras.generated.HRAGrammarParser;
+import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser;
 
 /**
  * @author Nils

@@ -9,13 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 
 import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
-import de.dralle.som.SOMBitcodeRunner;
 
 /**
  * @author Nils

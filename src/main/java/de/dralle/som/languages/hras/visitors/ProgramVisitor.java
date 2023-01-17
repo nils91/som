@@ -1,10 +1,9 @@
 /**
  * 
  */
-package de.dralle.som.languages.hrass.visitors;
+package de.dralle.som.languages.hras.visitors;
 
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
-import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
@@ -55,9 +54,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 	public HRASModel visitDirective(DirectiveContext ctx) {
 		MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
 		if(ctx.D_N()!=null) {
-			model.setN(address.resolve(model));
-		}else if(ctx.HEAP()!=null) {
-			model.setHeap(address.resolve(model));
+			model.setN(address.resolve(model));		
 		}else if (ctx.START()!=null) {
 			model.setStartAdress(address.resolve(model));
 			model.setStartAddressExplicit(true);

@@ -3,7 +3,10 @@
  */
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -14,13 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import de.dralle.som.Compiler;
 import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.WriteHookManager;
-import de.dralle.som.test.util.TestUtil;
 import de.dralle.som.test.util.TestWriteHook;
 
 /**

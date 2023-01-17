@@ -3,7 +3,7 @@
  */
 package de.dralle.som.test.meta;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;

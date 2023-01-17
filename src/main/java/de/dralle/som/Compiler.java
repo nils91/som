@@ -16,7 +16,7 @@ public class Compiler {
 	public IMemspace abStringToMemspace(String s) {
 		return abStringToMemspace(s.toCharArray());
 	}
-	public IMemspace compileHRAtoMemspace(HRASModel model) {
+	public IMemspace compileHRAStoMemspace(HRASModel model) {
 		return model.compileToMemspace();
 	}
 

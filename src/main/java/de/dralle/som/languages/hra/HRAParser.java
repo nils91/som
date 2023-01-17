@@ -14,7 +14,7 @@ import de.dralle.som.languages.hra.generated.HRAGrammarLexer;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser;
 import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
 import de.dralle.som.languages.hra.model.HRAModel;
-import de.dralle.som.languages.hra.visitors.ProgramVisitor;
+import de.dralle.som.languages.hras.visitors.ProgramVisitor;
 
 /**
  * @author Nils

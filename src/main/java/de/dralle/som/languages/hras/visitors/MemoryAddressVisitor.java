@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dralle.som.languages.hra.visitors;
+package de.dralle.som.languages.hras.visitors;
 
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hra.generated.HRAGrammarBaseVisitor;

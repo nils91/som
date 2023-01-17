@@ -1,26 +1,26 @@
 /**
  * 
  */
-package de.dralle.som.languages.hras.visitors;
+package de.dralle.som.languages.hrass.visitors;
 
 import de.dralle.som.Opcode;
-import de.dralle.som.languages.hra.generated.HRAGrammarBaseVisitor;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.CommandContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.DirectiveContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.Int_or_symbolContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.LineContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.Offset_specifyContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.Symbol_decContext;
-import de.dralle.som.languages.hra.model.Command;
-import de.dralle.som.languages.hra.model.HRAModel;
-import de.dralle.som.languages.hra.model.MemoryAddress;
+import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.Symbol_decContext;
+import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hras.model.MemoryAddress;
 
 /**
  * @author Nils
  *
  */
-public class MemoryAddressVisitor extends HRAGrammarBaseVisitor<MemoryAddress> {
+public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<MemoryAddress> {
 
 	private MemoryAddress address;
 

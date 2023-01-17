@@ -1,28 +1,28 @@
 /**
  * 
  */
-package de.dralle.som.languages.hras.visitors;
+package de.dralle.som.languages.hrass.visitors;
 
-import de.dralle.som.languages.hra.generated.HRAGrammarBaseVisitor;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.CommandContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.DirectiveContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.LineContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.ProgramContext;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser.Symbol_decContext;
-import de.dralle.som.languages.hra.model.Command;
-import de.dralle.som.languages.hra.model.HRAModel;
-import de.dralle.som.languages.hra.model.MemoryAddress;
+import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.Symbol_decContext;
+import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hras.model.MemoryAddress;
 
 /**
  * @author Nils
  *
  */
-public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
+public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 
-	private HRAModel model;
+	private HRASModel model;
 
 	@Override
-	public HRAModel visitLine(LineContext ctx) {
+	public HRASModel visitLine(LineContext ctx) {
 		if(ctx.symbol_dec()!=null) {
 			ctx.symbol_dec().accept(this);
 		}else if(ctx.directive()!=null) {
@@ -35,14 +35,14 @@ public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
 	}
 
 	@Override
-	public HRAModel visitSymbol_dec(Symbol_decContext ctx) {
+	public HRASModel visitSymbol_dec(Symbol_decContext ctx) {
 		model.addSymbol(ctx.SYMBOL().toString(), ctx.int_or_symbol().accept(new MemoryAddressVisitor()).resolve(model));
 		return model;
 	}
 
 	@Override
-	public HRAModel visitProgram(ProgramContext ctx) {
-		model=new HRAModel();
+	public HRASModel visitProgram(ProgramContext ctx) {
+		model=new HRASModel();
 		for (LineContext line : ctx.line()) {
 			line.accept(this);
 		}
@@ -52,7 +52,7 @@ public class ProgramVisitor extends HRAGrammarBaseVisitor<HRAModel> {
 
 
 	@Override
-	public HRAModel visitDirective(DirectiveContext ctx) {
+	public HRASModel visitDirective(DirectiveContext ctx) {
 		MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
 		if(ctx.D_N()!=null) {
 			model.setN(address.resolve(model));

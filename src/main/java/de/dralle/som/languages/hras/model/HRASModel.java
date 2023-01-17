@@ -22,29 +22,36 @@ import de.dralle.som.ISomMemspace;
 public class HRASModel {
 	public HRASModel() {
 		setupBuiltins();
-		symbols=new LinkedHashMap<>();
+		symbols = new LinkedHashMap<>();
 	}
-private int nextCommandAddress;
-	public int getNextCommandAddress() {
-	return nextCommandAddress;
-}
 
-public void setNextCommandAddress(int nextCommandAddress) {
-	this.nextCommandAddress = nextCommandAddress;
-}
+	private MemoryAddress nextCommandAddress;
+
+	public MemoryAddress getNextCommandAddress() {
+		return nextCommandAddress;
+	}
+
+	public void setNextCommandAddress(MemoryAddress nextCommandAddress) {
+		this.nextCommandAddress = nextCommandAddress;
+	}
+
 	private int n;
+
 	public void setN(int n) {
 		this.n = n;
 	}
 
-	public void setStartAdress(int startAdress) {
+	public void setStartAdress(MemoryAddress startAdress) {
 		this.startAdress = startAdress;
 	}
 
-	public void setHeap(int heap) {
-		this.heap = heap;
+	
+
+	private MemoryAddress startAdress;
+	public MemoryAddress getStartAdress() {
+		return startAdress;
 	}
-	private int startAdress;
+
 	boolean startAddressExplicit;
 
 	public boolean isStartAddressExplicit() {
@@ -54,69 +61,46 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	public void setStartAddressExplicit(boolean startAddressExplicit) {
 		this.startAddressExplicit = startAddressExplicit;
 	}
-
-	public int getStartAddress() {
-		if (startAddressExplicit) {
-			return startAdress;
-		}
-		startAdress = getFixedBitCount() + symbols.size();
-		return startAdress;
-	}
-
-	public int getHeapSize() {
-		int minHeap = (int) (Math.pow(2, n)) - getFixedBitCount() - getCommandBits();
-		if (heap < minHeap) {
-			heap = minHeap;
-		}
-		return heap;
-	}
-
-	private int heap;
-	private Map<String, Integer> symbols;
-	private Map<String, Integer> builtins;
-	private Map<Integer, Command> commands;
 	
-	public void addSymbol(String name,int value) {
-		if(symbols==null) {
-			symbols=new LinkedHashMap<>();
+	private Map<String, MemoryAddress> symbols;
+	private Map<String, MemoryAddress> builtins;
+	private Map<MemoryAddress, Command> commands;
+
+	public void addSymbol(String name, MemoryAddress value) {
+		if (symbols == null) {
+			symbols = new LinkedHashMap<>();
 		}
 		symbols.put(name, value);
 	}
+
 	public void addCommand(Command c) {
-		if(commands==null) {
-			commands=new LinkedHashMap<>();
+		if (commands == null) {
+			commands = new LinkedHashMap<>();
 		}
 		commands.put(nextCommandAddress, c);
-		nextCommandAddress+=getCommandSize();
-	}
-	private void setupBuiltins() {
-		builtins = new HashMap<>();
-		builtins.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
-		builtins.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
-		builtins.put("WH_EN", AbstractSomMemspace.WH_EN);
-		builtins.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
-		builtins.put("WH_COM", AbstractSomMemspace.WH_COM);
-		builtins.put("WH_DIR", AbstractSomMemspace.WH_DIR);
-		builtins.put("WH_SEL", AbstractSomMemspace.WH_SEL);
-		builtins.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
+		Integer currentOffset=nextCommandAddress.getAddressOffset();
+		if(currentOffset!=null) {
+			currentOffset=currentOffset.intValue()+getCommandSize();
+		}else {
+			currentOffset=getCommandSize();
+		}
+		nextCommandAddress.setAddressOffset(currentOffset.intValue());
 	}
 
-	private int recalculateN() {
-		int minN = Integer.MAX_VALUE;
-		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits() + heap;
-		int i = 0;
-		while (i < 10000 && minBitCount > Math.pow(2, n)) {
-			n++;
-			minBitCount = getFixedBitCount() + symbols.size() + getCommandBits() + heap;
-			if (minBitCount < getHighestTgtAddress() + 1) {
-				minBitCount = getHighestTgtAddress() + 1;
-			}
-		}
-		return n;
+	private void setupBuiltins() {
+		builtins = new HashMap<>();
+		builtins.put("ACC", new MemoryAddress(AbstractSomMemspace.ACC_ADDRESS));
+		builtins.put("ADR_EVAL",new MemoryAddress( AbstractSomMemspace.ADR_EVAL_ADDRESS));
+		builtins.put("WH_EN",new MemoryAddress( AbstractSomMemspace.WH_EN));
+		builtins.put("N",new MemoryAddress( AbstractSomMemspace.ADDRESS_SIZE_START));
+		builtins.put("WH_COM",new MemoryAddress( AbstractSomMemspace.WH_COM));
+		builtins.put("WH_DIR",new MemoryAddress( AbstractSomMemspace.WH_DIR));
+		builtins.put("WH_SEL",new MemoryAddress( AbstractSomMemspace.WH_SEL));
+		builtins.put("ADR",new MemoryAddress( AbstractSomMemspace.START_ADDRESS_START));
 	}
 
 	private boolean checkN() {
-		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits() + heap;
+		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits();
 		if (minBitCount < getHighestTgtAddress() + 1) {
 			minBitCount = getHighestTgtAddress() + 1;
 		}
@@ -125,15 +109,16 @@ public void setNextCommandAddress(int nextCommandAddress) {
 
 	private int getHighestTgtAddress() {
 		int high = 0;
-		for (Entry<Integer, Command> commandEntry : commands.entrySet()) {
-			int commandAddress = commandEntry.getKey().intValue();
+		for (Entry<MemoryAddress, Command> commandEntry : commands.entrySet()) {
+			MemoryAddress commandAddress = commandEntry.getKey();
 			Command command = commandEntry.getValue();
+			int commandAddressValue = commandAddress.resolve(this);
 			int commandTargetAddress = getCommandTargetAddress(command);
-			if(commandAddress>high) {
-				high=commandAddress;
+			if (commandAddressValue > high) {
+				high = commandAddressValue;
 			}
-			if(commandTargetAddress>high) {
-				high=commandTargetAddress;
+			if (commandTargetAddress > high) {
+				high = commandTargetAddress;
 			}
 		}
 		return high;
@@ -145,21 +130,18 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		Integer target = builtins.get(symbol);
-		if (target != null) {
-			return target.intValue();
+		MemoryAddress targetAddress = builtins.get(symbol);
+		if (targetAddress != null) {
+			return targetAddress.resolve(this);
 		}
-		if(symbols!=null) {
-			target = symbols.get(symbol);
-		}		
-		if (target != null) {
-			return target.intValue();
+		if (symbols != null) {
+			targetAddress = symbols.get(symbol);
 		}
-		target = Integer.parseInt(symbol);
-		if (target != null) {
-			return target.intValue();
+		if (targetAddress != null) {
+			return targetAddress.resolve(this);
 		}
-		return 0;
+		return Integer.parseInt(symbol);
+		
 	}
 
 	private int getCommandBits() {
@@ -180,37 +162,33 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	}
 
 	private String getNDirective() {
-		return String.format(";n = %d", recalculateN());
-	}
-
-	private String getHeapDirective() {
-		return String.format(";heap = %d", getHeapSize());
+		return String.format(";n = %d", n);
 	}
 
 	private String getStartDirective() {
-		return String.format(";start = %d", getStartAddress());
+		return String.format(";start = %s", getStartAdress().asHRASCode());
 	}
 
-	private String getContinueDirective(int continueAddress) {
-		return String.format(";continue = %d", continueAddress);
+	private String getContinueDirective(String string) {
+		return String.format(";continue = %s", string);
 	}
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, Integer> symbol : symbols.entrySet()) {
-			tmp.add(String.format("%s %d", symbol.getKey(), symbol.getValue().intValue()));
+		for (Entry<String, MemoryAddress> symbol : symbols.entrySet()) {
+			tmp.add(String.format("%s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
 		}
 		return tmp;
 	}
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<Integer, Command> c : commands.entrySet()) {
-			Integer address = c.getKey();
+		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
+			MemoryAddress address = c.getKey();
 			Command command = c.getValue();
 			MemoryAddress cooamndTgtAddress = command.getAddress();
-			tmp.add(String.format("%s%s%s %s[%d]", getContinueDirective(address.intValue()), System.lineSeparator(),
-					command.getOp(), cooamndTgtAddress.getSymbol(), cooamndTgtAddress.getAddressOffset()));
+			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
+					command.asHRASCode()));
 		}
 		return tmp;
 	}
@@ -218,8 +196,6 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getHeapDirective());
 		sb.append(System.lineSeparator());
 		sb.append(getStartDirective());
 		sb.append(System.lineSeparator());
@@ -235,15 +211,15 @@ public void setNextCommandAddress(int nextCommandAddress) {
 	}
 
 	public IMemspace compileToMemspace() {
-		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, recalculateN()));
-		mem.setN(recalculateN());
-		mem.setNextAddress(getStartAddress());
-		for (Entry<Integer, Command> c : commands.entrySet()) {
-			Integer address = c.getKey();
+		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
+		mem.setN(n);
+		mem.setNextAddress(getStartAdress().resolve(this));
+		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
+			MemoryAddress address = c.getKey();
 			Command command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
-			mem.setBit(address.intValue(), command.getOp().getBitValue());
-			mem.setBitsUnsigned(address.intValue() + 1, recalculateN(), cTgtAddress);
+			mem.setBit(address.resolve(this), command.getOp().getBitValue());
+			mem.setBitsUnsigned(address.resolve(this) + 1, n, cTgtAddress);
 		}
 		mem.setAccumulatorValue(true);
 		mem.setAdrEval(true);

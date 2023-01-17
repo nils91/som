@@ -25,7 +25,9 @@ public class Command {
 	public void setOp(Opcode op) {
 		this.op = op;
 	}
-
+public String asHRASCode() {
+	return String.format("%s %s", op,address.asHRASCode());
+}
 	
 	public Command() {
 		super();

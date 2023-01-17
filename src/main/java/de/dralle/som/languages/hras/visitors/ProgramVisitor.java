@@ -35,7 +35,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 
 	@Override
 	public HRASModel visitSymbol_dec(Symbol_decContext ctx) {
-		model.addSymbol(ctx.SYMBOL().toString(), ctx.int_or_symbol().accept(new MemoryAddressVisitor()).resolve(model));
+		model.addSymbol(ctx.SYMBOL().toString(), ctx.int_or_symbol().accept(new MemoryAddressVisitor()));
 		return model;
 	}
 
@@ -53,11 +53,11 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 		if (ctx.int_or_symbol() != null) {
 			MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
 			if (ctx.START() != null) {
-				model.setStartAdress(address.resolve(model));
+				model.setStartAdress(address);
 				model.setStartAddressExplicit(true);
-				model.setNextCommandAddress(model.getStartAddress());
+				model.setNextCommandAddress(model.getStartAdress());
 			} else if (ctx.CONT() != null) {
-				model.setNextCommandAddress(address.resolve(model));
+				model.setNextCommandAddress(address);
 			}
 		} else if (ctx.INT() != null) {
 			model.setN(Integer.parseInt(ctx.INT().getText()));

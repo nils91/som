@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dralle.som.languages.hra.model;
+package de.dralle.som.languages.hras.model;
 
 import de.dralle.som.Opcode;
 

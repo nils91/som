@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dralle.som.languages.hra.model;
+package de.dralle.som.languages.hras.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import de.dralle.som.SOMBitcodeRunner;
  * @author Nils
  *
  */
-public class HRAModel {
-	public HRAModel() {
+public class HRASModel {
+	public HRASModel() {
 		setupBuiltins();
 		symbols=new LinkedHashMap<>();
 	}

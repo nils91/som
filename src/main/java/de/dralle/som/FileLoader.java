@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.dralle.som.languages.hra.HRAParser;
-import de.dralle.som.languages.hra.model.HRAModel;
+import de.dralle.som.languages.hras.HRAParser;
+import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
  * @author Nils
@@ -30,16 +30,16 @@ public class FileLoader {
 	public FileLoader() {
 		c=new Compiler();
 	}
-	public HRAModel readHRAFile(String path) throws IOException {
+	public HRASModel readHRAFile(String path) throws IOException {
 		File f = new File(path);
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		HRAParser hp=new HRAParser();
-		HRAModel m = hp.parse(bis);
+		HRASModel m = hp.parse(bis);
 		bis.close();
 		return m;
 	}
-	public void writeHRAFile(HRAModel m ,String path) throws IOException {
+	public void writeHRAFile(HRASModel m ,String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);
 		BufferedWriter bis = new BufferedWriter(fis);

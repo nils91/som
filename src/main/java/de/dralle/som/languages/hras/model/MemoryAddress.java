@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dralle.som.languages.hra.model;
+package de.dralle.som.languages.hras.model;
 
 /**
  * @author Nils
@@ -22,7 +22,7 @@ public void setAddressOffset(int addressOffset) {
 	this.addressOffset = addressOffset;
 }
 private int addressOffset;
-public int resolve(HRAModel model) {
+public int resolve(HRASModel model) {
 	int address=model.resolveSymbolToAddress(symbol);
 	return address+addressOffset;
 }

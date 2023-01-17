@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dralle.som.languages.hra.generated.HRAGrammarBaseVisitor;
-import de.dralle.som.languages.hra.generated.HRAGrammarParser;
+import de.dralle.som.languages.hras.generated.HRAGrammarBaseVisitor;
+import de.dralle.som.languages.hras.generated.HRAGrammarParser;
 
 /**
  * @author Nils

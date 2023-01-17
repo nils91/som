@@ -6,7 +6,7 @@ package de.dralle.som;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dralle.som.languages.hra.model.HRAModel;
+import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
  * @author Nils
@@ -16,7 +16,7 @@ public class Compiler {
 	public IMemspace abStringToMemspace(String s) {
 		return abStringToMemspace(s.toCharArray());
 	}
-	public IMemspace compileHRAtoMemspace(HRAModel model) {
+	public IMemspace compileHRAtoMemspace(HRASModel model) {
 		return model.compileToMemspace();
 	}
 

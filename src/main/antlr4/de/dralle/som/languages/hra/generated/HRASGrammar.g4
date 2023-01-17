@@ -4,7 +4,7 @@ program : (NEWLINE? line)* EOF?;
 line: (directive|symbol_dec|command);
 symbol_dec: SYMBOL int_or_symbol;
 
-directive: SEMICOLON (D_N|START|CONT) EQ int_or_symbol;
+directive: SEMICOLON ((D_N EQ INT)|(START|CONT) EQ int_or_symbol);
 
 command: (NAR|NAW) int_or_symbol;
 

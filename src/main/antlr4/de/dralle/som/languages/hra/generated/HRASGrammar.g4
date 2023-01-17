@@ -1,4 +1,4 @@
-grammar HRAGrammar;
+grammar HRASGrammar;
 
 program : (NEWLINE? line)* EOF?;
 line: (directive|symbol_dec|command);

@@ -22,11 +22,11 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 
 	@Override
 	public HRASModel visitLine(LineContext ctx) {
-		if(ctx.symbol_dec()!=null) {
+		if (ctx.symbol_dec() != null) {
 			ctx.symbol_dec().accept(this);
-		}else if(ctx.directive()!=null) {
+		} else if (ctx.directive() != null) {
 			ctx.directive().accept(this);
-		}else if(ctx.command()!=null) {
+		} else if (ctx.command() != null) {
 			Command c = ctx.command().accept(new CommandVisitor());
 			model.addCommand(c);
 		}
@@ -41,26 +41,26 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 
 	@Override
 	public HRASModel visitProgram(ProgramContext ctx) {
-		model=new HRASModel();
+		model = new HRASModel();
 		for (LineContext line : ctx.line()) {
 			line.accept(this);
 		}
 		return model;
 	}
 
-
-
 	@Override
 	public HRASModel visitDirective(DirectiveContext ctx) {
-		MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
-		if(ctx.D_N()!=null) {
-			model.setN(address.resolve(model));		
-		}else if (ctx.START()!=null) {
-			model.setStartAdress(address.resolve(model));
-			model.setStartAddressExplicit(true);
-			model.setNextCommandAddress(model.getStartAddress());
-		}else if(ctx.CONT()!=null) {
-			model.setNextCommandAddress(address.resolve(model));
+		if (ctx.int_or_symbol() != null) {
+			MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
+			if (ctx.START() != null) {
+				model.setStartAdress(address.resolve(model));
+				model.setStartAddressExplicit(true);
+				model.setNextCommandAddress(model.getStartAddress());
+			} else if (ctx.CONT() != null) {
+				model.setNextCommandAddress(address.resolve(model));
+			}
+		} else if (ctx.INT() != null) {
+			model.setN(Integer.parseInt(ctx.INT().getText()));
 		}
 		return model;
 	}

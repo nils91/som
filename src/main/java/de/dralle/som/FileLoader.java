@@ -28,7 +28,7 @@ public class FileLoader {
 	public FileLoader() {
 		c=new Compiler();
 	}
-	public HRASModel readHRAFile(String path) throws IOException {
+	public HRASModel readHRASFile(String path) throws IOException {
 		File f = new File(path);
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);

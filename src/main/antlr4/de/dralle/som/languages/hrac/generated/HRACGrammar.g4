@@ -1,18 +1,20 @@
 grammar HRACGrammar;
 
 program : (NEWLINE? line)* EOF?;
-line: (directive|symbol_dec|command);
-symbol_dec: SYMBOL int_or_symbol;
+line: (directive|command|symbol_dec);
+symbol_dec: SYMBOL cnt_specify? (SYMBOL|builtins)?;
 
 directive: SEMICOLON HEAP EQ INT;
 
-command: (NAR|NAW) int_or_symbol;
+command: SYMBOL? (NAR|NAW) symbol_os;
 
-int_or_symbol:(INT|SYMBOL|builtins) offset_specify?;
+symbol_os:(SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
-builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|BI_N;
+cnt_specify:B_OPEN (INT) B_CLOSE;
+
+builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
 
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
@@ -22,6 +24,7 @@ WH_EN:'WH_EN';
 WH_COM:'WH_COM';
 WH_DIR:'WH_DIR';
 WH_SEL:'WH_SEL';
+HEAP_N:'HEAP';
 ADR:'ADR';
 NAR:'NAR';
 NAW:'NAW';

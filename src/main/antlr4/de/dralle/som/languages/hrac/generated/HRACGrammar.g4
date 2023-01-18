@@ -4,7 +4,7 @@ program : (NEWLINE? line)* EOF?;
 line: (directive|symbol_dec|command);
 symbol_dec: SYMBOL int_or_symbol;
 
-directive: SEMICOLON ((D_N EQ INT)|(START|CONT) EQ int_or_symbol);
+directive: SEMICOLON HEAP EQ INT;
 
 command: (NAR|NAW) int_or_symbol;
 
@@ -25,10 +25,8 @@ WH_SEL:'WH_SEL';
 ADR:'ADR';
 NAR:'NAR';
 NAW:'NAW';
-CONT:'continue'|'cont';
-START:'start';
+HEAP:'heap';
 BI_N:'N';
-D_N:'n';
 SYMBOL:[a-mo-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 NEG_INT: DASH INT;

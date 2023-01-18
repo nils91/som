@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser;
 
@@ -49,12 +51,19 @@ class GrammarExistenceTests {
 	}
 
 	@Test
-	void testHRAVisitorExistence() {
+	void testHRASVisitorExistence() {
 		assertNotNull(HRASGrammarBaseVisitor.class);
 	}
 	@Test
-	void testHRAParserExistence() {
+	void testHRASParserExistence() {
 		assertNotNull(HRASGrammarParser.class);
+	}@Test
+	void testHRACVisitorExistence() {
+		assertNotNull(HRACGrammarBaseVisitor.class);
+	}
+	@Test
+	void testHRACParserExistence() {
+		assertNotNull(HRACGrammarParser.class);
 	}
 
 }

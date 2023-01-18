@@ -44,7 +44,7 @@ class BitcodeRunnerExecuteHRASTests {
 
 	@Test
 	void testReturnCode0() throws IOException {
-		HRASModel model = f.readHRAFile("test/fixtures/hras/minimal_return0.hras");
+		HRASModel model = f.readHRASFile("test/fixtures/hras/minimal_return0.hras");
 		IMemspace memspace = c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -52,7 +52,7 @@ class BitcodeRunnerExecuteHRASTests {
 
 	@Test
 	void testReturnCode1() throws IOException {
-		HRASModel model = f.readHRAFile("test/fixtures/hras/minimal_return1.hras");
+		HRASModel model = f.readHRASFile("test/fixtures/hras/minimal_return1.hras");
 		IMemspace memspace = c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
@@ -61,7 +61,7 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		HRASModel model =f.readHRAFile("test/fixtures/hras/test_nar.hras");
+		HRASModel model =f.readHRASFile("test/fixtures/hras/test_nar.hras");
 		IMemspace memspace=c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
@@ -72,7 +72,7 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		HRASModel model =f.readHRAFile("test/fixtures/hras/test_naw.hras");
+		HRASModel model =f.readHRASFile("test/fixtures/hras/test_naw.hras");
 		IMemspace memspace=c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -83,7 +83,7 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
-		HRASModel model =f.readHRAFile("test/fixtures/hras/test_invert_with_nand.hras");
+		HRASModel model =f.readHRASFile("test/fixtures/hras/test_invert_with_nand.hras");
 		IMemspace memspace=c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -93,7 +93,7 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
-		HRASModel model =f.readHRAFile("test/fixtures/hras/test_read_with_nand.hras");
+		HRASModel model =f.readHRASFile("test/fixtures/hras/test_read_with_nand.hras");
 		IMemspace memspace=c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -103,7 +103,7 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {
-		HRASModel model =f.readHRAFile("test/fixtures/hras/test_write_with_nand.hras");
+		HRASModel model =f.readHRASFile("test/fixtures/hras/test_write_with_nand.hras");
 		IMemspace memspace=c.compileHRAStoMemspace(model);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());

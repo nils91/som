@@ -24,6 +24,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
@@ -43,11 +44,11 @@ class FormatHRASFileWriteTests {
 
 	private static Path tmpPath;
 	private static Path tmpPathWithHRAS;
-	private static Path testFixturesABPath;
+	private static Path testFixturesHRASPath;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		testFixturesABPath = Paths.get("test", "fixtures", "ab");
+		testFixturesHRASPath = Paths.get("test", "fixtures", "ab");
 		tmpPath = Paths.get("test", "tmp", FormatHRASFileWriteTests.class.getName());
 		tmpPathWithHRAS = Paths.get(tmpPath.toString(), "bin");
 		Files.createDirectories(tmpPathWithHRAS);
@@ -74,85 +75,138 @@ class FormatHRASFileWriteTests {
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	void testLoadSuccess(File file) throws IOException {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
-			HRASModel m = f.readHRAFile(file.getPath());
+			HRASModel m = f.readHRASFile(file.getPath());
 			assertNotNull(m);
 		}
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	void testCompileSuccess(File file) throws IOException {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
-			HRASModel m = f.readHRAFile(file.getPath());
+			HRASModel m = f.readHRASFile(file.getPath());
 			IMemspace nm = m.compileToMemspace();
 			assertNotNull(nm);
 		}
 	}
-
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
-	void testConvertSuccessContentEqual(File file) throws IOException {
+	@MethodSource("filesHRASFixturesInFolder")
+	void testCompileSuccessExecute(File file) throws IOException {
 		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			byte[] ba = c.memspaceToByteArray(m);
-			IMemspace nm = c.byteArrayToMemspace(ba);
-			assertTrue(m.equalContent(nm));
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace nm = m.compileToMemspace();
+			assertNotNull(nm);
+			SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) nm);
+			runner.execute();
 		}
 	}
-
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
+	void testCompileTwiceContentEqual(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace nm = m.compileToMemspace();
+			IMemspace nm2 = m.compileToMemspace();
+			assertTrue(nm.equalContent(nm2));
+		}
+	}@ParameterizedTest
+	@MethodSource("filesHRASFixturesInFolder")
+	void testCompileTwiceFromFileContentEqual(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			HRASModel m2 = f.readHRASFile(fileName);
+			IMemspace nm = m.compileToMemspace();
+			IMemspace nm2 = m2.compileToMemspace();
+			assertTrue(nm.equalContent(nm2));
+		}
+	}
+	@ParameterizedTest
+	@MethodSource("filesHRASFixturesInFolder")
+	void testCompileFromModelOutputContentEqual(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			String hrasCode = m.asCode();
+			HRASParser p = new HRASParser();
+			HRASModel m2 = p.parse(hrasCode);
+			IMemspace nm = m.compileToMemspace();
+			IMemspace nm2 = m2.compileToMemspace();
+			assertTrue(nm.equalContent(nm2));
+		}
+	}
+	@ParameterizedTest
+	@MethodSource("filesHRASFixturesInFolder")
+	void testCompileFromModelOutput(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			String hrasCode = m.asCode();
+			HRASParser p = new HRASParser();
+			HRASModel m2 = p.parse(hrasCode);
+			IMemspace nm2 = m2.compileToMemspace();
+			assertNotNull(nm2);
+		}
+	}
+	@ParameterizedTest
+	@MethodSource("filesHRASFixturesInFolder")
 	void testConvertAndWriteSuccess(File file) throws IOException {
 		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace mem = c.compileHRAStoMemspace(m);
 			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
+			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			assertTrue(Paths.get(tmpPathWithHRAS.toString(), newFileName).toFile().exists());
 		}
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	void testConvertAndWriteSuccessLoadSuccess(File file) throws IOException {
-		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
+	
+			String fileName = file.getName();
+			if (fileName.endsWith("hras")) {
+				HRASModel m = f.readHRASFile(file.getPath());
+				IMemspace mem = c.compileHRAStoMemspace(m);
+				String newFileName = fileName + ".bin";
+				f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			assertNotNull(nm);
 		}
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	void testConvertAndWriteSuccessLoadSuccessContenEqual(File file) throws IOException {
 		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace mem = c.compileHRAStoMemspace(m);
 			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
+			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
-			assertTrue(m.equalContent(nm));
+			assertTrue(mem.equalContent(nm));
 		}
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	@Timeout(300)
 	void testConvertAndWriteSuccessLoadSuccessCanExecute(File file) throws IOException {
 		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace mem = c.compileHRAStoMemspace(m);
 			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
+			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) nm);
 			runner.execute();
@@ -160,23 +214,24 @@ class FormatHRASFileWriteTests {
 	}
 
 	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
+	@MethodSource("filesHRASFixturesInFolder")
 	@Timeout(600)
 	void testConvertAndWriteSuccessLoadSuccessCanExecuteSameResult(File file) throws IOException {
 		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+		if (fileName.endsWith("hras")) {
+			HRASModel m = f.readHRASFile(file.getPath());
+			IMemspace mem = c.compileHRAStoMemspace(m);
 			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
+			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAS.toString(), newFileName).toString());
 			SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) nm);
-			SOMBitcodeRunner runner2 = new SOMBitcodeRunner((ISomMemspace) m);
+			SOMBitcodeRunner runner2 = new SOMBitcodeRunner((ISomMemspace) mem);
 			assertEquals(runner.execute(), runner2.execute());
 		}
 	}
 
-	private static Stream<File> filesABFixturesInFolder() {
-		return Stream.of(testFixturesABPath.toFile().listFiles());
+	private static Stream<File> filesHRASFixturesInFolder() {
+		return Stream.of(testFixturesHRASPath.toFile().listFiles());
 	}
 
 }

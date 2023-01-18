@@ -48,9 +48,9 @@ class FormatHRASFileWriteTests {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		testFixturesHRASPath = Paths.get("test", "fixtures", "ab");
+		testFixturesHRASPath = Paths.get("test", "fixtures", "hras");
 		tmpPath = Paths.get("test", "tmp", FormatHRASFileWriteTests.class.getName());
-		tmpPathWithHRAS = Paths.get(tmpPath.toString(), "bin");
+		tmpPathWithHRAS = Paths.get(tmpPath.toString(), "hras");
 		Files.createDirectories(tmpPathWithHRAS);
 	}
 
@@ -122,7 +122,7 @@ class FormatHRASFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
 			HRASModel m = f.readHRASFile(file.getPath());
-			HRASModel m2 = f.readHRASFile(fileName);
+			HRASModel m2 = f.readHRASFile(file.getPath());
 			IMemspace nm = m.compileToMemspace();
 			IMemspace nm2 = m2.compileToMemspace();
 			assertTrue(nm.equalContent(nm2));

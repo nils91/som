@@ -9,16 +9,12 @@ import de.dralle.som.Opcode;
  * @author Nils
  *
  */
-public class Command {
+public class HRACCommand {
+	private HRACSymbol label;
 	private Opcode op;
-	private MemoryAddress address;
+	private HRACMemoryAddress target;
 	
-	public MemoryAddress getAddress() {
-		return address;
-	}
-	public void setAddress(MemoryAddress address) {
-		this.address = address;
-	}
+
 	public Opcode getOp() {
 		return op;
 	}
@@ -26,14 +22,14 @@ public class Command {
 		this.op = op;
 	}
 public String asHRASCode() {
-	return String.format("%s %s", op,address.asHRASCode());
+	return String.format("%s %s", op,address.asHRACCode());
 }
 	
 	@Override
 public String toString() {
 	return asHRASCode();
 }
-	public Command() {
+	public HRACCommand() {
 		super();
 	}
 }

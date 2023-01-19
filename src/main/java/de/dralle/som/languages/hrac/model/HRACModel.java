@@ -19,19 +19,19 @@ import de.dralle.som.ISomMemspace;
  * @author Nils
  *
  */
-public class HRASModel {
-	public HRASModel() {
+public class HRACModel {
+	public HRACModel() {
 		setupBuiltins();
 		symbols = new LinkedHashMap<>();
 	}
 
-	private MemoryAddress nextCommandAddress;
+	private HRACMemoryAddress nextCommandAddress;
 
-	public MemoryAddress getNextCommandAddress() {
+	public HRACMemoryAddress getNextCommandAddress() {
 		return nextCommandAddress;
 	}
 
-	public void setNextCommandAddress(MemoryAddress nextCommandAddress) {
+	public void setNextCommandAddress(HRACMemoryAddress nextCommandAddress) {
 		this.nextCommandAddress = nextCommandAddress;
 	}
 
@@ -41,14 +41,14 @@ public class HRASModel {
 		this.n = n;
 	}
 
-	public void setStartAdress(MemoryAddress startAdress) {
+	public void setStartAdress(HRACMemoryAddress startAdress) {
 		this.startAdress = startAdress;
 	}
 
 	
 
-	private MemoryAddress startAdress;
-	public MemoryAddress getStartAdress() {
+	private HRACMemoryAddress startAdress;
+	public HRACMemoryAddress getStartAdress() {
 		return startAdress;
 	}
 
@@ -62,41 +62,21 @@ public class HRASModel {
 		this.startAddressExplicit = startAddressExplicit;
 	}
 	
-	private Map<String, MemoryAddress> symbols;
-	private Map<String, MemoryAddress> builtins;
-	private Map<MemoryAddress, Command> commands;
+	private List<HRACSymbol> symbols;
+	private List<HRACCommand> commands;
 
-	public void addSymbol(String name, MemoryAddress value) {
+	public void addSymbol(HRACSymbol symbol) {
 		if (symbols == null) {
-			symbols = new LinkedHashMap<>();
+			symbols = new ArrayList<>();
 		}
-		symbols.put(name, value);
+		symbols.add(symbol);
 	}
 
-	public void addCommand(Command c) {
+	public void addCommand(HRACCommand c) {
 		if (commands == null) {
-			commands = new LinkedHashMap<>();
+			commands = new ArrayList<>();
 		}
-		commands.put(nextCommandAddress.clone(), c);
-		Integer currentOffset=nextCommandAddress.getAddressOffset();
-		if(currentOffset!=null) {
-			currentOffset=currentOffset.intValue()+getCommandSize();
-		}else {
-			currentOffset=getCommandSize();
-		}
-		nextCommandAddress.setAddressOffset(currentOffset.intValue());
-	}
-
-	private void setupBuiltins() {
-		builtins = new HashMap<>();
-		builtins.put("ACC", new MemoryAddress(AbstractSomMemspace.ACC_ADDRESS));
-		builtins.put("ADR_EVAL",new MemoryAddress( AbstractSomMemspace.ADR_EVAL_ADDRESS));
-		builtins.put("WH_EN",new MemoryAddress( AbstractSomMemspace.WH_EN));
-		builtins.put("N",new MemoryAddress( AbstractSomMemspace.ADDRESS_SIZE_START));
-		builtins.put("WH_COM",new MemoryAddress( AbstractSomMemspace.WH_COM));
-		builtins.put("WH_DIR",new MemoryAddress( AbstractSomMemspace.WH_DIR));
-		builtins.put("WH_SEL",new MemoryAddress( AbstractSomMemspace.WH_SEL));
-		builtins.put("ADR",new MemoryAddress( AbstractSomMemspace.START_ADDRESS_START));
+		commands.add(c);
 	}
 
 	private boolean checkN() {
@@ -109,9 +89,9 @@ public class HRASModel {
 
 	private int getHighestTgtAddress() {
 		int high = 0;
-		for (Entry<MemoryAddress, Command> commandEntry : commands.entrySet()) {
-			MemoryAddress commandAddress = commandEntry.getKey();
-			Command command = commandEntry.getValue();
+		for (Entry<HRACMemoryAddress, HRACCommand> commandEntry : commands.entrySet()) {
+			HRACMemoryAddress commandAddress = commandEntry.getKey();
+			HRACCommand command = commandEntry.getValue();
 			int commandAddressValue = commandAddress.resolve(this);
 			int commandTargetAddress = getCommandTargetAddress(command);
 			if (commandAddressValue > high) {
@@ -124,13 +104,13 @@ public class HRASModel {
 		return high;
 	}
 
-	private int getCommandTargetAddress(Command c) {
+	private int getCommandTargetAddress(HRACCommand c) {
 		int tgtAdddress = c.getAddress().resolve(this);
 		return tgtAdddress;
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		MemoryAddress targetAddress = builtins.get(symbol);
+		HRACMemoryAddress targetAddress = builtins.get(symbol);
 		if (targetAddress != null) {
 			return targetAddress.resolve(this);
 		}
@@ -161,33 +141,25 @@ public class HRASModel {
 		return (int) (Math.pow(2, n) - getCommandSize());
 	}
 
-	private String getNDirective() {
-		return String.format(";n = %d", n);
-	}
-
-	private String getStartDirective() {
-		return String.format(";start = %s", getStartAdress().asHRASCode());
-	}
-
-	private String getContinueDirective(String string) {
-		return String.format(";continue = %s", string);
+	private String getHeapDirective() {
+		return String.format(";heap = %d", n);
 	}
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, MemoryAddress> symbol : symbols.entrySet()) {
-			tmp.add(String.format("%s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
+		for (Entry<String, HRACMemoryAddress> symbol : symbols.entrySet()) {
+			tmp.add(String.format("%s %s", symbol.getKey(), symbol.getValue().asHRACCode()));
 		}
 		return tmp;
 	}
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
-			MemoryAddress address = c.getKey();
-			Command command = c.getValue();
-			MemoryAddress cooamndTgtAddress = command.getAddress();
-			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
+		for (Entry<HRACMemoryAddress, HRACCommand> c : commands.entrySet()) {
+			HRACMemoryAddress address = c.getKey();
+			HRACCommand command = c.getValue();
+			HRACMemoryAddress cooamndTgtAddress = command.getAddress();
+			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRACCode()), System.lineSeparator(),
 					command.asHRASCode()));
 		}
 		return tmp;
@@ -214,9 +186,9 @@ public class HRASModel {
 		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
 		mem.setN(n);
 		mem.setNextAddress(getStartAdress().resolve(this));
-		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
-			MemoryAddress address = c.getKey();
-			Command command = c.getValue();
+		for (Entry<HRACMemoryAddress, HRACCommand> c : commands.entrySet()) {
+			HRACMemoryAddress address = c.getKey();
+			HRACCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
 			mem.setBit(address.resolve(this), command.getOp().getBitValue());
 			mem.setBitsUnsigned(address.resolve(this) + 1, n, cTgtAddress);

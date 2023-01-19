@@ -7,22 +7,23 @@ package de.dralle.som.languages.hrac.model;
  * @author Nils
  *
  */
-public class MemoryAddress implements Cloneable{
-	private String symbol;
+public class HRACMemoryAddress implements Cloneable{
+	private HRACSymbol symbol;
+	private Integer offset;
 
-	public MemoryAddress(int accAddress) {
-		this.symbol = accAddress + "";
+	public HRACMemoryAddress(HRACSymbol symbol) {
+		this.symbol = symbol;
 	}
 
-	public MemoryAddress() {
+	public HRACMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getSymbol() {
+	public HRACSymbol getSymbol() {
 		return symbol;
 	}
 
-	public void setSymbol(String symbol) {
+	public void setSymbol(HRACSymbol symbol) {
 		this.symbol = symbol;
 	}
 
@@ -36,7 +37,7 @@ public class MemoryAddress implements Cloneable{
 
 	private Integer addressOffset;
 
-	public int resolve(HRASModel model) {
+	public int resolve(HRACModel model) {
 		int address = model.resolveSymbolToAddress(symbol);
 		if(addressOffset==null) {
 			return address;
@@ -54,10 +55,10 @@ public class MemoryAddress implements Cloneable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj!=null&&obj instanceof MemoryAddress) {
-			boolean equal = symbol.equals(((MemoryAddress)obj).symbol);
+		if(obj!=null&&obj instanceof HRACMemoryAddress) {
+			boolean equal = symbol.equals(((HRACMemoryAddress)obj).symbol);
 			if(equal&&addressOffset!=null) {
-				return addressOffset.equals(((MemoryAddress)obj).addressOffset);
+				return addressOffset.equals(((HRACMemoryAddress)obj).addressOffset);
 			}
 			return equal;
 		}
@@ -66,12 +67,12 @@ public class MemoryAddress implements Cloneable{
 
 	@Override
 	public String toString() {
-		return asHRASCode();
+		return asHRACCode();
 	}
 
 	@Override
-	public MemoryAddress clone() {
-		MemoryAddress copy = new MemoryAddress();
+	public HRACMemoryAddress clone() {
+		HRACMemoryAddress copy = new HRACMemoryAddress();
 		copy.symbol=symbol;
 		if(addressOffset!=null) { 
 			copy.addressOffset=addressOffset.intValue();
@@ -79,11 +80,11 @@ public class MemoryAddress implements Cloneable{
 		return copy;
 	}
 
-	public String asHRASCode() {
-		if(addressOffset!=null) {
-			return String.format("%s[%d]", symbol,addressOffset);
+	public String asHRACCode() {
+		if(offset!=null) {
+			return String.format("%s[%d]", symbol.getName(),offset);
 		}else {
-			return symbol;
+			return symbol.getName();
 		}
 	}
 }

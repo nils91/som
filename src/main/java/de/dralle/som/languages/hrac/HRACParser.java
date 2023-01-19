@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarLexer;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser;
+import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.generated.HRASGrammarLexer;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
@@ -23,11 +24,11 @@ import de.dralle.som.languages.hras.visitors.ProgramVisitor;
  *
  */
 public class HRACParser {
-	public HRASModel parse(InputStream is) throws IOException {
+	public HRACModel parse(InputStream is) throws IOException {
 		HRACGrammarLexer lexer = new HRACGrammarLexer(new ANTLRInputStream(is));
 		HRACGrammarParser parser = new HRACGrammarParser(new CommonTokenStream(lexer));
 		ProgramContext pt = parser.program();
-		HRASModel model = pt.accept(new ProgramVisitor());
+		HRACModel model = pt.accept(new ProgramVisitor());
 		return model;
 	}
 	public HRASModel parse(String s) throws IOException {

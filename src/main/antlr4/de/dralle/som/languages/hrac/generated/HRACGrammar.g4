@@ -12,7 +12,7 @@ symbol_os:(SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
-cnt_specify:B_OPEN (INT) B_CLOSE;
+cnt_specify:B_OPEN (INT|BI_N) B_CLOSE;
 
 builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
 

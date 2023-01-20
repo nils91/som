@@ -4,6 +4,9 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext;
+import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
@@ -13,33 +16,33 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class MemoryAddressVisitor extends HRACGrammarBaseVisitor<MemoryAddress> {
+public class MemoryAddressVisitor extends HRACGrammarBaseVisitor<HRACMemoryAddress> {
 
-	private MemoryAddress address;
+	private HRACMemoryAddress address;
 
 	@Override
-	public MemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
-		if (ctx.NEG_INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.NEG_INT().getText()));
-		} else if (ctx.INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.INT().getText()));
+	public HRACMemoryAddress visitSymbol_os(Symbol_osContext ctx) {
+		address=new HRACMemoryAddress();
+		if(ctx.getChild(0)!=null) {
+			HRACSymbol s = new HRACSymbol();
+			s.setName(ctx.getChild(0).getText());
+			address.setSymbol(s);
+		}
+		if(ctx.offset_specify()!=null) {
+			ctx.offset_specify().accept(this);
 		}
 		return address;
 	}
 
 	@Override
-	public MemoryAddress visitInt_or_symbol(Int_or_symbolContext ctx) {
-		address = new MemoryAddress();
-		if (ctx.offset_specify() != null) {
-			ctx.offset_specify().accept(this);
+	public HRACMemoryAddress visitOffset_specify(
+			de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specifyContext ctx) {
+		if(ctx.getChild(1)!=null) {
+			address.setOffset(Integer.parseInt(ctx.getChild(1).getText()));
 		}
-		if (ctx.getChild(0) != null) {
-			address.setSymbol(ctx.getChild(0).getText());
-			return address;
-		}
-		return null;
+		return address;
 	}
 
-	
+
 
 }

@@ -2,7 +2,7 @@ grammar HRACGrammar;
 
 program : (NEWLINE? line)* EOF?;
 line: (directive|command|symbol_dec);
-symbol_dec: SYMBOL cnt_specify? (SYMBOL|builtins)?;
+symbol_dec: SYMBOL cnt_specify? symbol_os?;
 
 directive: SEMICOLON HEAP EQ INT;
 

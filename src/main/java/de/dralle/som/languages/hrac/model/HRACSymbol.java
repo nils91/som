@@ -9,7 +9,10 @@ package de.dralle.som.languages.hrac.model;
  */
 public class HRACSymbol {
 	private String name;
-	private String mirrorSymbol;
+	/**
+	 * Potential target symbol. Might be null.
+	 */
+	private HRACMemoryAddress targetSymbol;
 	private int bitCnt;
 	private boolean bitCntISN;
 	public String getName() {
@@ -18,11 +21,11 @@ public class HRACSymbol {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getMirrorSymbol() {
-		return mirrorSymbol;
+	public HRACMemoryAddress getTargetSymbol() {
+		return targetSymbol;
 	}
-	public void setMirrorSymbol(String mirrorSymbol) {
-		this.mirrorSymbol = mirrorSymbol;
+	public void setTargetSymbol(HRACMemoryAddress mirrorSymbol) {
+		this.targetSymbol = mirrorSymbol;
 	}
 	public int getBitCnt() {
 		return bitCnt;
@@ -44,8 +47,8 @@ public class HRACSymbol {
 	}else {
 		sb.append(String.format("[%d]", bitCnt));
 	}
-	if(mirrorSymbol!=null) {
-		sb.append(String.format(" %s", mirrorSymbol));
+	if(targetSymbol!=null) {
+		sb.append(String.format(" %s", targetSymbol));
 	}
 	return sb.toString();
 	}

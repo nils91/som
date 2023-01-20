@@ -27,6 +27,14 @@ public class HRACModel {
 	private Map<String, Integer> builtins;
 	
 	private int heapSize;
+	public int getHeapSize() {
+		return heapSize;
+	}
+
+	public void setHeapSize(int heapSize) {
+		this.heapSize = heapSize;
+	}
+
 	public HRACModel() {
 		setupBuiltins();
 		symbols = new ArrayList<>();
@@ -82,7 +90,7 @@ public class HRACModel {
 		int cnt = 0;
 		for (HRACSymbol s : symbols) {
 			if(isSymbolNameAllowed(s.getName())) {
-				if(s.getMirrorSymbol()==null) {
+				if(s.getTargetSymbol()==null) {
 					if(s.isBitCntISN()) {
 						cnt+=n;
 					}else {
@@ -185,12 +193,20 @@ public class HRACModel {
 		m.setNextCommandAddress(startAddress);
 		int nxtSymbolAddress=getFixedBitCount(n);
 		for (HRACSymbol s : symbols) {
-			if(s.getMirrorSymbol()==null) {
+			if(s.getTargetSymbol()==null) {
 				int address = nxtSymbolAddress;
-				nxtSymbolAddress+=s.getBitCnt();
+				if(s.isBitCntISN()) {
+					nxtSymbolAddress+=n;
+				}else {
+					nxtSymbolAddress+=s.getBitCnt();
+				}
 				m.addSymbol(s.getName(), new MemoryAddress(address));
 			}else {
-				m.addSymbol(s.getName(), new MemoryAddress(s.getMirrorSymbol()));
+				HRACMemoryAddress tgt = s.getTargetSymbol();
+				MemoryAddress tgHras=new MemoryAddress();
+				tgHras.setSymbol(tgt.getSymbol().getName());
+				tgHras.setAddressOffset(tgt.getOffset());
+				m.addSymbol(s.getName(), tgHras);
 			}
 		}
 		m.addSymbol("HEAP",new MemoryAddress(getHeapStartAddress(n)));

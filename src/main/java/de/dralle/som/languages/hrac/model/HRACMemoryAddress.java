@@ -11,6 +11,14 @@ public class HRACMemoryAddress implements Cloneable{
 	private HRACSymbol symbol;
 	private Integer offset;
 
+	public Integer getOffset() {
+		return offset;
+	}
+
+	public void setOffset(Integer offset) {
+		this.offset = offset;
+	}
+
 	public HRACMemoryAddress(HRACSymbol symbol) {
 		this.symbol = symbol;
 	}
@@ -27,28 +35,12 @@ public class HRACMemoryAddress implements Cloneable{
 		this.symbol = symbol;
 	}
 
-	public Integer getAddressOffset() {
-		return addressOffset;
-	}
 
-	public void setAddressOffset(Integer addressOffset) {
-		this.addressOffset = addressOffset;
-	}
-
-	private Integer addressOffset;
-
-	public int resolve(HRACModel model) {
-		int address = model.resolveSymbolToAddress(symbol);
-		if(addressOffset==null) {
-			return address;
-		}
-		return address + addressOffset;
-	}
 	@Override
 	public int hashCode() {
 		int hashc = symbol.hashCode();
-		if(addressOffset!=null) {
-			hashc+=addressOffset.hashCode();
+		if(offset!=null) {
+			hashc+=offset.hashCode();
 		}
 		return hashc;
 	}
@@ -57,8 +49,8 @@ public class HRACMemoryAddress implements Cloneable{
 	public boolean equals(Object obj) {
 		if(obj!=null&&obj instanceof HRACMemoryAddress) {
 			boolean equal = symbol.equals(((HRACMemoryAddress)obj).symbol);
-			if(equal&&addressOffset!=null) {
-				return addressOffset.equals(((HRACMemoryAddress)obj).addressOffset);
+			if(equal&&offset!=null) {
+				return offset.equals(((HRACMemoryAddress)obj).offset);
 			}
 			return equal;
 		}
@@ -74,8 +66,8 @@ public class HRACMemoryAddress implements Cloneable{
 	public HRACMemoryAddress clone() {
 		HRACMemoryAddress copy = new HRACMemoryAddress();
 		copy.symbol=symbol;
-		if(addressOffset!=null) { 
-			copy.addressOffset=addressOffset.intValue();
+		if(offset!=null) { 
+			copy.offset=offset.intValue();
 		}		
 		return copy;
 	}

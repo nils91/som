@@ -18,6 +18,10 @@ public class MemoryAddress implements Cloneable{
 		// TODO Auto-generated constructor stub
 	}
 
+	public MemoryAddress(String mirrorSymbol) {
+		this.symbol=mirrorSymbol;
+	}
+
 	public String getSymbol() {
 		return symbol;
 	}

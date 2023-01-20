@@ -36,4 +36,17 @@ public class HRACSymbol {
 	public void setBitCntISN(boolean bitCntISN) {
 		this.bitCntISN = bitCntISN;
 	}
+	public String asCode() {
+	StringBuilder sb=new StringBuilder();
+	sb.append(name);
+	if(bitCntISN) {
+		sb.append("[N]");
+	}else {
+		sb.append(String.format("[%d]", bitCnt));
+	}
+	if(mirrorSymbol!=null) {
+		sb.append(String.format(" %s", mirrorSymbol));
+	}
+	return sb.toString();
+	}
 }

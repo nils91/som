@@ -15,19 +15,36 @@ public class HRACCommand {
 	private HRACMemoryAddress target;
 	
 
+	public HRACSymbol getLabel() {
+		return label;
+	}
+	public void setLabel(HRACSymbol label) {
+		this.label = label;
+	}
+	public HRACMemoryAddress getTarget() {
+		return target;
+	}
+	public void setTarget(HRACMemoryAddress target) {
+		this.target = target;
+	}
 	public Opcode getOp() {
 		return op;
 	}
 	public void setOp(Opcode op) {
 		this.op = op;
 	}
-public String asHRASCode() {
-	return String.format("%s %s", op,address.asHRACCode());
+public String asCode() {
+	String code = "";
+	if(label!=null) {
+		code+=label.getName()+" ";
+	}
+	code+=op+" "+target.asHRACCode();
+	return code;
 }
 	
 	@Override
 public String toString() {
-	return asHRASCode();
+	return asCode();
 }
 	public HRACCommand() {
 		super();

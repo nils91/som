@@ -73,7 +73,7 @@ public class HRASModel {
 		symbols.put(name, value);
 	}
 
-	public void addCommand(Command c) {
+	public MemoryAddress addCommand(Command c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
@@ -85,6 +85,7 @@ public class HRASModel {
 			currentOffset=getCommandSize();
 		}
 		nextCommandAddress.setAddressOffset(currentOffset.intValue());
+		return nextCommandAddress.clone();
 	}
 
 	private void setupBuiltins() {
@@ -229,5 +230,15 @@ public class HRASModel {
 	@Override
 	public String toString() {
 		return asCode();
+	}
+
+	public void setStartAdress(int startAdress2) {
+		setStartAdress(new MemoryAddress(startAdress2));
+		
+	}
+
+	public void setNextCommandAddress(int startAdress2) {
+		setNextCommandAddress(new MemoryAddress(startAdress2));
+		
 	}
 }

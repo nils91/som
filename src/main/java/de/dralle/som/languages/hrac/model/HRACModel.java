@@ -14,15 +14,35 @@ import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hras.model.MemoryAddress;
 
 /**
  * @author Nils
  *
  */
 public class HRACModel {
+	
+	private Map<String, Integer> builtins;
+	
+	private int heapSize;
 	public HRACModel() {
 		setupBuiltins();
-		symbols = new LinkedHashMap<>();
+		symbols = new ArrayList<>();
+		commands=new ArrayList<>();
+	}
+	
+	private void setupBuiltins() {
+		builtins = new HashMap<>();
+		builtins.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
+		builtins.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
+		builtins.put("WH_EN", AbstractSomMemspace.WH_EN);
+		builtins.put("N",AbstractSomMemspace.ADDRESS_SIZE_START);
+		builtins.put("WH_COM",AbstractSomMemspace.WH_COM);
+		builtins.put("WH_DIR",AbstractSomMemspace.WH_DIR);
+		builtins.put("WH_SEL",AbstractSomMemspace.WH_SEL);
+		builtins.put("ADR",AbstractSomMemspace.START_ADDRESS_START);
 	}
 
 	private HRACMemoryAddress nextCommandAddress;
@@ -35,32 +55,11 @@ public class HRACModel {
 		this.nextCommandAddress = nextCommandAddress;
 	}
 
-	private int n;
 
-	public void setN(int n) {
-		this.n = n;
+	public int getStartAdress(int n) {
+		return (int) Math.pow(2, n)-getCommandBitCount(n);
 	}
 
-	public void setStartAdress(HRACMemoryAddress startAdress) {
-		this.startAdress = startAdress;
-	}
-
-	
-
-	private HRACMemoryAddress startAdress;
-	public HRACMemoryAddress getStartAdress() {
-		return startAdress;
-	}
-
-	boolean startAddressExplicit;
-
-	public boolean isStartAddressExplicit() {
-		return startAddressExplicit;
-	}
-
-	public void setStartAddressExplicit(boolean startAddressExplicit) {
-		this.startAddressExplicit = startAddressExplicit;
-	}
 	
 	private List<HRACSymbol> symbols;
 	private List<HRACCommand> commands;
@@ -78,98 +77,92 @@ public class HRACModel {
 		}
 		commands.add(c);
 	}
-
-	private boolean checkN() {
-		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits();
-		if (minBitCount < getHighestTgtAddress() + 1) {
-			minBitCount = getHighestTgtAddress() + 1;
-		}
-		return Math.pow(2, n) <= minBitCount;
-	}
-
-	private int getHighestTgtAddress() {
-		int high = 0;
-		for (Entry<HRACMemoryAddress, HRACCommand> commandEntry : commands.entrySet()) {
-			HRACMemoryAddress commandAddress = commandEntry.getKey();
-			HRACCommand command = commandEntry.getValue();
-			int commandAddressValue = commandAddress.resolve(this);
-			int commandTargetAddress = getCommandTargetAddress(command);
-			if (commandAddressValue > high) {
-				high = commandAddressValue;
-			}
-			if (commandTargetAddress > high) {
-				high = commandTargetAddress;
+	
+	private int getSymbolBitCnt(int n) {
+		int cnt = 0;
+		for (HRACSymbol s : symbols) {
+			if(isSymbolNameAllowed(s.getName())) {
+				if(s.getMirrorSymbol()==null) {
+					if(s.isBitCntISN()) {
+						cnt+=n;
+					}else {
+						cnt+=s.getBitCnt();
+					}
+				}					
 			}
 		}
-		return high;
+			return cnt;
+	}
+	private boolean isSymbolNameAllowed(String name) {
+		return !builtins.containsKey(name)&&!"HEAP".equals(name);
 	}
 
-	private int getCommandTargetAddress(HRACCommand c) {
-		int tgtAdddress = c.getAddress().resolve(this);
-		return tgtAdddress;
+	private boolean checkN(int n) {
+		int minBitCnt=getFixedBitCount(n)+getSymbolBitCnt(n)+heapSize+getCommandBitCount(n);
+		return minBitCnt<= Math.pow(2, n);
 	}
+	private int findN() {
+		int n=0;
+		do {
+			n++;
+		}while(!checkN(n));
+		return n;
+	}
+	
 
-	public int resolveSymbolToAddress(String symbol) {
-		HRACMemoryAddress targetAddress = builtins.get(symbol);
+	
+	public int resolveBuiltinToAddress(String symbol, int n) {
+		Integer targetAddress = builtins.get(symbol);
 		if (targetAddress != null) {
-			return targetAddress.resolve(this);
+			return targetAddress;
 		}
-		if (symbols != null) {
-			targetAddress = symbols.get(symbol);
+		if(symbol.equals("HEAP")) {
+			return getHeapStartAddress(n);
 		}
-		if (targetAddress != null) {
-			return targetAddress.resolve(this);
-		}
-		return Integer.parseInt(symbol);
-		
+		return -1;
+	}
+	
+	private int getHeapStartAddress(int n) {
+		return getFixedBitCount(n)+getSymbolBitCnt(n);
 	}
 
-	private int getCommandBits() {
-		int commandSize = getCommandSize();
+	private int getCommandBitCount(int n) {
+		int commandSize = getCommandSize(n);
 		return commands.size() * commandSize;
 	}
 
-	private int getCommandSize() {
+	private int getCommandSize(int n) {
 		return 1 + n;
 	}
 
-	private int getFixedBitCount() {
+	private int getFixedBitCount(int n) {
 		return 11 + n;
 	}
 
-	private int getExitAddress() {
-		return (int) (Math.pow(2, n) - getCommandSize());
-	}
-
 	private String getHeapDirective() {
-		return String.format(";heap = %d", n);
+		return String.format(";heap = %d", heapSize);
 	}
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, HRACMemoryAddress> symbol : symbols.entrySet()) {
-			tmp.add(String.format("%s %s", symbol.getKey(), symbol.getValue().asHRACCode()));
+		for (HRACSymbol symbol : symbols) {
+			tmp.add(String.format("%s", symbol.asCode()));
 		}
 		return tmp;
 	}
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<HRACMemoryAddress, HRACCommand> c : commands.entrySet()) {
-			HRACMemoryAddress address = c.getKey();
-			HRACCommand command = c.getValue();
-			HRACMemoryAddress cooamndTgtAddress = command.getAddress();
-			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRACCode()), System.lineSeparator(),
-					command.asHRASCode()));
+		for (HRACCommand c : commands) {
+			
+			tmp.add(String.format("%s", c.asCode()));
 		}
 		return tmp;
 	}
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getStartDirective());
+		sb.append(getHeapDirective());
 		sb.append(System.lineSeparator());
 		for (String symbolString : getSymbolsAsStrings()) {
 			sb.append(symbolString);
@@ -182,20 +175,37 @@ public class HRACModel {
 		return sb.toString();
 	}
 
-	public IMemspace compileToMemspace() {
-		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
-		mem.setN(n);
-		mem.setNextAddress(getStartAdress().resolve(this));
-		for (Entry<HRACMemoryAddress, HRACCommand> c : commands.entrySet()) {
-			HRACMemoryAddress address = c.getKey();
-			HRACCommand command = c.getValue();
-			int cTgtAddress = getCommandTargetAddress(command);
-			mem.setBit(address.resolve(this), command.getOp().getBitValue());
-			mem.setBitsUnsigned(address.resolve(this) + 1, n, cTgtAddress);
+	public HRASModel compileToHRAS() {
+		HRASModel m = new HRASModel();
+		int n=findN();
+		m.setN(n);
+		m.setStartAddressExplicit(true);
+		int startAddress=getStartAdress(n);
+		m.setStartAdress(startAddress);
+		m.setNextCommandAddress(startAddress);
+		int nxtSymbolAddress=getFixedBitCount(n);
+		for (HRACSymbol s : symbols) {
+			if(s.getMirrorSymbol()==null) {
+				int address = nxtSymbolAddress;
+				nxtSymbolAddress+=s.getBitCnt();
+				m.addSymbol(s.getName(), new MemoryAddress(address));
+			}else {
+				m.addSymbol(s.getName(), new MemoryAddress(s.getMirrorSymbol()));
+			}
 		}
-		mem.setAccumulatorValue(true);
-		mem.setAdrEval(true);
-		return mem;
+		m.addSymbol("HEAP",new MemoryAddress(getHeapStartAddress(n)));
+		for (HRACCommand c : commands) {
+			Command hrasc = new Command();
+			hrasc.setOp(c.getOp());
+			MemoryAddress address = new MemoryAddress(c.getTarget().getSymbol().getName());
+			address.setAddressOffset(c.getTarget().getOffset());
+			hrasc.setAddress(address);
+			MemoryAddress assignedAddress=m.addCommand(hrasc);
+			if(c.getLabel()!=null) {
+				m.addSymbol(c.getLabel().getName(), assignedAddress);
+			}
+		}
+		return m;
 	}
 
 	@Override

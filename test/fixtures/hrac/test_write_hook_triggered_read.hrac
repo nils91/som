@@ -1,0 +1,12 @@
+#110 0 0001 (acc is set, ard eval set, wh en not set, address 5)
+;n=6
+#101 11010 //other wh bits set, address is 26
+;start=36
+#0000 //filler
+#1 00001 //reset adr eval
+NAW ADR_EVAL
+#set whcom whsel
+NAW WH_COM
+NAW WH_SEL
+#1 00010 // set wh en
+NAW WH_EN

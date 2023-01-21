@@ -1,0 +1,9 @@
+#1 100 0001 //ACC is set, ADR-EVAL is set, WH will not be used, N is 5 (offset of 4)
+;n=5
+#000 1 1010 //WH bits will not be used, address is twenty
+;start=20
+#0000 1 000 //start here (2nd nibble), NAW one (reset  ADR_EVAL to not loop)
+#01 
+NAW ADR_EVAL
+#1 0 000 0 //from bit 3, NAW zero (invert accumulator)
+NAW ACC

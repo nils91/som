@@ -1,12 +1,10 @@
 #1 100 0011 //ACC is set, ADR-EVAL is set, WH will not be used, N is 7 (offset of 4)
-;n=7
 #000 1 0010 //WH bits will not be used, address is 72
 #00
-;start=64
 #1 //this bit shall be read into the accumulator, address I8 (OOI OOIO). Will be set by one of the first commands
-TR 18
+TR
 #0 //helper bit, at I9 (OOI OOII)
-H 19
+H
 #0000 
 #0000 0000
 #0000 0000

@@ -1,7 +1,5 @@
 #110 0 0011 (acc is set, ard eval set, wh en not set, address 7)
-;n=7
 #111 01100 00//all wh bits set, address is 48
-;start=24
 #00 00000 00000 00 0000 0000 0000 0000//filler
 #1 0000001 //reset adr eval
 NAW ADR_EVAL

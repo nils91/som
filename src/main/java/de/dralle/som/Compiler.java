@@ -6,6 +6,7 @@ package de.dralle.som;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
@@ -13,6 +14,9 @@ import de.dralle.som.languages.hras.model.HRASModel;
  *
  */
 public class Compiler {
+	public HRASModel compileHRACtoHRAS(HRACModel m) {
+		return m.compileToHRAS();
+	}
 	public IMemspace abStringToMemspace(String s) {
 		return abStringToMemspace(s.toCharArray());
 	}

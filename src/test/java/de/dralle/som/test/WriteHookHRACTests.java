@@ -23,7 +23,7 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.WriteHookManager;
-import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.test.util.TestWriteHook;
 
 /**
@@ -72,8 +72,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_not_triggered.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_not_triggered.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -83,8 +83,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_write.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_write.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -94,8 +94,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_read.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_read.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -106,8 +106,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_write.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_write.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -117,8 +117,8 @@ class WriteHookHRACTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_write_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_write_101.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -128,8 +128,8 @@ class WriteHookHRACTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_nonew.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_nonew.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -138,8 +138,8 @@ class WriteHookHRACTests {
 	@Test
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_nonew.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_nonew.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -151,8 +151,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -161,8 +161,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
@@ -171,8 +171,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
@@ -184,8 +184,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_101.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
@@ -194,8 +194,8 @@ class WriteHookHRACTests {
 
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_101.hrac");
+		IMemspace m = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });

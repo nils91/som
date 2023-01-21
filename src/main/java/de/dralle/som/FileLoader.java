@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dralle.som.languages.hrac.HRACParser;
+import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 
@@ -37,7 +39,23 @@ public class FileLoader {
 		bis.close();
 		return m;
 	}
-	public void writeHRAFile(HRASModel m ,String path) throws IOException {
+	public void writeHRASFile(HRASModel m ,String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+		bis.write(m.asCode());
+		bis.close();
+	}
+	public HRACModel readHRACFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		HRACParser hp=new HRACParser();
+		HRACModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+	public void writeHRACFile(HRACModel m ,String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);
 		BufferedWriter bis = new BufferedWriter(fis);

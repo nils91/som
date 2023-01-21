@@ -27,11 +27,11 @@ public class HRACParser {
 	public HRACModel parse(InputStream is) throws IOException {
 		HRACGrammarLexer lexer = new HRACGrammarLexer(new ANTLRInputStream(is));
 		HRACGrammarParser parser = new HRACGrammarParser(new CommonTokenStream(lexer));
-		ProgramContext pt = parser.program();
-		HRACModel model = pt.accept(new ProgramVisitor());
+		de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext pt = parser.program();
+		HRACModel model = pt.accept(new de.dralle.som.languages.hrac.visitors.ProgramVisitor());
 		return model;
 	}
-	public HRASModel parse(String s) throws IOException {
+	public HRACModel parse(String s) throws IOException {
 		return parse(new ByteArrayInputStream(s.getBytes()));
 	}
 }

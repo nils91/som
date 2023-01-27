@@ -18,8 +18,8 @@ One of the bits is fixed (its always at position 0 and called the accumulator), 
 
 ## som bitcode
 
-The opcode is followed by n bits denoting the memory address to make one command. Once the execution of one command is complete, execution will resume at the next command.
-The accumulator lays in the regular address space, and it can be written to/read from like every other address. The accumulator address is always 0.
+Each command is made from the opcode followed by the address. The opcode is one bit and the address is n bits in size. Once the execution of one command is complete, execution will resume at the next command, except if the `ADR_EVAL` bit is set (at position 1), in which case execution will resume at the address set by the n bits at position 11 and following. For the positions of this and other special bits refer to the table `basic memory layout` below.
+The accumulator bit at position 0 is a special bit used by the `NAW` and `NAR` commands, which read respectively write to it.
 Bits 1-7 contain n as an unsigned int. The next bit is the `ADR_EVAL` bit, followed by n address bits. If the `ADR_EVAL` bit is set, the address bits will be evaluated and execution will continue at that address.
 The next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the write hook direction bit `WH_DIR`, 3rd is the global write hook communication bit (`WH_COM`), 4th is the write hook selection bit (`WH_SEL`). 
 Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
@@ -36,7 +36,7 @@ bit | name | code |
 8|writehook communication bit|`WH_COM`|
 9|writehook direction|`WH_DIR`|
 10|writehook select|`WH_SEL`|
-11+|next jump target address|`ADR[[0-(N-1)]]`
+11+|next jump target address (n bits)|`ADR[[0-(N-1)]]`
 
 ### write hooks
 

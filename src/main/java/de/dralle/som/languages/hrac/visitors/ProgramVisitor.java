@@ -49,6 +49,8 @@ public class ProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 	public HRACModel visitDirective(de.dralle.som.languages.hrac.generated.HRACGrammarParser.DirectiveContext ctx) {
 		if (ctx.HEAP() != null) {
 			model.setHeapSize(Integer.parseInt(ctx.INT().getText()));
+		}else if (ctx.D_N()!=null){
+			model.setMinimumN(Integer.parseInt(ctx.INT().getText()));
 		}
 		return model;
 	}

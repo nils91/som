@@ -102,15 +102,18 @@ Gives the start address. (Only once per file)
    Continue writing at a given address. Does not change program execution.
 - Symbols:
 Symbols are placeholders for memory addresses. They can be used within commands. They can also be used for the `start` and `continue` directives.
-	- Symbols can be defined by writing the symbol name followed by an address.
+	- Symbols can be defined by writing the symbol name followed by an address:
 	```A 42```
-	- Symbols  can be defined using other symbols.
+	- Symbols  can be defined using other symbols:
 	```B A```
-	- Symbols can be used within commands.
+	- Symbols can be used within commands:
 	```NAR A```
-	- When using symbols, a address offset can be used.
-	```NAR A[42]```
-	```B A[42]``` 
+	- When using symbols, a address offset can be used:
+	`NAR A[42]`
+	`B A[42]`
+	- There are built-in symbols. For these see the table 'basic memory layout'.
+- Commands
+	- Available commands are`NAW` and `NAR`. Both can be used with symbols or memory addresses.
 	
 	
 ### Language features hrac

@@ -92,6 +92,27 @@ That program is equivalent to above bitcode example. The same in hrac would only
 
 ### Language features hras
 
+- Directives:
+ Directives start with a semicolon (`;`) and are hints for the compiler. hras supports the following directives:
+	- `;n=<value>`
+   Value for N. (Only once per file)
+	- `;start=<value>`
+Gives the start address. (Only once per file)
+	- `;continue=<value>`
+   Continue writing at a given address. Does not change program execution.
+- Symbols:
+Symbols are placeholders for memory addresses. They can be used within commands. They can also be used for the `start` and `continue` directives.
+	- Symbols can be defined by writing the symbol name followed by an address.
+	```A 42```
+	- Symbols  can be defined using other symbols.
+	```B A```
+	- Symbols can be used within commands.
+	```NAR A```
+	- When using symbols, a address offset can be used.
+	```NAR A[42]```
+	```B A[42]``` 
+	
+	
 ### Language features hrac
 
 ### SOM simplified (.hrb)

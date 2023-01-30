@@ -27,6 +27,15 @@ public class HRACModel {
 	private Map<String, Integer> builtins;
 	
 	private int heapSize;
+	private int minimumN;
+	public int getMinimumN() {
+		return minimumN;
+	}
+
+	public void setMinimumN(int minimumN) {
+		this.minimumN = minimumN;
+	}
+
 	public int getHeapSize() {
 		return heapSize;
 	}
@@ -52,17 +61,6 @@ public class HRACModel {
 		builtins.put("WH_SEL",AbstractSomMemspace.WH_SEL);
 		builtins.put("ADR",AbstractSomMemspace.START_ADDRESS_START);
 	}
-
-	private HRACMemoryAddress nextCommandAddress;
-
-	public HRACMemoryAddress getNextCommandAddress() {
-		return nextCommandAddress;
-	}
-
-	public void setNextCommandAddress(HRACMemoryAddress nextCommandAddress) {
-		this.nextCommandAddress = nextCommandAddress;
-	}
-
 
 	public int getStartAdress(int n) {
 		return (int) Math.pow(2, n)-getCommandBitCount(n);
@@ -106,6 +104,9 @@ public class HRACModel {
 	}
 
 	private boolean checkN(int n) {
+		if(n<minimumN) {
+			return false;
+		}
 		int minBitCnt=getFixedBitCount(n)+getSymbolBitCnt(n)+heapSize+getCommandBitCount(n);
 		return minBitCnt<= Math.pow(2, n);
 	}
@@ -150,7 +151,9 @@ public class HRACModel {
 	private String getHeapDirective() {
 		return String.format(";heap = %d", heapSize);
 	}
-
+	private String getNDirective() {
+		return String.format(";n = %d", minimumN);
+	}
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
 		for (HRACSymbol symbol : symbols) {
@@ -170,6 +173,8 @@ public class HRACModel {
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(getNDirective());
+		sb.append(System.lineSeparator());
 		sb.append(getHeapDirective());
 		sb.append(System.lineSeparator());
 		for (String symbolString : getSymbolsAsStrings()) {

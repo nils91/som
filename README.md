@@ -20,9 +20,7 @@ One of the bits is fixed (its always at position 0 and called the accumulator), 
 
 Each command is made from the opcode followed by the address. The opcode is one bit and the address is n bits in size. Once the execution of one command is complete, execution will resume at the next command, except if the `ADR_EVAL` bit is set (at position 1), in which case execution will resume at the address set by the n bits at position 11 and following. For the positions of this and other special bits refer to the table `basic memory layout` below.
 The accumulator bit at position 0 is a special bit used by the `NAW` and `NAR` commands, which read respectively write to it.
-Bits 1-7 contain n as an unsigned int. The next bit is the `ADR_EVAL` bit, followed by n address bits. If the `ADR_EVAL` bit is set, the address bits will be evaluated and execution will continue at that address.
-The next 4 bits are the write hook bits. The first one is the global write hook trigger bit (`WH_TRG`), 2nd is the write hook direction bit `WH_DIR`, 3rd is the global write hook communication bit (`WH_COM`), 4th is the write hook selection bit (`WH_SEL`). 
-Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. So, to exit at any point, jump to n^2-(1+n). If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
+Each command is n+1 bits long. The first bit of each command is the opcode bit (see above), the remaining n bits are a memory address. The program will terminate, when execution reaches the end of the file with exactly 0 bits left. If the accumulator bit is 1 at the time the program exits normally, a return code of 0 will be returned, otherwise 1.
 In order to perform a jump to a memory address, write the address to the address bits and set `ADR_EVAL` to 1. Don´t forget to clear `ADR_EVAL` after the jump.
 
 ### basic memory layout
@@ -48,23 +46,26 @@ If `WH_SEL` is one, when the write hook is triggered, the currently loaded write
 
 - Notes on implementation
   
-### Example (outdated)
+### Example
 
-Note: For readability each command is written as a new line and commented. Comments are not supported within the bitcode.
+Note: For readability each command is written as a new line and commented. Comments are not really supported within the bitcode.
 
 ```
-0			//accumulator
-00001		//n=5
-01011		//startaddress=11
-10 00000	//NAND ACC. This has the effect of inverting the accumulator bit.
-11 11001	//CJMP 25.
+1 //ACC is set
+1 //ADR_EVAL is set
+0 //WH_EN is set
+00001 //N is 5 (offset of 4)
+000 //WH bits (WH_COM, WH_SEL and WH_DIR) will not be used
+11010 //(Start-)Address is 26 and will be continued at because ADR_EVAL is set
+0000000000 //unused bits
+1 00001 //Address 26 starts here. Command is NAW one (Address one is ADR_EVAL, this needs to be cleared to prevent the program from being stuck on address 26)
 ```
 
 Each bit not explicitly written in the file is 0. The file is 2^n bits in size.
 
-## SOM language (possibly outdated)
+## SOM language
 
-SOM language comes in different flavors, .hra, .hrb and .hrc. .hra is just as slightly more human readable version of the bitcode, while .hrb and .hrc are human readable assembly languages. .hrc is a more complex version of .hrb. .hrb programs can also be interpreted as .hrc.
+SOM language comes in different flavors to make the bitcode more accessible.
 
 ## Formats
 
@@ -72,7 +73,7 @@ SOM bitcode can be used in several formats.
 
 ### Ascii binary (.ab)
 
-The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example is a valid program in ascii binary (its outdated).  Comments are not really supported, but since all characters other than 0 or 1 are ignored, it is still possible to comment as long the 0 or 1 characters are not used.
+The ascii binary format is a format where the bits are the characters '0' and '1'. Every other character is ignored. Above example is a valid program in ascii binary.  Comments are not really supported, but since all characters other than 0 or 1 are ignored, it is still possible to comment as long the 0 or 1 characters are not used.
 
 ### Binary (.bin)
 
@@ -80,16 +81,18 @@ Same thing as ascii binary, but instead of characters the bits are actual bits. 
 
 ### SOM bitlanguage (.hra)
 
-The bitlanguage replaces the opcode bits with human-readable letter codes. The file only contains the commands, the compiler handles the accumulator bits. N is specified at the top of the file as `N 5`. hra also allows the `ACC` and `EXIT` symbols in place of addresses. The start address can be set with `START [N]`, but doesn´t have to, in which case it is calculated automatically (and is subsequently available as a symbol). Additional symbols are the ones given in above table `basic memory layout`. It is also possible to define own symbols: `SYMBOL [VALUE]`. Symbols can also be accessed as arrays: `SYMBOL[0]` would be the same as `SYMBOL` and point to `[VALUE]`, while `SYMBOL[1]` would point to `[VALUE]+1`. Comments are supported, but only as line comments starting with `'#'`. The following is a valid .hra program: (TODO: outdated, needs update)
-
+The bitlanguage replaces the opcode bits with human-readable letter codes. There are 2 versions of .hra: .hras and .hrac. In hras memory addresses still need to be written, while in hrac the compiller allocates the addresses used. The file only contains the commands, the compiler handles the accumulator bits. N is specified at the top of the file as `;n=5`. hra also allows  symbols in place of addresses. Builtin are the ones outlined in the table basic memory layout, more can be definded by the user. The start address can be set with `;start=26`. Comments are supported, but only as line comments starting with `'#'`. The following is a valid .hras program:
 ```
 ;n=5
-;start=11
-NAND ACC
-CJMP EXIT
+;start=26
+NAW ADR_EVAL
 ```
 
-That program is equivalent to above bitcode example.
+That program is equivalent to above bitcode example. The same in hrac would only need to contain the command (`NAW ADR_EVAL`), n and the start address are calculated automatically.
+
+### Language features hras
+
+### Language features hrac
 
 ### SOM simplified (.hrb)
 

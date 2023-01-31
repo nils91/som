@@ -118,6 +118,29 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	
 ### Language features hrac
 
+- Directives:
+ Directives start with a semicolon (`;`) and are hints for the compiler. hras supports the following directives:
+	- `;n=<value>`
+   Minimum value for N. N will be calculated automatically. (Optional) 
+	- `;heap=<value>`
+Minimum number of additional unused bytes to be included.
+- Symbols:
+Symbols are placeholders for memory addresses. They can be used within commands. The memory address for each symbol will be calculated automatically.
+	- Symbols can be defined by writing just the symbol name:
+	```A```
+	- Arrays of symbols can be defined:
+	```A[10]```
+	- Symbols  can be defined using other symbols:
+	```B A```
+	- Symbols can be used within commands:
+	```NAR A```
+	- When using symbols, a address offset can be used:
+	`NAR A[4]`
+	`B A[4]`
+	- There are built-in symbols. For these see the table 'basic memory layout'.
+- Commands
+	- Available commands are`NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
+	
 ### SOM simplified (.hrb)
 
 ### SOM language (.hrc)

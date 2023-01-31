@@ -134,9 +134,14 @@ public class FileLoader {
 		File f = new File(path);
 		String name = f.getName();
 		for (SOMFormats format : SOMFormats.values()) {
-			if (name.endsWith(format.getFileExtensionString())) {
-				return loadFile(format, path);
+			String[] possibleFileExtensions = format.getFileExtensionString();
+			for (int i = 0; i < possibleFileExtensions.length; i++) {
+				String string = possibleFileExtensions[i];
+				if (name.endsWith(string)) {
+					return loadFile(format, path);
+				}
 			}
+			
 		}
 		throw new UnsupportedOperationException("Unknown format");
 	}

@@ -113,7 +113,7 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	`B A[42]`
 	- There are built-in symbols. For these see the table 'basic memory layout'.
 - Commands
-	- Available commands are`NAW` and `NAR`. Both can be used with symbols or memory addresses.
+	- Available commands are `NAW` and `NAR`. Both can be used with symbols or memory addresses.
 	
 	
 ### Language features hrac

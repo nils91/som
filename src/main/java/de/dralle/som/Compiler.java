@@ -38,18 +38,7 @@ public class Compiler {
 		}
 		return null;
 	}
-	private Object compileFromString(String source,SOMFormats sourceFormat) throws IOException{
-		if(sourceFormat.equals(SOMFormats.HRAC)){
-			return new HRACParser().parse(source);
-		}
-		if(sourceFormat.equals(SOMFormats.HRAS)){
-			return new HRASParser().parse(source);
-		}
-		if(sourceFormat.equals(SOMFormats.AB)){
-			return abStringToMemspace((String) source);
-		}
-		return null;
-	}
+	
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}

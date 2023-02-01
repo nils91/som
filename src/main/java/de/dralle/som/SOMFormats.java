@@ -5,12 +5,15 @@ package de.dralle.som;
 
 import java.util.List;
 
+import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASModel;
+
 /**
  * @author Nils
  *
  */
 public enum SOMFormats {
-	AB("ascii binary","ab"),BIN("binary","bin"),HRAS("human readable SOM Type A Simple","hras"),HRAC("human readable SOM Type A Complex","hrac",new String[]{"hra","hrac"});
+	AB(IMemspace.class,"ascii binary","ab"),BIN(IMemspace.class,"binary","bin"),HRAS(HRASModel.class,"human readable SOM Type A Simple","hras"),HRAC(HRACModel.class,"human readable SOM Type A Complex","hrac",new String[]{"hra","hrac"});
 
 	private String friendlyName;
 	private String shortName;
@@ -32,17 +35,24 @@ public enum SOMFormats {
 	public String[] getFileExtensionString() {
 		return fileExtensions;
 	}
+	
+	private Class<?> internalClazz;
 
 	
-	private SOMFormats(String friendlyName, String shortName) {
-		this(friendlyName,shortName,shortName);
+	public Class<?> getInternalClazz() {
+		return internalClazz;
 	}
-	private SOMFormats(String friendlyName, String shortName,String fileExt) {
-		this(friendlyName,shortName,new String[] {fileExt});
+
+	private SOMFormats(Class<?> internalClazz,String friendlyName, String shortName) {
+		this(internalClazz,friendlyName,shortName,shortName);
 	}
-	private SOMFormats(String friendlyName, String shortName,String[] fileExts) {
+	private SOMFormats(Class<?> internalClazz,String friendlyName, String shortName,String fileExt) {
+		this(internalClazz,friendlyName,shortName,new String[] {fileExt});
+	}
+	private SOMFormats(Class<?> internalClazz,String friendlyName, String shortName,String[] fileExts) {
 		this.fileExtensions=fileExts;
 		this.friendlyName=friendlyName;
 		this.shortName=shortName;
+		this.internalClazz=internalClazz;
 	}
 }

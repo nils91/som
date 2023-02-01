@@ -3,10 +3,17 @@
  */
 package de.dralle.som;
 
+import java.io.IOException;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
+import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
@@ -14,6 +21,35 @@ import de.dralle.som.languages.hras.model.HRASModel;
  *
  */
 public class Compiler {
+
+	private List<SOMCompilePath<?, ?>> compilePaths;
+	private Object compile(Object sourceModel,SOMFormats sourceFormat,SOMFormats targetFormat){
+		if(sourceFormat.equals(SOMFormats.HRAC)&&targetFormat.equals(SOMFormats.HRAS)){
+			return compileHRACtoHRAS((HRACModel) sourceModel);
+		}
+		if(sourceFormat.equals(SOMFormats.HRAS)&&targetFormat.equals(SOMFormats.BIN)){
+			return compileHRAStoMemspace((HRASModel) sourceModel);
+		}
+		if(sourceFormat.equals(SOMFormats.BIN)&&targetFormat.equals(SOMFormats.AB)){
+			return memSpaceToABString((IMemspace) sourceModel);
+		}
+		if(sourceFormat.equals(SOMFormats.AB)&&targetFormat.equals(SOMFormats.BIN)){
+			return abStringToMemspace((String) sourceModel);
+		}
+		return null;
+	}
+	private Object compileFromString(String source,SOMFormats sourceFormat) throws IOException{
+		if(sourceFormat.equals(SOMFormats.HRAC)){
+			return new HRACParser().parse(source);
+		}
+		if(sourceFormat.equals(SOMFormats.HRAS)){
+			return new HRASParser().parse(source);
+		}
+		if(sourceFormat.equals(SOMFormats.AB)){
+			return abStringToMemspace((String) source);
+		}
+		return null;
+	}
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}

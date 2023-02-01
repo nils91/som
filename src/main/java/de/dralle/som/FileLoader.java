@@ -122,39 +122,20 @@ public class FileLoader {
 		bis.close();
 	}
 
-	/**
-	 * Will use the file extension as format. Throws UnsupportedOperationException
-	 * if unknown or not implemented yet.
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	public IMemspace loadFile(String path) throws IOException {
-		File f = new File(path);
-		String name = f.getName();
+	
+	public SOMFormats getFormatFromFilename(String name) {
 		for (SOMFormats format : SOMFormats.values()) {
 			String[] possibleFileExtensions = format.getFileExtensionString();
 			for (int i = 0; i < possibleFileExtensions.length; i++) {
 				String string = possibleFileExtensions[i];
 				if (name.endsWith(string)) {
-					return loadFile(format, path);
+					return format;
 				}
 			}
 			
 		}
-		throw new UnsupportedOperationException("Unknown format");
+		return null;
 	}
 
-	public IMemspace loadFile(SOMFormats format, String path) throws IOException {
-		switch (format) {
-		case BIN:
-			return loadBinaryFile(path);
-		case AB:
-			return loadAsciiBinaryFile(path);
-		default:
-			throw new UnsupportedOperationException("Format " + format + " not implemented yet");
-		}
-		// return null;
-	}
+	
 }

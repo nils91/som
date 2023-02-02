@@ -12,7 +12,9 @@ import java.util.Map.Entry;
 
 import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.ByteArrayMemspace;
+import de.dralle.som.IHeap;
 import de.dralle.som.IMemspace;
+import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.languages.hras.model.Command;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -22,7 +24,8 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class HRACModel {
+public class HRACModel implements ISetN,IHeap
+{
 	
 	private Map<String, Integer> builtins;
 	
@@ -233,4 +236,22 @@ public class HRACModel {
 	public String toString() {
 		return asCode();
 	}
+
+	@Override
+	/**
+	 * Returns the N calculatedx for this Model.
+	 */
+	public int getN() {
+		return findN();
+	}
+
+	@Override
+	/**
+	 * Sets the minimum value for N.
+	 */
+	public void setN(int n) {
+		setMinimumN(n);
+		
+	}
+
 }

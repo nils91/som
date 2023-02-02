@@ -13,13 +13,14 @@ import java.util.Map.Entry;
 import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
+import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 
 /**
  * @author Nils
  *
  */
-public class HRASModel {
+public class HRASModel implements ISetN{
 	public HRASModel() {
 		setupBuiltins();
 		symbols = new LinkedHashMap<>();
@@ -240,5 +241,10 @@ public class HRASModel {
 	public void setNextCommandAddress(int startAdress2) {
 		setNextCommandAddress(new MemoryAddress(startAdress2));
 		
+	}
+
+	@Override
+	public int getN() {
+		return n;
 	}
 }

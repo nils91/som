@@ -98,6 +98,7 @@ public class Main {
 				//Can be executed
 				int exitCode=0;
 				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
+				if(t)
 				boolean execSuccess = runner.execute();
 				if(verbose) {
 					System.out.println("Program successfull: "+execSuccess);
@@ -113,6 +114,17 @@ public class Main {
 				}
 				System.exit(exitCode);
 			}
+		}
+		if(compile) {
+			Object sourceModel = new FileLoader().loadFromFile(infile, inputFormat);
+			if(n>-1&&sourceModel instanceof ISetN) {
+				((ISetN)sourceModel).setN(n);
+			}
+			if(heap>0&&sourceModel instanceof IHeap) {
+				((IHeap)sourceModel).setHeapSize(heap);
+			}
+			Object targetModel = new Compiler().compile(sourceModel, inputFormat, outputFormat);
+			new FileLoader().writeToFile(targetModel, outputFormat, outfile);
 		}
 	}
 

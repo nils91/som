@@ -165,58 +165,7 @@ public class Main {
 		}
 	}
 
-	private static void runProgramFromFile(String inputFile, boolean verbose) throws IOException {
-		File f = new File(inputFile);
-		if (verbose) {
-			System.out.println("File: " + f);
-			System.out.println("File exist: " + f.exists());
-		}
-		List<Boolean> bits = new ArrayList<>();
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		int r = 0;
-		while ((r = br.read()) != -1) {
-			switch ((char) r) {
-			case '0':
-				bits.add(false);
-				break;
-			case '1':
-				bits.add(true);
-				break;
-			default:
-				break;
-			}
-		}
-		br.close();
-		runProgramFromBitList(bits,verbose);
-	}
-
-	private static void runProgramFromBitList(List<Boolean> bits, boolean verbose) {
-		Compiler c=new Compiler();
-		IMemspace memspace = c.booleanListToMemspace(bits);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		boolean execSuccess = runner.execute();
-		System.out.println("Program successfull: "+execSuccess);
-		if(execSuccess) {
-			System.exit(0);
-		}else {
-			System.exit(1);
-		}
-	}
-
-	private static int getAsUnsignedInt(List<Boolean> subList) {
-		return getAsUnsignedInt(subList.toArray(new Boolean[subList.size()]));
-	}
-
-	private static int getAsUnsignedInt(Boolean[] array) {
-		int n = 0;
-		for (int i = 0; i < array.length; i++) {
-			if (array[i]) {
-				n += Math.pow(2, array.length - i - 1);
-			}
-		}
-		return n;
-	}
-
+	
 	private static Options setupCliOptions() {
 		Options options = new Options();
 		options.addOption("v", "version", false, "Display the version");
@@ -230,7 +179,7 @@ public class Main {
 		options.addOption(null, "compile", false, "Compile a file");
 		options.addOption(null, "heap", true, "Force the use of a heap");
 		options.addOption("n"		, "n", true, "Set a minimum value for N");
-		options.addOption(null		, "timeout", true, "Timeout after <value> milliseconds");
+		options.addOption(null		, "timeout", true, "Timeout after <value> in seconds");
 		return options;
 	}
 }

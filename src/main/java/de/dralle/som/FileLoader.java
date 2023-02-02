@@ -179,7 +179,7 @@ public class FileLoader {
 			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
 			String result = s.hasNext() ? s.next() : "";
 			s.close();
-			return new Compiler().abStringToMemspace((String) result);
+			return result;
 		}
 		if (sourceFormat.equals(SOMFormats.BIN)) {
 			List<Byte> bytes = new ArrayList<>();
@@ -223,9 +223,8 @@ public class FileLoader {
 			out.write(str);
 		}
 		if (format.equals(SOMFormats.AB)) {
-			IMemspace m = (IMemspace) obj;
-			String str = new Compiler().memSpaceToABString(m);
-			out.write(str);
+			String m = (String) obj;
+			out.write(m);
 		}
 		return out;
 	}
@@ -253,6 +252,9 @@ public class FileLoader {
 	}
 
 	public SOMFormats getFormatFromFilename(String name) {
+		if(name==null) {
+			return null;
+		}
 		for (SOMFormats format : SOMFormats.values()) {
 			String[] possibleFileExtensions = format.getFileExtensionString();
 			for (int i = 0; i < possibleFileExtensions.length; i++) {

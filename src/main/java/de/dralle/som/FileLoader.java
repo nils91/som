@@ -137,11 +137,11 @@ public class FileLoader {
 		bis.close();
 	}
 
-	private Object loadFromString(String source, SOMFormats sourceFormat) throws IOException {
+	public Object loadFromString(String source, SOMFormats sourceFormat) throws IOException {
 		return loadFromInputStream(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)), sourceFormat);
 	}
 
-	private Object loadFromFile(File f, SOMFormats sourceFormat) throws IOException {
+	public Object loadFromFile(File f, SOMFormats sourceFormat) throws IOException {
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		Object obj = loadFromInputStream(bis, sourceFormat);
@@ -149,15 +149,26 @@ public class FileLoader {
 		return obj;
 	}
 
-	private Object loadFromPath(Path p, SOMFormats sourceFormat) throws IOException {
+	public Object loadFromPath(Path p, SOMFormats sourceFormat) throws IOException {
 		return loadFromFile(p.toFile(), sourceFormat);
 	}
 
-	private Object loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
+	public Object loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
 		return loadFromFile(new File(path), sourceFormat);
 	}
+	public Object loadFromFile(File f) throws IOException {
+		return loadFromFile(f,getFormatFromFilename(f.getName()));
+	}
 
-	private Object loadFromInputStream(InputStream source, SOMFormats sourceFormat) throws IOException {
+	public Object loadFromPath(Path p ) throws IOException {
+		return loadFromFile(p.toFile());
+	}
+
+	public Object loadFromFile(String path) throws IOException {
+		return loadFromFile(new File(path));
+	}
+
+	public Object loadFromInputStream(InputStream source, SOMFormats sourceFormat) throws IOException {
 		if (sourceFormat.equals(SOMFormats.HRAC)) {
 			return new HRACParser().parse(source);
 		}
@@ -182,7 +193,7 @@ public class FileLoader {
 		return null;
 	}
 
-	private OutputStream writeToOutputStream(Object obj, SOMFormats format, OutputStream out) throws IOException {
+	public OutputStream writeToOutputStream(Object obj, SOMFormats format, OutputStream out) throws IOException {
 		if (format.equals(SOMFormats.BIN)) {
 			IMemspace m = (IMemspace) obj;
 			byte[] arr = new Compiler().memspaceToByteArray(m);
@@ -199,7 +210,7 @@ public class FileLoader {
 		}
 	}
 
-	private OutputStreamWriter writeToOutputWriter(Object obj, SOMFormats format, OutputStreamWriter out)
+	public OutputStreamWriter writeToOutputWriter(Object obj, SOMFormats format, OutputStreamWriter out)
 			throws IOException {
 		if (format.equals(SOMFormats.HRAC)) {
 			HRACModel m = (HRACModel) obj;
@@ -219,7 +230,7 @@ public class FileLoader {
 		return out;
 	}
 
-	private String writeToString(Object obj, SOMFormats format) throws IOException {
+	public String writeToString(Object obj, SOMFormats format) throws IOException {
 		OutputStream os = new ByteArrayOutputStream();
 		os = writeToOutputStream(obj, format, os);
 		os.close();
@@ -227,17 +238,17 @@ public class FileLoader {
 
 	}
 
-	private File writeToFile(Object obj, SOMFormats format, File f) throws IOException {
+	public File writeToFile(Object obj, SOMFormats format, File f) throws IOException {
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
 		OutputStream os = writeToOutputStream(obj, format, bis);
 		os.close();
 		return f;
 	}
-	private File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
+	public File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
 		return writeToFile(obj, format, p.toFile());
 	}
-	private File writeToFile(Object obj, SOMFormats format,String filePath) throws IOException {
+	public File writeToFile(Object obj, SOMFormats format,String filePath) throws IOException {
 		return writeToFile(obj, format, Paths.get(filePath));
 	}
 
@@ -246,7 +257,7 @@ public class FileLoader {
 			String[] possibleFileExtensions = format.getFileExtensionString();
 			for (int i = 0; i < possibleFileExtensions.length; i++) {
 				String string = possibleFileExtensions[i];
-				if (name.endsWith(string)) {
+				if (name.toLowerCase().endsWith(string.toLowerCase())) {
 					return format;
 				}
 			}

@@ -60,7 +60,7 @@ public class Main {
 		}
 		String outfile =null;
 		if (cmd.hasOption("outfile")) {
-			infile = cmd.getOptionValue("outfile");
+			outfile = cmd.getOptionValue("outfile");
 		}
 		String informat = null;
 		if (cmd.hasOption("informat")) {
@@ -70,8 +70,49 @@ public class Main {
 		if (cmd.hasOption("outformat")) {
 			outformat = cmd.getOptionValue("outformat");
 		}
-		if (cmd.hasOption("run")) {
-			runProgramFromFile(infile, verbose);
+		int to=0;
+		if (cmd.hasOption("timeout")) {
+			to=Integer.parseInt(cmd.getOptionValue("timeout"));
+		}
+		boolean compile=cmd.hasOption("compile");
+		boolean run=cmd.hasOption("run");
+		int heap=0;
+		if (cmd.hasOption("heap")) {
+			heap=Integer.parseInt(cmd.getOptionValue("heap"));
+		}
+		int n=-1;
+		if (cmd.hasOption("n")) {
+			n=Integer.parseInt(cmd.getOptionValue("n"));
+		}
+		SOMFormats inputFormat=new FileLoader().getFormatFromFilename(informat);
+		SOMFormats outputFormat=new FileLoader().getFormatFromFilename(outformat);
+		if(inputFormat==null) {
+			inputFormat=new FileLoader().getFormatFromFilename(infile);
+		}
+		if(outputFormat==null) {
+			outputFormat=new FileLoader().getFormatFromFilename(outfile);
+		}
+		if(run) {
+			Object model = new FileLoader().loadFromFile(infile, inputFormat);
+			if(model instanceof IMemspace) {
+				//Can be executed
+				int exitCode=0;
+				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
+				boolean execSuccess = runner.execute();
+				if(verbose) {
+					System.out.println("Program successfull: "+execSuccess);
+				}
+				if(execSuccess) {
+					exitCode=0;
+				}else {
+					exitCode=1;
+				}
+				if(outfile!=null) {
+					ISomMemspace memAfterExec = runner.getMemspace();
+					new FileLoader().writeToFile(memAfterExec, outputFormat, outfile);
+				}
+				System.exit(exitCode);
+			}
 		}
 	}
 
@@ -150,6 +191,9 @@ public class Main {
 		options.addOption("of", "outformat", true, "Output file format");
 		options.addOption(null, "run", false, "Run a file");
 		options.addOption(null, "compile", false, "Compile a file");
+		options.addOption(null, "heap", true, "Force the use of a heap");
+		options.addOption("n"		, "n", true, "Set a minimum value for N");
+		options.addOption(null		, "timeout", true, "Timeout after <value> milliseconds");
 		return options;
 	}
 }

@@ -9,6 +9,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -96,10 +103,28 @@ public class Main {
 			Object model = new FileLoader().loadFromFile(infile, inputFormat);
 			if(model instanceof IMemspace) {
 				//Can be executed
-				int exitCode=0;
+				int exitCode=0;				
+				if(n>-1&&model instanceof ISetN) {
+					((ISetN)model).setN(n);
+				}
 				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
-				if(t)
-				boolean execSuccess = runner.execute();
+				boolean execSuccess = false;
+				if(to>0) {
+					ExecutorService runnerExecutor = Executors.newSingleThreadExecutor();
+					Callable<Boolean> runnerCallable=() ->{
+						return runner.execute();
+					};
+					Future<Boolean> runnerFuture=runnerExecutor.submit(runnerCallable);
+					try {
+						execSuccess=runnerFuture.get(to, TimeUnit.SECONDS);
+					} catch (InterruptedException | ExecutionException | TimeoutException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else {
+					execSuccess=runner.execute();
+				}
+				
 				if(verbose) {
 					System.out.println("Program successfull: "+execSuccess);
 				}

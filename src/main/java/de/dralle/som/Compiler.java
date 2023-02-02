@@ -21,8 +21,6 @@ import de.dralle.som.languages.hras.model.HRASModel;
  *
  */
 public class Compiler {
-
-	private List<SOMCompilePath<?, ?>> compilePaths;
 	private Object compile(Object sourceModel,SOMFormats sourceFormat,SOMFormats targetFormat){
 		if(sourceFormat.equals(SOMFormats.HRAC)&&targetFormat.equals(SOMFormats.HRAS)){
 			return compileHRACtoHRAS((HRACModel) sourceModel);

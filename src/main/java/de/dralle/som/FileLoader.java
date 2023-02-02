@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -219,18 +220,25 @@ public class FileLoader {
 	}
 
 	private String writeToString(Object obj, SOMFormats format) throws IOException {
-		OutputStream os=new ByteArrayOutputStream();
-		os=writeToOutputStream(obj, format, os);
+		OutputStream os = new ByteArrayOutputStream();
+		os = writeToOutputStream(obj, format, os);
 		os.close();
 		return os.toString();
 
 	}
-	private String writeToStr(Object obj, SOMFormats format) throws IOException {
-		OutputStream os=new ByteArrayOutputStream();
-		os=writeToOutputStream(obj, format, os);
-		os.close();
-		return os.toString();
 
+	private File writeToFile(Object obj, SOMFormats format, File f) throws IOException {
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		OutputStream os = writeToOutputStream(obj, format, bis);
+		os.close();
+		return f;
+	}
+	private File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
+		return writeToFile(obj, format, p.toFile());
+	}
+	private File writeToFile(Object obj, SOMFormats format,String filePath) throws IOException {
+		return writeToFile(obj, format, Paths.get(filePath));
 	}
 
 	public SOMFormats getFormatFromFilename(String name) {

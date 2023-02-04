@@ -1,8 +1,7 @@
 #110 0 0011 (acc is set, ard eval set, wh en not set, address 7)
 #111 01100 00//all wh bits set, address is 48
 #00 00000 00000 00 0000 0000 0000 0000//filler
-#1 0000001 //reset adr eval
-NAW ADR_EVAL
+#1 0000001 //reset adr eval(not needed in HRAC) 
 #set whcom whdir whsel
 NAW WH_COM
 NAW WH_DIR

@@ -2,6 +2,6 @@
 #000 1 1010 //WH bits will not be used, address is twenty
 #0000 1 000 //start here (2nd nibble), NAW one (reset  ADR_EVAL to not loop)
 #01 
-NAW ADR_EVAL
+(not needed in HRAC)
 #1 0 000 0 //from bit 3, NAW zero (invert accumulator)
 NAW ACC

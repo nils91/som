@@ -4,5 +4,4 @@
 #000 1 1010 //WH bits will not be used, address is 26
 #0000 0000
 #00
-#1 0 0001 //start here, NAW one (reset  ADR_EVAL to not loop)
-NAW ADR_EVAL
+#1 0 0001 //start here, NAW one (reset  ADR_EVAL to not loop)(not needed in HRAC)

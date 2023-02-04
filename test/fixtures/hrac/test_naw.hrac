@@ -2,8 +2,7 @@
 #000 1 0101 //WH bits will not be used, address is 43
 #1 
 #00000000000000000000000000 //filler bits
-#1 000 001 //reset ADR_EVAL
-NAW ADR_EVAL
+#1 000 001 //reset ADR_EVAL(not needed in HRAC)
 #0 000 000 //invert acc with NAW
 #0 000 000 //invert acc with NAW
 NAW ACC

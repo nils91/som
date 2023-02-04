@@ -1,6 +1,8 @@
 grammar HRBSGrammar;
 
-program : (NEWLINE? line)* EOF?;
+program : (import_stmt NEWLINE?)+ (command_def NEWLINE?)+  EOF?;
+command_def: cmd_head directives symbol_definitions commands;
+
 line: (directive|command|symbol_dec);
 symbol_dec: SYMBOL cnt_specify? symbol_os?;
 
@@ -16,8 +18,11 @@ cnt_specify:B_OPEN (INT|BI_N) B_CLOSE;
 
 builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
 
+import_stmt: IMPORT (NAME|FILEPATH) SEMICOLON;
+
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
+IMPORT:'import';
 ACC:'ACC';
 ADR_EVAL:'ADR_EVAL';
 WH_EN:'WH_EN';
@@ -31,13 +36,16 @@ NAW:'NAW';
 HEAP:'heap';
 BI_N:'N';
 D_N:'n';
-SYMBOL:[a-mo-zA-Z][a-zA-Z0-9_-]*;
+SINGLE_QUOTE:'\'';
+DOUBLE_QUOTE:'\""';
+FILEPATH:[\'"] .+? [\'"];
+NAME:[a-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 NEG_INT: DASH INT;
 EQ:'=';
 SEMICOLON:';';
+DOT:'.';
 B_OPEN:'[';
 B_CLOSE:']';
 DASH:'-';
-
 WS : [ \f\t]+ -> skip;

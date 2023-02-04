@@ -88,7 +88,7 @@ The bitlanguage replaces the opcode bits with human-readable letter codes. There
 NAW ADR_EVAL
 ```
 
-That program is equivalent to above bitcode example. The same in hrac would only need to contain the command (`NAW ADR_EVAL`), n and the start address are calculated automatically.
+That program is equivalent to above bitcode example. The same in hrac would only need to contain the commands, n and the start address are calculated automatically.
 
 ### Language features hras
 
@@ -114,6 +114,9 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	- There are built-in symbols. For these see the table 'basic memory layout'.
 - Commands
 	- Available commands are `NAW` and `NAR`. Both can be used with symbols or memory addresses.
+	- First command must be `NAW ADR_EVAL` to clear the ADR_EVAL bit.
+	
+The accumulator will be set at program start.
 	
 	
 ### Language features hrac
@@ -139,7 +142,10 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	`B A[4]`
 	- There are built-in symbols. For these see the table 'basic memory layout'.
 - Commands
-	- Available commands are`NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
+	- Available commands are `NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
+	- The first command `NAW ADR_EVAL` to clear the ADR_EVAL bit is added automatically.
+	
+The accumulator will be set at program start.
 	
 ### SOM simplified (.hrb)
 

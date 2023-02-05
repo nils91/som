@@ -8,6 +8,7 @@ package de.dralle.som.languages.hrbs.model;
  *
  */
 public class HRBSMemoryAddress implements Cloneable{
+	private boolean isDeref=false;
 	private HRBSSymbol symbol;
 	private Integer offset;
 
@@ -48,6 +49,7 @@ public class HRBSMemoryAddress implements Cloneable{
 	@Override
 	public boolean equals(Object obj) {
 		if(obj!=null&&obj instanceof HRBSMemoryAddress) {
+			HRBSMemoryAddress other = (HRBSMemoryAddress)obj;
 			boolean equal = symbol.equals(((HRBSMemoryAddress)obj).symbol);
 			if(equal&&offset!=null) {
 				return offset.equals(((HRBSMemoryAddress)obj).offset);
@@ -78,5 +80,13 @@ public class HRBSMemoryAddress implements Cloneable{
 		}else {
 			return symbol.getName();
 		}
+	}
+
+	public boolean isDeref() {
+		return isDeref;
+	}
+
+	public void setDeref(boolean isDeref) {
+		this.isDeref = isDeref;
 	}
 }

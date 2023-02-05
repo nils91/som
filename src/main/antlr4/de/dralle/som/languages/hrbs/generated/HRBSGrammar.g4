@@ -3,8 +3,8 @@ grammar HRBSGrammar;
 program : (import_stmt NEWLINE?)+ (command_def NEWLINE?)+  EOF?;
 command_def: cmd_head directives? symbol_definitions? commands;
 commands: (command NEWLINE?)+;
-
-symbol_definitions: (symbol_dec NEWLINE)+;
+symbol_blk:(GLOBAL|SHARED|LOCAL) CB_OPEN NEWLINE  (symbol_dec NEWLINE)+ CB_CLOSE NEWLINE;
+symbol_definitions: ((symbol_blk|symbol_ns) NEWLINE)+;
 
 cmd_head:NAME ((NAME COMMA)* NAME)? COLON NEWLINE;
 directives: (directive NEWLINE)+;
@@ -15,7 +15,9 @@ directive: SEMICOLON (HEAP|D_N) EQ INT;
 
 command: NAME? (NAR|NAW|NAME) symbol_os SEMICOLON;
 
-symbol_os:(NAME|builtins) offset_specify?;
+symbol_ns:(GLOBAL|SHARED|LOCAL?) symbol_dec;
+
+symbol_os:AMP? (NAME|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
@@ -39,6 +41,9 @@ ADR:'ADR';
 NAR:'NAR';
 NAW:'NAW';
 HEAP:'heap';
+GLOBAL:'global';
+SHARED:'shared';
+LOCAL:'local';
 BI_N:'N';
 D_N:'n';
 SINGLE_QUOTE:'\'';
@@ -54,5 +59,8 @@ DOT:'.';
 COMMA:',';
 B_OPEN:'[';
 B_CLOSE:']';
+CB_OPEN:'{';
+CB_CLOSE:'}';
 DASH:'-';
+AMP:'&';
 WS : [ \f\t]+ -> skip;

@@ -50,9 +50,10 @@ public class HRBSMemoryAddress implements Cloneable{
 	public boolean equals(Object obj) {
 		if(obj!=null&&obj instanceof HRBSMemoryAddress) {
 			HRBSMemoryAddress other = (HRBSMemoryAddress)obj;
-			boolean equal = symbol.equals(((HRBSMemoryAddress)obj).symbol);
+			boolean equal = symbol.equals(other.symbol);
+			equal=equal&&(isDeref==other.isDeref);
 			if(equal&&offset!=null) {
-				return offset.equals(((HRBSMemoryAddress)obj).offset);
+				return offset.equals(other.offset);
 			}
 			return equal;
 		}
@@ -76,7 +77,7 @@ public class HRBSMemoryAddress implements Cloneable{
 
 	public String asHRBSCode() {
 		if(offset!=null) {
-			return String.format("%s[%d]", symbol.getName(),offset);
+			return String.format("%s%s[%d]", isDeref?"&":"",symbol.getName(),offset);
 		}else {
 			return symbol.getName();
 		}

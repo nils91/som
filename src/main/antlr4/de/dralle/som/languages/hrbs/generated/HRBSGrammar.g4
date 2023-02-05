@@ -1,16 +1,21 @@
 grammar HRBSGrammar;
 
 program : (import_stmt NEWLINE?)+ (command_def NEWLINE?)+  EOF?;
-command_def: cmd_head directives symbol_definitions commands;
+command_def: cmd_head directives? symbol_definitions? commands;
+commands: (command NEWLINE?)+;
 
+symbol_definitions: (symbol_dec NEWLINE)+;
+
+cmd_head:NAME ((NAME COMMA)* NAME)? COLON NEWLINE;
+directives: (directive NEWLINE)+;
 line: (directive|command|symbol_dec);
-symbol_dec: SYMBOL cnt_specify? symbol_os?;
+symbol_dec: NAME cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 
-command: SYMBOL? (NAR|NAW) symbol_os;
+command: NAME? (NAR|NAW|NAME) symbol_os SEMICOLON;
 
-symbol_os:(SYMBOL|builtins) offset_specify?;
+symbol_os:(NAME|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
@@ -43,8 +48,10 @@ NAME:[a-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 NEG_INT: DASH INT;
 EQ:'=';
+COLON:':';
 SEMICOLON:';';
 DOT:'.';
+COMMA:',';
 B_OPEN:'[';
 B_CLOSE:']';
 DASH:'-';

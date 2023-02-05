@@ -15,6 +15,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 
 /**
  * @author Nils
@@ -68,6 +69,11 @@ class GrammarExistenceTests {
 	@Test
 	void testHRACParserExistence() {
 		assertNotNull(HRACGrammarParser.class);
+	}
+	
+	@Test
+	void testHRBSVisitorExistence() {
+		assertNotNull(HRBSGrammarBaseVisitor.class);
 	}
 
 }

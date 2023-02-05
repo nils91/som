@@ -4,8 +4,7 @@
 #0 //this bit will be written to (I7, IOO OOI)
 TW
 #00000000000 //filler bits
-#1 000 001 //reset ADR_EVAL
-NAW ADR_EVAL
+#1 000 001 //reset ADR_EVAL(not needed in HRAC)
 #1 100 001
 NAW TW
 #0 000 000

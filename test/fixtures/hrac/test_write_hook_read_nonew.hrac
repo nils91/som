@@ -2,8 +2,7 @@
 #101 01110 //wh bits whcom whsel set, address is 29
 #1
 #000000000000 //filler
-#1 000 001 //reset adr eval
-NAW ADR_EVAL
+#1 000 001 //reset adr eval(not needed in HRAC)
 #set whcom whsel
 NAW WH_COM
 NAW WH_SEL

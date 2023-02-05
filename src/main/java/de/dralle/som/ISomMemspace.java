@@ -7,7 +7,7 @@ package de.dralle.som;
  * @author Nils Dralle
  *
  */
-public interface ISomMemspace extends IMemspace{
+public interface ISomMemspace extends IMemspace, ISetN{
 	
 	static final int ACC_ADDRESS = 0;
 	static final int START_ADDRESS_START = 11;
@@ -67,6 +67,7 @@ public interface ISomMemspace extends IMemspace{
 	int getN();
 	
 	void setN(int n);
+	
 
 	/**
 	 * Address bits. If ADR_EVAL is set, these contain the next memory address, from

@@ -88,12 +88,65 @@ The bitlanguage replaces the opcode bits with human-readable letter codes. There
 NAW ADR_EVAL
 ```
 
-That program is equivalent to above bitcode example. The same in hrac would only need to contain the command (`NAW ADR_EVAL`), n and the start address are calculated automatically.
+That program is equivalent to above bitcode example. The same in hrac would only need to contain the commands, n and the start address are calculated automatically.
 
 ### Language features hras
 
+- Directives:
+ Directives start with a semicolon (`;`) and are hints for the compiler. hras supports the following directives:
+	- `;n=<value>`
+   Value for N. (Only once per file)
+	- `;start=<value>`
+Gives the start address. (Only once per file)
+	- `;continue=<value>`
+   Continue writing at a given address. Does not change program execution.
+- Symbols:
+Symbols are placeholders for memory addresses. They can be used within commands. They can also be used for the `start` and `continue` directives.
+	- Symbols can be defined by writing the symbol name followed by an address:
+	```A 42```
+	- Symbols  can be defined using other symbols:
+	```B A```
+	- Symbols can be used within commands:
+	```NAR A```
+	- When using symbols, a address offset can be used:
+	`NAR A[42]`
+	`B A[42]`
+	- There are built-in symbols. For these see the table 'basic memory layout'.
+- Commands
+	- Available commands are `NAW` and `NAR`. Both can be used with symbols or memory addresses.
+	- First command must be `NAW ADR_EVAL` to clear the ADR_EVAL bit.
+	
+The accumulator will be set at program start.
+	
+	
 ### Language features hrac
 
+- Directives:
+ Directives start with a semicolon (`;`) and are hints for the compiler. hras supports the following directives:
+	- `;n=<value>`
+   Minimum value for N. N will be calculated automatically. (Optional) 
+	- `;heap=<value>`
+Minimum number of additional unused bytes to be included.
+- Symbols:
+Symbols are placeholders for memory addresses. They can be used within commands. The memory address for each symbol will be calculated automatically.
+	- Symbols can be defined by writing just the symbol name:
+	```A```
+	- Arrays of symbols can be defined:
+	```A[10]```
+	- Symbols  can be defined using other symbols:
+	```B A```
+	- Symbols can be used within commands:
+	```NAR A```
+	- When using symbols, a address offset can be used:
+	`NAR A[4]`
+	`B A[4]`
+	- There are built-in symbols. For these see the table 'basic memory layout'.
+- Commands
+	- Available commands are `NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
+	- The first command `NAW ADR_EVAL` to clear the ADR_EVAL bit is added automatically.
+	
+The accumulator will be set at program start.
+	
 ### SOM simplified (.hrb)
 
 ### SOM language (.hrc)

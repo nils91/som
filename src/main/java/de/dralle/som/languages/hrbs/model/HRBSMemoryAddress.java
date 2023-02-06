@@ -11,6 +11,7 @@ public class HRBSMemoryAddress implements Cloneable{
 	private boolean isDeref=false;
 	private HRBSSymbol symbol;
 	private Integer offset;
+	private Integer derefOffset;
 
 	public Integer getOffset() {
 		return offset;
@@ -43,6 +44,12 @@ public class HRBSMemoryAddress implements Cloneable{
 		if(offset!=null) {
 			hashc+=offset.hashCode();
 		}
+		if(derefOffset!=null) {
+			hashc+=derefOffset.hashCode();
+		}
+		if(isDeref) {
+			hashc*=1337;
+		}
 		return hashc;
 	}
 
@@ -53,7 +60,10 @@ public class HRBSMemoryAddress implements Cloneable{
 			boolean equal = symbol.equals(other.symbol);
 			equal=equal&&(isDeref==other.isDeref);
 			if(equal&&offset!=null) {
-				return offset.equals(other.offset);
+				equal= offset.equals(other.offset);
+			}
+			if(equal&&derefOffset!=null) {
+				equal= derefOffset.equals(other.derefOffset);
 			}
 			return equal;
 		}
@@ -72,15 +82,25 @@ public class HRBSMemoryAddress implements Cloneable{
 		if(offset!=null) { 
 			copy.offset=offset.intValue();
 		}		
+		if(derefOffset!=null) { 
+			copy.derefOffset=derefOffset.intValue();
+		}		
+		copy.isDeref=isDeref;
 		return copy;
 	}
 
 	public String asHRBSCode() {
-		if(offset!=null) {
-			return String.format("%s%s[%d]", isDeref?"&":"",symbol.getName(),offset);
-		}else {
-			return symbol.getName();
+		String s = "";
+		if(isDeref) {
+			s+="&";
 		}
+		s+=symbol.getName();
+		if(offset!=null) {
+			s+="["+offset+"]";
+		}if(derefOffset!=null) {
+			s+="["+derefOffset+"]";
+		}
+		return s;
 	}
 
 	public boolean isDeref() {
@@ -89,5 +109,13 @@ public class HRBSMemoryAddress implements Cloneable{
 
 	public void setDeref(boolean isDeref) {
 		this.isDeref = isDeref;
+	}
+
+	public Integer getDerefOffset() {
+		return derefOffset;
+	}
+
+	public void setDerefOffset(Integer derefOffset) {
+		this.derefOffset = derefOffset;
 	}
 }

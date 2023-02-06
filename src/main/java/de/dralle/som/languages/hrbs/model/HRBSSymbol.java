@@ -13,6 +13,7 @@ public class HRBSSymbol {
 	 * Potential target symbol. Might be null.
 	 */
 	private HRBSMemoryAddress targetSymbol;
+	private HRBSSymbolType type;
 	private int bitCnt;
 	private boolean bitCntISN;
 	public String getName() {
@@ -41,6 +42,9 @@ public class HRBSSymbol {
 	}
 	public String asCode() {
 	StringBuilder sb=new StringBuilder();
+	if(type!=null) {
+		sb.append(type+" ");
+	}
 	sb.append(name);
 	if(bitCntISN) {
 		sb.append("[N]");
@@ -48,8 +52,14 @@ public class HRBSSymbol {
 		sb.append(String.format("[%d]", bitCnt));
 	}
 	if(targetSymbol!=null) {
-		sb.append(String.format(" %s", targetSymbol));
+		sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
 	}
 	return sb.toString();
+	}
+	public HRBSSymbolType getType() {
+		return type;
+	}
+	public void setType(HRBSSymbolType type) {
+		this.type = type;
 	}
 }

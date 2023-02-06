@@ -27,9 +27,9 @@ public class CommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 			c.setLabel(null);
 		}
 		if(ctx.NAR()!=null) {
-			c.setOp(Opcode.NAR);
+			c.setCmd(Opcode.NAR);
 		}else if(ctx.NAW()!=null) {
-			c.setOp(Opcode.NAW);
+			c.setCmd(Opcode.NAW);
 		}
 		if(ctx.symbol_os()!=null) {
 		c.setTarget(ctx.symbol_os().accept(new MemoryAddressVisitor()));

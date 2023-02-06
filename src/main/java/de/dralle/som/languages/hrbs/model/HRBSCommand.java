@@ -3,6 +3,9 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.dralle.som.Opcode;
 
 /**
@@ -10,42 +13,63 @@ import de.dralle.som.Opcode;
  *
  */
 public class HRBSCommand {
-	private HRBSSymbol label;
-	private Opcode op;
-	private HRBSMemoryAddress target;
-	
+	private String label;
+	private String command;
+	private List<HRBSMemoryAddress> targets;
 
-	public HRBSSymbol getLabel() {
+	public String getLabel() {
 		return label;
 	}
-	public void setLabel(HRBSSymbol label) {
+
+	public void setLabel(String label) {
 		this.label = label;
 	}
-	public HRBSMemoryAddress getTarget() {
-		return target;
+
+	public List<HRBSMemoryAddress> getTarget() {
+		return targets;
 	}
-	public void setTarget(HRBSMemoryAddress target) {
-		this.target = target;
+
+	public void setTarget(List<HRBSMemoryAddress> target) {
+		this.targets = target;
 	}
-	public Opcode getOp() {
-		return op;
+
+	public void addTarget(HRBSMemoryAddress target) {
+		if (targets == null) {
+			targets = new ArrayList<>();
+		}
+		targets.add(target);
 	}
-	public void setOp(Opcode op) {
-		this.op = op;
+
+	public String getCmd() {
+		return command;
 	}
-public String asCode() {
-	String code = "";
-	if(label!=null) {
-		code+=label.getName()+" ";
+
+	public void setCmd(String op) {
+		this.command = op;
 	}
-	code+=op+" "+target.asHrbsCode();
-	return code;
-}
-	
+
+	public String asCode() {
+		String code = "";
+		if (label != null) {
+			code += label + " ";
+		}
+		code += command;
+		if(targets!=null) {
+			code+=" ,";
+			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
+				code+=hrbsMemoryAddress.asHRBSCode()+",";
+			}
+		}
+		code=code.substring(0, code.length()-1);
+		code+=";";
+		return code;
+	}
+
 	@Override
-public String toString() {
-	return asCode();
-}
+	public String toString() {
+		return asCode();
+	}
+
 	public HRBSCommand() {
 		super();
 	}

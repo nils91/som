@@ -6,9 +6,9 @@ commands: (command NEWLINE?)+;
 symbol_blk:(GLOBAL|SHARED|LOCAL) C_OPEN NEWLINE  (symbol_dec NEWLINE)+ C_CLOSE NEWLINE;
 symbol_definitions: ((symbol_blk|symbol_ns) NEWLINE)+;
 
-cmd_head:NAME ((NAME COMMA)* NAME)? COLON NEWLINE;
+cmd_head:NAME ((cmd_head_param COMMA)* cmd_head_param)? COLON NEWLINE;
+cmd_head_param:NAME;
 directives: (directive NEWLINE)+;
-line: (directive|command|symbol_dec);
 symbol_dec: NAME cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;

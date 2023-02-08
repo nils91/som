@@ -193,6 +193,14 @@ public class HRBSModel implements ISetN, IHeap {
 					cTgtSymbol.setName(cTgtSymbolName);
 					cTGTAddress.setSymbol(cTgtSymbol);
 					cTGTAddress.setOffset(tgt.getOffset());
+					
+					HRACSymbol hracSymbol = new HRACSymbol();
+					hracSymbol.setName(s.getName());
+					hracSymbol.setBitCnt(s.getBitCnt());
+					hracSymbol.setBitCntISN(s.isBitCntISN());
+					hracSymbol.setTargetSymbol(cTGTAddress);
+					
+					m.addSymbol(hracSymbol);
 				}
 				MemoryAddress tgHras = new MemoryAddress();
 				tgHras.setSymbol(tgt.getSymbol().getName());

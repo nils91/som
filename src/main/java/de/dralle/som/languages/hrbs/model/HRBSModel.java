@@ -17,6 +17,7 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
+import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
@@ -184,7 +185,36 @@ public class HRBSModel implements ISetN, IHeap {
 			} else {
 				HRBSMemoryAddress tgt = s.getTargetSymbol();
 				if(tgt.isDeref()) {
+					HRACMemoryAddress cTGTAddressForS=new HRACMemoryAddress();
+					HRACSymbol cTgtSymbol = new HRACSymbol();
+					String cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+					cTgtSymbol.setName(cTgtSymbolName);
 					
+					String odCommandLabelName="CL_"+cTgtSymbolName;
+					HRACSymbol odCLSymbol=new HRACSymbol();
+					odCLSymbol.setName(odCommandLabelName);
+					
+					cTGTAddressForS.setSymbol(odCLSymbol);
+					cTGTAddressForS.setOffset(1+tgt.getDerefOffset());
+					
+					HRACSymbol hracSymbol = new HRACSymbol();
+					hracSymbol.setName(s.getName());
+					hracSymbol.setBitCnt(s.getBitCnt());
+					hracSymbol.setBitCntISN(s.isBitCntISN());
+					hracSymbol.setTargetSymbol(cTGTAddressForS);
+					
+					m.addSymbol(hracSymbol);
+					
+					HRACMemoryAddress cTGTAddressForC=new HRACMemoryAddress();
+					cTGTAddressForC.setSymbol(cTgtSymbol);
+					cTGTAddressForC.setOffset(tgt.getOffset());					
+					
+					HRACCommand odCommand=new HRACCommand();
+					odCommand.setLabel(odCLSymbol);
+					odCommand.setOp(Opcode.NAR);
+					odCommand.setTarget(cTGTAddressForC);
+					
+					m.addCommand(odCommand);
 				}else {
 					HRACMemoryAddress cTGTAddress=new HRACMemoryAddress();
 					HRACSymbol cTgtSymbol = new HRACSymbol();

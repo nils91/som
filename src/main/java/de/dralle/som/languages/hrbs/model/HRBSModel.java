@@ -156,7 +156,7 @@ public class HRBSModel implements ISetN, IHeap {
 		return sb.toString();
 	}
 
-	public HRASModel compileToHRAS(String uniqueUsageId) {
+	public HRASModel compileToHRAS(String uniqueUsageId,Map<String,HRBSMemoryAddress> params) {
 		Map<String,String> lclSymbolNameMap=new HashMap<>();
 		HRACModel m = new HRACModel();
 		m.setN(minimumN);
@@ -187,7 +187,20 @@ public class HRBSModel implements ISetN, IHeap {
 				if(tgt.isDeref()) {
 					HRACMemoryAddress cTGTAddressForS=new HRACMemoryAddress();
 					HRACSymbol cTgtSymbol = new HRACSymbol();
-					String cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+					
+					String cTgtSymbolName =null;//init is null, because the target name will be searched for in the params and locally renamed symbols
+					//test if target symbol is a parameter
+					HRBSMemoryAddress paramTarget=null;
+					if(params!=null) {
+						paramTarget=params.get(tgt.getSymbol().getName());
+						if(paramTarget!=null) {
+							cTgtSymbolName=paramTarget.getSymbol().getName();
+						}
+					}
+					
+					if(cTgtSymbolName==null) {
+						cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+					}
 					cTgtSymbol.setName(cTgtSymbolName);
 					
 					String odCommandLabelName="CL_"+cTgtSymbolName;
@@ -207,7 +220,16 @@ public class HRBSModel implements ISetN, IHeap {
 					
 					HRACMemoryAddress cTGTAddressForC=new HRACMemoryAddress();
 					cTGTAddressForC.setSymbol(cTgtSymbol);
-					cTGTAddressForC.setOffset(tgt.getOffset());					
+					cTGTAddressForC.setOffset(tgt.getOffset());	
+					if(paramTarget!=null) {
+						if(cTGTAddressForC.getOffset()==null) {
+							cTGTAddressForC.setOffset(paramTarget.getOffset());
+						}else {
+							if(paramTarget.getOffset()!=null) {
+								paramTarget.setOffset(paramTarget.getOffset()+cTGTAddressForC.getOffset());
+							}
+						}
+					}
 					
 					HRACCommand odCommand=new HRACCommand();
 					odCommand.setLabel(odCLSymbol);
@@ -218,11 +240,32 @@ public class HRBSModel implements ISetN, IHeap {
 				}else {
 					HRACMemoryAddress cTGTAddress=new HRACMemoryAddress();
 					HRACSymbol cTgtSymbol = new HRACSymbol();
-					String cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+					String cTgtSymbolName =null;//init is null, because the target name will be searched for in the params and locally renamed symbols
+					//test if target symbol is a parameter
+					HRBSMemoryAddress paramTarget=null;
+					if(params!=null) {
+						paramTarget=params.get(tgt.getSymbol().getName());
+						if(paramTarget!=null) {
+							cTgtSymbolName=paramTarget.getSymbol().getName();
+						}
+					}
 					
+					if(cTgtSymbolName==null) {
+						cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+					}
 					cTgtSymbol.setName(cTgtSymbolName);
 					cTGTAddress.setSymbol(cTgtSymbol);
 					cTGTAddress.setOffset(tgt.getOffset());
+					
+					if(paramTarget!=null) {
+						if(cTGTAddress.getOffset()==null) {
+							cTGTAddress.setOffset(paramTarget.getOffset());
+						}else {
+							if(paramTarget.getOffset()!=null) {
+								paramTarget.setOffset(paramTarget.getOffset()+cTGTAddress.getOffset());
+							}
+						}
+					}
 					
 					HRACSymbol hracSymbol = new HRACSymbol();
 					hracSymbol.setName(s.getName());
@@ -231,21 +274,26 @@ public class HRBSModel implements ISetN, IHeap {
 					hracSymbol.setTargetSymbol(cTGTAddress);
 					
 					m.addSymbol(hracSymbol);
-				}
-				MemoryAddress tgHras = new MemoryAddress();
-				tgHras.setSymbol(tgt.getSymbol().getName());
-				tgHras.setAddressOffset(tgt.getOffset());
-				m.addSymbol(s.getName(), tgHras);
+				}			
 			}
 		}
-		m.addSymbol("HEAP", new MemoryAddress(getHeapStartAddress(n)));
 
-		Command clrAdrEval = new Command();
-		clrAdrEval.setOp(Opcode.NAW);
-		clrAdrEval.setAddress(new MemoryAddress("ADR_EVAL"));
-		m.addCommand(clrAdrEval);
+		
 
 		for (HRBSCommand c : commands) {
+			switch(c.getCmd()){
+			case "NAW":
+				HRACCommand tgtC=new HRACCommand();
+				tgtC.setOp(Opcode.NAW);
+				HRACMemoryAddress tgtAdr=new HRACMemoryAddress();
+				HRACSymbol tgtS=new HRACSymbol();
+				HRBSMemoryAddress s = c.getTarget().get(0);
+				tgtAdr.setOffset(s.getOffset());
+				tgtAdr.setSymbol(tgtS);
+				tgtS.setName(getTargetSymbolName(c.getTarget().get(0).getSymbol().getName(), params, lclSymbolNameMap));
+				break;
+			case "NAR":
+			}
 			Command hrasc = new Command();
 			hrasc.setCmd(c.getOp());
 			MemoryAddress address = new MemoryAddress(c.getTarget().getSymbol().getName());
@@ -257,6 +305,49 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 		return m;
+	}
+	
+	private HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
+		HRACSymbol newTargetSymbol=getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames);
+		Integer newOffset=null;
+		if(params!=null) {
+			HRBSMemoryAddress passedDownSymbol = params.get(originalMemoryAddress.getSymbol().getName());
+			if(passedDownSymbol!=null) {
+				newOffset=passedDownSymbol.getOffset();
+			}
+		}
+		if(newOffset!=null) {
+			if(originalMemoryAddress.getOffset()!=null) {
+				newOffset=newOffset+originalMemoryAddress.getOffset();
+			}
+		}else {
+			newOffset=originalMemoryAddress.getOffset();
+		}
+		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
+		newTgtAddress.setSymbol(newTargetSymbol);
+		newTgtAddress.setOffset(newOffset);
+		return newTgtAddress;
+	}
+	private HRACSymbol getAsHRACSymbol(HRBSSymbol symbol,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
+		HRACSymbol s=new HRACSymbol();
+		s.setName(getTargetSymbolName(symbol.getName(), params, localSymbolNames));
+		return s;
+	}
+
+	private String getTargetSymbolName(String originalSymbolName,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
+		String targetName=null;
+		if(params!=null) {
+			HRBSMemoryAddress passedDownSymbol = params.get(originalSymbolName);
+			if(passedDownSymbol!=null) {
+				targetName=passedDownSymbol.getSymbol().getName();
+			}
+		}
+		if(targetName==null) {
+			if(localSymbolNames!=null) {
+			targetName=localSymbolNames.getOrDefault(originalSymbolName, originalSymbolName);
+		}
+		}		
+		return targetName;
 	}
 
 	@Override

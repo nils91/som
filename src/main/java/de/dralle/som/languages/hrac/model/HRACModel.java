@@ -71,6 +71,14 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private List<HRACSymbol> symbols;
+	public List<HRACSymbol> getSymbols() {
+		return symbols;
+	}
+
+	public List<HRACCommand> getCommands() {
+		return commands;
+	}
+
 	private List<HRACCommand> commands;
 
 	public void addSymbol(HRACSymbol symbol) {

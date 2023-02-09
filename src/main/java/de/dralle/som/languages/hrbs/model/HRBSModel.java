@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.text.AsyncBoxView.ChildState;
+
 import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IHeap;
@@ -33,22 +35,50 @@ public class HRBSModel implements ISetN, IHeap {
 
 	private String name;
 	private List<String> params;
-	private List<HRBSModel> childs;
-
+	/**
+	 * Maps available commands by their name to their models.
+	 */
+	private Map<String, HRBSModel> childs;
+	private static Map<String, Integer> cmdUsageTracker;
 	private int heapSize;
 	private int minimumN;
 
 	public void addChild(HRBSModel c) {
 		if (childs == null) {
-			childs = new ArrayList<>();
+			childs = new HashMap<>();
 		}
-		childs.add(c);
+		childs.put(c.getName(), c);
+		if (cmdUsageTracker == null) {
+			cmdUsageTracker = new HashMap<>();
+		}
+		cmdUsageTracker.put(c.getName(), 0);
+	}
+
+	private static int incCommandUsage(HRBSCommand c) {
+		if (cmdUsageTracker == null) {
+			cmdUsageTracker = new HashMap<>();
+		}
+		int incCmdUsage = getCurrentCommandUsage(c) + 1;
+		cmdUsageTracker.put(c.getCmd(), incCmdUsage);
+		return incCmdUsage;
+	}
+
+	private static int getCurrentCommandUsage(HRBSCommand c) {
+		if (cmdUsageTracker == null) {
+			cmdUsageTracker = new HashMap<>();
+		}
+		Integer useCnt = cmdUsageTracker.get(c.getCmd());
+		if (useCnt == null) {
+			useCnt = 0;
+			cmdUsageTracker.put(c.getCmd(), useCnt);
+		}
+		return useCnt;
 	}
 
 	public int getMinimumN() {
 		int rn = minimumN;
 		if (childs != null) {
-			for (HRBSModel hrbsModel : childs) {
+			for (HRBSModel hrbsModel : childs.values()) {
 				if (rn < hrbsModel.getMinimumN()) {
 					rn = hrbsModel.getMinimumN();
 				}
@@ -64,7 +94,7 @@ public class HRBSModel implements ISetN, IHeap {
 	public int getHeapSize() {
 		int rh = heapSize;
 		if (childs != null) {
-			for (HRBSModel hrbsModel : childs) {
+			for (HRBSModel hrbsModel : childs.values()) {
 				rh += hrbsModel.getHeapSize();
 			}
 		}
@@ -148,7 +178,7 @@ public class HRBSModel implements ISetN, IHeap {
 			sb.append(System.lineSeparator());
 		}
 		if (childs != null) {
-			for (HRBSModel hrbsModel : childs) {
+			for (HRBSModel hrbsModel : childs.values()) {
 				sb.append(hrbsModel.asCode());
 				sb.append(System.lineSeparator());
 			}
@@ -156,8 +186,8 @@ public class HRBSModel implements ISetN, IHeap {
 		return sb.toString();
 	}
 
-	public HRASModel compileToHRAS(String uniqueUsageId,Map<String,HRBSMemoryAddress> params) {
-		Map<String,String> lclSymbolNameMap=new HashMap<>();
+	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params) {
+		Map<String, String> lclSymbolNameMap = new HashMap<>();
 		HRACModel m = new HRACModel();
 		m.setN(minimumN);
 		for (HRBSSymbol s : symbols) {
@@ -165,13 +195,13 @@ public class HRBSModel implements ISetN, IHeap {
 			if (s.getTargetSymbol() == null) {
 				switch (s.getType()) {
 				case global:
-					symbolName=s.getName();
+					symbolName = s.getName();
 					break;
 				case shared:
-					symbolName=String.format("%s_%s", name,s.getName());
+					symbolName = String.format("%s_%s", name, s.getName());
 					break;
-				default: //local is default
-					symbolName=String.format("%s_%s_%s", name,uniqueUsageId,s.getName());
+				default: // local is default
+					symbolName = String.format("%s_%s_%s", name, uniqueUsageId, s.getName());
 					break;
 
 				}
@@ -180,113 +210,115 @@ public class HRBSModel implements ISetN, IHeap {
 				hracSymbol.setName(symbolName);
 				hracSymbol.setBitCnt(s.getBitCnt());
 				hracSymbol.setBitCntISN(s.isBitCntISN());
-				
+
 				m.addSymbol(hracSymbol);
 			} else {
 				HRBSMemoryAddress tgt = s.getTargetSymbol();
-				if(tgt.isDeref()) {
-					HRACMemoryAddress cTGTAddressForS=new HRACMemoryAddress();
+				if (tgt.isDeref()) {
+					HRACMemoryAddress cTGTAddressForS = new HRACMemoryAddress();
 					HRACSymbol cTgtSymbol = new HRACSymbol();
-					
-					String cTgtSymbolName =null;//init is null, because the target name will be searched for in the params and locally renamed symbols
-					//test if target symbol is a parameter
-					HRBSMemoryAddress paramTarget=null;
-					if(params!=null) {
-						paramTarget=params.get(tgt.getSymbol().getName());
-						if(paramTarget!=null) {
-							cTgtSymbolName=paramTarget.getSymbol().getName();
+
+					String cTgtSymbolName = null;// init is null, because the target name will be searched for in the
+													// params and locally renamed symbols
+					// test if target symbol is a parameter
+					HRBSMemoryAddress paramTarget = null;
+					if (params != null) {
+						paramTarget = params.get(tgt.getSymbol().getName());
+						if (paramTarget != null) {
+							cTgtSymbolName = paramTarget.getSymbol().getName();
 						}
 					}
-					
-					if(cTgtSymbolName==null) {
-						cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+
+					if (cTgtSymbolName == null) {
+						cTgtSymbolName = lclSymbolNameMap.getOrDefault(tgt.getSymbol().getName(),
+								tgt.getSymbol().getName());
 					}
 					cTgtSymbol.setName(cTgtSymbolName);
-					
-					String odCommandLabelName="CL_"+cTgtSymbolName;
-					HRACSymbol odCLSymbol=new HRACSymbol();
+
+					String odCommandLabelName = "CL_" + cTgtSymbolName;
+					HRACSymbol odCLSymbol = new HRACSymbol();
 					odCLSymbol.setName(odCommandLabelName);
-					
+
 					cTGTAddressForS.setSymbol(odCLSymbol);
-					cTGTAddressForS.setOffset(1+tgt.getDerefOffset());
-					
+					cTGTAddressForS.setOffset(1 + tgt.getDerefOffset());
+
 					HRACSymbol hracSymbol = new HRACSymbol();
 					hracSymbol.setName(s.getName());
 					hracSymbol.setBitCnt(s.getBitCnt());
 					hracSymbol.setBitCntISN(s.isBitCntISN());
 					hracSymbol.setTargetSymbol(cTGTAddressForS);
-					
+
 					m.addSymbol(hracSymbol);
-					
-					HRACMemoryAddress cTGTAddressForC=new HRACMemoryAddress();
+
+					HRACMemoryAddress cTGTAddressForC = new HRACMemoryAddress();
 					cTGTAddressForC.setSymbol(cTgtSymbol);
-					cTGTAddressForC.setOffset(tgt.getOffset());	
-					if(paramTarget!=null) {
-						if(cTGTAddressForC.getOffset()==null) {
+					cTGTAddressForC.setOffset(tgt.getOffset());
+					if (paramTarget != null) {
+						if (cTGTAddressForC.getOffset() == null) {
 							cTGTAddressForC.setOffset(paramTarget.getOffset());
-						}else {
-							if(paramTarget.getOffset()!=null) {
-								paramTarget.setOffset(paramTarget.getOffset()+cTGTAddressForC.getOffset());
+						} else {
+							if (paramTarget.getOffset() != null) {
+								paramTarget.setOffset(paramTarget.getOffset() + cTGTAddressForC.getOffset());
 							}
 						}
 					}
-					
-					HRACCommand odCommand=new HRACCommand();
+
+					HRACCommand odCommand = new HRACCommand();
 					odCommand.setLabel(odCLSymbol);
 					odCommand.setOp(Opcode.NAR);
 					odCommand.setTarget(cTGTAddressForC);
-					
+
 					m.addCommand(odCommand);
-				}else {
-					HRACMemoryAddress cTGTAddress=new HRACMemoryAddress();
+				} else {
+					HRACMemoryAddress cTGTAddress = new HRACMemoryAddress();
 					HRACSymbol cTgtSymbol = new HRACSymbol();
-					String cTgtSymbolName =null;//init is null, because the target name will be searched for in the params and locally renamed symbols
-					//test if target symbol is a parameter
-					HRBSMemoryAddress paramTarget=null;
-					if(params!=null) {
-						paramTarget=params.get(tgt.getSymbol().getName());
-						if(paramTarget!=null) {
-							cTgtSymbolName=paramTarget.getSymbol().getName();
+					String cTgtSymbolName = null;// init is null, because the target name will be searched for in the
+													// params and locally renamed symbols
+					// test if target symbol is a parameter
+					HRBSMemoryAddress paramTarget = null;
+					if (params != null) {
+						paramTarget = params.get(tgt.getSymbol().getName());
+						if (paramTarget != null) {
+							cTgtSymbolName = paramTarget.getSymbol().getName();
 						}
 					}
-					
-					if(cTgtSymbolName==null) {
-						cTgtSymbolName = lclSymbolNameMap.getOrDefault( tgt.getSymbol().getName(), tgt.getSymbol().getName());
+
+					if (cTgtSymbolName == null) {
+						cTgtSymbolName = lclSymbolNameMap.getOrDefault(tgt.getSymbol().getName(),
+								tgt.getSymbol().getName());
 					}
 					cTgtSymbol.setName(cTgtSymbolName);
 					cTGTAddress.setSymbol(cTgtSymbol);
 					cTGTAddress.setOffset(tgt.getOffset());
-					
-					if(paramTarget!=null) {
-						if(cTGTAddress.getOffset()==null) {
+
+					if (paramTarget != null) {
+						if (cTGTAddress.getOffset() == null) {
 							cTGTAddress.setOffset(paramTarget.getOffset());
-						}else {
-							if(paramTarget.getOffset()!=null) {
-								paramTarget.setOffset(paramTarget.getOffset()+cTGTAddress.getOffset());
+						} else {
+							if (paramTarget.getOffset() != null) {
+								paramTarget.setOffset(paramTarget.getOffset() + cTGTAddress.getOffset());
 							}
 						}
 					}
-					
+
 					HRACSymbol hracSymbol = new HRACSymbol();
 					hracSymbol.setName(s.getName());
 					hracSymbol.setBitCnt(s.getBitCnt());
 					hracSymbol.setBitCntISN(s.isBitCntISN());
 					hracSymbol.setTargetSymbol(cTGTAddress);
-					
+
 					m.addSymbol(hracSymbol);
-				}			
+				}
 			}
 		}
 
-		
-
 		for (HRBSCommand c : commands) {
-			switch(c.getCmd()){
+			switch (c.getCmd()) {
 			case "NAW":
-				HRACCommand tgtC=new HRACCommand();
+				HRACCommand tgtC = new HRACCommand();
 				tgtC.setOp(Opcode.NAW);
-				HRACMemoryAddress tgtAdr=new HRACMemoryAddress();
-				HRACSymbol tgtS=new HRACSymbol();
+				HRACMemoryAddress tgtAdr = new HRACMemoryAddress();
+				HRACSymbol tgtS = new HRACSymbol();
 				HRBSMemoryAddress s = c.getTarget().get(0);
 				tgtAdr.setOffset(s.getOffset());
 				tgtAdr.setSymbol(tgtS);
@@ -306,48 +338,245 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		return m;
 	}
-	
-	private HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
-		HRACSymbol newTargetSymbol=getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames);
-		Integer newOffset=null;
-		if(params!=null) {
-			HRBSMemoryAddress passedDownSymbol = params.get(originalMemoryAddress.getSymbol().getName());
-			if(passedDownSymbol!=null) {
-				newOffset=passedDownSymbol.getOffset();
+
+	/**
+	 * Adds commands and symbols from one hrac model to another (from other to
+	 * target, returns target)
+	 * 
+	 * @param target
+	 * @param other
+	 * @return
+	 */
+	private static HRACModel addCommandsAndSymbolsFromOther(HRACModel target, HRACModel other) {
+		List<HRACSymbol> osymbols = other.getSymbols();
+		List<HRACCommand> oCommands = other.getCommands();
+		if (osymbols != null) {
+			for (HRACSymbol s : osymbols) {
+				target.addSymbol(s);
 			}
 		}
-		if(newOffset!=null) {
-			if(originalMemoryAddress.getOffset()!=null) {
-				newOffset=newOffset+originalMemoryAddress.getOffset();
+		if (oCommands != null) {
+			for (HRACCommand hracCommand : oCommands) {
+				target.addCommand(hracCommand);
 			}
-		}else {
-			newOffset=originalMemoryAddress.getOffset();
 		}
-		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
-		newTgtAddress.setSymbol(newTargetSymbol);
-		newTgtAddress.setOffset(newOffset);
-		return newTgtAddress;
+		return target;
 	}
-	private HRACSymbol getAsHRACSymbol(HRBSSymbol symbol,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
-		HRACSymbol s=new HRACSymbol();
+
+	/**
+	 * Converts the HRBS command to HRBS. Returns the final command, does not add it
+	 * to the HRAC model.
+	 * 
+	 * @param c
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param symbolNameReplacementMap
+	 * @param m
+	 * @return
+	 */
+	private static HRACCommand convertNARCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m) {
+		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m);
+	}
+
+	/**
+	 * Converts the HRBS command to HRBS. Does not return the final command(s),
+	 * instead adds them to the given model.
+	 * 
+	 * @param c
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param symbolNameReplacementMap
+	 * @param m
+	 * @return
+	 */
+	private static void convertAnyCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap,
+			Map<String, HRBSModel> availChildsCommands, HRACModel m) {
+		String cmdName = c.getCmd();
+		boolean standardCommand = false;
+		for (Opcode op : Opcode.values()) {
+			if (op.name().equals(cmdName)) {
+				HRACCommand converted = convertStandardCommands(c, op, parentCmdName, cmdExecId, params,
+						symbolNameReplacementMap, m);
+				standardCommand = true;
+				m.addCommand(converted);
+			}
+		}
+		if (!standardCommand) {
+			HRBSModel cmdModel = availChildsCommands.get(cmdName);
+			HRACModel compiledCmdModel = cmdModel.compileToHRAC(getCurrentCommandUsage(c) + "",
+					assembleParamMap(cmdModel, c));
+			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
+		}
+		incCommandUsage(c);
+	}
+
+	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c) {
+		List<HRBSMemoryAddress> cTargets = c.getTarget();
+		List<String> modelParams = m.getParams();
+		Map<String, HRBSMemoryAddress> retMap = new HashMap<>();
+		;
+		for (int i = 0; i < modelParams.size(); i++) {
+			String p = modelParams.get(i);
+			retMap.put(p, cTargets.get(i));
+		}
+		return retMap;
+	}
+
+	/**
+	 * Converts the HRBS command to HRBS. Returns the final command, does not add it
+	 * to the HRAC model.
+	 * 
+	 * @param c
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param symbolNameReplacementMap
+	 * @param m
+	 * @return
+	 */
+	private static HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m) {
+		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m);
+	}
+
+	/**
+	 * Converts the HRBS command to HRBS. Returns the final command, does not add it
+	 * to the HRAC model.
+	 * 
+	 * @param c
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param symbolNameReplacementMap
+	 * @param m
+	 * @return
+	 */
+	private static HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName,
+			String cmdExecId, Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap,
+			HRACModel m) {
+		HRACCommand tgtC = new HRACCommand();
+		tgtC.setOp(opcode);
+		HRACMemoryAddress tgtAdr = calculateHRACMemoryAddress(c.getTarget().get(0), parentCmdName, cmdExecId, params,
+				symbolNameReplacementMap, m);
+		tgtC.setTarget(tgtAdr);
+		if (c.getLabel() != null) {
+			tgtC.setLabel(new HRACSymbol(
+					generateHRACSymbolName(c.getLabel(), HRBSSymbolType.local, parentCmdName, cmdExecId)));
+		}
+		return tgtC;
+	}
+
+	/**
+	 * Convert the HRBS Address to a HRAC address (includinng required name and
+	 * offset changes). if the hrbs address is a deref, this will also generate the
+	 * required commands and add them to the hrac model.
+	 * 
+	 * @param originalMemoryAddress
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param localSymbolNames
+	 * @param m
+	 * @return
+	 */
+	private static HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
+			String parentCmdName, String cmdExecId, Map<String, HRBSMemoryAddress> params,
+			Map<String, String> localSymbolNames, HRACModel m) {
+		HRACSymbol newTargetSymbol = getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames);
+		Integer newOffset = null;
+		if (params != null) {
+			HRBSMemoryAddress passedDownSymbol = params.get(originalMemoryAddress.getSymbol().getName());
+			if (passedDownSymbol != null) {
+				newOffset = passedDownSymbol.getOffset();
+			}
+		}
+		if (newOffset != null) {
+			if (originalMemoryAddress.getOffset() != null) {
+				newOffset = newOffset + originalMemoryAddress.getOffset();
+			}
+		} else {
+			newOffset = originalMemoryAddress.getOffset();
+		}
+		if (originalMemoryAddress.isDeref()) {
+			String odCommandLabelName = "CL_"
+					+ generateHRACSymbolName(originalMemoryAddress.getSymbol(), parentCmdName, cmdExecId);
+			HRACSymbol odCLSymbol = new HRACSymbol();
+			odCLSymbol.setName(odCommandLabelName);
+
+			HRACMemoryAddress cTGTAddressForS = new HRACMemoryAddress();
+			cTGTAddressForS.setSymbol(odCLSymbol);
+			cTGTAddressForS.setOffset(1 + originalMemoryAddress.getDerefOffset());
+
+			HRACMemoryAddress cTGTAddressForC = new HRACMemoryAddress();
+			cTGTAddressForC.setSymbol(getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames));
+			cTGTAddressForC.setOffset(newOffset);
+
+			HRACCommand odCommand = new HRACCommand();
+			odCommand.setLabel(odCLSymbol);
+			odCommand.setOp(Opcode.NAR);
+			odCommand.setTarget(cTGTAddressForC);
+
+			m.addCommand(odCommand);
+
+			return cTGTAddressForS;
+		} else {
+			HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
+			newTgtAddress.setSymbol(newTargetSymbol);
+			newTgtAddress.setOffset(newOffset);
+			return newTgtAddress;
+		}
+
+	}
+
+	private static HRACSymbol getAsHRACSymbol(HRBSSymbol symbol, Map<String, HRBSMemoryAddress> params,
+			Map<String, String> localSymbolNames) {
+		HRACSymbol s = new HRACSymbol();
 		s.setName(getTargetSymbolName(symbol.getName(), params, localSymbolNames));
+		s.setBitCnt(symbol.getBitCnt());
+		s.setBitCntISN(symbol.isBitCntISN());
 		return s;
 	}
 
-	private String getTargetSymbolName(String originalSymbolName,Map<String,HRBSMemoryAddress> params,Map<String,String> localSymbolNames) {
-		String targetName=null;
-		if(params!=null) {
+	private static String getTargetSymbolName(String originalSymbolName, Map<String, HRBSMemoryAddress> params,
+			Map<String, String> localSymbolNames) {
+		String targetName = null;
+		if (params != null) {
 			HRBSMemoryAddress passedDownSymbol = params.get(originalSymbolName);
-			if(passedDownSymbol!=null) {
-				targetName=passedDownSymbol.getSymbol().getName();
+			if (passedDownSymbol != null) {
+				targetName = passedDownSymbol.getSymbol().getName();
 			}
 		}
-		if(targetName==null) {
-			if(localSymbolNames!=null) {
-			targetName=localSymbolNames.getOrDefault(originalSymbolName, originalSymbolName);
+		if (targetName == null) {
+			if (localSymbolNames != null) {
+				targetName = localSymbolNames.getOrDefault(originalSymbolName, originalSymbolName);
+			}
 		}
-		}		
 		return targetName;
+	}
+
+	public static String generateHRACSymbolName(String hrbsSymbolName, HRBSSymbolType hrbsSymbolType, String cmdName,
+			String cmdExecId) {
+		String rString = hrbsSymbolName;
+		if (rString == null) {
+			rString = "NULL";
+		}
+		switch (hrbsSymbolType) {
+		case global:
+			return rString;
+		case shared:
+			return String.format("%s_%s", cmdName, rString);
+		default: // local is default
+			return String.format("%s_%s_%s", cmdName, cmdExecId, rString);
+
+		}
+	}
+
+	public static String generateHRACSymbolName(HRBSSymbol hrbsSymbol, String cmdName, String cmdExecId) {
+		return generateHRACSymbolName(hrbsSymbol.getName(), hrbsSymbol.getType(), cmdName, cmdExecId);
 	}
 
 	@Override

@@ -15,6 +15,12 @@ public class HRACSymbol {
 	private HRACMemoryAddress targetSymbol;
 	private int bitCnt;
 	private boolean bitCntISN;
+	public HRACSymbol(String generateHRACSymbolName) {
+		name=generateHRACSymbolName;
+	}
+	public HRACSymbol() {
+		// TODO Auto-generated constructor stub
+	}
 	public String getName() {
 		return name;
 	}

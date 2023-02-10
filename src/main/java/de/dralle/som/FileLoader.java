@@ -30,6 +30,8 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrbs.HRBSParser;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
  * @author Nils
@@ -69,7 +71,43 @@ public class FileLoader {
 		bis.close();
 		return m;
 	}
+	
+	public void writeHRBSFile(HRBSModel m, String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+		bis.write(m.asCode());
+		bis.close();
+	}
 
+	public HRBSModel readHRBSFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		HRBSParser hp = new HRBSParser();
+		HRBSModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+	public HRBSModel readHRBSFileFromInternal(String path) throws IOException {
+		ClassLoader cl=getClass().getClassLoader();
+		InputStream is = cl.getResourceAsStream(path);
+		BufferedInputStream bis = new BufferedInputStream(is);
+		HRBSParser hp = new HRBSParser();
+		HRBSModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+	public HRBSModel readHRBSFileInternalFirst(String path) throws IOException{
+		try {
+			return readHRBSFileFromInternal(path);
+		} catch (IOException e) {			
+		}
+		return readHRBSFile(path);
+	}
+	public HRBSModel loadHRBSByName(String name) throws IOException{
+		return readHRBSFileInternalFirst(Paths.get("includes", "hrbs", name+".hrbs").toString());
+	}
 	public void writeHRACFile(HRACModel m, String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);
@@ -127,14 +165,7 @@ public class FileLoader {
 	}
 
 	public void writeAsciiBinaryFile(IMemspace memspace, String path) throws IOException {
-		File f = new File(path);
-		FileWriter fis = new FileWriter(f);
-		BufferedWriter bis = new BufferedWriter(fis);
-
-		for (int i = 0; i < memspace.getSize(); i++) {
-			bis.write(memspace.getBit(i) ? '1' : '0');
-		}
-		bis.close();
+		writeToFile(memspace, SOMFormats.BIN, path);
 	}
 
 	public Object loadFromString(String source, SOMFormats sourceFormat) throws IOException {

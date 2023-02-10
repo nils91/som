@@ -187,139 +187,62 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {
+		Map<String, HRBSMemoryAddress> modifiedParamMap = new HashMap<String, HRBSMemoryAddress>();
+		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
+		List<HRBSCommand> additionalCommands = new ArrayList<>();
+		if (params != null) { // convert all params that are derefs
+			for (Map.Entry<String, HRBSMemoryAddress> entry : params.entrySet()) {
+				String key = entry.getKey();
+				HRBSMemoryAddress val = entry.getValue();
+				HRBSMemoryAddress dedereffed = resolveDeref(additionalSymbols, additionalCommands, val);
+				modifiedParamMap.put(key, dedereffed);
+			}
+		}
+		params = modifiedParamMap;
+		addSymbols(additionalSymbols);
+		addCommands(additionalCommands);
+		additionalCommands.clear();
+		additionalSymbols.clear();
 		Map<String, String> lclSymbolNameMap = new HashMap<>();
 		HRACModel m = new HRACModel();
-		m.setN(minimumN);
-		for (HRBSSymbol s : symbols) {
-			String symbolName=generateHRACSymbolName(s, name, uniqueUsageId);
-			lclSymbolNameMap.put(s.getName(), symbolName);
-			HRACSymbol hracSymbol = getAsHRACSymbol(s, params, lclSymbolNameMap);
-			if (s.getTargetSymbol() == null) {
-				switch (s.getType()) {
-				case global:
-					symbolName = s.getName();
-					break;
-				case shared:
-					symbolName = String.format("%s_%s", name, s.getName());
-					break;
-				default: // local is default
-					symbolName = String.format("%s_%s_%s", name, uniqueUsageId, s.getName());
-					break;
-
-				}
-				lclSymbolNameMap.put(s.getName(), symbolName);
-				HRACSymbol hracSymbol = new HRACSymbol();
-				hracSymbol.setName(symbolName);
-				hracSymbol.setBitCnt(s.getBitCnt());
-				hracSymbol.setBitCntISN(s.isBitCntISN());
-
-				m.addSymbol(hracSymbol);
-			} else {
-				HRBSMemoryAddress tgt = s.getTargetSymbol();
-				if (tgt.isDeref()) {
-					HRACMemoryAddress cTGTAddressForS = new HRACMemoryAddress();
-					HRACSymbol cTgtSymbol = new HRACSymbol();
-
-					String cTgtSymbolName = null;// init is null, because the target name will be searched for in the
-													// params and locally renamed symbols
-					// test if target symbol is a parameter
-					HRBSMemoryAddress paramTarget = null;
-					if (params != null) {
-						paramTarget = params.get(tgt.getSymbol().getName());
-						if (paramTarget != null) {
-							cTgtSymbolName = paramTarget.getSymbol().getName();
-						}
-					}
-
-					if (cTgtSymbolName == null) {
-						cTgtSymbolName = lclSymbolNameMap.getOrDefault(tgt.getSymbol().getName(),
-								tgt.getSymbol().getName());
-					}
-					cTgtSymbol.setName(cTgtSymbolName);
-
-					String odCommandLabelName = "CL_" + cTgtSymbolName;
-					HRACSymbol odCLSymbol = new HRACSymbol();
-					odCLSymbol.setName(odCommandLabelName);
-
-					cTGTAddressForS.setSymbol(odCLSymbol);
-					cTGTAddressForS.setOffset(1 + tgt.getDerefOffset());
-
-					HRACSymbol hracSymbol = new HRACSymbol();
-					hracSymbol.setName(s.getName());
-					hracSymbol.setBitCnt(s.getBitCnt());
-					hracSymbol.setBitCntISN(s.isBitCntISN());
-					hracSymbol.setTargetSymbol(cTGTAddressForS);
-
-					m.addSymbol(hracSymbol);
-
-					HRACMemoryAddress cTGTAddressForC = new HRACMemoryAddress();
-					cTGTAddressForC.setSymbol(cTgtSymbol);
-					cTGTAddressForC.setOffset(tgt.getOffset());
-					if (paramTarget != null) {
-						if (cTGTAddressForC.getOffset() == null) {
-							cTGTAddressForC.setOffset(paramTarget.getOffset());
-						} else {
-							if (paramTarget.getOffset() != null) {
-								paramTarget.setOffset(paramTarget.getOffset() + cTGTAddressForC.getOffset());
-							}
-						}
-					}
-
-					HRACCommand odCommand = new HRACCommand();
-					odCommand.setLabel(odCLSymbol);
-					odCommand.setOp(Opcode.NAR);
-					odCommand.setTarget(cTGTAddressForC);
-
-					m.addCommand(odCommand);
-				} else {
-					HRACMemoryAddress cTGTAddress = new HRACMemoryAddress();
-					HRACSymbol cTgtSymbol = new HRACSymbol();
-					String cTgtSymbolName = null;// init is null, because the target name will be searched for in the
-													// params and locally renamed symbols
-					// test if target symbol is a parameter
-					HRBSMemoryAddress paramTarget = null;
-					if (params != null) {
-						paramTarget = params.get(tgt.getSymbol().getName());
-						if (paramTarget != null) {
-							cTgtSymbolName = paramTarget.getSymbol().getName();
-						}
-					}
-
-					if (cTgtSymbolName == null) {
-						cTgtSymbolName = lclSymbolNameMap.getOrDefault(tgt.getSymbol().getName(),
-								tgt.getSymbol().getName());
-					}
-					cTgtSymbol.setName(cTgtSymbolName);
-					cTGTAddress.setSymbol(cTgtSymbol);
-					cTGTAddress.setOffset(tgt.getOffset());
-
-					if (paramTarget != null) {
-						if (cTGTAddress.getOffset() == null) {
-							cTGTAddress.setOffset(paramTarget.getOffset());
-						} else {
-							if (paramTarget.getOffset() != null) {
-								paramTarget.setOffset(paramTarget.getOffset() + cTGTAddress.getOffset());
-							}
-						}
-					}
-
-					HRACSymbol hracSymbol = new HRACSymbol();
-					hracSymbol.setName(s.getName());
-					hracSymbol.setBitCnt(s.getBitCnt());
-					hracSymbol.setBitCntISN(s.isBitCntISN());
-					hracSymbol.setTargetSymbol(cTGTAddress);
-
-					m.addSymbol(hracSymbol);
-				}
+		m.setN(getMinimumN());
+		m.setHeapSize(getHeapSize());
+		for (HRBSSymbol s : symbols) {// convert all mirror symbols that are derefs
+			if (s.getTargetSymbol() != null) {
+				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));
 			}
+		}
+		addSymbols(additionalSymbols);
+		addCommands(additionalCommands);
+		additionalCommands.clear();
+		additionalSymbols.clear();
+		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway, becuase...)
+			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
+			lclSymbolNameMap.put(s.getName(), symbolName);
+			HRACSymbol hracSymbol = getAsHRACSymbol(s, params, lclSymbolNameMap, name, uniqueUsageId, m, childs);
+			m.addSymbol(hracSymbol);
+			
 		}
 		localizeCommandLabels(commands, lclSymbolNameMap, name, uniqueUsageId);
 		for (int i = 0; i < commands.size(); i++) {
 			HRBSCommand c = commands.get(i);
 			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), params, lclSymbolNameMap, childs, m);
 		}
-		
+
 		return m;
+	}
+
+	private void addCommands(List<HRBSCommand> additionalCommands) {
+		for (HRBSCommand hrbsCommand : additionalCommands) {
+			addCommand(hrbsCommand);
+		}
+
+	}
+
+	private void addSymbols(List<HRBSSymbol> additionalSymbols) {
+		for (HRBSSymbol hrbsSymbol : additionalSymbols) {
+			addSymbol(hrbsSymbol);
+		}
 	}
 
 	/**
@@ -356,11 +279,12 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
+	 * @param additionalCommands 
 	 * @return
 	 */
 	private static HRACCommand convertNARCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
-			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m) {
-		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m);
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
+		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m, additionalCommands);
 	}
 
 	/**
@@ -385,7 +309,7 @@ public class HRBSModel implements ISetN, IHeap {
 		for (Opcode op : Opcode.values()) {
 			if (op.name().equals(cmdName)) {
 				HRACCommand converted = convertStandardCommands(c, op, parentCmdName, cmdExecId, params,
-						symbolNameReplacementMap, m);
+						symbolNameReplacementMap, m, availChildsCommands);
 				standardCommand = true;
 				if (label != null) {
 					if (converted.getLabel() == null) {
@@ -441,11 +365,12 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
+	 * @param additionalCommands 
 	 * @return
 	 */
 	private static HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
-			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m) {
-		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m);
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
+		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m, additionalCommands);
 	}
 
 	/**
@@ -458,11 +383,12 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
+	 * @param additionalCommands 
 	 * @return
 	 */
 	private static HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName,
 			String cmdExecId, Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap,
-			HRACModel m) {
+			HRACModel m, Map<String, HRBSModel> additionalCommands) {
 		HRACCommand tgtC = new HRACCommand();
 		if (c.getLabel() != null) {
 			String lclSmblName = getTargetSymbolName(c.getLabel(), params, symbolNameReplacementMap);
@@ -470,16 +396,62 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		tgtC.setOp(opcode);
 		HRACMemoryAddress tgtAdr = calculateHRACMemoryAddress(c.getTarget().get(0), parentCmdName, cmdExecId, params,
-				symbolNameReplacementMap, m);
+				symbolNameReplacementMap, m, additionalCommands);
 		tgtC.setTarget(tgtAdr);
 
 		return tgtC;
 	}
 
 	/**
+	 * Method to turn a HRBS address with deref into one without. If the given
+	 * address has no deref, it is returned without change (also true for null). If
+	 * it has, the required commands/symbols are generated, added to the provided
+	 * lists if applicable, and an address without deref is returned.
+	 * 
+	 * @param m
+	 * @param originalMemoryAddress
+	 * @return
+	 */
+	private static HRBSMemoryAddress resolveDeref(List<HRBSSymbol> addSymbols, List<HRBSCommand> addCommands,
+			HRBSMemoryAddress originalMemoryAddress) {
+		if (originalMemoryAddress != null && originalMemoryAddress.isDeref()) {
+			String odCommandLabelName = "DRFL_" + originalMemoryAddress.getSymbol().getName();
+			String odSymbolName = "DRFS_" + originalMemoryAddress.getSymbol().getName();
+
+			HRBSSymbol odSymbol = new HRBSSymbol();
+			odSymbol.setType(HRBSSymbolType.local);
+			odSymbol.setName(odSymbolName);
+
+			HRBSSymbol odCommandLblSymbol = new HRBSSymbol();
+			odCommandLblSymbol.setName(odCommandLabelName);
+			odCommandLblSymbol.setType(HRBSSymbolType.local);
+			HRBSMemoryAddress odCommandLblTargetSymbol = new HRBSMemoryAddress(odCommandLblSymbol);
+			if (originalMemoryAddress.getDerefOffset() == null) {
+				odCommandLblTargetSymbol.setOffset(1);
+			} else {
+				odCommandLblTargetSymbol.setOffset(originalMemoryAddress.getDerefOffset() + 1);
+			}
+			odSymbol.setTargetSymbol(odCommandLblTargetSymbol);
+			addSymbols.add(odSymbol);
+
+			HRBSCommand odCommand = new HRBSCommand();
+			odCommand.setLabel(odCommandLabelName);
+			odCommand.setCmd(Opcode.NAR.name());
+			HRBSMemoryAddress odCommandTarget = new HRBSMemoryAddress(originalMemoryAddress.getSymbol());
+			odCommandTarget.setOffset(originalMemoryAddress.getOffset());
+			odCommand.addTarget(odCommandTarget);
+			addCommands.add(odCommand);
+
+			return new HRBSMemoryAddress(odSymbol);
+		} else {
+			return originalMemoryAddress;
+		}
+	}
+
+	/**
 	 * Convert the HRBS Address to a HRAC address (includinng required name and
 	 * offset changes). if the hrbs address is a deref, this will also generate the
-	 * required commands and add them to the hrac model.
+	 * required commands and symbols and add them to the hrac model.
 	 * 
 	 * @param originalMemoryAddress
 	 * @param parentCmdName
@@ -487,12 +459,46 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param localSymbolNames
 	 * @param m
+	 * @param additionalAvailableCommands
 	 * @return
 	 */
 	private static HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
 			String parentCmdName, String cmdExecId, Map<String, HRBSMemoryAddress> params,
-			Map<String, String> localSymbolNames, HRACModel m) {
-		HRACSymbol newTargetSymbol = getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames, parentCmdName, cmdExecId, m);
+			Map<String, String> localSymbolNames, HRACModel m, Map<String, HRBSModel> additionalAvailableCommands) {
+
+		if (originalMemoryAddress.isDeref()) {
+			List<HRBSSymbol> additionalSymbols = new ArrayList<>();
+			List<HRBSCommand> additionalCommands = new ArrayList<>();
+			originalMemoryAddress = resolveDeref(additionalSymbols, additionalCommands, originalMemoryAddress);
+			for (HRBSSymbol s : additionalSymbols) {
+				HRACSymbol hracS = getAsHRACSymbol(s, params, localSymbolNames, parentCmdName, cmdExecId, m, additionalAvailableCommands);
+				m.addSymbol(hracS);
+			}
+			for (HRBSCommand hrbsCommand : additionalCommands) {
+				convertAnyCommand(hrbsCommand, parentCmdName, cmdExecId, cmdExecId, params, localSymbolNames,
+						additionalAvailableCommands, m);
+			}
+
+		}
+		return calculateHRACMemoryAddressNoDeref(originalMemoryAddress, params, localSymbolNames);
+	}
+
+	/**
+	 * Convert the HRBS Address to a HRAC address (includinng required name and
+	 * offset changes). Assumes no deref.
+	 * 
+	 * @param originalMemoryAddress
+	 * @param parentCmdName
+	 * @param cmdExecId
+	 * @param params
+	 * @param localSymbolNames
+	 * @param m
+	 * @param additionalAvailableCommands
+	 * @return
+	 */
+	private static HRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
+			Map<String, HRBSMemoryAddress> params, Map<String, String> localSymbolNames) {
+		HRACSymbol newTargetSymbol = getAsHRACSymbolNoTgt(originalMemoryAddress.getSymbol(), params, localSymbolNames);
 		Integer newOffset = null;
 		if (params != null) {
 			HRBSMemoryAddress passedDownSymbol = params.get(originalMemoryAddress.getSymbol().getName());
@@ -507,51 +513,29 @@ public class HRBSModel implements ISetN, IHeap {
 		} else {
 			newOffset = originalMemoryAddress.getOffset();
 		}
-		if (originalMemoryAddress.isDeref()) {
-			String odCommandLabelName = "CL_"
-					+ generateHRACSymbolName(originalMemoryAddress.getSymbol(), parentCmdName, cmdExecId);
-			HRACSymbol odCLSymbol = new HRACSymbol();
-			odCLSymbol.setName(odCommandLabelName);
-
-			HRACMemoryAddress cTGTAddressForS = new HRACMemoryAddress();
-			cTGTAddressForS.setSymbol(odCLSymbol);
-			if(originalMemoryAddress.getDerefOffset()==null) {
-				cTGTAddressForS.setOffset(1);
-			}else {
-				cTGTAddressForS.setOffset(1 + originalMemoryAddress.getDerefOffset());
-			}
-			
-
-			HRACMemoryAddress cTGTAddressForC = new HRACMemoryAddress();
-			cTGTAddressForC.setSymbol(getAsHRACSymbol(originalMemoryAddress.getSymbol(), params, localSymbolNames, parentCmdName, cmdExecId, m));
-			cTGTAddressForC.setOffset(newOffset);
-
-			HRACCommand odCommand = new HRACCommand();
-			odCommand.setLabel(odCLSymbol);
-			odCommand.setOp(Opcode.NAR);
-			odCommand.setTarget(cTGTAddressForC);
-
-			m.addCommand(odCommand);
-
-			return cTGTAddressForS;
-		} else {
-			HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
-			newTgtAddress.setSymbol(newTargetSymbol);
-			newTgtAddress.setOffset(newOffset);
-			return newTgtAddress;
-		}
-
+		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
+		newTgtAddress.setSymbol(newTargetSymbol);
+		newTgtAddress.setOffset(newOffset);
+		return newTgtAddress;
 	}
 
 	private static HRACSymbol getAsHRACSymbol(HRBSSymbol symbol, Map<String, HRBSMemoryAddress> params,
-			Map<String, String> localSymbolNames,String parentCmdName,String execId,HRACModel m) {
+			Map<String, String> localSymbolNames, String parentCmdName, String execId, HRACModel m, Map<String, HRBSModel> additionalCommands) {
+		HRACSymbol s = new HRACSymbol();
+		s = getAsHRACSymbolNoTgt(symbol, params, localSymbolNames);
+		if (symbol.getTargetSymbol() != null) {
+			s.setTargetSymbol(calculateHRACMemoryAddress(symbol.getTargetSymbol(), parentCmdName, execId, params,
+					localSymbolNames, m, additionalCommands));
+		}
+		return s;
+	}
+
+	private static HRACSymbol getAsHRACSymbolNoTgt(HRBSSymbol symbol, Map<String, HRBSMemoryAddress> params,
+			Map<String, String> localSymbolNames) {
 		HRACSymbol s = new HRACSymbol();
 		s.setName(getTargetSymbolName(symbol.getName(), params, localSymbolNames));
 		s.setBitCnt(symbol.getBitCnt());
 		s.setBitCntISN(symbol.isBitCntISN());
-		if(symbol.getTargetSymbol()!=null) {
-			s.setTargetSymbol(calculateHRACMemoryAddress(symbol.getTargetSymbol(), parentCmdName	, execId, params, localSymbolNames, m));
-		}
 		return s;
 	}
 
@@ -638,11 +622,11 @@ public class HRBSModel implements ISetN, IHeap {
 		params.add(param);
 	}
 
-	public List<HRASModel> getChilds() {
+	public Map<String, HRBSModel> getChilds() {
 		return childs;
 	}
 
-	public void setChilds(List<HRASModel> childs) {
+	public void setChilds(Map<String, HRBSModel> childs) {
 		this.childs = childs;
 	}
 

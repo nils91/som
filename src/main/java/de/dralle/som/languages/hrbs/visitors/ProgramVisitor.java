@@ -4,7 +4,13 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Command_defContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
@@ -30,7 +36,21 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	}
 	@Override
 	public HRBSModel visitProgram(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext ctx) {
-		
+		if(ctx.import_stmt()!=null) {
+			for (Import_stmtContext imp : ctx.import_stmt()) {
+				model.addChild(imp.accept(new HRBSImportVisitor()));
+			}
+		}
+		if(ctx.command_def()!=null) {
+			for (Command_defContext com : ctx.command_def()) {				
+				HRBSModel lclModel = com.accept(new ProgramVisitor());
+				if("MAIN".equalsIgnoreCase(lclModel.getName())) {
+					model=lclModel;
+				}else {
+					model.addChild(lclModel);
+				}
+			}
+		}
 		return model;
 	}
 

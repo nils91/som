@@ -32,7 +32,7 @@ public class CommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 			c.setCmd(Opcode.NAW);
 		}
 		if(ctx.symbol_os()!=null) {
-		c.setTarget(ctx.symbol_os().accept(new MemoryAddressVisitor()));
+		c.setTarget(ctx.symbol_os().accept(new HRBSMemoryAddressVisitor()));
 		}
 		return c;
 	}

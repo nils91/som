@@ -16,7 +16,7 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class MemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddress> {
+public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddress> {
 
 	private HRBSMemoryAddress address;
 

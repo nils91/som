@@ -4,11 +4,21 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_headContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_head_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Command_defContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectivesContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_blkContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionsContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
+import de.dralle.som.languages.hrbs.model.HRBSSymbol;
+import de.dralle.som.languages.hrbs.model.HRBSSymbolType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
@@ -35,10 +45,69 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		this.model=model;
 	}
 	@Override
+	public HRBSModel visitCmd_head(Cmd_headContext ctx) {
+			model.setName(ctx.NAME().getText());
+			for (Cmd_head_paramContext chp : ctx.cmd_head_param()) {
+				chp.accept(this);
+			}
+			return model;
+	}
+	@Override
+	public HRBSModel visitCmd_head_param(Cmd_head_paramContext ctx) {
+		model.addParam(ctx.NAME().getText());
+		return model;
+	}
+	@Override
+	public HRBSModel visitCommand_def(Command_defContext ctx) {
+		ctx.cmd_head().accept(this);
+		if(ctx.directives()!=null) {
+			ctx.directives().accept(this);
+		}
+		if(ctx.symbol_definitions()!=null) {
+			ctx.symbol_definitions().accept(this);
+		}
+		return model;
+	}
+	@Override
+	public HRBSModel visitSymbol_definitions(Symbol_definitionsContext ctx) {
+		if(ctx.symbol_blk()!=null) {
+			for (Symbol_blkContext bloc : ctx.symbol_blk()) {
+				bloc.accept(this);
+			}
+		}if(ctx.symbol_ns()!=null) {
+			for (Symbol_nsContext s : ctx.symbol_ns()) {
+				model.addSymbol(s.accept(new HRBSSymbolVisitor()));
+			}
+		}
+		return model;
+	}
+	@Override
+	public HRBSModel visitSymbol_blk(Symbol_blkContext ctx) {
+		HRBSSymbolType symbolType = HRBSSymbolType.local;
+		if(ctx.LOCAL()!=null) {
+			symbolType=HRBSSymbolType.local;
+		}else if(ctx.SHARED()!=null) {
+			symbolType=HRBSSymbolType.shared;
+		}else if(ctx.GLOBAL()!=null) {
+			symbolType=HRBSSymbolType.global;
+		}
+		for (de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext sd : ctx.symbol_dec()) {
+			HRBSSymbol symbol = sd.accept(new HRBSSymbolVisitor(symbolType));
+			model.addSymbol(symbol);
+		}
+		return model;
+	}
+	@Override
+	public HRBSModel visitDirectives(DirectivesContext ctx) {
+		// TODO Auto-generated method stub
+		return super.visitDirectives(ctx);
+	}
+	@Override
 	public HRBSModel visitProgram(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext ctx) {
+		List<HRBSModel> childModels = new ArrayList<HRBSModel>();
 		if(ctx.import_stmt()!=null) {
 			for (Import_stmtContext imp : ctx.import_stmt()) {
-				model.addChild(imp.accept(new HRBSImportVisitor()));
+				childModels.add(imp.accept(new HRBSImportVisitor()));
 			}
 		}
 		if(ctx.command_def()!=null) {
@@ -47,9 +116,12 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				if("MAIN".equalsIgnoreCase(lclModel.getName())) {
 					model=lclModel;
 				}else {
-					model.addChild(lclModel);
+					childModels.add(lclModel);
 				}
 			}
+		}
+		for (HRBSModel hrbsModel : childModels) {
+			model.addChild(hrbsModel);
 		}
 		return model;
 	}

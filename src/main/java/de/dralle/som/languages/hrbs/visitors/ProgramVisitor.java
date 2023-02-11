@@ -72,7 +72,7 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		if (ctx.symbol_definitions() != null) {
 			ctx.symbol_definitions().accept(this);
 		}
-		if(ctx.commands()!=null) {
+		if (ctx.commands() != null) {
 			ctx.commands().accept(this);
 		}
 		return model;
@@ -152,7 +152,7 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				model.addChild(hrbsModel);
 			}
 		}
-
+		model.propagateChilds();
 		return model;
 	}
 

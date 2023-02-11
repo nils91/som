@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrbs.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,15 +44,71 @@ public class HRBSModel implements ISetN, IHeap {
 	private int heapSize;
 	private int minimumN;
 
-	public void addChild(HRBSModel c) {
+	public boolean addChild(HRBSModel c) {
+		return addChild(c.getName(), c);
+	}
+
+	public boolean addChild(String name, HRBSModel c) {
 		if (childs == null) {
 			childs = new HashMap<>();
 		}
-		childs.put(c.getName(), c);
-		if (cmdUsageTracker == null) {
-			cmdUsageTracker = new HashMap<>();
+		if (!childs.containsKey(name)) {
+			if (this.name != name) {
+				childs.put(name, c);// prevent from adding itsself, prevent recursion
+			}
+			if (cmdUsageTracker == null) {
+				cmdUsageTracker = new HashMap<>();
+			}
+			cmdUsageTracker.put(name, 0);
+			return true;
 		}
-		cmdUsageTracker.put(c.getName(), 0);
+		return false;
+	}
+
+	public void propagateChildList() {
+		for (Entry<String, HRBSModel> entry : childs.entrySet()) {
+			String key = entry.getKey();
+			HRBSModel val = entry.getValue();
+			val.addChilds(childs);
+			val.propagateChildList();
+		}
+	}
+
+	public Collection<HRBSModel> getChildsAsList() {
+		if (childs != null) {
+			return childs.values();
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	public Map<String, HRBSModel> getChildsAsMap() {
+		if (childs == null) {
+			childs = new HashMap<>();
+		}
+		return childs;
+	}
+
+	public int addChilds(Map<String, HRBSModel> childs) {
+		int noAdds=0;
+		for (Entry<String, HRBSModel> entry : childs.entrySet()) {
+			String key = entry.getKey();
+			HRBSModel val = entry.getValue();
+			if(addChild(key, val)) {
+				noAdds++;
+			}
+		}
+		return noAdds;
+	}
+
+	public int addChilds(Collection<HRBSModel> childs) {
+		int noAdds=0;
+		for (HRBSModel hrbsModel : childs) {
+			if(addChild(hrbsModel)) {
+				noAdds++;
+			}
+		}
+		return noAdds;
 	}
 
 	private static int incCommandUsage(HRBSCommand c) {
@@ -216,12 +273,13 @@ public class HRBSModel implements ISetN, IHeap {
 		addCommands(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
-		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway, becuase...)
+		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway,
+										// becuase...)
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
 			lclSymbolNameMap.put(s.getName(), symbolName);
 			HRACSymbol hracSymbol = getAsHRACSymbol(s, params, lclSymbolNameMap, name, uniqueUsageId, m, childs);
 			m.addSymbol(hracSymbol);
-			
+
 		}
 		localizeCommandLabels(commands, lclSymbolNameMap, name, uniqueUsageId);
 		for (int i = 0; i < commands.size(); i++) {
@@ -279,12 +337,14 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
-	 * @param additionalCommands 
+	 * @param additionalCommands
 	 * @return
 	 */
 	private static HRACCommand convertNARCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
-			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
-		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m, additionalCommands);
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m,
+			Map<String, HRBSModel> additionalCommands) {
+		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m,
+				additionalCommands);
 	}
 
 	/**
@@ -365,12 +425,14 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
-	 * @param additionalCommands 
+	 * @param additionalCommands
 	 * @return
 	 */
 	private static HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
-			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
-		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m, additionalCommands);
+			Map<String, HRBSMemoryAddress> params, Map<String, String> symbolNameReplacementMap, HRACModel m,
+			Map<String, HRBSModel> additionalCommands) {
+		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, params, symbolNameReplacementMap, m,
+				additionalCommands);
 	}
 
 	/**
@@ -383,7 +445,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param params
 	 * @param symbolNameReplacementMap
 	 * @param m
-	 * @param additionalCommands 
+	 * @param additionalCommands
 	 * @return
 	 */
 	private static HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName,
@@ -471,7 +533,8 @@ public class HRBSModel implements ISetN, IHeap {
 			List<HRBSCommand> additionalCommands = new ArrayList<>();
 			originalMemoryAddress = resolveDeref(additionalSymbols, additionalCommands, originalMemoryAddress);
 			for (HRBSSymbol s : additionalSymbols) {
-				HRACSymbol hracS = getAsHRACSymbol(s, params, localSymbolNames, parentCmdName, cmdExecId, m, additionalAvailableCommands);
+				HRACSymbol hracS = getAsHRACSymbol(s, params, localSymbolNames, parentCmdName, cmdExecId, m,
+						additionalAvailableCommands);
 				m.addSymbol(hracS);
 			}
 			for (HRBSCommand hrbsCommand : additionalCommands) {
@@ -520,7 +583,8 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private static HRACSymbol getAsHRACSymbol(HRBSSymbol symbol, Map<String, HRBSMemoryAddress> params,
-			Map<String, String> localSymbolNames, String parentCmdName, String execId, HRACModel m, Map<String, HRBSModel> additionalCommands) {
+			Map<String, String> localSymbolNames, String parentCmdName, String execId, HRACModel m,
+			Map<String, HRBSModel> additionalCommands) {
 		HRACSymbol s = new HRACSymbol();
 		s = getAsHRACSymbolNoTgt(symbol, params, localSymbolNames);
 		if (symbol.getTargetSymbol() != null) {

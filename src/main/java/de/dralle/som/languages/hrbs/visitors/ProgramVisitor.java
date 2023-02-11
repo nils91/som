@@ -152,7 +152,7 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				model.addChild(hrbsModel);
 			}
 		}
-		model.propagateChilds();
+		model.propagateChildList();
 		return model;
 	}
 

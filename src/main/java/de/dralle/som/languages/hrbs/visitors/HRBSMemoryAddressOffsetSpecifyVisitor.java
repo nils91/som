@@ -16,39 +16,32 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddress> {
+public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddress> {
 
 	private HRBSMemoryAddress address;
+	private int nxtOffset;
 
-	public HRBSMemoryAddressVisitor() {
+	public int getNxtOffset() {
+		return nxtOffset;
+	}
+	public void setNxtOffset(int nxtOffset) {
+		this.nxtOffset = nxtOffset;
+	}
+	public HRBSMemoryAddressOffsetSpecifyVisitor() {
 		address=new HRBSMemoryAddress();
 	}
-	@Override
-	public HRBSMemoryAddress visitSymbol_os(Symbol_osContext ctx) {
-		if(ctx.AMP()!=null) {
-			address.setDeref(true);
-		}
-		if(ctx.getChild(0)!=null) {
-			HRBSSymbol s = new HRBSSymbol();
-			s.setName(ctx.getChild(0).getText());
-			address.setSymbol(s);
-		}
-		if(ctx.offset_specify()!=null) {
-			HRBSMemoryAddressOffsetSpecifyVisitor maov = new HRBSMemoryAddressOffsetSpecifyVisitor(address);
-			for (int i = 0; i < ctx.offset_specify().size();i++) {
-				maov.setNxtOffset(i);
-				de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
-				os.accept(maov);
-			}
-		}
-		return address;
+	public HRBSMemoryAddressOffsetSpecifyVisitor(HRBSMemoryAddress address) {
+		
 	}
 
 	@Override
 	public HRBSMemoryAddress visitOffset_specify(
 			de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specifyContext ctx) {
-		if(ctx.getChild(1)!=null) {
-			address.setOffset(Integer.parseInt(ctx.getChild(1).getText()));
+		int offset = Integer.parseInt(ctx.getChild(1).getText());
+		if( nxtOffset==0) {
+			address.setOffset(offset);
+		}else {
+			address.setDerefOffset(offset);
 		}
 		return address;
 	}

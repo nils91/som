@@ -28,23 +28,30 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 
 	@Override
 	public HRBSModel visitImport_stmt(Import_stmtContext ctx) {
-		if(ctx.NAME()!=null) {
+		HRBSModel mtr=null;
+		if(ctx.NAME()!=null&&ctx.FILEPATH()==null) {
 			try {
-				return new FileLoader().loadHRBSByName(ctx.NAME().getText());
+				mtr= new FileLoader().loadHRBSByName(ctx.NAME(0).getText());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if(ctx.NAME(1)!=null&&mtr!=null) {
+				mtr.setName(ctx.NAME(1).getText());
+			}
 		}
-		if(ctx.FILEPATH()!=null) {
+		else if(ctx.FILEPATH()!=null) {
 			String path=ctx.FILEPATH().getText();
 			try {
-				return new FileLoader().readHRBSFile(path);
+				mtr= new FileLoader().readHRBSFile(path);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			if(ctx.NAME(0)!=null&&mtr!=null) {
+				mtr.setName(ctx.NAME(0).getText());
+			}
 		}
-		return null;
+		return mtr;
 	}
 
 

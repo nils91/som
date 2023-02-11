@@ -25,7 +25,7 @@ cnt_specify:B_OPEN (INT|BI_N) B_CLOSE;
 
 builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
 
-import_stmt: IMPORT (NAME|FILEPATH) SEMICOLON;
+import_stmt: IMPORT (NAME|FILEPATH) (AS NAME)? SEMICOLON;
 
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
@@ -44,6 +44,7 @@ HEAP:'heap';
 GLOBAL:'global';
 SHARED:'shared';
 LOCAL:'local';
+AS:'as';
 BI_N:'N';
 D_N:'n';
 SINGLE_QUOTE:'\'';

@@ -24,7 +24,7 @@ public class CommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 		if(ctx.SYMBOL()!=null) {
 			HRACSymbol s = new HRACSymbol();
 			s.setName(ctx.SYMBOL().getText());
-			c.setLabel(null);
+			c.setLabel(s);
 		}
 		if(ctx.NAR()!=null) {
 			c.setOp(Opcode.NAR);

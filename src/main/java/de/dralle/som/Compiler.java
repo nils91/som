@@ -15,6 +15,7 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
  * @author Nils
@@ -22,6 +23,9 @@ import de.dralle.som.languages.hras.model.HRASModel;
  */
 public class Compiler {
 	public Object compile(Object sourceModel,SOMFormats sourceFormat,SOMFormats targetFormat){
+		if(sourceFormat.equals(SOMFormats.HRBS)&&targetFormat.equals(SOMFormats.HRAC)){
+			return compileHRBStoHRAC( (HRBSModel) sourceModel);
+		}
 		if(sourceFormat.equals(SOMFormats.HRAC)&&targetFormat.equals(SOMFormats.HRAS)){
 			return compileHRACtoHRAS((HRACModel) sourceModel);
 		}
@@ -36,7 +40,9 @@ public class Compiler {
 		}
 		return null;
 	}
-	
+	public HRACModel compileHRBStoHRAC(HRBSModel m) {
+		return m.compileToHRAC(null, null, null);
+	}
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}

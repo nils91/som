@@ -7,13 +7,14 @@ import java.util.List;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
  * @author Nils
  *
  */
 public enum SOMFormats {
-	AB(IMemspace.class,"ascii binary","ab"),BIN(IMemspace.class,"binary","bin"),HRAS(HRASModel.class,"human readable SOM Type A Simple","hras"),HRAC(HRACModel.class,"human readable SOM Type A Complex","hrac",new String[]{"hra","hrac"});
+	AB(String.class,"ascii binary","ab"),BIN(IMemspace.class,"binary","bin"),HRAS(HRASModel.class,"human readable SOM Type A Simple","hras"),HRAC(HRACModel.class,"human readable SOM Type A Complex","hrac",new String[]{"hra","hrac"}),HRBS(HRBSModel.class,"human readable som type b simple","hrbs");
 
 	private String friendlyName;
 	private String shortName;

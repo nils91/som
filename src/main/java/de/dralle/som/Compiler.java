@@ -5,11 +5,14 @@ package de.dralle.som;
 
 import java.io.IOException;
 import java.lang.annotation.Target;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -22,33 +25,75 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
  *
  */
 public class Compiler {
-	public Object compile(Object sourceModel,SOMFormats sourceFormat,SOMFormats targetFormat){
-		if(sourceFormat.equals(SOMFormats.HRBS)&&targetFormat.equals(SOMFormats.HRAC)){
-			return compileHRBStoHRAC( (HRBSModel) sourceModel);
+	public Compiler() {
+		
+
+	}
+public List<SOMFormats> findCompilePath(SOMFormats start,SOMFormats target) {
+	List<SOMFormats> cPath=new ArrayList<>();
+	cPath.add(start);
+	if(start!=null&&start.equals(target)) {
+		return cPath;
+	}else { 
+		SOMFormats[] availTargets = ATOMIC_COMPILE_PATHS.get(start);
+		if(availTargets==null) {
+			return null;
 		}
-		if(sourceFormat.equals(SOMFormats.HRAC)&&targetFormat.equals(SOMFormats.HRAS)){
+		for (int i = 0; i < availTargets.length; i++) {
+			SOMFormats somFormats = availTargets[i];
+			List<SOMFormats> ccPathh = findCompilePath(somFormats, target);			
+			if(ccPathh!=null) {
+				cPath.addAll(ccPathh);
+				return cPath;
+			}
+		}
+		return null;
+	}
+}
+	public static final Map<SOMFormats, SOMFormats[]> ATOMIC_COMPILE_PATHS = Stream
+			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
+					new SOMFormats[] { SOMFormats.BIN }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
+							new SOMFormats[] { SOMFormats.AB }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
+							new SOMFormats[] { SOMFormats.BIN }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
+							new SOMFormats[] { SOMFormats.HRAS }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
+							new SOMFormats[] { SOMFormats.HRAC }))
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+	public Object compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
+		if (sourceFormat.equals(SOMFormats.HRBS) && targetFormat.equals(SOMFormats.HRAC)) {
+			return compileHRBStoHRAC((HRBSModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAS)) {
 			return compileHRACtoHRAS((HRACModel) sourceModel);
 		}
-		if(sourceFormat.equals(SOMFormats.HRAS)&&targetFormat.equals(SOMFormats.BIN)){
+		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.BIN)) {
 			return compileHRAStoMemspace((HRASModel) sourceModel);
 		}
-		if(sourceFormat.equals(SOMFormats.BIN)&&targetFormat.equals(SOMFormats.AB)){
+		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.AB)) {
 			return memSpaceToABString((IMemspace) sourceModel);
 		}
-		if(sourceFormat.equals(SOMFormats.AB)&&targetFormat.equals(SOMFormats.BIN)){
+		if (sourceFormat.equals(SOMFormats.AB) && targetFormat.equals(SOMFormats.BIN)) {
 			return abStringToMemspace((String) sourceModel);
 		}
 		return null;
 	}
+
 	public HRACModel compileHRBStoHRAC(HRBSModel m) {
 		return m.compileToHRAC(null, null, null);
 	}
+
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}
+
 	public IMemspace abStringToMemspace(String s) {
 		return abStringToMemspace(s.toCharArray());
 	}
+
 	public IMemspace compileHRAStoMemspace(HRASModel model) {
 		return model.compileToMemspace();
 	}

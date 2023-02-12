@@ -55,7 +55,7 @@ public class HRBSCommand {
 		}
 		code += command;
 		if(targets!=null) {
-			code+=" ,";
+			code+=" ";
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
 				code+=hrbsMemoryAddress.asHRBSCode()+",";
 			}

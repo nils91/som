@@ -47,7 +47,6 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 
 	@Override
 	public HRBSSymbol visitSymbol_dec(Symbol_decContext ctx) {
-		s = new HRBSSymbol();
 		s.setBitCnt(1);
 		if (ctx.NAME() != null) {
 			s.setName(ctx.NAME().getText());

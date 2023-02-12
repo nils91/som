@@ -627,6 +627,9 @@ public class HRBSModel implements ISetN, IHeap {
 		if (rString == null) {
 			rString = "NULL";
 		}
+		if(hrbsSymbolType==null) {
+			hrbsSymbolType=HRBSSymbolType.global;
+		}
 		switch (hrbsSymbolType) {
 		case global:
 			return rString;

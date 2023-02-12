@@ -1,7 +1,7 @@
 grammar HRBSGrammar;
 
-program : (import_stmt NEWLINE?)+ (command_def NEWLINE?)+  EOF?;
-command_def: cmd_head directives? symbol_definitions? commands;
+program : (import_stmt NEWLINE?)* (command_def NEWLINE?)+  EOF?;
+command_def: cmd_head directives? symbol_definitions? commands?;
 commands: (command NEWLINE?)+;
 symbol_blk:(GLOBAL|SHARED|LOCAL) C_OPEN NEWLINE  (symbol_dec NEWLINE)+ C_CLOSE NEWLINE;
 symbol_definitions: ((symbol_blk|symbol_ns) NEWLINE)+;

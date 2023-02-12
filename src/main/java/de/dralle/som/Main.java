@@ -148,7 +148,7 @@ public class Main {
 			if(heap>0&&sourceModel instanceof IHeap) {
 				((IHeap)sourceModel).setHeapSize(heap);
 			}
-			Object targetModel = new Compiler().compile(sourceModel, inputFormat, outputFormat);
+			Object targetModel = new Compiler().compileDirect(sourceModel, inputFormat, outputFormat);
 			new FileLoader().writeToFile(targetModel, outputFormat, outfile);
 		}
 	}

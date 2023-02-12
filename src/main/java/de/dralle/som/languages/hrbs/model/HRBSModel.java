@@ -66,12 +66,13 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public void propagateChildList() {
+		if(this.childs!=null) {
 		for (Entry<String, HRBSModel> entry : childs.entrySet()) {
 			String key = entry.getKey();
 			HRBSModel val = entry.getValue();
 			val.addChilds(childs);
 			val.propagateChildList();
-		}
+		}}
 	}
 
 	public Collection<HRBSModel> getChildsAsList() {

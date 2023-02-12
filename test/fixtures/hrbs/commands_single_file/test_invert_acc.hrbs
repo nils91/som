@@ -1,0 +1,6 @@
+MAIN:
+	INV0;
+	INV0;
+
+INV0:
+	NAW ACC;

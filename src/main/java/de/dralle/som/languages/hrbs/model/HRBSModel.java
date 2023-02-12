@@ -684,7 +684,7 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public void addParam(String param) {
-		if (params != null) {
+		if (params == null) {
 			params = new ArrayList<>();
 		}
 		params.add(param);

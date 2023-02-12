@@ -1,0 +1,29 @@
+MAIN:
+#110 0 0011 (acc is set, ard eval set, wh en not set, address 7)
+#001 01000 00//only wh bit set is wh_sel, address is 32
+#00 00000 00000 00 //filler
+#1 0000001 //reset adr eval(not needed in HRAC)
+#set wh_sel
+NAW WH_SEL;
+#1 0000010 //set wh rn 
+NAW WH_EN;
+#1 0000010 //reset wh en
+NAW WH_EN;
+#0 0001000 //read wh com
+NAR WH_COM;
+#0 0000000 //invert acc
+NAR ACC;
+#1 0000010 //set wh rn 
+NAW WH_EN;
+#1 0000010 //reset wh en
+NAW WH_EN;
+#0 0001000 //read wh com
+NAR WH_COM;
+#1 0000010 //set wh rn 
+NAW WH_EN;
+#1 0000010 //reset wh en
+NAW WH_EN;
+#0 0001000 //read wh com
+NAR WH_COM;
+#0 0000000 //invert acc for successful exit
+NAR ACC;

@@ -1,0 +1,12 @@
+MAIN:
+	TR
+	NAW TR;
+	READ1 TR;
+	
+READ1 A:
+	local H
+	NAW H;
+	NAR ACC;
+	NAR H;
+	NAR A;
+	NAR ACC;

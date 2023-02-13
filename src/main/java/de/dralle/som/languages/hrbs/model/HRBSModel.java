@@ -257,7 +257,6 @@ public class HRBSModel implements ISetN, IHeap {
 				modifiedParamMap.put(key, dedereffed);
 			}
 		}
-		params = modifiedParamMap;
 		addSymbols(additionalSymbols);
 		addCommands(additionalCommands);
 		additionalCommands.clear();
@@ -275,18 +274,27 @@ public class HRBSModel implements ISetN, IHeap {
 		addCommands(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
+		if(modifiedParamMap!=null) {
+			for (Entry<String, HRBSMemoryAddress> entry : modifiedParamMap.entrySet()) {
+				String key = entry.getKey();
+				HRBSMemoryAddress val = entry.getValue();
+				HRBSSymbol s = val.getSymbol();
+				String convertedName = generateHRACSymbolName(s.getName(), HRBSSymbolType.local, name, uniqueUsageId);
+				s.setName(convertedName);
+			}
+		}
 		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway,
 										// becuase...)
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
 			lclSymbolNameMap.put(s.getName(), symbolName);
-			HRACSymbol hracSymbol = getAsHRACSymbol(s, params, lclSymbolNameMap, name, uniqueUsageId, m, childs);
+			HRACSymbol hracSymbol = getAsHRACSymbol(s, modifiedParamMap, lclSymbolNameMap, name, uniqueUsageId, m, childs);
 			m.addSymbol(hracSymbol);
 
 		}
 		localizeCommandLabels(commands, lclSymbolNameMap, name, uniqueUsageId);
 		for (int i = 0; i < commands.size(); i++) {
 			HRBSCommand c = commands.get(i);
-			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), params, lclSymbolNameMap, childs, m);
+			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), modifiedParamMap, lclSymbolNameMap, childs, m);
 		}
 
 		return m;

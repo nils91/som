@@ -66,13 +66,14 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public void propagateChildList() {
-		if(this.childs!=null) {
-		for (Entry<String, HRBSModel> entry : childs.entrySet()) {
-			String key = entry.getKey();
-			HRBSModel val = entry.getValue();
-			val.addChilds(childs);
-			val.propagateChildList();
-		}}
+		if (this.childs != null) {
+			for (Entry<String, HRBSModel> entry : childs.entrySet()) {
+				String key = entry.getKey();
+				HRBSModel val = entry.getValue();
+				val.addChilds(childs);
+				val.propagateChildList();
+			}
+		}
 	}
 
 	public Collection<HRBSModel> getChildsAsList() {
@@ -91,11 +92,11 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public int addChilds(Map<String, HRBSModel> childs) {
-		int noAdds=0;
+		int noAdds = 0;
 		for (Entry<String, HRBSModel> entry : childs.entrySet()) {
 			String key = entry.getKey();
 			HRBSModel val = entry.getValue();
-			if(addChild(key, val)) {
+			if (addChild(key, val)) {
 				noAdds++;
 			}
 		}
@@ -103,9 +104,9 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public int addChilds(Collection<HRBSModel> childs) {
-		int noAdds=0;
+		int noAdds = 0;
 		for (HRBSModel hrbsModel : childs) {
-			if(addChild(hrbsModel)) {
+			if (addChild(hrbsModel)) {
 				noAdds++;
 			}
 		}
@@ -367,21 +368,21 @@ public class HRBSModel implements ISetN, IHeap {
 			Map<String, HRBSModel> availChildsCommands, HRACModel m) {
 		String cmdName = c.getCmd();
 		boolean standardCommand = false;
+		if (label != null) {
+			if (c.getLabel() == null) {
+				c.setLabel(label);
+			} else {
+				HRACSymbol newSymbol = new HRACSymbol(label);
+				String lclSmblName = getTargetSymbolName(c.getLabel(), params, symbolNameReplacementMap);
+				newSymbol.setTargetSymbol(new HRACMemoryAddress(new HRACSymbol(lclSmblName)));
+				m.addSymbol(newSymbol);
+			}
+		}
 		for (Opcode op : Opcode.values()) {
 			if (op.name().equals(cmdName)) {
 				HRACCommand converted = convertStandardCommands(c, op, parentCmdName, cmdExecId, params,
 						symbolNameReplacementMap, m, availChildsCommands);
 				standardCommand = true;
-				if (label != null) {
-					if (converted.getLabel() == null) {
-						converted.setLabel(new HRACSymbol(label));
-					} else {
-						HRACSymbol newSymbol = new HRACSymbol(label);
-						newSymbol.setTargetSymbol(new HRACMemoryAddress(converted.getLabel()));
-						m.addSymbol(newSymbol);
-					}
-				}
-
 				m.addCommand(converted);
 			}
 		}
@@ -399,8 +400,11 @@ public class HRBSModel implements ISetN, IHeap {
 			String parentCmdName, String cmdExecId) {
 		for (HRBSCommand hrbsCommand : command) {
 			String cmdLbl = hrbsCommand.getLabel();
-			String localized = generateHRACSymbolName(cmdLbl, HRBSSymbolType.local, parentCmdName, cmdExecId);
-			symbolNameReplacementMap.put(cmdLbl, localized);
+			if (cmdLbl != null) {
+				String localized = generateHRACSymbolName(cmdLbl, HRBSSymbolType.local, parentCmdName, cmdExecId);
+
+				symbolNameReplacementMap.put(cmdLbl, localized);
+			}
 		}
 	}
 
@@ -627,8 +631,8 @@ public class HRBSModel implements ISetN, IHeap {
 		if (rString == null) {
 			rString = "NULL";
 		}
-		if(hrbsSymbolType==null) {
-			hrbsSymbolType=HRBSSymbolType.global;
+		if (hrbsSymbolType == null) {
+			hrbsSymbolType = HRBSSymbolType.global;
 		}
 		switch (hrbsSymbolType) {
 		case global:
@@ -652,7 +656,7 @@ public class HRBSModel implements ISetN, IHeap {
 
 	@Override
 	/**
-	 * Returns the N calculatedx for this Model.
+	 * Returns the N minimum for this Model.
 	 */
 	public int getN() {
 		return getMinimumN();

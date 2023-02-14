@@ -22,7 +22,6 @@ import de.dralle.som.ISomMemspace;
  */
 public class HRASModel implements ISetN{
 	public HRASModel() {
-		setupBuiltins();
 		symbols = new LinkedHashMap<>();
 	}
 
@@ -64,7 +63,6 @@ public class HRASModel implements ISetN{
 	}
 	
 	private Map<String, MemoryAddress> symbols;
-	private Map<String, MemoryAddress> builtins;
 	private Map<MemoryAddress, Command> commands;
 
 	public void addSymbol(String name, MemoryAddress value) {
@@ -89,17 +87,7 @@ public class HRASModel implements ISetN{
 		return nextCommandAddress.clone();
 	}
 
-	private void setupBuiltins() {
-		builtins = new HashMap<>();
-		builtins.put("ACC", new MemoryAddress(AbstractSomMemspace.ACC_ADDRESS));
-		builtins.put("ADR_EVAL",new MemoryAddress( AbstractSomMemspace.ADR_EVAL_ADDRESS));
-		builtins.put("WH_EN",new MemoryAddress( AbstractSomMemspace.WH_EN));
-		builtins.put("N",new MemoryAddress( AbstractSomMemspace.ADDRESS_SIZE_START));
-		builtins.put("WH_COM",new MemoryAddress( AbstractSomMemspace.WH_COM));
-		builtins.put("WH_DIR",new MemoryAddress( AbstractSomMemspace.WH_DIR));
-		builtins.put("WH_SEL",new MemoryAddress( AbstractSomMemspace.WH_SEL));
-		builtins.put("ADR",new MemoryAddress( AbstractSomMemspace.START_ADDRESS_START));
-	}
+
 
 	private boolean checkN() {
 		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits();
@@ -132,10 +120,7 @@ public class HRASModel implements ISetN{
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		MemoryAddress targetAddress = builtins.get(symbol);
-		if (targetAddress != null) {
-			return targetAddress.resolve(this);
-		}
+		MemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
 		}

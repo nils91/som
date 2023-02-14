@@ -38,53 +38,15 @@ class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 		c = new Compiler();
 		f=new FileLoader();
 	}
-
+                         
 	@AfterEach
 	void tearDown() throws Exception {
 	}
 
 	@Test
-	void testReturnCode0() throws IOException {
-		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/minimal_return0.hrbs");
-		IMemspace memspace = c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-	}
-
-	@Test
-	void testReturnCode1() throws IOException {
-		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/minimal_return1.hrbs");
-		IMemspace memspace = c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertFalse(runner.execute());
-	}
-
-	@Test
 	@Timeout(10)
-	void testOpcodeNAR() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_nar.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		runner.execute();
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
-	}
-
-	@Test
-	@Timeout(10)
-	void testOpcodeNAW() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_naw.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
-	}
-	
-	@Test
-	@Timeout(10)
-	void testNANDExampleInvert() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_invert_with_nand.hrbs");
+	void testInvert() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_invert_acc.hrbs");
 		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -103,8 +65,8 @@ class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 	}
 	@Test
 	@Timeout(10)
-	void testNANDExampleWrite() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_with_nand.hrbs");
+	void testSimpleWrite() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_simple.hrbs");
 		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());

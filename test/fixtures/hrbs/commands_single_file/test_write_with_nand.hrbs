@@ -1,9 +1,0 @@
-MAIN:
-	TW
-	WRITE1 TW;
-
-WRITE1 A:
-	NAW A;
-	NAR ACC;
-	NAW A;
-	NAR ACC;

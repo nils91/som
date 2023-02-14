@@ -6,10 +6,12 @@ package de.dralle.som.languages.hrbs.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.text.AsyncBoxView.ChildState;
 
@@ -55,12 +57,12 @@ public class HRBSModel implements ISetN, IHeap {
 		if (!childs.containsKey(name)) {
 			if (this.name != name) {
 				childs.put(name, c);// prevent from adding itsself, prevent recursion
+				if (cmdUsageTracker == null) {
+					cmdUsageTracker = new HashMap<>();
+				}
+				cmdUsageTracker.put(name, 0);
+				return true;
 			}
-			if (cmdUsageTracker == null) {
-				cmdUsageTracker = new HashMap<>();
-			}
-			cmdUsageTracker.put(name, 0);
-			return true;
 		}
 		return false;
 	}
@@ -70,8 +72,9 @@ public class HRBSModel implements ISetN, IHeap {
 			for (Entry<String, HRBSModel> entry : childs.entrySet()) {
 				String key = entry.getKey();
 				HRBSModel val = entry.getValue();
-				val.addChilds(childs);
-				val.propagateChildList();
+				if (val.addChilds(childs) > 0) {
+					val.propagateChildList();
+				}
 			}
 		}
 	}
@@ -134,30 +137,53 @@ public class HRBSModel implements ISetN, IHeap {
 		return useCnt;
 	}
 
-	public int getMinimumN() {
+	public int getMinimumN(Set<String> checked) {
+		if (checked == null) {
+			checked = new HashSet<>();
+		}
 		int rn = minimumN;
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				if (rn < hrbsModel.getMinimumN()) {
-					rn = hrbsModel.getMinimumN();
+		if (!checked.contains(name)) {
+			checked.add(name);
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					int childMinimum = getMinimumN(checked);
+					if (childMinimum > rn) {
+						rn = childMinimum;
+					}
 				}
 			}
 		}
 		return rn;
 	}
 
+	public int getMinimumN() {
+		return getMinimumN(null);
+	}
+
 	public void setMinimumN(int minimumN) {
 		this.minimumN = minimumN;
 	}
 
-	public int getHeapSize() {
-		int rh = heapSize;
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				rh += hrbsModel.getHeapSize();
-			}
+	public int getHeapSize(Set<String> added) {
+		if (added == null) {
+			added = new HashSet<>();
 		}
-		return rh;
+		if (!added.contains(name)) {
+			added.add(name);
+			int rh = heapSize;
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					rh += hrbsModel.getHeapSize(added);
+				}
+			}
+			return rh;
+		}else {
+			return 0;
+		}
+	}
+
+	public int getHeapSize() {
+		return getHeapSize(null);
 	}
 
 	public void setHeapSize(int heapSize) {

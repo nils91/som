@@ -279,8 +279,7 @@ public class HRBSModel implements ISetN, IHeap {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
 				HRBSSymbol s = new HRBSSymbol();
-				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId)
-						+ "_MS";
+				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId) + "_MS";
 				s.setName(convertedName);
 				s.setTargetSymbol(val);
 				addSymbol(s);
@@ -401,7 +400,7 @@ public class HRBSModel implements ISetN, IHeap {
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			HRACModel compiledCmdModel = cmdModel.compileToHRAC(getCurrentCommandUsage(c) + "",
 					assembleParamMap(cmdModel, c, symbolNameReplacementMap), lclSmblName);
-   			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
+			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 		}
 		incCommandUsage(c);
 	}
@@ -418,18 +417,20 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 	}
 
-	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c, Map<String, String> lclSymbolReplacementMap) {
+	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c,
+			Map<String, String> lclSymbolReplacementMap) {
 		List<HRBSMemoryAddress> cTargets = c.getTarget();
 		List<String> modelParams = m.getParams();
 		Map<String, HRBSMemoryAddress> retMap = new HashMap<>();
-		;
-		for (int i = 0; i < modelParams.size(); i++) {
-			String p = modelParams.get(i);
-			HRBSMemoryAddress cTgt = cTargets.get(i);
-			HRBSSymbol cTgtSymbol = cTgt.getSymbol();
-			String convertedName = getTargetSymbolName(cTgtSymbol.getName(), lclSymbolReplacementMap);
-			cTgtSymbol.setName(convertedName);
-			retMap.put(p,cTgt);
+		if (modelParams != null) {
+			for (int i = 0; i < modelParams.size(); i++) {
+				String p = modelParams.get(i);
+				HRBSMemoryAddress cTgt = cTargets.get(i);
+				HRBSSymbol cTgtSymbol = cTgt.getSymbol();
+				String convertedName = getTargetSymbolName(cTgtSymbol.getName(), lclSymbolReplacementMap);
+				cTgtSymbol.setName(convertedName);
+				retMap.put(p, cTgt);
+			}
 		}
 		return retMap;
 	}

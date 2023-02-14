@@ -55,6 +55,26 @@ class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 	}
 	@Test
 	@Timeout(10)
+	void testSet() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_set.hrbs");
+		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+	@Test
+	@Timeout(10)
+	void testClear() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_clear.hrbs");
+		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+	@Test
+	@Timeout(10)
 	void testSimpleRead() throws IOException {
 		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_read_simple.hrbs");
 		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);

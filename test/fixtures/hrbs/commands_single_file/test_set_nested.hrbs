@@ -12,4 +12,6 @@ CLEAR0:
 	NAR ACC;
 	NAW H;
 	NAR H;
-	NAR ACC;
+	
+INV0:
+	NAW ACC;

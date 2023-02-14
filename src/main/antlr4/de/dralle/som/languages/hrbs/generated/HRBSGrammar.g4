@@ -13,7 +13,7 @@ symbol_dec: NAME cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 
-command: NAME? (NAR|NAW|NAME) symbol_os+ SEMICOLON;
+command: NAME? (NAR|NAW|NAME) ((symbol_os COMMA)* symbol_os)? SEMICOLON;
 
 symbol_ns:(GLOBAL|SHARED|LOCAL?) symbol_dec;
 

@@ -3,6 +3,12 @@
 #101 01110 //wh bits whcom whsel set, address is 29
 #1
 ;start=72
+ACC 0
+ADR_EVAL 1
+WH_EN 2
+WH_COM 8
+WH_SEL 10
+WH_DIR 9
 #000000000000 //filler
 #1 000 001 //reset adr eval
 NAW ADR_EVAL

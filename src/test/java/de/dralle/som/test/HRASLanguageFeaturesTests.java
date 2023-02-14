@@ -100,16 +100,4 @@ class HRASLanguageFeaturesTests {
 		assertEquals(19, model.resolveSymbolToAddress("C"));
 		assertEquals(19, model.resolveSymbolToAddress("D"));
 	}
-	@Test
-	void testBuiltinSymbols() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/test_lf_hras.hras");
-		assertEquals(0, model.resolveSymbolToAddress("ACC"));
-		assertEquals(1, model.resolveSymbolToAddress("ADR_EVAL"));
-		assertEquals(2, model.resolveSymbolToAddress("WH_EN"));
-		assertEquals(3, model.resolveSymbolToAddress("N"));
-		assertEquals(8, model.resolveSymbolToAddress("WH_COM"));
-		assertEquals(9, model.resolveSymbolToAddress("WH_DIR"));
-		assertEquals(10, model.resolveSymbolToAddress("WH_SEL"));
-		assertEquals(11, model.resolveSymbolToAddress("ADR"));
-	}
 }

@@ -279,11 +279,12 @@ public class HRBSModel implements ISetN, IHeap {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
 				HRBSSymbol s = new HRBSSymbol();
-				String convertedName = generateHRACSymbolName(s.getName(), HRBSSymbolType.local, name, uniqueUsageId)
+				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId)
 						+ "_MS";
 				s.setName(convertedName);
 				s.setTargetSymbol(val);
 				addSymbol(s);
+				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
 		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway,
@@ -399,8 +400,8 @@ public class HRBSModel implements ISetN, IHeap {
 			HRBSModel cmdModel = availChildsCommands.get(cmdName);
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			HRACModel compiledCmdModel = cmdModel.compileToHRAC(getCurrentCommandUsage(c) + "",
-					assembleParamMap(cmdModel, c), lclSmblName);
-			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
+					assembleParamMap(cmdModel, c, symbolNameReplacementMap), lclSmblName);
+   			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 		}
 		incCommandUsage(c);
 	}
@@ -417,14 +418,18 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 	}
 
-	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c) {
+	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c, Map<String, String> lclSymbolReplacementMap) {
 		List<HRBSMemoryAddress> cTargets = c.getTarget();
 		List<String> modelParams = m.getParams();
 		Map<String, HRBSMemoryAddress> retMap = new HashMap<>();
 		;
 		for (int i = 0; i < modelParams.size(); i++) {
 			String p = modelParams.get(i);
-			retMap.put(p, cTargets.get(i));
+			HRBSMemoryAddress cTgt = cTargets.get(i);
+			HRBSSymbol cTgtSymbol = cTgt.getSymbol();
+			String convertedName = getTargetSymbolName(cTgtSymbol.getName(), lclSymbolReplacementMap);
+			cTgtSymbol.setName(convertedName);
+			retMap.put(p,cTgt);
 		}
 		return retMap;
 	}

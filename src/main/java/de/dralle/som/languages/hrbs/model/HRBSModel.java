@@ -146,7 +146,7 @@ public class HRBSModel implements ISetN, IHeap {
 			checked.add(name);
 			if (childs != null) {
 				for (HRBSModel hrbsModel : childs.values()) {
-					int childMinimum = getMinimumN(checked);
+					int childMinimum = hrbsModel.getMinimumN(checked);
 					if (childMinimum > rn) {
 						rn = childMinimum;
 					}
@@ -177,7 +177,7 @@ public class HRBSModel implements ISetN, IHeap {
 				}
 			}
 			return rh;
-		}else {
+		} else {
 			return 0;
 		}
 	}
@@ -213,11 +213,11 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private String getHeapDirective() {
-		return String.format(";heap = %d", heapSize);
+		return ";heap = " + heapSize;
 	}
 
 	private String getNDirective() {
-		return String.format(";n = %d", minimumN);
+		return ";n = " + minimumN;
 	}
 
 	private List<String> getSymbolsAsStrings() {
@@ -237,38 +237,48 @@ public class HRBSModel implements ISetN, IHeap {
 		return tmp;
 	}
 
-	public String asCode() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(name);
-		if (params != null) {
-			sb.append(" ");
-			for (String p : params) {
-				sb.append(p);
-				sb.append(",");
+	public String asCode(Set<String> printed) {
+		if (printed == null) {
+			printed = new HashSet<>();
+		}
+		if (!printed.contains(name)) {
+			printed.add(name);
+			StringBuilder sb = new StringBuilder();
+			sb.append(name);
+			if (params != null) {
+				sb.append(" ");
+				for (String p : params) {
+					sb.append(p);
+					sb.append(",");
+				}
+				sb.deleteCharAt(sb.length() - 1);
 			}
-			sb.deleteCharAt(sb.length() - 1);
-		}
-		sb.append(":");
-		sb.append(System.lineSeparator());
-		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getHeapDirective());
-		sb.append(System.lineSeparator());
-		for (String symbolString : getSymbolsAsStrings()) {
-			sb.append(symbolString);
+			sb.append(":");
 			sb.append(System.lineSeparator());
-		}
-		for (String symbolString : getCommandssAsStrings()) {
-			sb.append(symbolString);
+			sb.append(getNDirective());
 			sb.append(System.lineSeparator());
-		}
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				sb.append(hrbsModel.asCode());
+			sb.append(getHeapDirective());
+			sb.append(System.lineSeparator());
+			for (String symbolString : getSymbolsAsStrings()) {
+				sb.append(symbolString);
 				sb.append(System.lineSeparator());
 			}
+			for (String symbolString : getCommandssAsStrings()) {
+				sb.append(symbolString);
+				sb.append(System.lineSeparator());
+			}
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					sb.append(hrbsModel.asCode(printed));
+					sb.append(System.lineSeparator());
+				}
+			}
+			return sb.toString();
 		}
-		return sb.toString();
+		return "";
+	}
+	public String asCode() {
+		return asCode(null);
 	}
 
 	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {

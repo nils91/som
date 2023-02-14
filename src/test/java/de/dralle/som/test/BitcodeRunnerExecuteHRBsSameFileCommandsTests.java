@@ -103,4 +103,14 @@ class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+	@Test
+	@Timeout(10)
+	void testWriteNested() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_nested.hrbs");
+		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
 }

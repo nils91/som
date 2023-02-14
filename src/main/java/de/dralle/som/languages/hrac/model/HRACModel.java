@@ -209,6 +209,11 @@ public class HRACModel implements ISetN, IHeap {
 		int startAddress = getStartAdress(n);
 		m.setStartAdress(startAddress);
 		m.setNextCommandAddress(startAddress);
+		for (Entry<String, Integer> entry : builtins.entrySet()) {
+			String key = entry.getKey();
+			Integer val = entry.getValue();
+			m.addSymbol(key, new MemoryAddress(val));
+		}
 		int nxtSymbolAddress = getFixedBitCount(n);
 		for (HRACSymbol s : symbols) {
 			if (s.getTargetSymbol() == null) {

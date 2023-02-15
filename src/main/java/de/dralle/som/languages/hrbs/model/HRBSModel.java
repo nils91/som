@@ -277,20 +277,21 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		return "";
 	}
+
 	public String asCode() {
 		return asCode(null);
 	}
 
 	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {
-		//copy symbols n commands in local lists
-		List<HRBSSymbol  >lclSymbols=new ArrayList<>();
-	List<HRBSCommand> lclCommands=new ArrayList<>();
-	for (HRBSSymbol s : symbols) {
-		lclSymbols.add(s.clone());
-	}
-	for (HRBSCommand hrbsCommand : commands) {
-		lclCommands.add(hrbsCommand.clone());
-	}
+		// copy symbols n commands in local lists
+		List<HRBSSymbol> lclSymbols = new ArrayList<>();
+		List<HRBSCommand> lclCommands = new ArrayList<>();
+		for (HRBSSymbol s : symbols) {
+			lclSymbols.add(s.clone());
+		}
+		for (HRBSCommand hrbsCommand : commands) {
+			lclCommands.add(hrbsCommand.clone());
+		}
 		Map<String, HRBSMemoryAddress> modifiedParamMap = new HashMap<String, HRBSMemoryAddress>();
 		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 		List<HRBSCommand> additionalCommands = new ArrayList<>();
@@ -332,7 +333,7 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 		for (HRBSSymbol s : lclSymbols) {// assume no target symbol is a deref (but be prepared for it anyway,
-										// becuase...)
+											// becuase...)
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
 			lclSymbolNameMap.put(s.getName(), symbolName);
 			HRACSymbol hracSymbol = getAsHRACSymbol(s, lclSymbolNameMap, name, uniqueUsageId, m, childs);

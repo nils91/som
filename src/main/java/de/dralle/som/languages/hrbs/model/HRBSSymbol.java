@@ -15,7 +15,9 @@ public class HRBSSymbol implements Cloneable {
 		clone.setBitCnt(bitCnt);
 		clone.setBitCntISN(bitCntISN);
 		clone.setType(type);
-		clone.setTargetSymbol(targetSymbol);
+		if(targetSymbol!=null) {
+			clone.setTargetSymbol(targetSymbol.clone());
+		}		
 		return clone;
 	}
 	private String name;

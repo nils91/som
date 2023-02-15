@@ -52,6 +52,7 @@ public class TestWriteHook extends AbstractWriteHook {
 			bitToReturn = bitsProvidedForRead[0];
 		} 
 		bitsProvidedForRead = bitsProvidedForReadNew;
+		System.out.println(bitToReturn);
 		return bitToReturn;
 	}
 

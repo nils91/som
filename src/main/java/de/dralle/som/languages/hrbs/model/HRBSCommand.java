@@ -19,7 +19,7 @@ public class HRBSCommand implements Cloneable {
 		clone.setCmd(command);
 		clone.label=label;
 		clone.targets=targets;
-		return clone();
+		return clone;
 	}
 
 	private String label;

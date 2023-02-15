@@ -282,6 +282,15 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {
+		//copy symbols n commands in local lists
+		List<HRBSSymbol  >lclSymbols=new ArrayList<>();
+	List<HRBSCommand> lclCommands=new ArrayList<>();
+	for (HRBSSymbol s : symbols) {
+		lclSymbols.add(s.clone());
+	}
+	for (HRBSCommand hrbsCommand : commands) {
+		lclCommands.add(hrbsCommand.clone());
+	}
 		Map<String, HRBSMemoryAddress> modifiedParamMap = new HashMap<String, HRBSMemoryAddress>();
 		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 		List<HRBSCommand> additionalCommands = new ArrayList<>();
@@ -293,21 +302,21 @@ public class HRBSModel implements ISetN, IHeap {
 				modifiedParamMap.put(key, dedereffed);
 			}
 		}
-		addSymbols(additionalSymbols);
-		addCommands(additionalCommands);
+		lclSymbols.addAll(additionalSymbols);
+		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
 		Map<String, String> lclSymbolNameMap = new HashMap<>();
 		HRACModel m = new HRACModel();
 		m.setN(getMinimumN());
 		m.setHeapSize(getHeapSize());
-		for (HRBSSymbol s : symbols) {// convert all mirror symbols that are derefs
+		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
 				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));
 			}
 		}
-		addSymbols(additionalSymbols);
-		addCommands(additionalCommands);
+		lclSymbols.addAll(additionalSymbols);
+		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
 		if (modifiedParamMap != null) { // create mirror symbol for each param
@@ -318,11 +327,11 @@ public class HRBSModel implements ISetN, IHeap {
 				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId) + "_MS";
 				s.setName(convertedName);
 				s.setTargetSymbol(val);
-				addSymbol(s);
+				lclSymbols.add(s);
 				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
-		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway,
+		for (HRBSSymbol s : lclSymbols) {// assume no target symbol is a deref (but be prepared for it anyway,
 										// becuase...)
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
 			lclSymbolNameMap.put(s.getName(), symbolName);
@@ -330,9 +339,9 @@ public class HRBSModel implements ISetN, IHeap {
 			m.addSymbol(hracSymbol);
 
 		}
-		localizeCommandLabels(commands, lclSymbolNameMap, name, uniqueUsageId);
-		for (int i = 0; i < commands.size(); i++) {
-			HRBSCommand c = commands.get(i);
+		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, uniqueUsageId);
+		for (int i = 0; i < lclCommands.size(); i++) {
+			HRBSCommand c = lclCommands.get(i);
 			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
 		}
 

@@ -190,10 +190,11 @@ class WriteHookHRBSCommandsTests {
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_hook_read_101.hrbs");
 		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		HRASModel hras= c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
-
+System.out.println(hras);
 		boolean execResult = runner.execute();
 		m = runner.getMemspace();
 		assertTrue(execResult);

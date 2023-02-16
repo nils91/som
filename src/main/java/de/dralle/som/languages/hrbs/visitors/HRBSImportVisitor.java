@@ -41,6 +41,7 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		}
 		else if(ctx.FILEPATH()!=null) {
 			String path=ctx.FILEPATH().getText();
+			path=path.replaceAll("\"|'", "");
 			try {
 				mtr= new FileLoader().readHRBSFile(path);
 			} catch (IOException e) {

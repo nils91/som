@@ -1,0 +1,7 @@
+import "test/fixtures/hrbs/individual_commands/INV0.hrbs"
+
+WRITE1 A:
+	NAW A;
+	INV0;
+	NAW A;
+	INV0;

@@ -206,6 +206,9 @@ public class FileLoader {
 		if (sourceFormat.equals(SOMFormats.HRAS)) {
 			return new HRASParser().parse(source);
 		}
+		if (sourceFormat.equals(SOMFormats.HRBS)) {
+			return new HRBSParser().parse(source);
+		}
 		if (sourceFormat.equals(SOMFormats.AB)) {
 			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
 			String result = s.hasNext() ? s.next() : "";

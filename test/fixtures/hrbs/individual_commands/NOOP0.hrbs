@@ -1,0 +1,5 @@
+import "test/fixtures/hrbs/individual_commands/INV0.hrbs"
+
+NOOP0:
+	INV0;
+	INV0;

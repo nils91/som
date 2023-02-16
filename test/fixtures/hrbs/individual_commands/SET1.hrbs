@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+
+SET1 A:
+	SET0;
+	WRITE1 A;

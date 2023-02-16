@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/NOT1.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+
+INV1 A:
+	NOT1 A;
+	WRITE1 A;

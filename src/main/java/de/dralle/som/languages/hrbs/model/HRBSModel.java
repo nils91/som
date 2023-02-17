@@ -56,27 +56,17 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (!childs.containsKey(name)) {
 			if (this.name != name) {
-				childs.put(name, c);// prevent from adding itsself, prevent recursion
-				if (cmdUsageTracker == null) {
-					cmdUsageTracker = new HashMap<>();
+				if (!childs.containsKey(name)) { //do not override
+					childs.put(name, c);// prevent from adding itsself, prevent recursion
+					if (cmdUsageTracker == null) {
+						cmdUsageTracker = new HashMap<>();
+					}
+					cmdUsageTracker.put(name, 0);
+					return true;
 				}
-				cmdUsageTracker.put(name, 0);
-				return true;
 			}
 		}
 		return false;
-	}
-
-	public void propagateChildList() {
-		if (this.childs != null) {
-			for (Entry<String, HRBSModel> entry : childs.entrySet()) {
-				String key = entry.getKey();
-				HRBSModel val = entry.getValue();
-				if (val.addChilds(childs) > 0) {
-					val.propagateChildList();
-				}
-			}
-		}
 	}
 
 	public Collection<HRBSModel> getChildsAsList() {

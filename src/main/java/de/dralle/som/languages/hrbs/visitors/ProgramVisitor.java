@@ -157,7 +157,11 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		for (HRBSModel hrbsModel : importedModels) {
 			model.addChild(hrbsModel);
 		}
-		model.propagateChildList();
+		for (HRBSModel hrbsModel0 : childModels) {
+			for (HRBSModel hrbsModel1 : childModels) {
+				hrbsModel0.addChild(hrbsModel1);
+			}
+		}
 		return model;
 	}
 

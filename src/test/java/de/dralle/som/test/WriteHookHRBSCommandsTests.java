@@ -194,7 +194,6 @@ class WriteHookHRBSCommandsTests {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
-System.out.println(hras);
 		boolean execResult = runner.execute();
 		m = runner.getMemspace();
 		assertTrue(execResult);

@@ -314,22 +314,15 @@ public class HRBSModel implements ISetN, IHeap {
 			for (Entry<String, HRBSMemoryAddress> entry : modifiedParamMap.entrySet()) {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
-				HRBSSymbol s = new HRBSSymbol();
+				HRACSymbol s = new HRACSymbol();
 				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId) + "_MS";
 				s.setName(convertedName);
-				s.setTargetSymbol(val);
-				lclSymbols.add(s);
+				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, uniqueUsageId, lclSymbolNameMap, m, childs));
+				m.addSymbol(s);
 				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
-		for (HRBSSymbol s : lclSymbols) {// assume no target symbol is a deref (but be prepared for it anyway,
-											// becuase...)
-			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
-			lclSymbolNameMap.put(s.getName(), symbolName);
-			HRACSymbol hracSymbol = getAsHRACSymbol(s, lclSymbolNameMap, name, uniqueUsageId, m, childs);
-			m.addSymbol(hracSymbol);
-
-		}
+		convertSymbols(name,uniqueUsageId, lclSymbols, lclSymbolNameMap, m,childs);
 		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, uniqueUsageId);
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
@@ -337,6 +330,20 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 
 		return m;
+	}
+
+	private static void convertSymbols(String name,String uniqueUsageId, List<HRBSSymbol> lclSymbols, Map<String, String> lclSymbolNameMap,
+			HRACModel m,Map<String,HRBSModel> childs) {
+		for (HRBSSymbol s : lclSymbols) {// assume no target symbol is a deref (but be prepared for it anyway,
+											// becuase...)
+			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
+			if(lclSymbolNameMap!=null) {
+				lclSymbolNameMap.put(s.getName(), symbolName);
+			}
+			HRACSymbol hracSymbol = getAsHRACSymbol(s, lclSymbolNameMap, name, uniqueUsageId, m, childs);
+			m.addSymbol(hracSymbol);
+
+		}
 	}
 
 	private void addCommands(List<HRBSCommand> additionalCommands) {

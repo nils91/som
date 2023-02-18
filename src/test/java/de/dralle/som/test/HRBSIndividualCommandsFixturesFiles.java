@@ -138,31 +138,35 @@ class HRBSIndividualCommandsFixturesFiles {
 	private static Stream<Arguments> provideTruthTableSET0() {
 		return Stream.of(Arguments.of(false, true), Arguments.of(true, true));
 	}
+
 	@ParameterizedTest
 	@MethodSource("provideTruthTableINV1")
 	@Timeout(10)
-	void testINV1(boolean inValue, boolean finalValue) throws IOException {
+	void testINV1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: INV1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int aAdr=hrasModel.resolveSymbolToAddress("A");
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
 			@Override
 			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
-				memspace.setBit(aAdr, inValue);
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
 				return true;
 			}
 		});
 		runner.execute();
-		assertTrue(runner.getMemspace().getBit(aAdr) == finalValue);
+		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
+		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
 	}
 
 	private static Stream<Arguments> provideTruthTableINV1() {
-		return Stream.of(Arguments.of(false, true), Arguments.of(true, false));
+		return Stream.of(Arguments.of(false, false, false, true), Arguments.of(false, true, false, false),
+				Arguments.of(true, false, true, true), Arguments.of(true, true, true, false));
 	}
 }

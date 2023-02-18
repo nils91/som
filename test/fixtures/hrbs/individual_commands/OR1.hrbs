@@ -5,3 +5,4 @@ OR1 A:
 	INV1 A;
 	INV0;
 	NAR A;
+	INV1 A;

@@ -124,7 +124,6 @@ public class HRASModel implements ISetN{
 		MemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
-			System.out.println(symbol+":"+targetAddress);
 		}
 		if (targetAddress != null) {
 			return targetAddress.resolve(this);

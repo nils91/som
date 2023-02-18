@@ -69,8 +69,7 @@ public class SOMBitcodeRunner {
 		int programCounter = 0;
 		boolean accumulator = false;
 		int addressSize = 0;
-		do {
-			accumulator = memspace.getAccumulatorValue();
+		do {			
 			addressSize = memspace.getN();
 			int startAddress = memspace.getNextAddress();
 			boolean addressEval = memspace.isAdrEvalSet();
@@ -94,6 +93,7 @@ public class SOMBitcodeRunner {
 			for (AbstractUnconditionalDebugPoint dp : dps) {
 				dp.update(programCounter, opCode?Opcode.NAW:Opcode.NAR, tgtAddressValue, memspace);
 			}
+			accumulator = memspace.getAccumulatorValue();
 			boolean tgtBitValue = memspace.getBit(tgtAddressValue);
 			boolean nand = !(accumulator && tgtBitValue);
 			if (!opCode)// NAR

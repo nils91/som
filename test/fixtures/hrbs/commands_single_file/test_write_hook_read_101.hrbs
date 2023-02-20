@@ -21,18 +21,18 @@ AND1 A:
 	NAR A;
 	INV0;
 	
-#00 01 11 01
-#01 00 10 10
-#10 11 01 11
-#11 10 00 10
 OR1 A:
 	INV1 A;
 	INV0;
 	NAR A;
+	INV1 A;
 	
 INV1 A:
+	shared H
+	WRITE1 H;
 	NOT1 A;
 	WRITE1 A;
+	READ1 H;
 	
 NOT1 A:
 	READ1 A;
@@ -48,6 +48,7 @@ XOR1 A:
 	READ1 H[0];
 	AND1 A;
 	OR1 H[1];
+	INV1 A;
 	
 NOOP0:
 	INV0;
@@ -58,9 +59,12 @@ READ1 A:
 	NAR A;
 	INV0;
 	
-COPY2 S, T:
-	READ1 S;	
-	WRITE1 T;
+COPY2 I, O:
+	shared H
+	WRITE1 H;
+	READ1 I;	
+	WRITE1 O;
+	READ1 H;
 	
 TRIGGER1 A:
 	SET0;
@@ -79,8 +83,11 @@ SET0:
 	NAR H;
 	
 SET1 A:
+	local H
+	WRITE1 H;
 	SET0;
 	WRITE1 A;
+	READ1 H;
 
 #00 01 11 10 00
 #01 01 11 10 00

@@ -518,4 +518,102 @@ class HRBSIndividualCommandsFixturesFiles {
 		return Stream.of(Arguments.of(false, false, false, false), Arguments.of(false, true, false, true),
 				Arguments.of(true, false, false, false), Arguments.of(true, true, true, true));
 	}
+	
+	@ParameterizedTest
+	@MethodSource("provideTruthTableSWAPY2")
+	@Timeout(10)
+	void testSWAP2(boolean inValueAcc, boolean inValueA,boolean inValueB, boolean finalValueAcc, boolean finalValueA,boolean finalValueB)
+			throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: SWAP2 A,B;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int bAdr = hrasModel.resolveSymbolToAddress("B");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				memspace.setBit(bAdr, inValueB);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));assertEquals(finalValueB, runner.getMemspace().getBit(bAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableSWAPY2() {
+		return Stream.of(Arguments.of(false, false,  false, false, false, false),
+				Arguments.of(false, false, true, false, true, false),
+				Arguments.of(false, true, false,  false, false, true),
+				Arguments.of(false, true, true,  false, true, true),
+				Arguments.of(true, false, false,  true, false, false),
+				Arguments.of(true, false, true,  true, true, false),
+				Arguments.of(true, true, false,  true, false, true),
+				Arguments.of(true, true, true,  true, true, true));
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableNOR1")
+	@Timeout(10)
+	void testNOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: NOR1 A;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableNAND1")
+	@Timeout(10)
+	void testNAND1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: NAND1 A;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));
+	}
+	private static Stream<Arguments> provideTruthTableNAND1() {
+		return Stream.of(Arguments.of(false, false, true, false), Arguments.of(false, true, true, true),
+				Arguments.of(true, false, true, false), Arguments.of(true, true, false, true));
+	}
+	private static Stream<Arguments> provideTruthTableNOR1() {
+		return Stream.of(Arguments.of(false, false, true, false), Arguments.of(false, true, false, true),
+				Arguments.of(true, false, false, false), Arguments.of(true, true, false, true));
+	}
 }

@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/OR1.hrbs"
+import "test/fixtures/hrbs/individual_commands/INV0.hrbs"
+
+NOR1 A:
+	OR1 A;
+	INV0;

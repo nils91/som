@@ -1,0 +1,12 @@
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+
+SWAP1 A:
+	local H[2]
+	WRITE1 H[0];
+	READ1 A;
+	WRITE1 H[1];
+	READ1 H[0];
+	WRITE1 A;
+	READ1 H[1];
+	

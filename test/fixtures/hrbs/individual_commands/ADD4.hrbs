@@ -1,0 +1,16 @@
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/XOR2.hrbs"
+import "test/fixtures/hrbs/individual_commands/XOR1.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND3.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
+
+ADD4 I0, I1, O, CB:
+	shared H;
+	WRITE1 H;
+	XOR2 I0, I1;
+	XOR1 CB;
+	WRITE1 O;
+	AND2 I0, I1;
+	AND3 ACC, CB, CB;
+	READ1 H;

@@ -3,6 +3,8 @@
  */
 package de.dralle.som;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Target;
 import java.util.AbstractMap;
@@ -13,6 +15,9 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -55,36 +60,38 @@ public class Compiler {
 			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
 					new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
-							new SOMFormats[] { SOMFormats.AB }),
+							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
 							new SOMFormats[] { SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
-							new SOMFormats[] { SOMFormats.HRAC }))
+							new SOMFormats[] { SOMFormats.HRAC }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.CBIN,
+							new SOMFormats[] { SOMFormats.BIN }))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-	public <T> T compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat){
+	public <T> T compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		List<SOMFormats> cPath = findCompilePath(sourceFormat, targetFormat);
-		if(cPath==null||cPath.size()==0) {
+		if (cPath == null || cPath.size() == 0) {
 			return null;
 		}
-		if(cPath.size()==1) {
+		if (cPath.size() == 1) {
 			return (T) sourceModel;
-		}else if(cPath.size()==2) {
+		} else if (cPath.size() == 2) {
 			return compileDirect(sourceModel, cPath.get(0), cPath.get(1));
-		}
-		else {
+		} else {
 			Object somModel = sourceModel;
-			for (int i = 0; i < cPath.size()-1; i++) {
+			for (int i = 0; i < cPath.size() - 1; i++) {
 				SOMFormats compileStartFormat = cPath.get(i);
-				SOMFormats compileTargetFormat = cPath.get(i+1);
-				somModel=compileDirect(somModel, compileStartFormat, compileTargetFormat);
-				
+				SOMFormats compileTargetFormat = cPath.get(i + 1);
+				somModel = compileDirect(somModel, compileStartFormat, compileTargetFormat);
+
 			}
 			return (T) somModel;
 		}
 	}
+
 	public <T> T compileDirect(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		if (sourceFormat.equals(SOMFormats.HRBS) && targetFormat.equals(SOMFormats.HRAC)) {
 			return (T) compileHRBStoHRAC((HRBSModel) sourceModel);
@@ -97,6 +104,12 @@ public class Compiler {
 		}
 		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.AB)) {
 			return (T) memSpaceToABString((IMemspace) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.CBIN)) {
+			return (T) compressMemspace((IMemspace) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.CBIN) && targetFormat.equals(SOMFormats.BIN)) {
+			return (T) compressedArrayToMemspace((byte[]) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.AB) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) abStringToMemspace((String) sourceModel);
@@ -128,6 +141,64 @@ public class Compiler {
 		return sb.toString();
 	}
 
+	public byte[] compressMemspace(IMemspace memspace) {
+		ByteArrayMemspace bam = null;
+		if (memspace instanceof ByteArrayMemspace) {
+			bam = (ByteArrayMemspace) memspace;
+		} else {
+			bam = new ByteArrayMemspace();
+			bam.copy(memspace);
+		}
+		byte[] unc = bam.getUnderlyingByteArray();
+		// Create a ByteArrayOutputStream to write the compressed data to
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ZipOutputStream zos = new ZipOutputStream(baos);
+		ZipEntry entry = new ZipEntry("BIN");
+		entry.setSize(unc.length);
+		try {
+			zos.putNextEntry(entry);
+			zos.write(unc);
+			zos.closeEntry();
+			zos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return baos.toByteArray();
+	}
+	public IMemspace compressedArrayToMemspace(byte[] content) {
+		ByteArrayInputStream bais=new ByteArrayInputStream(content);
+		ZipInputStream zis = new ZipInputStream(bais);
+		try {
+			zis.getNextEntry();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// Create a ByteArrayOutputStream to write the decompressed data to
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        // Create a buffer for reading and writing the data
+        byte[] buffer = new byte[1024];
+        int len;
+
+        // Read and write the decompressed data to the ByteArrayOutputStream
+        try {
+			while ((len = zis.read(buffer)) > 0) {
+			    baos.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        // Get the decompressed data as a byte array
+        byte[] data = baos.toByteArray();
+		ByteArrayMemspace bam = new ByteArrayMemspace(data);
+		return bam;
+		
+	}
+
 	public IMemspace booleanListToMemspace(List<Boolean> bits) {
 		ISomMemspace m = new BooleanArrayMemspace(bits.size());
 		for (int i = 0; i < bits.size(); i++) {
@@ -157,11 +228,15 @@ public class Compiler {
 	}
 
 	public IMemspace byteListToMemspace(List<Byte> bytes) {
+		return byteArrayToMemspace(byteListToByteArray(bytes));
+	}
+
+	public byte[] byteListToByteArray(List<Byte> bytes) {
 		byte[] byteArray = new byte[bytes.size()];
 		for (int i = 0; i < byteArray.length; i++) {
 			byteArray[i] = bytes.get(i);
 		}
-		return byteArrayToMemspace(byteArray);
+		return byteArray;
 	}
 
 	public IMemspace byteArrayToMemspace(byte[] byteArray) {

@@ -25,6 +25,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -129,15 +133,54 @@ public class FileLoader {
 		IMemspace m = c.byteListToMemspace(bytes);
 		return m;
 	}
-
-	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
+	public void writeBinaryFile(byte[] content, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		bis.write(c.memspaceToByteArray(memspace));
+		bis.write(content);
 		bis.close();
 	}
+	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
+		writeBinaryFile(c.memspaceToByteArray(memspace), path);
+	}
+	public IMemspace loadCompressedBinaryFile(String path) throws IOException {
+		ZipFile f = new ZipFile(path);
+		ZipEntry somBinary = f.getEntry("BIN");
+		InputStream fis =f.getInputStream(somBinary);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		List<Byte> bytes = new ArrayList<>();
+		int b;
+		while ((b = bis.read()) != -1) {
+			bytes.add((byte) b);
+		}
+		bis.close();
+		f.close();
+		IMemspace m = c.byteListToMemspace(bytes);
+		return m;
+	}public byte[] loadCompressedBinaryFileFromStream(InputStream is) throws IOException {
+		ZipInputStream f = new ZipInputStream(is);
+		ZipEntry somBinary = f.getNextEntry();
+		List<Byte> bytes = new ArrayList<>();
+		int b;
+		while ((b = f.read()) != -1) {
+			bytes.add((byte) b);
+		}
+		f.close();
+		return c.byteListToByteArray(bytes);
+	}
 
+	public void writeCompressedBinaryFile(byte[] content,String path) throws IOException {
+		File f = new File(path);
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		ZipOutputStream zos=new ZipOutputStream(bis);
+		ZipEntry ze = new ZipEntry("BIN");
+		zos.putNextEntry(ze);
+		zos.write(content);
+		zos.closeEntry();
+		zos.close();
+		bis.close();
+	}
 	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
 		File f = new File(path);
 		FileReader fis = new FileReader(f);
@@ -215,6 +258,15 @@ public class FileLoader {
 			s.close();
 			return result;
 		}
+		if (sourceFormat.equals(SOMFormats.CBIN)) {
+			List<Byte> bytes = new ArrayList<>();
+			int b;
+			while ((b = source.read()) != -1) {
+				bytes.add((byte) b);
+			}
+			byte[] m = new Compiler().byteListToByteArray(bytes);
+			return m;
+		}
 		if (sourceFormat.equals(SOMFormats.BIN)) {
 			List<Byte> bytes = new ArrayList<>();
 			int b;
@@ -236,7 +288,14 @@ public class FileLoader {
 				out.write(c);
 			}
 			return out;
-		} else {
+		} else if(format.equals(SOMFormats.CBIN)){
+			byte[] arr = (byte[]) obj;
+			for (int i = 0; i < arr.length; i++) {
+				byte c = arr[i];
+				out.write(c);
+			}
+			return out;
+		}else {
 			OutputStreamWriter osw = new OutputStreamWriter(out);
 			osw = writeToOutputWriter(obj, format, osw);
 			osw.close();

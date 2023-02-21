@@ -1290,11 +1290,111 @@ class HRBSIndividualCommandsFixturesFiles {
 				Arguments.of(true, true, true, true, true, true, true, true));
 	}
 	@ParameterizedTest
-	@MethodSource("provideTruthTableADD4")
+	@MethodSource("provideTruthTableHADD13")
 	@Timeout(10)
-	void testADD4(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO,boolean inValueCB, boolean finalValueAcc,
+	void testHADD13(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
+			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD13.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: HADD13 I[0], I[1], O;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int iAdr = hrasModel.resolveSymbolToAddress("I");
+		int oAdr = hrasModel.resolveSymbolToAddress("O");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(iAdr, inValueI0);
+				memspace.setBit(iAdr + 1, inValueI1);
+				memspace.setBit(oAdr, inValueO);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
+		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
+		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableHADD13() {
+		return Stream.of(Arguments.of(false, false, false, false, false, false, false, false),
+				Arguments.of(false, false, false, true, false, false, false, false),
+				Arguments.of(false, false, true, false, false, false, true, true),
+				Arguments.of(false, false, true, true, false, false, true, true),
+				Arguments.of(false, true, false, false, false, true, false, true),
+				Arguments.of(false, true, false, true, false, true, false, true),
+				Arguments.of(false, true, true, false, true, true, true, false),
+				Arguments.of(false, true, true, true, true, true, true, false),
+				Arguments.of(true, false, false, false, false, false, false, false),
+				Arguments.of(true, false, false, true, false, false, false, false),
+				Arguments.of(true, false, true, false, false, false, true, true),
+				Arguments.of(true, false, true, true, false, false, true, true),
+				Arguments.of(true, true, false, false, false, true, false, true),
+				Arguments.of(true, true, false, true, false, true, false, true),
+				Arguments.of(true, true, true, false, true, true, true, false),
+				Arguments.of(true, true, true, true, true, true, true, false));
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableADD13")
+	@Timeout(10)
+	void testADD13(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
+			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD13.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: ADD13 I[0], I[1], O;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int iAdr = hrasModel.resolveSymbolToAddress("I");
+		int oAdr = hrasModel.resolveSymbolToAddress("O");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(iAdr, inValueI0);
+				memspace.setBit(iAdr + 1, inValueI1);
+				memspace.setBit(oAdr, inValueO);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
+		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
+		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableADD13() {
+		return Stream.of(Arguments.of(false, false, false, false, false, false, false, false),
+				Arguments.of(false, false, false, true, false, false, false, false),
+				Arguments.of(false, false, true, false, false, false, true, true),
+				Arguments.of(false, false, true, true, false, false, true, true),
+				Arguments.of(false, true, false, false, false, true, false, true),
+				Arguments.of(false, true, false, true, false, true, false, true),
+				Arguments.of(false, true, true, false, true, true, true, false),
+				Arguments.of(false, true, true, true, true, true, true, false),
+				Arguments.of(true, false, false, false, false, false, false, true),
+				Arguments.of(true, false, false, true, false, false, false, true),
+				Arguments.of(true, false, true, false, true, false, true, false),
+				Arguments.of(true, false, true, true, true, false, true, false),
+				Arguments.of(true, true, false, false, true, true, false, false),
+				Arguments.of(true, true, false, true, true, true, false, false),
+				Arguments.of(true, true, true, false, true, true, true, true),
+				Arguments.of(true, true, true, true, true, true, true, true));
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableADD14")
+	@Timeout(10)
+	void testADD14(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO,boolean inValueCB, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO,boolean finalValueCB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD4.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tglobal CB\n\tDEBUG: ADD4 I[0], I[1], O, CB;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD14.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tglobal CB\n\tDEBUG: ADD14 I[0], I[1], O, CB;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1324,7 +1424,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		assertEquals(finalValueCB, runner.getMemspace().getBit(cbAdr));
 	}
 
-	private static Stream<Arguments> provideTruthTableADD4() {
+	private static Stream<Arguments> provideTruthTableADD14() {
 		return Stream.of(Arguments.of(false,false, false, false, false,false, false, false, false, false),
 				Arguments.of(false,false, false, false, true,false, false, false, true, false),
 				Arguments.of(false,false, false, true, false,false, false, false, false, false),
@@ -1358,5 +1458,75 @@ class HRBSIndividualCommandsFixturesFiles {
 				Arguments.of(true,true, true, false, true, true,true, true, true, true),
 				Arguments.of(true,true, true, true, false, true,true, true, false, true),
 				Arguments.of(true,true, true, true, true,true, true, true, true, true));
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableHADD14")
+	@Timeout(10)
+	void testHADD14(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO,boolean inValueCB, boolean finalValueAcc,
+			boolean finalValueI0, boolean finalValueI1, boolean finalValueO,boolean finalValueCB) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD14.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tglobal CB\n\tDEBUG: HADD14 I[0], I[1], O, CB;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int iAdr = hrasModel.resolveSymbolToAddress("I");
+		int oAdr = hrasModel.resolveSymbolToAddress("O");
+		int cbAdr = hrasModel.resolveSymbolToAddress("CB");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(iAdr, inValueI0);
+				memspace.setBit(iAdr + 1, inValueI1);
+				memspace.setBit(oAdr, inValueO);
+				memspace.setBit(cbAdr, inValueCB);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
+		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
+		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
+		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
+		assertEquals(finalValueCB, runner.getMemspace().getBit(cbAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableHADD14() {
+		return Stream.of(Arguments.of(false,false, false, false, false,false, false, false, false, false),
+				Arguments.of(false,false, false, false, true,false, false, false, false, false),
+				Arguments.of(false,false, false, true, false,false, false, false, false, false),
+				Arguments.of(false,false, false, true, true,false, false, false, false, false),
+				Arguments.of(false,false, true, false, false,false, false, true, true, false),
+				Arguments.of(false,false, true, false, true, false,false, true, true, false),
+				Arguments.of(false,false, true, true, false, false,false, true, true, false),
+				Arguments.of(false,false, true, true, true,false, false, true, true, false),
+				Arguments.of(false,true, false, false, false,false, true, false, true, false),
+				Arguments.of(false,true, false, false, true,false, true, false, true, false),
+				Arguments.of(false,true, false, true, false,false, true, false, true, false),
+				Arguments.of(false,true, false, true, true, false,true, false, true, false),
+				Arguments.of(false,true, true, false, false,false, true, true, false, true),
+				Arguments.of(false,true, true, false, true, false,true, true, false, true),
+				Arguments.of(false,true, true, true, false, false,true, true, false, true),
+				Arguments.of(false,true, true, true, true,false, true, true, false, true),
+				
+				Arguments.of(true,false, false, false, false,true, false, false, false, false),
+				Arguments.of(true,false, false, false, true,true, false, false, false, false),
+				Arguments.of(true,false, false, true, false,true, false, false, false, false),
+				Arguments.of(true,false, false, true, true,true, false, false, false, false),
+				Arguments.of(true,false, true, false, false,true, false, true, true, false),
+				Arguments.of(true,false, true, false, true, true,false, true, true, false),
+				Arguments.of(true,false, true, true, false, true,false, true, true, false),
+				Arguments.of(true,false, true, true, true,true, false, true, true, false),
+				Arguments.of(true,true, false, false, false,true, true, false, true, false),
+				Arguments.of(true,true, false, false, true,true, true, false, true, false),
+				Arguments.of(true,true, false, true, false,true, true, false, true, false),
+				Arguments.of(true,true, false, true, true, true,true, false, true, false),
+				Arguments.of(true,true, true, false, false,true, true, true, false, true),
+				Arguments.of(true,true, true, false, true, true,true, true, false, true),
+				Arguments.of(true,true, true, true, false, true,true, true, false, true),
+				Arguments.of(true,true, true, true, true,true, true, true, false, true));
 	}
 }

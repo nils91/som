@@ -118,7 +118,7 @@ public class Compiler {
 	}
 
 	public HRACModel compileHRBStoHRAC(HRBSModel m) {
-		return m.compileToHRAC(null, null, null);
+		return m.compileToHRAC("GL", null, null);
 	}
 
 	public HRASModel compileHRACtoHRAS(HRACModel m) {

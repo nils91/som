@@ -3,6 +3,8 @@
  */
 package de.dralle.som;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +20,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -35,18 +40,18 @@ public class Compiler {
 	}
 
 	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target) {
-	return findCompilePath(start, target, null);
+		return findCompilePath(start, target, null);
 	}
 
-	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target,List<SOMFormats> path) {
-		if(path==null) {
-			path=new ArrayList<>();
+	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target, List<SOMFormats> path) {
+		if (path == null) {
+			path = new ArrayList<>();
 		}
 		List<SOMFormats> cPath = new ArrayList<>();
-		if(!path.contains(start)) {
+		if (!path.contains(start)) {
 			path.add(start);
 			cPath.add(start);
-		}else {
+		} else {
 			return null;
 		}
 		if (start != null && start.equals(target)) {
@@ -58,7 +63,7 @@ public class Compiler {
 			}
 			for (int i = 0; i < availTargets.length; i++) {
 				SOMFormats somFormats = availTargets[i];
-				List<SOMFormats> ccPathh = findCompilePath(somFormats, target,path);
+				List<SOMFormats> ccPathh = findCompilePath(somFormats, target, path);
 				if (ccPathh != null) {
 					cPath.addAll(ccPathh);
 					return cPath;
@@ -67,11 +72,12 @@ public class Compiler {
 			return null;
 		}
 	}
+
 	public static final Map<SOMFormats, SOMFormats[]> ATOMIC_COMPILE_PATHS = Stream
 			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
 					new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
-							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN }),
+							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
@@ -79,6 +85,8 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
 							new SOMFormats[] { SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.CBIN,
+							new SOMFormats[] { SOMFormats.BIN }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.IMAGE,
 							new SOMFormats[] { SOMFormats.BIN }))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -122,10 +130,87 @@ public class Compiler {
 		if (sourceFormat.equals(SOMFormats.CBIN) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) compressedArrayToMemspace((byte[]) sourceModel);
 		}
+		if (sourceFormat.equals(SOMFormats.IMAGE) && targetFormat.equals(SOMFormats.BIN)) {
+			return (T) Image2Memspace((RenderedImage) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.IMAGE)) {
+			return (T) memspace2Image((IMemspace) sourceModel);
+		}
 		if (sourceFormat.equals(SOMFormats.AB) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) abStringToMemspace((String) sourceModel);
 		}
 		return null;
+	}
+
+	private IMemspace Image2Memspace(RenderedImage sourceModel) {
+		// create the object of ByteArrayOutputStream class
+	      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+	        
+	      // write the image into the object of ByteArrayOutputStream class
+	      try {
+			ImageIO.write(sourceModel, "png", outStreamObj);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	        
+	      // create the byte array from image
+		byte[] arr = outStreamObj.toByteArray();
+		try {
+			outStreamObj.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ByteArrayMemspace mem = new ByteArrayMemspace(arr);
+		return mem;
+	}
+
+	private RenderedImage memspace2Image(IMemspace sourceModel) {
+		byte[] data = memspaceToByteArray(sourceModel);
+		int pxCNT = data.length / 3 + data.length % 3;
+		double sq = Math.sqrt(pxCNT);
+		int width = 0;
+		int height = 0;
+		if (sq != (int) sq) {
+			width = (int) sq;
+			height = width + 1;
+		} else {
+			width = (int) sq;
+			height = (int) sq;
+		}
+		while (width * height != pxCNT) {
+			int wh = width*height;
+			if(wh<pxCNT) {
+				width++;
+			}
+			if(wh>pxCNT) {
+				height--;
+				if(height<1) {
+					height++;
+					width--;
+				}
+			}
+		}
+		BufferedImage img = new BufferedImage(width, height,BufferedImage.TYPE_3BYTE_BGR);
+		for (int i = 0; i <width; i++) {
+			for (int j = 0; j <height; j++) {
+				int bARrIx=i*j*3;
+				byte b=0;
+				byte g=0;
+				byte r=0;
+				if(bARrIx<data.length) {
+					b=data[bARrIx];
+				}if(bARrIx+1<data.length) {
+					g=data[bARrIx+1];
+				}if(bARrIx+2<data.length) {
+					r=data[bARrIx+2];
+				}
+				img.setRGB(i, j, b*255*255+g*255+r);
+			}
+		}
+		img.flush();
+		return img;
 	}
 
 	public HRACModel compileHRBStoHRAC(HRBSModel m) {
@@ -177,8 +262,9 @@ public class Compiler {
 		}
 		return baos.toByteArray();
 	}
+
 	public IMemspace compressedArrayToMemspace(byte[] content) {
-		ByteArrayInputStream bais=new ByteArrayInputStream(content);
+		ByteArrayInputStream bais = new ByteArrayInputStream(content);
 		ZipInputStream zis = new ZipInputStream(bais);
 		try {
 			zis.getNextEntry();
@@ -187,27 +273,27 @@ public class Compiler {
 			e.printStackTrace();
 		}
 		// Create a ByteArrayOutputStream to write the decompressed data to
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        // Create a buffer for reading and writing the data
-        byte[] buffer = new byte[1024];
-        int len;
+		// Create a buffer for reading and writing the data
+		byte[] buffer = new byte[1024];
+		int len;
 
-        // Read and write the decompressed data to the ByteArrayOutputStream
-        try {
+		// Read and write the decompressed data to the ByteArrayOutputStream
+		try {
 			while ((len = zis.read(buffer)) > 0) {
-			    baos.write(buffer, 0, len);
+				baos.write(buffer, 0, len);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-        // Get the decompressed data as a byte array
-        byte[] data = baos.toByteArray();
+		// Get the decompressed data as a byte array
+		byte[] data = baos.toByteArray();
 		ByteArrayMemspace bam = new ByteArrayMemspace(data);
 		return bam;
-		
+
 	}
 
 	public IMemspace booleanListToMemspace(List<Boolean> bits) {

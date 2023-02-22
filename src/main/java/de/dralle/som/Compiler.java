@@ -35,8 +35,20 @@ public class Compiler {
 	}
 
 	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target) {
+	return findCompilePath(start, target, null);
+	}
+
+	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target,List<SOMFormats> path) {
+		if(path==null) {
+			path=new ArrayList<>();
+		}
 		List<SOMFormats> cPath = new ArrayList<>();
-		cPath.add(start);
+		if(!path.contains(start)) {
+			path.add(start);
+			cPath.add(start);
+		}else {
+			return null;
+		}
 		if (start != null && start.equals(target)) {
 			return cPath;
 		} else {
@@ -46,7 +58,7 @@ public class Compiler {
 			}
 			for (int i = 0; i < availTargets.length; i++) {
 				SOMFormats somFormats = availTargets[i];
-				List<SOMFormats> ccPathh = findCompilePath(somFormats, target);
+				List<SOMFormats> ccPathh = findCompilePath(somFormats, target,path);
 				if (ccPathh != null) {
 					cPath.addAll(ccPathh);
 					return cPath;
@@ -55,7 +67,6 @@ public class Compiler {
 			return null;
 		}
 	}
-
 	public static final Map<SOMFormats, SOMFormats[]> ATOMIC_COMPILE_PATHS = Stream
 			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
 					new SOMFormats[] { SOMFormats.BIN }),

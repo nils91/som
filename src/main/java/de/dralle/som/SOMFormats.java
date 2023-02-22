@@ -15,7 +15,7 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
  *
  */
 public enum SOMFormats {
-	AB(String.class,"ascii binary","ab"),BIN(IMemspace.class,"binary","bin"),HRAS(HRASModel.class,"human readable SOM Type A Simple","hras"),HRAC(HRACModel.class,"human readable SOM Type A Complex","hrac",new String[]{"hra","hrac"}),HRBS(HRBSModel.class,"human readable som type b simple","hrbs"),IMAGE(Image.class,"Binary as png","png"),CBIN(byte[].class,"compressed binary","cbin",new String[] {"cbin","zip"}),B64(String.class,"KBase64 binary","b64");
+	AB(String.class,"ascii binary","ab"),BIN(IMemspace.class,"binary","bin"),HRAS(HRASModel.class,"human readable SOM Type A Simple","hras"),HRAC(HRACModel.class,"human readable SOM Type A Complex","hrac",new String[]{".hra",".hrac"}),HRBS(HRBSModel.class,"human readable som type b simple","hrbs"),IMAGE(Image.class,"Binary as png","png"),CBIN(byte[].class,"compressed binary","cbin",new String[] {".cbin",".zip"}),B64(String.class,"KBase64 binary","b64");
 
 	private String friendlyName;
 	private String shortName;
@@ -46,7 +46,7 @@ public enum SOMFormats {
 	}
 
 	private SOMFormats(Class<?> internalClazz,String friendlyName, String shortName) {
-		this(internalClazz,friendlyName,shortName,shortName);
+		this(internalClazz,friendlyName,shortName,"."+shortName);
 	}
 	private SOMFormats(Class<?> internalClazz,String friendlyName, String shortName,String fileExt) {
 		this(internalClazz,friendlyName,shortName,new String[] {fileExt});

@@ -3,6 +3,9 @@
  */
 package de.dralle.som;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -29,6 +32,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import javax.imageio.ImageIO;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -267,6 +272,10 @@ public class FileLoader {
 			byte[] m = new Compiler().byteListToByteArray(bytes);
 			return m;
 		}
+		if(sourceFormat.equals(SOMFormats.IMAGE)) {
+			BufferedImage img = ImageIO.read(source);
+			return img;
+		}
 		if (sourceFormat.equals(SOMFormats.BIN)) {
 			List<Byte> bytes = new ArrayList<>();
 			int b;
@@ -295,7 +304,23 @@ public class FileLoader {
 				out.write(c);
 			}
 			return out;
-		}else {
+		}else if(format.equals(SOMFormats.IMAGE)){
+			// create the object of ByteArrayOutputStream class
+		      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+		        
+		      // write the image into the object of ByteArrayOutputStream class
+		      ImageIO.write((RenderedImage)obj, "png", outStreamObj);
+		        
+		      // create the byte array from image
+			byte[] arr = outStreamObj.toByteArray();
+			outStreamObj.close();
+			for (int i = 0; i < arr.length; i++) {
+				byte c = arr[i];
+				out.write(c);
+			}
+			return out;
+		}
+		else {
 			OutputStreamWriter osw = new OutputStreamWriter(out);
 			osw = writeToOutputWriter(obj, format, osw);
 			osw.close();

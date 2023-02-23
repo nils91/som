@@ -263,6 +263,12 @@ public class FileLoader {
 			s.close();
 			return result;
 		}
+		if (sourceFormat.equals(SOMFormats.B64)) {
+			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
+			String result = s.hasNext() ? s.next() : "";
+			s.close();
+			return result;
+		}
 		if (sourceFormat.equals(SOMFormats.CBIN)) {
 			List<Byte> bytes = new ArrayList<>();
 			int b;
@@ -341,6 +347,10 @@ public class FileLoader {
 			out.write(str);
 		}
 		if (format.equals(SOMFormats.AB)) {
+			String m = (String) obj;
+			out.write(m);
+		}
+		if (format.equals(SOMFormats.B64)) {
 			String m = (String) obj;
 			out.write(m);
 		}

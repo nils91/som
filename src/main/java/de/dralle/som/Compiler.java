@@ -3,6 +3,7 @@
  */
 package de.dralle.som;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -143,24 +144,35 @@ public class Compiler {
 	}
 
 	private IMemspace Image2Memspace(RenderedImage sourceModel) {
-		// create the object of ByteArrayOutputStream class
-	      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
-	        
-	      // write the image into the object of ByteArrayOutputStream class
-	      try {
-			ImageIO.write(sourceModel, "png", outStreamObj);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		BufferedImage bufferedImage = null;
+		if (sourceModel instanceof BufferedImage) {
+			bufferedImage = (BufferedImage) sourceModel;
+		} else {
+			// create a new BufferedImage from the RenderedImage
+			bufferedImage = new BufferedImage(sourceModel.getWidth(), sourceModel.getHeight(),
+					BufferedImage.TYPE_INT_RGB);
+			bufferedImage.createGraphics().drawRenderedImage(sourceModel, new AffineTransform());
 		}
-	        
-	      // create the byte array from image
-		byte[] arr = outStreamObj.toByteArray();
-		try {
-			outStreamObj.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		List<Integer> pixValues = new ArrayList<>();
+		for (int i = 0; i < bufferedImage.getWidth(); i++) {
+			for (int j2 = 0; j2 < bufferedImage.getHeight(); j2++) {
+				pixValues.add(bufferedImage.getRGB(i, j2));
+			}
+		}
+		// create the byte array from image
+		byte[] arr = new byte[pixValues.size() * 3];
+		for (int i = 0; i < pixValues.size(); i++) {
+			int rgb = pixValues.get(i);
+
+			// extract the red, green, and blue components from the RGB value
+			byte red = (byte) ((rgb >> 16) & 0xFF);
+			byte green = (byte) ((rgb >> 8) & 0xFF);
+			byte blue = (byte) (rgb & 0xFF);
+
+			arr[i * 3] = red;
+			arr[i * 3 + 1] = green;
+			arr[i * 3 + 2] = blue;
+
 		}
 		ByteArrayMemspace mem = new ByteArrayMemspace(arr);
 		return mem;
@@ -180,33 +192,36 @@ public class Compiler {
 			height = (int) sq;
 		}
 		while (width * height != pxCNT) {
-			int wh = width*height;
-			if(wh<pxCNT) {
+			int wh = width * height;
+			if (wh < pxCNT) {
 				width++;
 			}
-			if(wh>pxCNT) {
+			if (wh > pxCNT) {
 				height--;
-				if(height<1) {
+				if (height < 1) {
 					height++;
 					width--;
 				}
 			}
 		}
-		BufferedImage img = new BufferedImage(width, height,BufferedImage.TYPE_3BYTE_BGR);
-		for (int i = 0; i <width; i++) {
-			for (int j = 0; j <height; j++) {
-				int bARrIx=i*j*3;
-				byte b=0;
-				byte g=0;
-				byte r=0;
-				if(bARrIx<data.length) {
-					b=data[bARrIx];
-				}if(bARrIx+1<data.length) {
-					g=data[bARrIx+1];
-				}if(bARrIx+2<data.length) {
-					r=data[bARrIx+2];
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				int bARrIx = (i * width + j) * 3;
+				byte r = 0;
+				byte g = 0;
+				byte b = 0;
+				if (bARrIx < data.length) {
+					r = data[bARrIx];
 				}
-				img.setRGB(i, j, b*255*255+g*255+r);
+				if (bARrIx + 1 < data.length) {
+					g = data[bARrIx + 1];
+				}
+				if (bARrIx + 2 < data.length) {
+					b = data[bARrIx + 2];
+				}
+				int rgb = (r << 16) | (g << 8) | b;
+				img.setRGB(i, j, rgb);
 			}
 		}
 		img.flush();

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.annotation.Target;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class Compiler {
 			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
 					new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
-							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE }),
+							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE ,SOMFormats.B64}),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
@@ -88,7 +89,8 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.CBIN,
 							new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.IMAGE,
-							new SOMFormats[] { SOMFormats.BIN }))
+							new SOMFormats[] { SOMFormats.BIN }),new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.B64,
+									new SOMFormats[] { SOMFormats.BIN }))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 	public <T> T compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
@@ -140,7 +142,23 @@ public class Compiler {
 		if (sourceFormat.equals(SOMFormats.AB) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) abStringToMemspace((String) sourceModel);
 		}
+		if (sourceFormat.equals(SOMFormats.B64) && targetFormat.equals(SOMFormats.BIN)) {
+			return (T) base64String2Memspace((String) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.B64)) {
+			return (T) memspace2Base64String((IMemspace) sourceModel);
+		}
 		return null;
+	}
+
+	private String memspace2Base64String(IMemspace sourceModel) {
+		byte[] data = memspaceToByteArray(sourceModel);
+		return new String(Base64.getEncoder().encode(data));
+	}
+
+	private IMemspace base64String2Memspace(String sourceModel) {
+		byte[] arr = Base64.getDecoder().decode(sourceModel);
+		return new ByteArrayMemspace(arr);
 	}
 
 	private IMemspace Image2Memspace(RenderedImage sourceModel) {

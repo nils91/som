@@ -67,7 +67,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -94,7 +94,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -121,7 +121,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -149,7 +149,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -179,7 +179,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -209,7 +209,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -240,7 +240,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -272,7 +272,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -303,7 +303,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -335,7 +335,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -366,7 +366,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -398,7 +398,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -430,7 +430,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -468,7 +468,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -498,7 +498,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -526,7 +526,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -559,7 +559,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -597,7 +597,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -624,7 +624,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -661,7 +661,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -693,7 +693,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -726,7 +726,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -764,7 +764,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -805,7 +805,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -844,7 +844,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -884,7 +884,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -923,7 +923,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -962,7 +962,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1001,7 +1001,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1051,7 +1051,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1101,7 +1101,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1151,7 +1151,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1201,7 +1201,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1251,7 +1251,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1301,7 +1301,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1351,7 +1351,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1402,7 +1402,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int cbAdr = hrasModel.resolveSymbolToAddress("CB");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -1472,7 +1472,7 @@ class HRBSIndividualCommandsFixturesFiles {
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int cbAdr = hrasModel.resolveSymbolToAddress("CB");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_null_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 

@@ -30,6 +30,8 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.HRAVParser;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.HRBSParser;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
@@ -206,6 +208,9 @@ public class FileLoader {
 		if (sourceFormat.equals(SOMFormats.HRAS)) {
 			return new HRASParser().parse(source);
 		}
+		if (sourceFormat.equals(SOMFormats.HRAV)) {
+			return new HRAVParser().parse(source);
+		}
 		if (sourceFormat.equals(SOMFormats.AB)) {
 			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
 			String result = s.hasNext() ? s.next() : "";
@@ -250,6 +255,11 @@ public class FileLoader {
 		}
 		if (format.equals(SOMFormats.HRAS)) {
 			HRASModel m = (HRASModel) obj;
+			String str = m.asCode();
+			out.write(str);
+		}
+		if (format.equals(SOMFormats.HRAV)) {
+			HRAVModel m = (HRAVModel) obj;
 			String str = m.asCode();
 			out.write(str);
 		}

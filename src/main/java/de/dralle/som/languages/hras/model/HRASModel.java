@@ -15,6 +15,8 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.languages.hrav.model.HRAVCommand;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 
 /**
  * @author Nils
@@ -232,5 +234,25 @@ public class HRASModel implements ISetN{
 	@Override
 	public int getN() {
 		return n;
+	}
+
+	public HRAVModel compileToHRAV() {
+		HRAVModel hrav = new HRAVModel();
+		hrav.setN(n);
+		if(startAdress!=null) {
+			hrav.setStartAddressExplicit(true);
+			hrav.setStartAdress(startAdress.resolve(this));
+		}
+		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
+			MemoryAddress address = c.getKey();
+			hrav.setNextCommandAddress(address.resolve(this));
+			Command command = c.getValue();
+			int cTgtAddress = getCommandTargetAddress(command);
+			HRAVCommand hravCommand = new HRAVCommand();
+			hravCommand.setOp(command.getOp());
+			hravCommand.setAddress(cTgtAddress);
+			hrav.addCommand(hravCommand);
+		}
+		return hrav;
 	}
 }

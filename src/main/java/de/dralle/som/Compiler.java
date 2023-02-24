@@ -30,6 +30,7 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
@@ -124,8 +125,11 @@ public class Compiler {
 		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAS)) {
 			return (T) compileHRACtoHRAS((HRACModel) sourceModel);
 		}
-		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.BIN)) {
-			return (T) compileHRAStoMemspace((HRASModel) sourceModel);
+		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
+			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.BIN)) {
+			return (T) compileHRAVtoMemspace((HRAVModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.AB)) {
 			return (T) memSpaceToABString((IMemspace) sourceModel);
@@ -256,12 +260,14 @@ public class Compiler {
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}
-
+	public HRAVModel compileHRAStoHRAV(HRASModel m) {
+		return m.compileToHRAV();
+	}
 	public IMemspace abStringToMemspace(String s) {
 		return abStringToMemspace(s.toCharArray());
 	}
 
-	public IMemspace compileHRAStoMemspace(HRASModel model) {
+	public IMemspace compileHRAVtoMemspace(HRAVModel model) {
 		return model.compileToMemspace();
 	}
 

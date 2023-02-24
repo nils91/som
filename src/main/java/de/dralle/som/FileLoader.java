@@ -234,8 +234,8 @@ public class FileLoader {
 		return loadFromFile(p.toFile(), sourceFormat);
 	}
 
-	public Object loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
-		return loadFromFile(new File(path), sourceFormat);
+	public <T> T loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
+		return (T) loadFromFile(new File(path), sourceFormat);
 	}
 	public Object loadFromFile(File f) throws IOException {
 		return loadFromFile(f,getFormatFromFilename(f.getName()));

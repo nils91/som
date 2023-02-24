@@ -17,6 +17,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 class BitcodeRunnerExecuteHRASTests {
@@ -44,16 +45,16 @@ class BitcodeRunnerExecuteHRASTests {
 
 	@Test
 	void testReturnCode0() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/minimal_return0.hras");
-		IMemspace memspace = c.compileHRAStoMemspace(model);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0.hras",SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testReturnCode1() throws IOException {
-		HRASModel model = f.readHRASFile("test/fixtures/hras/minimal_return1.hras");
-		IMemspace memspace = c.compileHRAStoMemspace(model);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1.hras",SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
@@ -61,8 +62,8 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		HRASModel model =f.readHRASFile("test/fixtures/hras/test_nar.hras");
-		IMemspace memspace=c.compileHRAStoMemspace(model);
+		HRASModel model =f.loadFromFile("test/fixtures/hras/test_nar.hras",SOMFormats.HRAS);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
 		// should have written accumulator to 1
@@ -72,8 +73,8 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		HRASModel model =f.readHRASFile("test/fixtures/hras/test_naw.hras");
-		IMemspace memspace=c.compileHRAStoMemspace(model);
+		HRASModel model =f.loadFromFile("test/fixtures/hras/test_naw.hras",SOMFormats.HRAS);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -83,8 +84,8 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
-		HRASModel model =f.readHRASFile("test/fixtures/hras/test_invert_with_nand.hras");
-		IMemspace memspace=c.compileHRAStoMemspace(model);
+		HRASModel model =f.loadFromFile("test/fixtures/hras/test_invert_with_nand.hras",SOMFormats.HRAS);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -93,8 +94,8 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
-		HRASModel model =f.readHRASFile("test/fixtures/hras/test_read_with_nand.hras");
-		IMemspace memspace=c.compileHRAStoMemspace(model);
+		HRASModel model =f.loadFromFile("test/fixtures/hras/test_read_with_nand.hras",SOMFormats.HRAS);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -103,8 +104,8 @@ class BitcodeRunnerExecuteHRASTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {
-		HRASModel model =f.readHRASFile("test/fixtures/hras/test_write_with_nand.hras");
-		IMemspace memspace=c.compileHRAStoMemspace(model);
+		HRASModel model =f.loadFromFile("test/fixtures/hras/test_write_with_nand.hras",SOMFormats.HRAS);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1

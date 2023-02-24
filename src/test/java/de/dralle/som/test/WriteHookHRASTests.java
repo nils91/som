@@ -22,6 +22,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.WriteHookManager;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.test.util.TestWriteHook;
@@ -73,7 +74,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_not_triggered.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -84,7 +85,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_write.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -95,7 +96,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_read.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -107,7 +108,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_triggered_write.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -118,7 +119,7 @@ class WriteHookHRASTests {
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_write_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -129,7 +130,7 @@ class WriteHookHRASTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_nonew.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -139,7 +140,7 @@ class WriteHookHRASTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_nonew.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -152,7 +153,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -162,7 +163,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
@@ -172,7 +173,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_newdata.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
@@ -185,7 +186,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
@@ -195,7 +196,7 @@ class WriteHookHRASTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_write_hook_read_101.hras");
-		IMemspace m = c.compileHRAStoMemspace(model);
+		IMemspace m = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });

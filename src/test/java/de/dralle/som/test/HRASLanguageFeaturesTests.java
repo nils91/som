@@ -18,6 +18,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 /**
@@ -62,7 +63,7 @@ class HRASLanguageFeaturesTests {
 	@Test
 	void testDirectiveN() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_lf_hras.hras");
-		IMemspace memspace = c.compileHRAStoMemspace(model);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		// The file sets n to 7 (in binary 00011 - there is an offset of 4)
 		assertFalse(memspace.getBit(3));
 		assertFalse(memspace.getBit(4));
@@ -74,7 +75,7 @@ class HRASLanguageFeaturesTests {
 	@Test
 	void testDirectiveAddress() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_lf_hras.hras");
-		IMemspace memspace = c.compileHRAStoMemspace(model);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		// The file sets the address to 104 (1101000 starting at address 11)
 		assertTrue(memspace.getBit(11));
 		assertTrue(memspace.getBit(12));
@@ -87,7 +88,7 @@ class HRASLanguageFeaturesTests {
 	@Test
 	void testDirectiveContinue() throws IOException {
 		HRASModel model = f.readHRASFile("test/fixtures/hras/test_lf_hras.hras");
-		IMemspace memspace = c.compileHRAStoMemspace(model);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		//Test if there is the opcode for NAW at 96 and 120
 		assertTrue(memspace.getBit(96));
 		assertTrue(memspace.getBit(120));

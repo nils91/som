@@ -24,6 +24,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 
@@ -161,7 +162,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace mem = c.compileHRAStoMemspace(c.compileHRACtoHRAS(m));
+			IMemspace mem = c.compile(m,SOMFormats.HRAC,SOMFormats.BIN);
 			String newFileName = fileName + ".bin";
 			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
 			assertTrue(Paths.get(tmpPathWithHRAC.toString(), newFileName).toFile().exists());
@@ -175,7 +176,7 @@ class FormatHRACFileWriteTests {
 			String fileName = file.getName();
 			if (fileName.endsWith("hrac")) {
 				HRACModel m = f.readHRACFile(file.getPath());
-				IMemspace mem = c.compileHRAStoMemspace(c.compileHRACtoHRAS(m));
+				IMemspace mem = c.compile(m,SOMFormats.HRAC,SOMFormats.BIN);
 				String newFileName = fileName + ".bin";
 				f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
@@ -189,7 +190,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace mem = c.compileHRAStoMemspace(c.compileHRACtoHRAS(m));
+			IMemspace mem = c.compile(m,SOMFormats.HRAC,SOMFormats.BIN);
 			String newFileName = fileName + ".bin";
 			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
@@ -204,7 +205,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace mem = c.compileHRAStoMemspace(c.compileHRACtoHRAS(m));
+			IMemspace mem = c.compile(m,SOMFormats.HRAC,SOMFormats.BIN);
 			String newFileName = fileName + ".bin";
 			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
@@ -220,7 +221,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace mem = c.compileHRAStoMemspace(c.compileHRACtoHRAS(m));
+			IMemspace mem = c.compile(m,SOMFormats.HRAC,SOMFormats.BIN);
 			String newFileName = fileName + ".bin";
 			f.writeBinaryFile(mem, Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithHRAC.toString(), newFileName).toString());

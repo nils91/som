@@ -14,7 +14,7 @@ import de.dralle.som.languages.hrav.generated.HRAVGrammarLexer;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarParser;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.ProgramContext;
 import de.dralle.som.languages.hrav.model.HRAVModel;
-import de.dralle.som.languages.hrav.visitors.ProgramVisitor;
+import de.dralle.som.languages.hrav.visitors.HRAVProgramVisitor;
 
 /**
  * @author Nils
@@ -25,7 +25,7 @@ public class HRAVParser {
 		HRAVGrammarLexer lexer = new HRAVGrammarLexer(new ANTLRInputStream(is));
 		HRAVGrammarParser parser = new HRAVGrammarParser(new CommonTokenStream(lexer));
 		ProgramContext pt = parser.program();
-		HRAVModel model = pt.accept(new ProgramVisitor());
+		HRAVModel model = pt.accept(new HRAVProgramVisitor());
 		return model;
 	}
 	public HRAVModel parse(String s) throws IOException {

@@ -12,7 +12,7 @@ import de.dralle.som.languages.hrav.model.HRAVCommand;
  * @author Nils
  *
  */
-public class CommandVisitor extends HRAVGrammarBaseVisitor<HRAVCommand> {
+public class HRAVCommandVisitor extends HRAVGrammarBaseVisitor<HRAVCommand> {
 	private HRAVCommand c;
 
 	@Override
@@ -23,8 +23,8 @@ public class CommandVisitor extends HRAVGrammarBaseVisitor<HRAVCommand> {
 		} else if (ctx.NAW() != null) {
 			c.setOp(Opcode.NAW);
 		}
-		if (ctx.int_or_symbol() != null) {
-			c.setAddress(ctx.int_or_symbol().accept(new MemoryAddressVisitor()));
+		if (ctx.INT() != null) {
+			c.setAddress(Integer.parseInt(ctx.INT().getText()));
 			return c;
 		}
 		return null;

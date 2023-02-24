@@ -36,7 +36,7 @@ public class HRACCommand {
 public String asCode() {
 	String code = "";
 	if(label!=null) {
-		code+=label.getName()+" ";
+		code+=label.getName()+": ";
 	}
 	code+=op+" "+target.asHRACCode();
 	return code;

@@ -6,9 +6,9 @@ symbol_dec: SYMBOL cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 
-command: SYMBOL? (NAR|NAW) symbol_os;
+command: (SYMBOL COLON)? (NAR|NAW) symbol_os;
 
-symbol_os:(SYMBOL|builtins) offset_specify?;
+symbol_os:(SYMBOL_KW|ALLOC_KW)? (SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
@@ -28,6 +28,8 @@ HEAP_N:'HEAP';
 ADR:'ADR';
 NAR:'NAR';
 NAW:'NAW';
+SYMBOL_KW:'symbol'|'sym';
+ALLOC_KW:'allocate'|'alloc';
 HEAP:'heap';
 BI_N:'N';
 D_N:'n';
@@ -36,6 +38,7 @@ INT:[0-9]+;
 NEG_INT: DASH INT;
 EQ:'=';
 SEMICOLON:';';
+COLON:':';
 B_OPEN:'[';
 B_CLOSE:']';
 DASH:'-';

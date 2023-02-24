@@ -47,6 +47,11 @@ public class HRACSymbol {
 	}
 	public String asCode() {
 	StringBuilder sb=new StringBuilder();
+	if(targetSymbol!=null) {
+		sb.append("symbol ");
+	}else {
+		sb.append("alloc ");
+	}
 	sb.append(name);
 	if(bitCntISN) {
 		sb.append("[N]");

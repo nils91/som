@@ -3,6 +3,9 @@
  */
 package de.dralle.som;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.dralle.som.writehooks.IWriteHook;
 
 /**
@@ -11,6 +14,10 @@ import de.dralle.som.writehooks.IWriteHook;
  */
 public class SOMBitcodeRunner {
 	private ISomMemspace memspace;
+	private List<AbstractUnconditionalDebugPoint> dps=new ArrayList<>();
+	public void addDebugPoint(AbstractUnconditionalDebugPoint dp) {
+		dps.add(dp);
+	}
 	private WriteHookManager writeHookManager = new WriteHookManager();
 
 	public WriteHookManager getWriteHookManager() {
@@ -62,8 +69,7 @@ public class SOMBitcodeRunner {
 		int programCounter = 0;
 		boolean accumulator = false;
 		int addressSize = 0;
-		do {
-			accumulator = memspace.getAccumulatorValue();
+		do {			
 			addressSize = memspace.getN();
 			int startAddress = memspace.getNextAddress();
 			boolean addressEval = memspace.isAdrEvalSet();
@@ -83,6 +89,11 @@ public class SOMBitcodeRunner {
 				tgtAddress[i] = nextCommand[i + opcodeSize];
 			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
+			//update debug points
+			for (AbstractUnconditionalDebugPoint dp : dps) {
+				dp.update(programCounter, opCode?Opcode.NAW:Opcode.NAR, tgtAddressValue, memspace);
+			}
+			accumulator = memspace.getAccumulatorValue();
 			boolean tgtBitValue = memspace.getBit(tgtAddressValue);
 			boolean nand = !(accumulator && tgtBitValue);
 			if (!opCode)// NAR

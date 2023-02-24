@@ -6,10 +6,12 @@ package de.dralle.som.languages.hrbs.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.text.AsyncBoxView.ChildState;
 
@@ -54,26 +56,17 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (!childs.containsKey(name)) {
 			if (this.name != name) {
-				childs.put(name, c);// prevent from adding itsself, prevent recursion
+				if (!childs.containsKey(name)) { //do not override
+					childs.put(name, c);// prevent from adding itsself, prevent recursion
+					if (cmdUsageTracker == null) {
+						cmdUsageTracker = new HashMap<>();
+					}
+					cmdUsageTracker.put(name, 0);
+					return true;
+				}
 			}
-			if (cmdUsageTracker == null) {
-				cmdUsageTracker = new HashMap<>();
-			}
-			cmdUsageTracker.put(name, 0);
-			return true;
 		}
 		return false;
-	}
-
-	public void propagateChildList() {
-		if (this.childs != null) {
-			for (Entry<String, HRBSModel> entry : childs.entrySet()) {
-				String key = entry.getKey();
-				HRBSModel val = entry.getValue();
-				val.addChilds(childs);
-				val.propagateChildList();
-			}
-		}
 	}
 
 	public Collection<HRBSModel> getChildsAsList() {
@@ -134,30 +127,53 @@ public class HRBSModel implements ISetN, IHeap {
 		return useCnt;
 	}
 
-	public int getMinimumN() {
+	public int getMinimumN(Set<String> checked) {
+		if (checked == null) {
+			checked = new HashSet<>();
+		}
 		int rn = minimumN;
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				if (rn < hrbsModel.getMinimumN()) {
-					rn = hrbsModel.getMinimumN();
+		if (!checked.contains(name)) {
+			checked.add(name);
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					int childMinimum = hrbsModel.getMinimumN(checked);
+					if (childMinimum > rn) {
+						rn = childMinimum;
+					}
 				}
 			}
 		}
 		return rn;
 	}
 
+	public int getMinimumN() {
+		return getMinimumN(null);
+	}
+
 	public void setMinimumN(int minimumN) {
 		this.minimumN = minimumN;
 	}
 
-	public int getHeapSize() {
-		int rh = heapSize;
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				rh += hrbsModel.getHeapSize();
-			}
+	public int getHeapSize(Set<String> added) {
+		if (added == null) {
+			added = new HashSet<>();
 		}
-		return rh;
+		if (!added.contains(name)) {
+			added.add(name);
+			int rh = heapSize;
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					rh += hrbsModel.getHeapSize(added);
+				}
+			}
+			return rh;
+		} else {
+			return 0;
+		}
+	}
+
+	public int getHeapSize() {
+		return getHeapSize(null);
 	}
 
 	public void setHeapSize(int heapSize) {
@@ -187,11 +203,11 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private String getHeapDirective() {
-		return String.format(";heap = %d", heapSize);
+		return ";heap = " + heapSize;
 	}
 
 	private String getNDirective() {
-		return String.format(";n = %d", minimumN);
+		return ";n = " + minimumN;
 	}
 
 	private List<String> getSymbolsAsStrings() {
@@ -211,41 +227,61 @@ public class HRBSModel implements ISetN, IHeap {
 		return tmp;
 	}
 
-	public String asCode() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(name);
-		if (params != null) {
-			sb.append(" ");
-			for (String p : params) {
-				sb.append(p);
-				sb.append(",");
+	public String asCode(Set<String> printed) {
+		if (printed == null) {
+			printed = new HashSet<>();
+		}
+		if (!printed.contains(name)) {
+			printed.add(name);
+			StringBuilder sb = new StringBuilder();
+			sb.append(name);
+			if (params != null) {
+				sb.append(" ");
+				for (String p : params) {
+					sb.append(p);
+					sb.append(",");
+				}
+				sb.deleteCharAt(sb.length() - 1);
 			}
-			sb.deleteCharAt(sb.length() - 1);
-		}
-		sb.append(":");
-		sb.append(System.lineSeparator());
-		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getHeapDirective());
-		sb.append(System.lineSeparator());
-		for (String symbolString : getSymbolsAsStrings()) {
-			sb.append(symbolString);
+			sb.append(":");
 			sb.append(System.lineSeparator());
-		}
-		for (String symbolString : getCommandssAsStrings()) {
-			sb.append(symbolString);
+			sb.append(getNDirective());
 			sb.append(System.lineSeparator());
-		}
-		if (childs != null) {
-			for (HRBSModel hrbsModel : childs.values()) {
-				sb.append(hrbsModel.asCode());
+			sb.append(getHeapDirective());
+			sb.append(System.lineSeparator());
+			for (String symbolString : getSymbolsAsStrings()) {
+				sb.append(symbolString);
 				sb.append(System.lineSeparator());
 			}
+			for (String symbolString : getCommandssAsStrings()) {
+				sb.append(symbolString);
+				sb.append(System.lineSeparator());
+			}
+			if (childs != null) {
+				for (HRBSModel hrbsModel : childs.values()) {
+					sb.append(hrbsModel.asCode(printed));
+					sb.append(System.lineSeparator());
+				}
+			}
+			return sb.toString();
 		}
-		return sb.toString();
+		return "";
+	}
+
+	public String asCode() {
+		return asCode(null);
 	}
 
 	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {
+		// copy symbols n commands in local lists
+		List<HRBSSymbol> lclSymbols = new ArrayList<>();
+		List<HRBSCommand> lclCommands = new ArrayList<>();
+		for (HRBSSymbol s : symbols) {
+			lclSymbols.add(s.clone());
+		}
+		for (HRBSCommand hrbsCommand : commands) {
+			lclCommands.add(hrbsCommand.clone());
+		}
 		Map<String, HRBSMemoryAddress> modifiedParamMap = new HashMap<String, HRBSMemoryAddress>();
 		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 		List<HRBSCommand> additionalCommands = new ArrayList<>();
@@ -257,51 +293,57 @@ public class HRBSModel implements ISetN, IHeap {
 				modifiedParamMap.put(key, dedereffed);
 			}
 		}
-		addSymbols(additionalSymbols);
-		addCommands(additionalCommands);
+		lclSymbols.addAll(additionalSymbols);
+		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
 		Map<String, String> lclSymbolNameMap = new HashMap<>();
 		HRACModel m = new HRACModel();
 		m.setN(getMinimumN());
 		m.setHeapSize(getHeapSize());
-		for (HRBSSymbol s : symbols) {// convert all mirror symbols that are derefs
+		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
 				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));
 			}
 		}
-		addSymbols(additionalSymbols);
-		addCommands(additionalCommands);
+		lclSymbols.addAll(additionalSymbols);
+		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
 		if (modifiedParamMap != null) { // create mirror symbol for each param
 			for (Entry<String, HRBSMemoryAddress> entry : modifiedParamMap.entrySet()) {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
-				HRBSSymbol s = new HRBSSymbol();
-				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId)
-						+ "_MS";
+				HRACSymbol s = new HRACSymbol();
+				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId) + "_MS";
 				s.setName(convertedName);
-				s.setTargetSymbol(val);
-				addSymbol(s);
+				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, uniqueUsageId, lclSymbolNameMap, m, childs));
+				m.addSymbol(s);
 				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
-		for (HRBSSymbol s : symbols) {// assume no target symbol is a deref (but be prepared for it anyway,
-										// becuase...)
-			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
-			lclSymbolNameMap.put(s.getName(), symbolName);
-			HRACSymbol hracSymbol = getAsHRACSymbol(s, lclSymbolNameMap, name, uniqueUsageId, m, childs);
-			m.addSymbol(hracSymbol);
-
-		}
-		localizeCommandLabels(commands, lclSymbolNameMap, name, uniqueUsageId);
-		for (int i = 0; i < commands.size(); i++) {
-			HRBSCommand c = commands.get(i);
+		convertSymbols(name,uniqueUsageId, lclSymbols, lclSymbolNameMap, m,childs);
+		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, uniqueUsageId);
+		for (int i = 0; i < lclCommands.size(); i++) {
+			HRBSCommand c = lclCommands.get(i);
 			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
 		}
 
 		return m;
+	}
+
+	private static void convertSymbols(String name,String uniqueUsageId, List<HRBSSymbol> lclSymbols, Map<String, String> lclSymbolNameMap,
+			HRACModel m,Map<String,HRBSModel> childs) {
+		for (HRBSSymbol s : lclSymbols) {// assume no target symbol is a deref (but be prepared for it anyway,
+											// becuase...)
+			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
+			if(lclSymbolNameMap!=null) {
+				lclSymbolNameMap.put(s.getName(), symbolName);
+			}
+			HRACSymbol hracSymbol = getAsHRACSymbol(s, lclSymbolNameMap, name, uniqueUsageId, m, childs);
+			m.addSymbol(hracSymbol);
+
+		}
 	}
 
 	private void addCommands(List<HRBSCommand> additionalCommands) {
@@ -401,7 +443,7 @@ public class HRBSModel implements ISetN, IHeap {
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			HRACModel compiledCmdModel = cmdModel.compileToHRAC(getCurrentCommandUsage(c) + "",
 					assembleParamMap(cmdModel, c, symbolNameReplacementMap), lclSmblName);
-   			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
+			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 		}
 		incCommandUsage(c);
 	}
@@ -418,18 +460,20 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 	}
 
-	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c, Map<String, String> lclSymbolReplacementMap) {
+	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c,
+			Map<String, String> lclSymbolReplacementMap) {
 		List<HRBSMemoryAddress> cTargets = c.getTarget();
 		List<String> modelParams = m.getParams();
 		Map<String, HRBSMemoryAddress> retMap = new HashMap<>();
-		;
-		for (int i = 0; i < modelParams.size(); i++) {
-			String p = modelParams.get(i);
-			HRBSMemoryAddress cTgt = cTargets.get(i);
-			HRBSSymbol cTgtSymbol = cTgt.getSymbol();
-			String convertedName = getTargetSymbolName(cTgtSymbol.getName(), lclSymbolReplacementMap);
-			cTgtSymbol.setName(convertedName);
-			retMap.put(p,cTgt);
+		if (modelParams != null) {
+			for (int i = 0; i < modelParams.size(); i++) {
+				String p = modelParams.get(i);
+				HRBSMemoryAddress cTgt = cTargets.get(i);
+				HRBSSymbol cTgtSymbol = cTgt.getSymbol();
+				String convertedName = getTargetSymbolName(cTgtSymbol.getName(), lclSymbolReplacementMap);
+				cTgtSymbol.setName(convertedName);
+				retMap.put(p, cTgt);
+			}
 		}
 		return retMap;
 	}

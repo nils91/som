@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/XOR3.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
+
+HADD13 I0, I1, O:	
+	XOR3 I0,I1,O;
+	AND2 I0,I1;

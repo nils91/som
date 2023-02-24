@@ -7,7 +7,19 @@ package de.dralle.som.languages.hrbs.model;
  * @author Nils
  *
  */
-public class HRBSSymbol {
+public class HRBSSymbol implements Cloneable {
+	@Override
+	public HRBSSymbol clone()   {
+		HRBSSymbol clone = new HRBSSymbol();
+		clone.setName(name);
+		clone.setBitCnt(bitCnt);
+		clone.setBitCntISN(bitCntISN);
+		clone.setType(type);
+		if(targetSymbol!=null) {
+			clone.setTargetSymbol(targetSymbol.clone());
+		}		
+		return clone;
+	}
 	private String name;
 	/**
 	 * Potential target symbol. Might be null.

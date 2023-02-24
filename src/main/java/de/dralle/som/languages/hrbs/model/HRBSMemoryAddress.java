@@ -78,7 +78,9 @@ public class HRBSMemoryAddress implements Cloneable{
 	@Override
 	public HRBSMemoryAddress clone() {
 		HRBSMemoryAddress copy = new HRBSMemoryAddress();
-		copy.symbol=symbol;
+		if(symbol!=null) {
+			copy.symbol=symbol.clone();
+		}		
 		if(offset!=null) { 
 			copy.offset=offset.intValue();
 		}		

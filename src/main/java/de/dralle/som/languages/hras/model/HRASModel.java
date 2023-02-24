@@ -76,7 +76,8 @@ public class HRASModel implements ISetN{
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		commands.put(nextCommandAddress.clone(), c);
+		MemoryAddress assignedCommandAddress = nextCommandAddress.clone();
+		commands.put(assignedCommandAddress, c);
 		Integer currentOffset=nextCommandAddress.getAddressOffset();
 		if(currentOffset!=null) {
 			currentOffset=currentOffset.intValue()+getCommandSize();
@@ -84,7 +85,7 @@ public class HRASModel implements ISetN{
 			currentOffset=getCommandSize();
 		}
 		nextCommandAddress.setAddressOffset(currentOffset.intValue());
-		return nextCommandAddress.clone();
+		return assignedCommandAddress;
 	}
 
 

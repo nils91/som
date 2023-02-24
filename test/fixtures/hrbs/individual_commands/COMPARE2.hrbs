@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/COMPARE1.hrbs"
+
+COMPARE2 A, B:
+	READ1 A;
+	COMPARE1 B;

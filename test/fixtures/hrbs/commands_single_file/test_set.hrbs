@@ -1,0 +1,13 @@
+MAIN:
+	SET0;
+	
+#00 01 11 10 10
+#01 01 11 10 10
+#10 11 01 01 11
+#11 10 00 01 11
+SET0:
+	shared H
+	NAW H;
+	NAR ACC;
+	NAW H;
+	NAR H;

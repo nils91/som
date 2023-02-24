@@ -92,30 +92,8 @@ public class HRASModel implements ISetN{
 
 
 
-	private boolean checkN() {
-		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits();
-		if (minBitCount < getHighestTgtAddress() + 1) {
-			minBitCount = getHighestTgtAddress() + 1;
-		}
-		return Math.pow(2, n) <= minBitCount;
-	}
 
-	private int getHighestTgtAddress() {
-		int high = 0;
-		for (Entry<MemoryAddress, Command> commandEntry : commands.entrySet()) {
-			MemoryAddress commandAddress = commandEntry.getKey();
-			Command command = commandEntry.getValue();
-			int commandAddressValue = commandAddress.resolve(this);
-			int commandTargetAddress = getCommandTargetAddress(command);
-			if (commandAddressValue > high) {
-				high = commandAddressValue;
-			}
-			if (commandTargetAddress > high) {
-				high = commandTargetAddress;
-			}
-		}
-		return high;
-	}
+
 
 	private int getCommandTargetAddress(Command c) {
 		int tgtAdddress = c.getAddress().resolve(this);
@@ -134,22 +112,11 @@ public class HRASModel implements ISetN{
 		
 	}
 
-	private int getCommandBits() {
-		int commandSize = getCommandSize();
-		return commands.size() * commandSize;
-	}
-
+	
 	private int getCommandSize() {
 		return 1 + n;
 	}
 
-	private int getFixedBitCount() {
-		return 11 + n;
-	}
-
-	private int getExitAddress() {
-		return (int) (Math.pow(2, n) - getCommandSize());
-	}
 
 	private String getNDirective() {
 		return String.format(";n = %d", n);
@@ -166,7 +133,7 @@ public class HRASModel implements ISetN{
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
 		for (Entry<String, MemoryAddress> symbol : symbols.entrySet()) {
-			tmp.add(String.format("%s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
+			tmp.add(String.format("symbol %s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
 		}
 		return tmp;
 	}
@@ -176,7 +143,6 @@ public class HRASModel implements ISetN{
 		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
 			MemoryAddress address = c.getKey();
 			Command command = c.getValue();
-			MemoryAddress cooamndTgtAddress = command.getAddress();
 			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
 					command.asHRASCode()));
 		}

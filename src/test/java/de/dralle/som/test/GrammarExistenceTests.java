@@ -15,6 +15,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser;
+import de.dralle.som.languages.hrav.generated.HRAVGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 
 /**
@@ -75,5 +76,8 @@ class GrammarExistenceTests {
 	void testHRBSVisitorExistence() {
 		assertNotNull(HRBSGrammarBaseVisitor.class);
 	}
-
+	@Test
+	void testHRAVVisitorExistence() {
+		assertNotNull(HRAVGrammarBaseVisitor.class);
+	}
 }

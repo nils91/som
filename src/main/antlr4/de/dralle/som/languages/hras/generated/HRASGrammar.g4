@@ -2,7 +2,7 @@ grammar HRASGrammar;
 
 program : (NEWLINE? line)* EOF?;
 line: (directive|symbol_dec|command);
-symbol_dec: SYMBOL_KW SYMBOL int_or_symbol;
+symbol_dec: SYMBOL_KW? SYMBOL int_or_symbol;
 
 directive: SEMICOLON ((D_N EQ INT)|(START|CONT) EQ int_or_symbol);
 
@@ -18,7 +18,7 @@ NAR:'NAR';
 NAW:'NAW';
 CONT:'continue'|'cont';
 START:'start';
-SYMBOL_KW:'symbol';
+SYMBOL_KW:'symbol'|'sym';
 D_N:'n';
 SYMBOL:[a-mo-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;

@@ -2,6 +2,8 @@
 ;n=6
 #000 1 0101 //WH bits will not be used, address is 43
 #1 
+ACC 0
+ADR_EVAL 1
 ;start 43
 #00000000000000000000000000 //filler bits
 #1 000 001 //reset ADR_EVAL

@@ -1,9 +1,24 @@
 MAIN:
-#110 0 0001 (acc is set, ard eval set, wh en not set, address 5)
-#111 11010 //other wh bits set, address is 36
-#0000000000 //filler
-#1 00001 //reset adr eval(not needed in HRAC)
-#set other wh bits
-NAW WH_COM;
-NAW WH_DIR;
-NAW WH_SEL;
+	SET1 WH_COM;
+	SET1 WH_DIR;
+	SET1 WH_SEL;
+
+SET0:
+	shared H
+	NAW H;
+	NAR ACC;
+	NAW H;
+	NAR H;
+	
+SET1 A:
+	SET0;
+	WRITE1 A;
+	
+WRITE1 A:
+	NAW A;
+	INV0;
+	NAW A;
+	INV0;
+	
+INV0:
+	NAR ACC;

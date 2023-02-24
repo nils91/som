@@ -15,6 +15,8 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.languages.hrav.model.HRAVCommand;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 
 /**
  * @author Nils
@@ -22,7 +24,6 @@ import de.dralle.som.ISomMemspace;
  */
 public class HRASModel implements ISetN{
 	public HRASModel() {
-		setupBuiltins();
 		symbols = new LinkedHashMap<>();
 	}
 
@@ -64,7 +65,6 @@ public class HRASModel implements ISetN{
 	}
 	
 	private Map<String, MemoryAddress> symbols;
-	private Map<String, MemoryAddress> builtins;
 	private Map<MemoryAddress, Command> commands;
 
 	public void addSymbol(String name, MemoryAddress value) {
@@ -78,7 +78,8 @@ public class HRASModel implements ISetN{
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		commands.put(nextCommandAddress.clone(), c);
+		MemoryAddress assignedCommandAddress = nextCommandAddress.clone();
+		commands.put(assignedCommandAddress, c);
 		Integer currentOffset=nextCommandAddress.getAddressOffset();
 		if(currentOffset!=null) {
 			currentOffset=currentOffset.intValue()+getCommandSize();
@@ -86,20 +87,10 @@ public class HRASModel implements ISetN{
 			currentOffset=getCommandSize();
 		}
 		nextCommandAddress.setAddressOffset(currentOffset.intValue());
-		return nextCommandAddress.clone();
+		return assignedCommandAddress;
 	}
 
-	private void setupBuiltins() {
-		builtins = new HashMap<>();
-		builtins.put("ACC", new MemoryAddress(AbstractSomMemspace.ACC_ADDRESS));
-		builtins.put("ADR_EVAL",new MemoryAddress( AbstractSomMemspace.ADR_EVAL_ADDRESS));
-		builtins.put("WH_EN",new MemoryAddress( AbstractSomMemspace.WH_EN));
-		builtins.put("N",new MemoryAddress( AbstractSomMemspace.ADDRESS_SIZE_START));
-		builtins.put("WH_COM",new MemoryAddress( AbstractSomMemspace.WH_COM));
-		builtins.put("WH_DIR",new MemoryAddress( AbstractSomMemspace.WH_DIR));
-		builtins.put("WH_SEL",new MemoryAddress( AbstractSomMemspace.WH_SEL));
-		builtins.put("ADR",new MemoryAddress( AbstractSomMemspace.START_ADDRESS_START));
-	}
+
 
 	private boolean checkN() {
 		int minBitCount = getFixedBitCount() + symbols.size() + getCommandBits();
@@ -132,10 +123,7 @@ public class HRASModel implements ISetN{
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		MemoryAddress targetAddress = builtins.get(symbol);
-		if (targetAddress != null) {
-			return targetAddress.resolve(this);
-		}
+		MemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
 		}
@@ -246,5 +234,25 @@ public class HRASModel implements ISetN{
 	@Override
 	public int getN() {
 		return n;
+	}
+
+	public HRAVModel compileToHRAV() {
+		HRAVModel hrav = new HRAVModel();
+		hrav.setN(n);
+		if(startAdress!=null) {
+			hrav.setStartAddressExplicit(true);
+			hrav.setStartAdress(startAdress.resolve(this));
+		}
+		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
+			MemoryAddress address = c.getKey();
+			hrav.setNextCommandAddress(address.resolve(this));
+			Command command = c.getValue();
+			int cTgtAddress = getCommandTargetAddress(command);
+			HRAVCommand hravCommand = new HRAVCommand();
+			hravCommand.setOp(command.getOp());
+			hravCommand.setAddress(cTgtAddress);
+			hrav.addCommand(hravCommand);
+		}
+		return hrav;
 	}
 }

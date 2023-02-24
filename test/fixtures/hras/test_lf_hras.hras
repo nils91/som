@@ -1,5 +1,7 @@
 #ACC is set, ADR-EVAL is set, WH will not be used, N is 7 (offset of 4)
 ;n=7
+ACC 0
+ADR_EVAL 1
 #1 100 0001 //
 #WH bits will not be used, address is 26
 ;start=104

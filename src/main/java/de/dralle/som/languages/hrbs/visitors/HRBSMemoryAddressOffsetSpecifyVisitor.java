@@ -31,7 +31,7 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 		address=new HRBSMemoryAddress();
 	}
 	public HRBSMemoryAddressOffsetSpecifyVisitor(HRBSMemoryAddress address) {
-		
+		this.address=address;
 	}
 
 	@Override

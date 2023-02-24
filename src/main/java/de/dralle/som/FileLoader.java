@@ -3,6 +3,9 @@
  */
 package de.dralle.som;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -25,11 +28,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import javax.imageio.ImageIO;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.HRAVParser;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.HRBSParser;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
@@ -129,15 +140,54 @@ public class FileLoader {
 		IMemspace m = c.byteListToMemspace(bytes);
 		return m;
 	}
-
-	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
+	public void writeBinaryFile(byte[] content, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		bis.write(c.memspaceToByteArray(memspace));
+		bis.write(content);
 		bis.close();
 	}
+	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
+		writeBinaryFile(c.memspaceToByteArray(memspace), path);
+	}
+	public IMemspace loadCompressedBinaryFile(String path) throws IOException {
+		ZipFile f = new ZipFile(path);
+		ZipEntry somBinary = f.getEntry("BIN");
+		InputStream fis =f.getInputStream(somBinary);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		List<Byte> bytes = new ArrayList<>();
+		int b;
+		while ((b = bis.read()) != -1) {
+			bytes.add((byte) b);
+		}
+		bis.close();
+		f.close();
+		IMemspace m = c.byteListToMemspace(bytes);
+		return m;
+	}public byte[] loadCompressedBinaryFileFromStream(InputStream is) throws IOException {
+		ZipInputStream f = new ZipInputStream(is);
+		ZipEntry somBinary = f.getNextEntry();
+		List<Byte> bytes = new ArrayList<>();
+		int b;
+		while ((b = f.read()) != -1) {
+			bytes.add((byte) b);
+		}
+		f.close();
+		return c.byteListToByteArray(bytes);
+	}
 
+	public void writeCompressedBinaryFile(byte[] content,String path) throws IOException {
+		File f = new File(path);
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		ZipOutputStream zos=new ZipOutputStream(bis);
+		ZipEntry ze = new ZipEntry("BIN");
+		zos.putNextEntry(ze);
+		zos.write(content);
+		zos.closeEntry();
+		zos.close();
+		bis.close();
+	}
 	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
 		File f = new File(path);
 		FileReader fis = new FileReader(f);
@@ -184,8 +234,8 @@ public class FileLoader {
 		return loadFromFile(p.toFile(), sourceFormat);
 	}
 
-	public Object loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
-		return loadFromFile(new File(path), sourceFormat);
+	public <T> T loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
+		return (T) loadFromFile(new File(path), sourceFormat);
 	}
 	public Object loadFromFile(File f) throws IOException {
 		return loadFromFile(f,getFormatFromFilename(f.getName()));
@@ -206,11 +256,37 @@ public class FileLoader {
 		if (sourceFormat.equals(SOMFormats.HRAS)) {
 			return new HRASParser().parse(source);
 		}
+		if (sourceFormat.equals(SOMFormats.HRAV)) {
+			return new HRAVParser().parse(source);
+		}
+		if (sourceFormat.equals(SOMFormats.HRBS)) {
+			return new HRBSParser().parse(source);
+
+		}
 		if (sourceFormat.equals(SOMFormats.AB)) {
 			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
 			String result = s.hasNext() ? s.next() : "";
 			s.close();
 			return result;
+		}
+		if (sourceFormat.equals(SOMFormats.B64)) {
+			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
+			String result = s.hasNext() ? s.next() : "";
+			s.close();
+			return result;
+		}
+		if (sourceFormat.equals(SOMFormats.CBIN)) {
+			List<Byte> bytes = new ArrayList<>();
+			int b;
+			while ((b = source.read()) != -1) {
+				bytes.add((byte) b);
+			}
+			byte[] m = new Compiler().byteListToByteArray(bytes);
+			return m;
+		}
+		if(sourceFormat.equals(SOMFormats.IMAGE)) {
+			BufferedImage img = ImageIO.read(source);
+			return img;
 		}
 		if (sourceFormat.equals(SOMFormats.BIN)) {
 			List<Byte> bytes = new ArrayList<>();
@@ -233,7 +309,30 @@ public class FileLoader {
 				out.write(c);
 			}
 			return out;
-		} else {
+		} else if(format.equals(SOMFormats.CBIN)){
+			byte[] arr = (byte[]) obj;
+			for (int i = 0; i < arr.length; i++) {
+				byte c = arr[i];
+				out.write(c);
+			}
+			return out;
+		}else if(format.equals(SOMFormats.IMAGE)){
+			// create the object of ByteArrayOutputStream class
+		      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+		        
+		      // write the image into the object of ByteArrayOutputStream class
+		      ImageIO.write((RenderedImage)obj, "png", outStreamObj);
+		        
+		      // create the byte array from image
+			byte[] arr = outStreamObj.toByteArray();
+			outStreamObj.close();
+			for (int i = 0; i < arr.length; i++) {
+				byte c = arr[i];
+				out.write(c);
+			}
+			return out;
+		}
+		else {
 			OutputStreamWriter osw = new OutputStreamWriter(out);
 			osw = writeToOutputWriter(obj, format, osw);
 			osw.close();
@@ -253,7 +352,16 @@ public class FileLoader {
 			String str = m.asCode();
 			out.write(str);
 		}
+		if (format.equals(SOMFormats.HRAV)) {
+			HRAVModel m = (HRAVModel) obj;
+			String str = m.asCode();
+			out.write(str);
+		}
 		if (format.equals(SOMFormats.AB)) {
+			String m = (String) obj;
+			out.write(m);
+		}
+		if (format.equals(SOMFormats.B64)) {
 			String m = (String) obj;
 			out.write(m);
 		}

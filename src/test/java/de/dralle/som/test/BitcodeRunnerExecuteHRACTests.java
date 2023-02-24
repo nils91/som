@@ -17,6 +17,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 
 class BitcodeRunnerExecuteHRACTests {
@@ -44,16 +45,17 @@ class BitcodeRunnerExecuteHRACTests {
 
 	@Test
 	void testReturnCode0() throws IOException {
-		HRACModel model = f.readHRACFile("test/fixtures/hrac/minimal_return0.hrac");
-		IMemspace memspace = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/minimal_return0.hrac",SOMFormats.HRAC);
+		
+		IMemspace memspace = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testReturnCode1() throws IOException {
-		HRACModel model = f.readHRACFile("test/fixtures/hrac/minimal_return1.hrac");
-		IMemspace memspace = c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/minimal_return1.hrac",SOMFormats.HRAC);
+		IMemspace memspace = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
@@ -61,8 +63,8 @@ class BitcodeRunnerExecuteHRACTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		HRACModel model =f.readHRACFile("test/fixtures/hrac/test_nar.hrac");
-		IMemspace memspace=c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model =f.loadFromFile("test/fixtures/hrac/test_nar.hrac",SOMFormats.HRAC);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
 		// should have written accumulator to 1
@@ -72,8 +74,8 @@ class BitcodeRunnerExecuteHRACTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		HRACModel model =f.readHRACFile("test/fixtures/hrac/test_naw.hrac");
-		IMemspace memspace=c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model =f.loadFromFile("test/fixtures/hrac/test_naw.hrac",SOMFormats.HRAC);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -83,8 +85,8 @@ class BitcodeRunnerExecuteHRACTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
-		HRACModel model =f.readHRACFile("test/fixtures/hrac/test_invert_with_nand.hrac");
-		IMemspace memspace=c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model =f.loadFromFile("test/fixtures/hrac/test_invert_with_nand.hrac",SOMFormats.HRAC);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -93,8 +95,8 @@ class BitcodeRunnerExecuteHRACTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
-		HRACModel model =f.readHRACFile("test/fixtures/hrac/test_read_with_nand.hrac");
-		IMemspace memspace=c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model =f.loadFromFile("test/fixtures/hrac/test_read_with_nand.hrac",SOMFormats.HRAC);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
@@ -103,8 +105,9 @@ class BitcodeRunnerExecuteHRACTests {
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {
-		HRACModel model =f.readHRACFile("test/fixtures/hrac/test_write_with_nand.hrac");
-		IMemspace memspace=c.compileHRAStoMemspace(c.compileHRACtoHRAS(model));
+		HRACModel model =f.loadFromFile("test/fixtures/hrac/test_write_with_nand.hrac",SOMFormats.HRAC);
+		IMemspace memspace=c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1

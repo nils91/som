@@ -12,7 +12,21 @@ import de.dralle.som.Opcode;
  * @author Nils
  *
  */
-public class HRBSCommand {
+public class HRBSCommand implements Cloneable {
+	@Override
+	public HRBSCommand clone(){
+		HRBSCommand clone = new HRBSCommand();
+		clone.setCmd(command);
+		clone.label=label;
+		if(targets!=null) {
+			clone.targets=new ArrayList<>();
+			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
+				clone.targets.add(hrbsMemoryAddress.clone());
+			}
+		}
+		return clone;
+	}
+
 	private String label;
 	private String command;
 	private List<HRBSMemoryAddress> targets;

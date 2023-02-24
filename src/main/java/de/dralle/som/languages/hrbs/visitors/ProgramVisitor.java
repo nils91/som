@@ -129,9 +129,11 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitProgram(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext ctx) {
 		List<HRBSModel> childModels = new ArrayList<HRBSModel>();
+		List<HRBSModel> importedModels = new ArrayList<HRBSModel>();
 		if (ctx.import_stmt() != null) {
 			for (Import_stmtContext imp : ctx.import_stmt()) {
-				childModels.add(imp.accept(new HRBSImportVisitor()));
+				HRBSModel imported = imp.accept(new HRBSImportVisitor());
+				importedModels.add(imported);
 			}
 		}
 		if (ctx.command_def() != null) {
@@ -152,7 +154,14 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				model.addChild(hrbsModel);
 			}
 		}
-		model.propagateChildList();
+		for (HRBSModel hrbsModel : importedModels) {
+			model.addChild(hrbsModel);
+		}
+		for (HRBSModel hrbsModel0 : childModels) {
+			for (HRBSModel hrbsModel1 : childModels) {
+				hrbsModel0.addChild(hrbsModel1);
+			}
+		}
 		return model;
 	}
 

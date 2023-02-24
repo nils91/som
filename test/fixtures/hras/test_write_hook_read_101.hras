@@ -2,6 +2,12 @@
 ;n=7
 #001 01000 00//only wh bit set is wh_sel, address is 32
 ;start=24
+ACC 0
+ADR_EVAL 1
+WH_EN 2
+WH_COM 8
+WH_SEL 10
+WH_DIR 9
 #00 00000 00000 00 //filler
 #1 0000001 //reset adr eval
 NAW ADR_EVAL

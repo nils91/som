@@ -4,6 +4,8 @@
 #00
 ;start=64
 #1 //this bit shall be read into the accumulator, address I8 (OOI OOIO). Will be set by one of the first commands
+ACC 0
+ADR_EVAL 1
 TR 18
 #0 //helper bit, at I9 (OOI OOII)
 H 19

@@ -1,0 +1,9 @@
+import "test/fixtures/hrbs/individual_commands/ADD14.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+
+ADD13 I0, I1, O:
+	shared H
+	WRITE1 H;	
+	ADD14 I0,I1,O,H;
+	READ1 H;

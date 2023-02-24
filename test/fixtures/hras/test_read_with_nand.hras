@@ -1,34 +1,22 @@
-#1 100 0011 //ACC is set, ADR-EVAL is set, WH will not be used, N is 7 (offset of 4)
-;n=7
-#000 1 0010 //WH bits will not be used, address is 72
-#00
-;start=64
-#1 //this bit shall be read into the accumulator, address I8 (OOI OOIO). Will be set by one of the first commands
-ACC 0
-ADR_EVAL 1
-TR 18
-#0 //helper bit, at I9 (OOI OOII)
-H 19
-#0000 
-#0000 0000
-#0000 0000
-#0000 0000
-#0000 0000
-#0000 0000
-#1 000 0001 //reset ADR_EVAL
+;n = 7
+;start = 64
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol TR 18
+symbol H 19
+;continue = 64
 NAW ADR_EVAL
-#set TR
+;continue = 64[8]
 NAW TR
-#//see common_commands.txt
-#1 001 0011
+;continue = 64[16]
 NAW H
-#0 000 0000
+;continue = 64[24]
 NAR ACC
-#1 001 0011
+;continue = 64[32]
 NAW H
-#0 001 0011
+;continue = 64[40]
 NAR H
-#0 001 0010
+;continue = 64[48]
 NAR TR
-#0 000 0000
+;continue = 64[56]
 NAR ACC

@@ -1,21 +1,16 @@
-#ACC is set, ADR-EVAL is set, WH will not be used, N is 7 (offset of 4)
-;n=7
-ACC 0
-ADR_EVAL 1
-#1 100 0001 //
-#WH bits will not be used, address is 26
-;start=104
-#000 1 1010 //WH bits will not be used, address is 26
-A 18
-B 19
-C B
-D A[1]
-#0000 0000
-#00
-#1 0 0001 //start here, NAW one (reset  ADR_EVAL to not loop)
+;n = 7
+;start = 104
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol A 18
+symbol B 19
+symbol C B
+symbol D A[1]
+;continue = 104
 NAW ADR_EVAL
+;continue = 104[8]
 NAW ACC
-;continue=96
+;continue = 96
 NAW ACC
-;continue=120
+;continue = 120
 NAW ACC

@@ -1,23 +1,20 @@
-#110 0 0010 (acc is set, ard eval set, wh en not set, address 6)
-;n=6
-#101 10010 //wh bits whcom whsel set, address is 36
-#0
-;start=22
-ACC 0
-ADR_EVAL 1
-WH_EN 2
-WH_COM 8
-WH_SEL 10
-WH_DIR 9
-#0000000000000000000 //filler
-#1 000 001 //reset adr eval
+;n = 6
+;start = 22
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol WH_EN 2
+symbol WH_COM 8
+symbol WH_SEL 10
+symbol WH_DIR 9
+;continue = 22
 NAW ADR_EVAL
-#set whcom whsel
+;continue = 22[7]
 NAW WH_COM
+;continue = 22[14]
 NAW WH_SEL
-#1 000 010 // set wh en
+;continue = 22[21]
 NAW WH_EN
-#1 000 010 /reset wh en
+;continue = 22[28]
 NAW WH_EN
-#0 001 001 //read from wh dir
+;continue = 22[35]
 NAR WH_DIR

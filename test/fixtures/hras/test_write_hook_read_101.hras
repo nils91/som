@@ -1,37 +1,34 @@
-#110 0 0011 (acc is set, ard eval set, wh en not set, address 7)
-;n=7
-#001 01000 00//only wh bit set is wh_sel, address is 32
-;start=24
-ACC 0
-ADR_EVAL 1
-WH_EN 2
-WH_COM 8
-WH_SEL 10
-WH_DIR 9
-#00 00000 00000 00 //filler
-#1 0000001 //reset adr eval
+;n = 7
+;start = 24
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol WH_EN 2
+symbol WH_COM 8
+symbol WH_SEL 10
+symbol WH_DIR 9
+;continue = 24
 NAW ADR_EVAL
-#set wh_sel
+;continue = 24[8]
 NAW WH_SEL
-#1 0000010 //set wh rn 
+;continue = 24[16]
 NAW WH_EN
-#1 0000010 //reset wh en
+;continue = 24[24]
 NAW WH_EN
-#0 0001000 //read wh com
+;continue = 24[32]
 NAR WH_COM
-#0 0000000 //invert acc
+;continue = 24[40]
 NAR ACC
-#1 0000010 //set wh rn 
+;continue = 24[48]
 NAW WH_EN
-#1 0000010 //reset wh en
+;continue = 24[56]
 NAW WH_EN
-#0 0001000 //read wh com
+;continue = 24[64]
 NAR WH_COM
-#1 0000010 //set wh rn 
+;continue = 24[72]
 NAW WH_EN
-#1 0000010 //reset wh en
+;continue = 24[80]
 NAW WH_EN
-#0 0001000 //read wh com
+;continue = 24[88]
 NAR WH_COM
-#0 0000000 //invert acc for successful exit
+;continue = 24[96]
 NAR ACC

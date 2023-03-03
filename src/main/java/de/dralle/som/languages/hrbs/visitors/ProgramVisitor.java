@@ -104,13 +104,9 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitSymbol_blk(Symbol_blkContext ctx) {
 		HRBSSymbolType symbolType = HRBSSymbolType.local;
-		if (ctx.LOCAL() != null) {
-			symbolType = HRBSSymbolType.local;
-		} else if (ctx.SHARED() != null) {
-			symbolType = HRBSSymbolType.shared;
-		} else if (ctx.GLOBAL() != null) {
-			symbolType = HRBSSymbolType.global;
-		}
+	if(ctx.def_scope()!=null) {
+		symbolType=ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
+	}
 		for (de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext sd : ctx.symbol_dec()) {
 			HRBSSymbol symbol = sd.accept(new HRBSSymbolVisitor(symbolType));
 			model.addSymbol(symbol);

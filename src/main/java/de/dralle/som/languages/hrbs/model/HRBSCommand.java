@@ -28,6 +28,11 @@ public class HRBSCommand implements Cloneable {
 	}
 
 	private String label;
+	private HRBSSymbolType labelType;
+	public HRBSSymbolType getLabelType() {
+		return labelType;
+	}
+
 	private String command;
 	private List<HRBSMemoryAddress> targets;
 
@@ -65,7 +70,10 @@ public class HRBSCommand implements Cloneable {
 	public String asCode() {
 		String code = "";
 		if (label != null) {
-			code += label + " ";
+			if(labelType!=null) {
+				code+=labelType+" ";
+			}
+			code += label + ":\n ";
 		}
 		code += command;
 		if(targets!=null) {
@@ -73,9 +81,8 @@ public class HRBSCommand implements Cloneable {
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
 				code+=hrbsMemoryAddress.asHRBSCode()+",";
 			}
-		}
-		code=code.substring(0, code.length()-1);
-		code+=";";
+			code=code.substring(0, code.length()-1);
+		}		
 		return code;
 	}
 
@@ -86,5 +93,9 @@ public class HRBSCommand implements Cloneable {
 
 	public HRBSCommand() {
 		super();
+	}
+
+	public void setLabelType(HRBSSymbolType labelType) {
+		this.labelType=labelType;
 	}
 }

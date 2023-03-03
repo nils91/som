@@ -26,6 +26,7 @@ public class HRBSCommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 		HRBSSymbolType labelType = null;
 		if(ctx.def_scope()!=null) {
 			labelType=ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
+			c.setLabelType(labelType);
 		}
 		boolean hasCmd = false;
 		if (ctx.NAR() != null) {

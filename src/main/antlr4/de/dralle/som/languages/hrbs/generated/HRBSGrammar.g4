@@ -9,7 +9,7 @@ symbol_definitions: ((symbol_blk|symbol_ns) NEWLINE)+;
 cmd_head:NAME ((cmd_head_param COMMA)* cmd_head_param)? COLON NEWLINE;
 cmd_head_param:NAME;
 directives: (directive NEWLINE)+;
-symbol_dec: NAME cnt_specify? symbol_os?;
+symbol_dec: (ALLOC|SYMBOL) NAME cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 

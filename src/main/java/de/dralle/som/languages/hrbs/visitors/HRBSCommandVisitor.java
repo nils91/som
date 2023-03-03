@@ -8,6 +8,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.model.HRBSCommand;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
+import de.dralle.som.languages.hrbs.model.HRBSSymbolType;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
 import de.dralle.som.languages.hras.model.Command;
@@ -22,6 +23,10 @@ public class HRBSCommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 	@Override
 	public HRBSCommand visitCommand(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandContext ctx) {
 		c = new HRBSCommand();
+		HRBSSymbolType labelType = null;
+		if(ctx.def_scope()!=null) {
+			labelType=ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
+		}
 		boolean hasCmd = false;
 		if (ctx.NAR() != null) {
 			hasCmd = true;

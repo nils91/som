@@ -3,7 +3,7 @@ grammar HRBSGrammar;
 program : (import_stmt NEWLINE?)* (command_def NEWLINE?)+  EOF?;
 command_def: cmd_head directives? symbol_definitions? commands?;
 commands: (command NEWLINE?)+;
-symbol_blk:def_scope C_OPEN NEWLINE  (symbol_dec NEWLINE)+ C_CLOSE NEWLINE;
+symbol_blk:(GLOBAL|SHARED|LOCAL) C_OPEN NEWLINE  (symbol_dec NEWLINE)+ C_CLOSE NEWLINE;
 symbol_definitions: ((symbol_blk|symbol_ns) NEWLINE)+;
 
 cmd_head:NAME ((cmd_head_param COMMA)* cmd_head_param)? COLON NEWLINE;
@@ -13,13 +13,9 @@ symbol_dec: (ALLOC|SYMBOL) NAME cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 
-command: (def_scope? NAME COLON)? NEWLINE? (NAR|NAW|NAME) ((symbol_os COMMA)* symbol_os)?;
+command: (NAME COLON)? NEWLINE? (NAR|NAW|NAME) ((symbol_os COMMA)* symbol_os)? SEMICOLON;
 
-def_scope:(GLOBAL|def_scope_shared|LOCAL);
-
-def_scope_shared:SHARED (P_OPEN (NAME COMMA)* NAME P_CLOSE)?;
-
-symbol_ns:def_scope? symbol_dec;
+symbol_ns:(GLOBAL|SHARED|LOCAL?) symbol_dec;
 
 symbol_os:AMP? (NAME|builtins) offset_specify*;
 

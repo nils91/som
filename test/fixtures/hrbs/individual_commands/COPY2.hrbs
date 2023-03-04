@@ -2,7 +2,7 @@ import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 	
 COPY2 I, O:
-	shared H
+	shared alloc H
 	WRITE1 H;
 	READ1 I;	
 	WRITE1 O;

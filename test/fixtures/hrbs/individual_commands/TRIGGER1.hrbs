@@ -3,7 +3,7 @@ import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 
 TRIGGER1 A:
-	shared H
+	shared alloc H
 	WRITE1 H;
 	SET0;
 	NAW A;

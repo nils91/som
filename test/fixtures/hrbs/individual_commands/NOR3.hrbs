@@ -3,7 +3,7 @@ import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/NOR2.hrbs"
 
 NOR3 I0, I1, O:
-	shared H;
+	shared alloc H;
 	WRITE1 H;
 	NOR2 I0, I1;
 	WRITE1 O;

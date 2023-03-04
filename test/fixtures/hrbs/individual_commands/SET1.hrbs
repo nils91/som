@@ -3,7 +3,7 @@ import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 
 SET1 A:
-	local H
+	local alloc H
 	WRITE1 H;
 	SET0;
 	WRITE1 A;

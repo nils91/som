@@ -3,7 +3,7 @@ import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/COMPARE2.hrbs"
 
 COMPARE3 I0, I1, O:
-	shared H;
+	shared alloc H;
 	WRITE1 H;
 	COMPARE2 I0, I1;
 	WRITE1 O;

@@ -3,7 +3,7 @@ import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/FLIP1.hrbs"
 
 FLIP2 I, F:
-	local H
+	local alloc H
 	WRITE1 H;
 	READ1 I;
 	FLIP1 F;

@@ -6,8 +6,6 @@ package de.dralle.som.languages.hrbs.visitors;
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cnt_specifyContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Def_scopeContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Def_scope_sharedContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
 import de.dralle.som.languages.hrbs.model.HRBSCommand;
@@ -65,13 +63,14 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 	@Override
 	public HRBSSymbol visitSymbol_ns(Symbol_nsContext ctx) {
 		HRBSSymbolType symbolType = HRBSSymbolType.local;
-		if(ctx.def_scope()!=null) {
-			symbolType= ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
-		}else {
-			
+		if(ctx.LOCAL()!=null) {
+			symbolType=HRBSSymbolType.local;
+		}else if(ctx.SHARED()!=null) {
+			symbolType=HRBSSymbolType.shared;
+		}else if(ctx.GLOBAL()!=null) {
+			symbolType=HRBSSymbolType.global;
 		}
-		s.setType(symbolType);
-		return ctx.symbol_dec().accept(this);
+		return ctx.symbol_dec().accept(new HRBSSymbolVisitor(symbolType));
 	}
 
 }

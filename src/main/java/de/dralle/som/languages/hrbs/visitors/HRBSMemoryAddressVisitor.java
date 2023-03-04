@@ -5,6 +5,7 @@ package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_nnameContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
@@ -28,10 +29,8 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 		if(ctx.AMP()!=null) {
 			address.setDeref(true);
 		}
-		if(ctx.getChild(0)!=null) {
-			HRBSSymbol s = new HRBSSymbol();
-			s.setName(ctx.getChild(0).getText());
-			address.setSymbol(s);
+		if(ctx.symbol_target_nname()!=null) {
+			ctx.symbol_target_nname().accept(this);
 		}
 		if(ctx.offset_specify()!=null) {
 			HRBSMemoryAddressOffsetSpecifyVisitor maov = new HRBSMemoryAddressOffsetSpecifyVisitor(address);
@@ -44,6 +43,11 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 		return address;
 	}
 
+	@Override
+	public HRBSMemoryAddress visitSymbol_target_nname(Symbol_target_nnameContext ctx) {
+		boolean isBuiltIn=ctx.builtins()!=null;
+		address.setTargetCmd("");
+	}
 	@Override
 	public HRBSMemoryAddress visitOffset_specify(
 			de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specifyContext ctx) {

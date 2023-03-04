@@ -10,6 +10,15 @@ package de.dralle.som.languages.hrbs.model;
 public class HRBSMemoryAddress implements Cloneable{
 	private boolean isDeref=false;
 	private HRBSSymbol symbol;
+	private String tgtCmd;
+	public String getTgtCmd() {
+		return tgtCmd;
+	}
+
+	public void setTgtCmd(String tgtCmd) {
+		this.tgtCmd = tgtCmd;
+	}
+
 	private Integer offset;
 	private Integer derefOffset;
 
@@ -41,6 +50,9 @@ public class HRBSMemoryAddress implements Cloneable{
 	@Override
 	public int hashCode() {
 		int hashc = symbol.hashCode();
+		if(tgtCmd!=null) {
+			hashc+=tgtCmd.hashCode();
+		}
 		if(offset!=null) {
 			hashc+=offset.hashCode();
 		}
@@ -65,9 +77,12 @@ public class HRBSMemoryAddress implements Cloneable{
 			if(equal&&derefOffset!=null) {
 				equal= derefOffset.equals(other.derefOffset);
 			}
+			if(equal&&tgtCmd!=null) {
+				equal=tgtCmd.equals(other.tgtCmd);
+			}
 			return equal;
 		}
-		return false;
+		return super.equals(obj);
 	}
 
 	@Override
@@ -88,6 +103,7 @@ public class HRBSMemoryAddress implements Cloneable{
 			copy.derefOffset=derefOffset.intValue();
 		}		
 		copy.isDeref=isDeref;
+		copy.tgtCmd=tgtCmd;
 		return copy;
 	}
 

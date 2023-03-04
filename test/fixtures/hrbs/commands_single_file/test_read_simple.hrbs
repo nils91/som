@@ -1,5 +1,5 @@
 MAIN:
-	TR
+	alloc TR
 	NAW TR;
 	READ1 TR;
 	

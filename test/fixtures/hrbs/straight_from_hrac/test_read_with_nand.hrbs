@@ -3,9 +3,9 @@ MAIN:
 #000 1 0010 //WH bits will not be used, address is 72
 #00
 #1 //this bit shall be read into the accumulator, address I8 (OOI OOIO). Will be set by one of the first commands
-TR
+alloc TR
 #0 //helper bit, at I9 (OOI OOII)
-H
+alloc H
 #0000 
 #0000 0000
 #0000 0000

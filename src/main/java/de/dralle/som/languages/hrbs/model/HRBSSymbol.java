@@ -8,6 +8,11 @@ package de.dralle.som.languages.hrbs.model;
  *
  */
 public class HRBSSymbol implements Cloneable {
+	public HRBSSymbol(String name) {
+		this.name=name;
+	}
+	public HRBSSymbol() {
+	}
 	@Override
 	public HRBSSymbol clone()   {
 		HRBSSymbol clone = new HRBSSymbol();

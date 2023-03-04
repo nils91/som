@@ -453,7 +453,11 @@ public class HRBSModel implements ISetN, IHeap {
 		for (HRBSCommand hrbsCommand : command) {
 			String cmdLbl = hrbsCommand.getLabel();
 			if (cmdLbl != null) {
-				String localized = generateHRACSymbolName(cmdLbl, HRBSSymbolType.local, parentCmdName, cmdExecId);
+				HRBSSymbolType scp = HRBSSymbolType.local;
+				if(hrbsCommand.getLabelType()!=null) {
+					scp=hrbsCommand.getLabelType();
+				}
+				String localized = generateHRACSymbolName(cmdLbl, scp, parentCmdName, cmdExecId);
 
 				symbolNameReplacementMap.put(cmdLbl, localized);
 			}

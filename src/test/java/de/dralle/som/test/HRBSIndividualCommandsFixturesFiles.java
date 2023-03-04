@@ -89,12 +89,12 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableNOOP0")
 	@Timeout(10)
 	void testNOOP0(boolean inAcc, boolean finalAcc) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOOP0.hrbs\"\n\nMAIN:\n\tDEBUG: NOOP0;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOOP0.hrbs\"\n\nMAIN:\n\tglobal DEBUG: NOOP0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 

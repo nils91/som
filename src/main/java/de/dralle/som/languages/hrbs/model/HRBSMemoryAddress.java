@@ -112,6 +112,9 @@ public class HRBSMemoryAddress implements Cloneable{
 		if(isDeref) {
 			s+="&";
 		}
+		if(tgtCmd!=null) {
+			s+=tgtCmd+".";
+		}
 		s+=symbol.getName();
 		if(offset!=null) {
 			s+="["+offset+"]";

@@ -623,7 +623,15 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private static HRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
 			Map<String, String> localSymbolNames) {
-		HRACSymbol newTargetSymbol = getAsHRACSymbolNoTgt(originalMemoryAddress.getSymbol(), localSymbolNames);
+		HRACSymbol newTargetSymbol =null;
+		String symbName="";
+		if(originalMemoryAddress.getTgtCmd()!=null) {
+			symbName+=originalMemoryAddress.getTgtCmd()+"_";
+			symbName+=originalMemoryAddress.getSymbol().getName();
+			newTargetSymbol=new HRACSymbol(symbName);
+		}else {
+			newTargetSymbol = getAsHRACSymbolNoTgt(originalMemoryAddress.getSymbol(), localSymbolNames);
+		}		
 		Integer newOffset = null;
 
 		if (originalMemoryAddress.getOffset() != null) {

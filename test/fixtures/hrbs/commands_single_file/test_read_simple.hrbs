@@ -4,7 +4,7 @@ MAIN:
 	READ1 TR;
 	
 READ1 A:
-	local H
+	local alloc H
 	NAW H;
 	NAR ACC;
 	NAR H;

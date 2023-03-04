@@ -1,5 +1,5 @@
 MAIN:
-	H[3]
+	alloc H[3]
 	SET1 WH_SEL;
 	TRIGGER1 WH_EN;
 	COPY2 WH_COM, H[0];
@@ -28,7 +28,7 @@ OR1 A:
 	INV1 A;
 	
 INV1 A:
-	shared H
+	shared alloc H
 	WRITE1 H;
 	NOT1 A;
 	WRITE1 A;
@@ -39,7 +39,7 @@ NOT1 A:
 	INV0;
 	
 XOR1 A:
-	shared H[2]
+	shared alloc H[2]
 	WRITE1 H[0];
 	INV0;
 	AND1 A;
@@ -60,7 +60,7 @@ READ1 A:
 	INV0;
 	
 COPY2 I, O:
-	shared H
+	shared alloc H
 	WRITE1 H;
 	READ1 I;	
 	WRITE1 O;
@@ -76,14 +76,14 @@ TRIGGER1 A:
 #10 11 01 01 11
 #11 10 00 01 11
 SET0:
-	shared H
+	shared alloc H
 	NAW H;
 	INV0;
 	NAW H;
 	NAR H;
 	
 SET1 A:
-	local H
+	local alloc H
 	WRITE1 H;
 	SET0;
 	WRITE1 A;

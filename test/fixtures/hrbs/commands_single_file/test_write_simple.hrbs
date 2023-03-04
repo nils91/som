@@ -1,5 +1,5 @@
 MAIN:
-	TW
+	alloc TW
 	WRITE1 TW;
 	NAR TW;
 	NAR ACC;

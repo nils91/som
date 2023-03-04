@@ -4,7 +4,7 @@ MAIN:
 	SET1 WH_SEL;
 
 SET0:
-	shared H
+	shared alloc H
 	NAW H;
 	NAR ACC;
 	NAW H;

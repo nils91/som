@@ -11,7 +11,7 @@ CLEAR0:
 	INV0;
 	
 SET0:
-	shared H
+	shared alloc H
 	NAW H;
 	NAR ACC;
 	NAW H;

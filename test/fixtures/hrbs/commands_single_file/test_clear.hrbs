@@ -7,7 +7,7 @@ MAIN:
 #10 11 01 01 11
 #11 10 00 01 11
 CLEAR0:
-	shared H
+	shared alloc H
 	NAW H;
 	NAR ACC;
 	NAW H;

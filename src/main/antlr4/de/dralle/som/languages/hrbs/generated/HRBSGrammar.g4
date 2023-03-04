@@ -17,7 +17,9 @@ command: (def_scope? NAME COLON)? NEWLINE? (NAR|NAW|NAME) ((symbol_os COMMA)* sy
 
 symbol_ns:def_scope? symbol_dec;
 
-symbol_os:AMP? (NAME|builtins) offset_specify*;
+symbol_os:AMP? symbol_target_nname offset_specify*;
+
+symbol_target_nname:NAME? (NAME|builtins);
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 

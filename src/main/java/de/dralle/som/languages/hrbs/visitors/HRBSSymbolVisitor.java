@@ -7,7 +7,6 @@ import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Def_scopeContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Def_scope_sharedContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
 import de.dralle.som.languages.hrbs.model.HRBSCommand;

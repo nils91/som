@@ -46,10 +46,10 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 	@Override
 	public HRBSMemoryAddress visitSymbol_target_nname(Symbol_target_nnameContext ctx) {
 		boolean isBuiltIn=ctx.builtins()!=null;
-		if(isBuiltIn) { 
+		if(isBuiltIn) {
+			address.setSymbol(new HRBSSymbol(ctx.builtins().getText()));
 			if(ctx.NAME().size()>=1) {
-				address.setTgtCmd(ctx.NAME(0).getText());
-				address.setSymbol(new HRBSSymbol(ctx.builtins().getText()));
+				address.setTgtCmd(ctx.NAME(0).getText());				
 			}
 		}else {
 			if(ctx.NAME().size()==1) {

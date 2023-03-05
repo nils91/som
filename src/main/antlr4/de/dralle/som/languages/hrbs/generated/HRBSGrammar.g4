@@ -19,13 +19,13 @@ instance_id: B_OPEN NAME B_CLOSE;
 
 
 
-commad_label:(def_scope? NAME COLON);
+commad_label:def_scope? NAME COLON;
 
 symbol_ns:def_scope? symbol_dec;
 
 symbol_os:AMP? symbol_target_nname offset_specify*;
 
-symbol_target_nname:custom_command_call_no_param? DOT (NAME|builtins);
+symbol_target_nname:(custom_command_call_no_param DOT)? (NAME|builtins);
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 

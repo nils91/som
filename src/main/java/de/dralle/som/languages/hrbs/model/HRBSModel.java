@@ -439,9 +439,13 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 		if (!standardCommand) {
+			String instId = c.getCllInstId();
+			if(instId==null) {
+				instId=getCurrentCommandUsage(c) + "";
+			}
 			HRBSModel cmdModel = availChildsCommands.get(cmdName);
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
-			HRACModel compiledCmdModel = cmdModel.compileToHRAC(getCurrentCommandUsage(c) + "",
+			HRACModel compiledCmdModel = cmdModel.compileToHRAC(instId,
 					assembleParamMap(cmdModel, c, symbolNameReplacementMap), lclSmblName);
 			m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 		}
@@ -631,6 +635,9 @@ public class HRBSModel implements ISetN, IHeap {
 		String symbName="";
 		if(originalMemoryAddress.getTgtCmd()!=null) {
 			symbName+=originalMemoryAddress.getTgtCmd()+"_";
+			if(originalMemoryAddress.getTgtCmdInst()!=null) {
+				symbName+=originalMemoryAddress.getTgtCmdInst()+"_";
+			}
 			symbName+=originalMemoryAddress.getSymbol().getName();
 			newTargetSymbol=new HRACSymbol(symbName);
 		}else {

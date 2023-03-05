@@ -143,7 +143,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableINV1")
 	@Timeout(10)
 	void testINV1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: INV1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: INV1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -173,7 +173,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableFLUIP1")
 	@Timeout(10)
 	void testFLIP1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: FLIP1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: FLIP1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -203,7 +203,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableNOT1")
 	@Timeout(10)
 	void testNOT1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOT1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: NOT1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOT1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NOT1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -234,13 +234,13 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableOR1")
 	@Timeout(10)
 	void testOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: OR1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: OR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -266,7 +266,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testREAD1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/READ1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: READ1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/READ1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: READ1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -297,7 +297,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableSET1")
 	@Timeout(10)
 	void testSET1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SET1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: SET1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SET1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: SET1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -329,7 +329,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testWRITE1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITE1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: WRITE1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITE1.hrbs\"\n\nMAIN:\n\tglobal alloc alloc A\n\tDEBUG: WRITE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -360,7 +360,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableXOR1")
 	@Timeout(10)
 	void testXOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: XOR1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: XOR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -392,7 +392,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testTRIGGER1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/TRIGGER1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: TRIGGER1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/TRIGGER1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: TRIGGER1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -423,7 +423,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testCOPY2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COPY2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: COPY2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COPY2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: COPY2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -462,7 +462,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testCOMPARE1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: COMPARE1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: COMPARE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -520,7 +520,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableAND1")
 	@Timeout(10)
 	void testAND1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: AND1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: AND1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -552,7 +552,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testSWAP2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: SWAP2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: SWAP2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -591,7 +591,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@MethodSource("provideTruthTableNOR1")
 	@Timeout(10)
 	void testNOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: NOR1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NOR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -618,7 +618,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testNAND1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: NAND1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NAND1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -655,7 +655,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testSWAP1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: SWAP1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: SWAP1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -687,7 +687,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testCLEARP1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/CLEAR1.hrbs\"\n\nMAIN:\n\tglobal A\n\tDEBUG: CLEAR1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/CLEAR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: CLEAR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -719,7 +719,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testXOR2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: XOR2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: XOR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -757,7 +757,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testFLIP2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: FLIP2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: FLIP2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -798,7 +798,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testOR2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: OR2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: OR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -837,7 +837,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testNOR2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: NOR2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: NOR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -877,7 +877,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testNAND2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: NAND2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: NAND2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -916,7 +916,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testCOMPARE2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc,
 			boolean finalValueA, boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: COMPARE2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: COMPARE2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -955,7 +955,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testAND2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND2.hrbs\"\n\nMAIN:\n\tglobal A\n\tglobal B\n\tDEBUG: AND2 A,B;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: AND2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -994,7 +994,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testAND3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: AND3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: AND3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1044,7 +1044,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testXOR3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: XOR3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: XOR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1094,7 +1094,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testOR3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: OR3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: OR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1144,7 +1144,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testNOR3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: NOR3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: NOR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1194,7 +1194,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testNAND3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: NAND3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: NAND3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1244,7 +1244,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testCOMPARE3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE3.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: COMPARE3 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: COMPARE3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1294,7 +1294,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testHADD13(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD13.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: HADD13 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD13.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: HADD13 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1344,7 +1344,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testADD13(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD13.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tDEBUG: ADD13 I[0], I[1], O;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD13.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: ADD13 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1394,7 +1394,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testADD14(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO,boolean inValueCB, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO,boolean finalValueCB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD14.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tglobal CB\n\tDEBUG: ADD14 I[0], I[1], O, CB;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD14.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tglobal alloc CB\n\tDEBUG: ADD14 I[0], I[1], O, CB;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -1464,7 +1464,7 @@ class HRBSIndividualCommandsFixturesFiles {
 	@Timeout(10)
 	void testHADD14(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO,boolean inValueCB, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO,boolean finalValueCB) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD14.hrbs\"\n\nMAIN:\n\tglobal I[2]\n\tglobal O\n\tglobal CB\n\tDEBUG: HADD14 I[0], I[1], O, CB;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD14.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tglobal alloc CB\n\tDEBUG: HADD14 I[0], I[1], O, CB;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);

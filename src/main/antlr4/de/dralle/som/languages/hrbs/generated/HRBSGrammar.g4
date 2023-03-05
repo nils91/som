@@ -13,7 +13,7 @@ symbol_dec: (ALLOC|SYMBOL) NAME cnt_specify? symbol_os?;
 def_scope:(GLOBAL|SHARED|LOCAL);
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 
-command: (def_scope? NAME COLON)? NEWLINE? (NAR|NAW|NAME) ((symbol_os COMMA)* symbol_os)? SEMICOLON?;
+command: (def_scope? NAME COLON)? NEWLINE? (NAR|NAW|NAME) ((symbol_os COMMA)* symbol_os)? SEMICOLON;
 
 symbol_ns:def_scope? symbol_dec;
 

@@ -18,6 +18,7 @@ public class HRBSCommand implements Cloneable {
 		HRBSCommand clone = new HRBSCommand();
 		clone.setCmd(command);
 		clone.label=label;
+		clone.labelType=labelType;
 		if(targets!=null) {
 			clone.targets=new ArrayList<>();
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {

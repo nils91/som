@@ -11,6 +11,15 @@ public class HRBSMemoryAddress implements Cloneable{
 	private boolean isDeref=false;
 	private HRBSSymbol symbol;
 	private String tgtCmd;
+	private String tgtCmdInst;
+	public String getTgtCmdInst() {
+		return tgtCmdInst;
+	}
+
+	public void setTgtCmdInst(String tgtCmdInst) {
+		this.tgtCmdInst = tgtCmdInst;
+	}
+
 	public String getTgtCmd() {
 		return tgtCmd;
 	}
@@ -104,6 +113,7 @@ public class HRBSMemoryAddress implements Cloneable{
 		}		
 		copy.isDeref=isDeref;
 		copy.tgtCmd=tgtCmd;
+		copy.tgtCmdInst=tgtCmdInst;
 		return copy;
 	}
 
@@ -113,7 +123,11 @@ public class HRBSMemoryAddress implements Cloneable{
 			s+="&";
 		}
 		if(tgtCmd!=null) {
-			s+=tgtCmd+".";
+			s+=tgtCmd;
+			if(tgtCmdInst!=null) {
+				s+=String.format("[%s]", tgtCmdInst);
+			}
+			s+=".";
 		}
 		s+=symbol.getName();
 		if(offset!=null) {
@@ -121,6 +135,7 @@ public class HRBSMemoryAddress implements Cloneable{
 		}if(derefOffset!=null) {
 			s+="["+derefOffset+"]";
 		}
+		s+=";";
 		return s;
 	}
 
@@ -139,4 +154,6 @@ public class HRBSMemoryAddress implements Cloneable{
 	public void setDerefOffset(Integer derefOffset) {
 		this.derefOffset = derefOffset;
 	}
+
+	
 }

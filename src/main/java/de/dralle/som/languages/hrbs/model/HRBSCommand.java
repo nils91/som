@@ -19,6 +19,7 @@ public class HRBSCommand implements Cloneable {
 		clone.setCmd(command);
 		clone.label=label;
 		clone.labelType=labelType;
+		clone.cllInstId=cllInstId;
 		if(targets!=null) {
 			clone.targets=new ArrayList<>();
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
@@ -29,6 +30,15 @@ public class HRBSCommand implements Cloneable {
 	}
 
 	private String label;
+	private String cllInstId;
+	public String getCllInstId() {
+		return cllInstId;
+	}
+
+	public void setCllInstId(String cllInstId) {
+		this.cllInstId = cllInstId;
+	}
+
 	private HRBSSymbolType labelType;
 	public HRBSSymbolType getLabelType() {
 		return labelType;

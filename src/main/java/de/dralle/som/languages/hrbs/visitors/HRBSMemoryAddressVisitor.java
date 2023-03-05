@@ -4,6 +4,8 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Custom_command_call_no_paramContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Instance_idContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_nnameContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddress;
@@ -47,19 +49,27 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 	public HRBSMemoryAddress visitSymbol_target_nname(Symbol_target_nnameContext ctx) {
 		boolean isBuiltIn=ctx.builtins()!=null;
 		if(isBuiltIn) {
-			address.setSymbol(new HRBSSymbol(ctx.builtins().getText()));
-			if(ctx.NAME().size()>=1) {
-				address.setTgtCmd(ctx.NAME(0).getText());				
-			}
+			address.setSymbol(new HRBSSymbol(ctx.builtins().getText()));			
 		}else {
-			if(ctx.NAME().size()==1) {
-				address.setSymbol(new HRBSSymbol(ctx.NAME(0).getText()));
-			}
-			if(ctx.NAME().size()>=2) {
-				address.setTgtCmd(ctx.NAME(0).getText());
-				address.setSymbol(new HRBSSymbol(ctx.NAME(1).getText()));
-			}
+			
+				address.setSymbol(new HRBSSymbol(ctx.NAME
+						().getText()));}
+	if(ctx.custom_command_call_no_param()!=null) {
+		ctx.custom_command_call_no_param().accept(this);
+	}
+		return address;
+	}
+	@Override
+	public HRBSMemoryAddress visitCustom_command_call_no_param(Custom_command_call_no_paramContext ctx) {
+		address.setTgtCmd(ctx.NAME().getText());
+		if(ctx.instance_id()!=null) {
+			ctx.instance_id().accept(this);
 		}
+		return address;
+	}
+	@Override
+	public HRBSMemoryAddress visitInstance_id(Instance_idContext ctx) {
+		address.setTgtCmdInst(ctx.NAME().getText());
 		return address;
 	}
 	@Override

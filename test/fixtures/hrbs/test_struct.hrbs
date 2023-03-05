@@ -1,0 +1,8 @@
+MAIN:
+	STRUCT[T];
+	NAW STRUCT[T].A;
+	NAW STRUCT[T].B;
+	
+STRUCT:
+	alloc A
+	alloc B

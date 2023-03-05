@@ -21,6 +21,7 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
@@ -80,6 +81,14 @@ class HRBSLanguageFeaturesTests {
 		HRACModel hracModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAC);
 		
 		assertEquals(37, hracModel.getHeapSize());
+	}
+	@Test
+	void testInstIdCompile() throws IOException {
+		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/test_struct.hrbs");
+
+		HRACModel hracModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAS);	HRAVModel hravModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAV);
+		assertNotNull(hravModel);
 	}
 	
 }

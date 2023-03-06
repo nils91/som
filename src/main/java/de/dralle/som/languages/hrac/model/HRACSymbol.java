@@ -7,7 +7,22 @@ package de.dralle.som.languages.hrac.model;
  * @author Nils
  *
  */
-public class HRACSymbol {
+public class HRACSymbol implements Cloneable{
+	@Override
+	public HRACSymbol clone() {
+		HRACSymbol clone;
+		try {
+			clone = (HRACSymbol) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			clone=new HRACSymbol();
+		}
+		if(targetSymbol!=null) {
+			clone.targetSymbol=targetSymbol.clone();
+		}
+		return clone;
+	}
 	private String name;
 	/**
 	 * Potential target symbol. Might be null.

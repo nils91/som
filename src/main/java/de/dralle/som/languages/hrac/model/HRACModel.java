@@ -98,7 +98,7 @@ public class HRACModel implements ISetN, IHeap {
 	}
 	private int getSymbolBitCnt(int n) {
 		int cnt = 0;
-		for (HRACSymbol s : symbols) {
+		for (HRACSymbol s : getSymbolsInclFrCommands()) {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
 					if (s.isBitCntSpecial()) {
@@ -117,10 +117,18 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private boolean checkN(int n) {
+		int hs=heapSize;
 		if (n < minimumN) {
 			return false;
 		}
-		int minBitCnt = getFixedBitCount(n) + getSymbolBitCnt(n) + heapSize + getCommandBitCount(n);
+		for (HRACForDup hracForDup : commands) {
+			hracForDup.setSpecial(n);
+			hs+=hracForDup.getHeapSize();
+			if(n<hracForDup.getN()) {
+				return false;
+			}
+		}
+		int minBitCnt = getFixedBitCount(n) + getSymbolBitCnt(n) + hs + getCommandBitCount(n);
 		return minBitCnt <= Math.pow(2, n);
 	}
 
@@ -149,7 +157,11 @@ public class HRACModel implements ISetN, IHeap {
 
 	private int getCommandBitCount(int n) {
 		int commandSize = getCommandSize(n);
-		return (commands.size()+1) * commandSize;//one command will be added during the compile
+		int cmdCnt = 1;//one command will be added during the compile
+		for (HRACForDup hracForDup : commands) {
+			cmdCnt+=hracForDup.getCommands().size();
+		}
+		return (cmdCnt) * commandSize;
 	}
 
 	private int getCommandSize(int n) {
@@ -216,7 +228,7 @@ public class HRACModel implements ISetN, IHeap {
 			m.addSymbol(key, new MemoryAddress(val));
 		}
 		int nxtSymbolAddress = getFixedBitCount(n);
-		for (HRACSymbol s : symbols) {
+		for (HRACSymbol s : getSymbolsInclFrCommands()) {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
 				if (s.isBitCntSpecial()) {
@@ -241,6 +253,7 @@ public class HRACModel implements ISetN, IHeap {
 		m.addCommand(clrAdrEval);
 
 		for (HRACForDup cf : commands) {
+			cf.setSpecial(n);
 			for (HRACCommand c : cf.getCommands()) {
 				Command hrasc = new Command();
 				hrasc.setOp(c.getOp());
@@ -277,6 +290,17 @@ public class HRACModel implements ISetN, IHeap {
 	public void setN(int n) {
 		setMinimumN(n);
 
+	}
+
+	public List<HRACSymbol> getSymbolsInclFrCommands() {
+		List<HRACSymbol> allSymbols=new ArrayList<>();
+		if(symbols!=null) {
+			allSymbols.addAll(symbols);
+		}
+		for (HRACForDup hracSymbol : commands) {
+			allSymbols.addAll(hracSymbol.getSymbols());
+		}
+		return allSymbols;
 	}
 
 }

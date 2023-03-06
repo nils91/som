@@ -27,8 +27,8 @@ public class ProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
-		}else if(ctx.command()!=null) {
-			model.addCommand(ctx.command().accept(new CommandVisitor()));
+		}else if(ctx.commadn_or_for()!=null) {
+			model.addCommand(ctx.commadn_or_for().accept(new CommandVisitor()));
 		}else if(ctx.symbol_dec()!=null) {
 			model.addSymbol(ctx.symbol_dec().accept(new HRACSymbolVisitor()));
 		}

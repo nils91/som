@@ -75,11 +75,11 @@ public class HRACModel implements ISetN, IHeap {
 		return symbols;
 	}
 
-	public List<HRACCommand> getCommands() {
+	public List<HRACForDup> getCommands() {
 		return commands;
 	}
 
-	private List<HRACCommand> commands;
+	private List<HRACForDup> commands;
 
 	public void addSymbol(HRACSymbol symbol) {
 		if (symbols == null) {
@@ -88,13 +88,14 @@ public class HRACModel implements ISetN, IHeap {
 		symbols.add(symbol);
 	}
 
-	public void addCommand(HRACCommand c) {
+	public void addCommand(HRACForDup c) {
 		if (commands == null) {
 			commands = new ArrayList<>();
 		}
 		commands.add(c);
 	}
-
+	public void addCommand(HRACCommand c) {addCommand(new HRACForDup(c));
+	}
 	private int getSymbolBitCnt(int n) {
 		int cnt = 0;
 		for (HRACSymbol s : symbols) {
@@ -177,7 +178,7 @@ public class HRACModel implements ISetN, IHeap {
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (HRACCommand c : commands) {
+		for (HRACForDup c : commands) {
 
 			tmp.add(String.format("%s", c.asCode()));
 		}
@@ -239,16 +240,19 @@ public class HRACModel implements ISetN, IHeap {
 		clrAdrEval.setAddress(new MemoryAddress("ADR_EVAL"));
 		m.addCommand(clrAdrEval);
 
-		for (HRACCommand c : commands) {
-			Command hrasc = new Command();
-			hrasc.setOp(c.getOp());
-			MemoryAddress address = new MemoryAddress(c.getTarget().getSymbol().getName());
-			address.setAddressOffset(c.getTarget().getOffset());
-			hrasc.setAddress(address);
-			MemoryAddress assignedAddress = m.addCommand(hrasc);
-			if (c.getLabel() != null) {
-				m.addSymbol(c.getLabel().getName(), assignedAddress);
+		for (HRACForDup cf : commands) {
+			for (HRACCommand c : cf.getCommands()) {
+				Command hrasc = new Command();
+				hrasc.setOp(c.getOp());
+				MemoryAddress address = new MemoryAddress(c.getTarget().getSymbol().getName());
+				address.setAddressOffset(c.getTarget().getOffset());
+				hrasc.setAddress(address);
+				MemoryAddress assignedAddress = m.addCommand(hrasc);
+				if (c.getLabel() != null) {
+					m.addSymbol(c.getLabel().getName(), assignedAddress);
+				}
 			}
+			
 		}
 		return m;
 	}

@@ -5,6 +5,7 @@ package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Commadn_or_forContext;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
@@ -35,6 +36,12 @@ public class CommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 		c.setTarget(ctx.symbol_os().accept(new MemoryAddressVisitor()));
 		}
 		return c;
+	}
+
+	@Override
+	public HRACCommand visitCommadn_or_for(Commadn_or_forContext ctx) {
+		// TODO Auto-generated method stub
+		return super.visitCommadn_or_for(ctx);
 	}
 
 	

@@ -10,6 +10,15 @@ package de.dralle.som.languages.hrac.model;
 public class HRACMemoryAddress implements Cloneable{
 	private HRACSymbol symbol;
 	private Integer offset;
+	private boolean offsetSpecial;
+
+	public boolean isOffsetSpecial() {
+		return offsetSpecial;
+	}
+
+	public void setOffsetSpecial(boolean offsetSpecial) {
+		this.offsetSpecial = offsetSpecial;
+	}
 
 	public Integer getOffset() {
 		return offset;
@@ -66,6 +75,7 @@ public class HRACMemoryAddress implements Cloneable{
 	public HRACMemoryAddress clone() {
 		HRACMemoryAddress copy = new HRACMemoryAddress();
 		copy.symbol=symbol;
+		copy.offsetSpecial=offsetSpecial;
 		if(offset!=null) { 
 			copy.offset=offset.intValue();
 		}		
@@ -73,6 +83,9 @@ public class HRACMemoryAddress implements Cloneable{
 	}
 
 	public String asHRACCode() {
+		if(offsetSpecial) {
+			return String.format("%s[@]", symbol.getName());
+		}
 		if(offset!=null) {
 			return String.format("%s[%d]", symbol.getName(),offset);
 		}else {

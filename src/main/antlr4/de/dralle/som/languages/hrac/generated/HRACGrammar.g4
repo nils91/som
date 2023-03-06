@@ -13,11 +13,11 @@ symbol_os: (SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN offset_specify_number B_CLOSE;
 
-offset_specify_number:(NEG_INT|INT|R_I);
+offset_specify_number:(NEG_INT|INT|AT);
 offset_specify_range:B_OPEN offset_specify_number COLON offset_specify_number B_CLOSE;
 for_duplication:for_duplication_head NEWLINE? program_blk;
-for_duplication_head:FOR R_I EQ offset_specify_range DUPLICATE COLON;
-cnt_specify:B_OPEN (INT|BI_N) B_CLOSE;
+for_duplication_head:FOR offset_specify_range DUPLICATE COLON;
+cnt_specify:B_OPEN (INT|AT) B_CLOSE;
 
 builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
 
@@ -40,8 +40,7 @@ HEAP:'heap';
 FOR:'for';
 BI_N:'N';
 D_N:'n';
-R_I:'i';
-SYMBOL:[a-mo-zA-Z][a-zA-Z0-9_-]*;
+SYMBOL:[a-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 NEG_INT: DASH INT;
 EQ:'=';
@@ -52,5 +51,6 @@ B_CLOSE:']';
 C_OPEN:'{';
 C_CLOSE:'}';
 DASH:'-';
+AT:'@';
 
 WS : [ \f\t]+ -> skip;

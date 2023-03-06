@@ -14,7 +14,7 @@ public class HRACSymbol {
 	 */
 	private HRACMemoryAddress targetSymbol;
 	private int bitCnt;
-	private boolean bitCntISN;
+	private boolean bitCntSpecial;
 	public HRACSymbol(String generateHRACSymbolName) {
 		name=generateHRACSymbolName;
 	}
@@ -39,11 +39,11 @@ public class HRACSymbol {
 	public void setBitCnt(int bitCnt) {
 		this.bitCnt = bitCnt;
 	}
-	public boolean isBitCntISN() {
-		return bitCntISN;
+	public boolean isBitCntSpecial() {
+		return bitCntSpecial;
 	}
-	public void setBitCntISN(boolean bitCntISN) {
-		this.bitCntISN = bitCntISN;
+	public void setBitCntSpecial(boolean bitCntISN) {
+		this.bitCntSpecial = bitCntISN;
 	}
 	public String asCode() {
 	StringBuilder sb=new StringBuilder();
@@ -53,8 +53,8 @@ public class HRACSymbol {
 		sb.append("alloc ");
 	}
 	sb.append(name);
-	if(bitCntISN) {
-		sb.append("[N]");
+	if(bitCntSpecial) {
+		sb.append("[@]");
 	}else {
 		sb.append(String.format("[%d]", bitCnt));
 	}

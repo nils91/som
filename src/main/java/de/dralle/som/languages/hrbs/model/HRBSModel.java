@@ -669,7 +669,7 @@ public class HRBSModel implements ISetN, IHeap {
 		HRACSymbol s = new HRACSymbol();
 		s.setName(getTargetSymbolName(symbol.getName(), localSymbolNames));
 		s.setBitCnt(symbol.getBitCnt());
-		s.setBitCntISN(symbol.isBitCntISN());
+		s.setBitCntSpecial(symbol.isBitCntISN());
 		return s;
 	}
 

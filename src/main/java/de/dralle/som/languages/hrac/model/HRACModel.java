@@ -100,7 +100,7 @@ public class HRACModel implements ISetN, IHeap {
 		for (HRACSymbol s : symbols) {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
-					if (s.isBitCntISN()) {
+					if (s.isBitCntSpecial()) {
 						cnt += n;
 					} else {
 						cnt += s.getBitCnt();
@@ -218,7 +218,7 @@ public class HRACModel implements ISetN, IHeap {
 		for (HRACSymbol s : symbols) {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
-				if (s.isBitCntISN()) {
+				if (s.isBitCntSpecial()) {
 					nxtSymbolAddress += n;
 				} else {
 					nxtSymbolAddress += s.getBitCnt();

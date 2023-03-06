@@ -25,7 +25,7 @@ public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 		if(ctx.INT()!=null) {
 s.setBitCnt(Integer.parseInt(ctx.INT().getText()));			
 		}else if(ctx.BI_N()!=null) {
-			s.setBitCntISN(true);
+			s.setBitCntSpecial(true);
 		}
 		return s;
 	}

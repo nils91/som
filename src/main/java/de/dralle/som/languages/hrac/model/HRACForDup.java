@@ -23,6 +23,11 @@ public class HRACForDup implements Cloneable{
 	public List<HRACCommand> getCommands(){
 		List<HRACCommand> returnList=new ArrayList<>();
 		if(cmd!=null) {
+			HRACMemoryAddress ma = cmd.getTarget();
+			if(ma!=null&&ma.isOffsetSpecial()) {
+				ma.setOffset(special);
+				ma.setOffsetSpecial(false);
+			}
 			returnList.add(cmd);
 		}
 		return returnList;

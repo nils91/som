@@ -23,6 +23,7 @@ import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.model.HRACCommand;
+import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
@@ -369,14 +370,14 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private static HRACModel addCommandsAndSymbolsFromOther(HRACModel target, HRACModel other) {
 		List<HRACSymbol> osymbols = other.getSymbols();
-		List<HRACCommand> oCommands = other.getCommands();
+		List<HRACForDup> oCommands = other.getCommands();
 		if (osymbols != null) {
 			for (HRACSymbol s : osymbols) {
 				target.addSymbol(s);
 			}
 		}
 		if (oCommands != null) {
-			for (HRACCommand hracCommand : oCommands) {
+			for (HRACForDup hracCommand : oCommands) {
 				target.addCommand(hracCommand);
 			}
 		}

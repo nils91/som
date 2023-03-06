@@ -8,7 +8,17 @@ import java.util.List;
  * @author Nils
  *
  */
-public class HRACForDup {
+public class HRACForDup implements Cloneable{
+	private int special;
+	private HRACForDupRange range=null;
+	@Override
+	protected HRACForDup clone() {
+		HRACForDup clone = new HRACForDup();
+		if(cmd!=null) {
+			clone.cmd=cmd;
+		}
+		return clone;
+	}
 	private HRACCommand cmd=null;
 	public List<HRACCommand> getCommands(){
 		List<HRACCommand> returnList=new ArrayList<>();
@@ -20,6 +30,9 @@ public class HRACForDup {
 	public HRACForDup(HRACCommand cmd) {
 		super();
 		this.cmd = cmd;
+	}
+	public HRACForDup() {
+		// TODO Auto-generated constructor stub
 	}
 	public String asCode() {
 		if(cmd!=null) {

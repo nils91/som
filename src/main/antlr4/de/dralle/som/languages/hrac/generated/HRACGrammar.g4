@@ -2,14 +2,14 @@ grammar HRACGrammar;
 
 program : (NEWLINE? line)* EOF?;
 line: (directive|commadn_or_for|symbol_dec);
-symbol_dec: SYMBOL cnt_specify? symbol_os?;
+symbol_dec: (SYMBOL_KW|ALLOC_KW)? SYMBOL cnt_specify? symbol_os?;
 
 directive: SEMICOLON (HEAP|D_N) EQ INT;
 commadn_or_for:command|for_duplication;
 program_blk:C_OPEN program C_CLOSE;
 command: (SYMBOL COLON)? (NAR|NAW) symbol_os;
 
-symbol_os:(SYMBOL_KW|ALLOC_KW)? (SYMBOL|builtins) offset_specify?;
+symbol_os: (SYMBOL|builtins) offset_specify?;
 
 offset_specify:B_OPEN offset_specify_number B_CLOSE;
 

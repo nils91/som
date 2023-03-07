@@ -28,30 +28,53 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
 public class HRACModel implements ISetN, IHeap {
 
 	private Map<String, Integer> builtins;
-
-	private int heapSize;
-	private int minimumN;
+	private Map<String, String> directives;// as parsed
+	private Map<String, String> additionalDirectives;// additionals added at runtime
 
 	public int getMinimumN() {
-		return minimumN;
+		return getDirectiveAsInt("n");
+	}
+
+	public int getDirectiveAsInt(String name) {
+		try {
+			String sv = additionalDirectives.get(name);
+			return Integer.parseInt(sv);
+		} catch (Exception e) {
+
+		}
+		try {
+			String sv = directives.get(name);
+			return Integer.parseInt(sv);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+	
+	public Map<String,String> getAllDirectives(){
+		Map<String,String> retMap=new HashMap<>();
+		retMap.putAll(additionalDirectives);
+		retMap.putAll(directives);
+		return retMap;
 	}
 
 	public void setMinimumN(int minimumN) {
-		this.minimumN = minimumN;
+		this.directives.put("n", minimumN + "");
 	}
 
 	public int getHeapSize() {
-		return heapSize;
+		return getDirectiveAsInt("heap");
 	}
 
 	public void setHeapSize(int heapSize) {
-		this.heapSize = heapSize;
+		directives.put("heap", heapSize + "");
 	}
 
 	public HRACModel() {
 		setupBuiltins();
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
+		directives = new HashMap<>();
+		additionalDirectives = new HashMap<>();
 	}
 
 	private void setupBuiltins() {
@@ -71,6 +94,7 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private List<HRACSymbol> symbols;
+
 	public List<HRACSymbol> getSymbols() {
 		return symbols;
 	}
@@ -94,8 +118,11 @@ public class HRACModel implements ISetN, IHeap {
 		}
 		commands.add(c);
 	}
-	public void addCommand(HRACCommand c) {addCommand(new HRACForDup(c));
+
+	public void addCommand(HRACCommand c) {
+		addCommand(new HRACForDup(c));
 	}
+
 	private int getSymbolBitCnt(int n) {
 		int cnt = 0;
 		for (HRACSymbol s : getSymbolsInclFrCommands()) {
@@ -117,14 +144,14 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private boolean checkN(int n) {
-		int hs=heapSize;
-		if (n < minimumN) {
+		int hs = getHeapSize();
+		if (n < getMinimumN()) {
 			return false;
 		}
 		for (HRACForDup hracForDup : commands) {
-			hracForDup.setSpecial(n);
-			hs+=hracForDup.getHeapSize();
-			if(n<hracForDup.getN()) {
+			hracForDup.setParent(this);
+			hs += hracForDup.getHeapSize();
+			if (n < hracForDup.getN()) {
 				return false;
 			}
 		}
@@ -157,9 +184,9 @@ public class HRACModel implements ISetN, IHeap {
 
 	private int getCommandBitCount(int n) {
 		int commandSize = getCommandSize(n);
-		int cmdCnt = 1;//one command will be added during the compile
+		int cmdCnt = 1;// one command will be added during the compile
 		for (HRACForDup hracForDup : commands) {
-			cmdCnt+=hracForDup.getCommands().size();
+			cmdCnt += hracForDup.getCommands().size();
 		}
 		return (cmdCnt) * commandSize;
 	}
@@ -172,12 +199,12 @@ public class HRACModel implements ISetN, IHeap {
 		return 11 + n;
 	}
 
-	private String getHeapDirective() {
-		return String.format(";heap = %d", heapSize);
-	}
-
-	private String getNDirective() {
-		return String.format(";n = %d", minimumN);
+	private List<String> getDirectivesAsStrings() {
+		List<String> tmp = new ArrayList<>();
+		for (Entry<String, String> symbol : directives.entrySet()) {
+			tmp.add(String.format(";%s=\"%s\"", symbol.getKey(), symbol.getValue()));
+		}
+		return tmp;
 	}
 
 	private List<String> getSymbolsAsStrings() {
@@ -199,10 +226,10 @@ public class HRACModel implements ISetN, IHeap {
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getHeapDirective());
-		sb.append(System.lineSeparator());
+		for (String symbolString : getDirectivesAsStrings()) {
+			sb.append(symbolString);
+			sb.append(System.lineSeparator());
+		}
 		for (String symbolString : getSymbolsAsStrings()) {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
@@ -217,6 +244,8 @@ public class HRACModel implements ISetN, IHeap {
 	public HRASModel compileToHRAS() {
 		HRASModel m = new HRASModel();
 		int n = findN();
+		// add calculate n as directive to be used later on
+		additionalDirectives.put("N", n + "");
 		m.setN(n);
 		m.setStartAddressExplicit(true);
 		int startAddress = getStartAdress(n);
@@ -232,7 +261,7 @@ public class HRACModel implements ISetN, IHeap {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
 				if (s.isBitCntSpecial()) {
-					nxtSymbolAddress += n;
+					nxtSymbolAddress += getDirectiveAsInt(s.getSpecialName());
 				} else {
 					nxtSymbolAddress += s.getBitCnt();
 				}
@@ -253,7 +282,7 @@ public class HRACModel implements ISetN, IHeap {
 		m.addCommand(clrAdrEval);
 
 		for (HRACForDup cf : commands) {
-			cf.setSpecial(n);
+			cf.setParent(this);
 			for (HRACCommand c : cf.getCommands()) {
 				Command hrasc = new Command();
 				hrasc.setOp(c.getOp());
@@ -265,7 +294,7 @@ public class HRACModel implements ISetN, IHeap {
 					m.addSymbol(c.getLabel().getName(), assignedAddress);
 				}
 			}
-			
+
 		}
 		return m;
 	}
@@ -293,8 +322,8 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	public List<HRACSymbol> getSymbolsInclFrCommands() {
-		List<HRACSymbol> allSymbols=new ArrayList<>();
-		if(symbols!=null) {
+		List<HRACSymbol> allSymbols = new ArrayList<>();
+		if (symbols != null) {
 			allSymbols.addAll(symbols);
 		}
 		for (HRACForDup hracSymbol : commands) {
@@ -303,4 +332,21 @@ public class HRACModel implements ISetN, IHeap {
 		return allSymbols;
 	}
 
+	public void addDirective(String name, String value) {
+		directives.put(name, value);
+	}
+
+	public void addDirective(String name, int value) {
+		addDirective(name, value + "");
+	}
+	public void addAddDirective(String name, String value) {
+		additionalDirectives.put(name, value);
+	}
+
+	public void addAddDirective(String name, int value) {
+		addDirective(name, value + "");
+	}
+	public void addAddDirectives(Map<String,String> additionals) {
+		additionalDirectives.putAll(additionals);
+	}
 }

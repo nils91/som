@@ -47,11 +47,16 @@ public class ProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 
 	@Override
 	public HRACModel visitDirective(de.dralle.som.languages.hrac.generated.HRACGrammarParser.DirectiveContext ctx) {
-		if (ctx.HEAP() != null) {
-			model.setHeapSize(Integer.parseInt(ctx.INT().getText()));
-		}else if (ctx.D_N()!=null){
-			model.setMinimumN(Integer.parseInt(ctx.INT().getText()));
+		String name = ctx.directive_name().getText();
+		String value = "";
+		if(ctx.INT()!=null) {
+			value=ctx.INT().getText()
+					;
 		}
+		if(ctx.DIRECTIVE_VALUE_STR()!=null) {
+			value=ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1);
+		}
+		model.addDirective(name, value);
 		return model;
 	}
 

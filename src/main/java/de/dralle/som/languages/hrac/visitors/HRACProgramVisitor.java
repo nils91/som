@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Program_blkContext;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
@@ -34,6 +35,11 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		}
 
 		return model;
+	}
+
+	@Override
+	public HRACModel visitProgram_blk(Program_blkContext ctx) {
+		return ctx.program().accept(this);
 	}
 
 	@Override

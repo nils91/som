@@ -6,6 +6,38 @@ public class HRACForDupRange {
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 
+	public int getRangeStart() {
+		return rangeStart;
+	}
+
+	public void setRangeStart(int rangeStart) {
+		this.rangeStart = rangeStart;
+	}
+
+	public int getRangeEnd() {
+		return rangeEnd;
+	}
+
+	public void setRangeEnd(int rangeEnd) {
+		this.rangeEnd = rangeEnd;
+	}
+
+	public String getRangeStartSpecial() {
+		return rangeStartSpecial;
+	}
+
+	public void setRangeStartSpecial(String rangeStartSpecial) {
+		this.rangeStartSpecial = rangeStartSpecial;
+	}
+
+	public String getRangeEndSpecial() {
+		return rangeEndSpecial;
+	}
+
+	public void setRangeEndSpecial(String rangeEndSpecial) {
+		this.rangeEndSpecial = rangeEndSpecial;
+	}
+
 	public int[] getRange(HRACModel parent) {
 		if (rangeEndSpecial != null) {
 			rangeEnd = parent.getDirectiveAsInt(rangeEndSpecial);

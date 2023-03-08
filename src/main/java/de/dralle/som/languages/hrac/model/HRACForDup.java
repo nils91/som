@@ -50,13 +50,15 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		if (cmd != null) {
 			HRACMemoryAddress ma = cmd.getTarget();
 			if (ma != null && ma.isOffsetSpecial()) {
-				cmd=cmd.clone();
+				HRACCommand ncmd = cmd.clone();
 				ma = ma.clone();
 				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
 				ma.setOffsetSpecial(false);
-				cmd.setTarget(ma);				
+				ncmd.setTarget(ma);	
+				returnList.add(ncmd);
+			}else {
+				returnList.add(cmd);
 			}
-			returnList.add(cmd);
 		}
 		if (model != null) {
 			model.addAddDirectives(parent.getAllDirectives());

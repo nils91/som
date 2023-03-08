@@ -344,7 +344,7 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	public void addAddDirective(String name, int value) {
-		addDirective(name, value + "");
+		addAddDirective(name, value + "");
 	}
 
 	public void addAddDirectives(Map<String, String> additionals) {

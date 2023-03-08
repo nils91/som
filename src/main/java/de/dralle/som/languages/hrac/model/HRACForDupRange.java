@@ -31,13 +31,13 @@ public class HRACForDupRange {
 	public String asCode() {
 		String s = "[";
 		if (rangeStartSpecial != null) {
-			s += ";" + rangeStartSpecial;
+			s += "$" + rangeStartSpecial;
 		} else {
 			s += rangeStart + "";
 		}
 		s += ":";
 		if (rangeEndSpecial != null) {
-			s += ";" + rangeEndSpecial;
+			s += "$" + rangeEndSpecial;
 		} else {
 			s += rangeEnd + "";
 		}

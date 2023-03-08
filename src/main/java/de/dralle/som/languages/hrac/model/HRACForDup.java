@@ -12,13 +12,7 @@ import de.dralle.som.ISetN;
  *
  */
 public class HRACForDup implements ISetN,IHeap, Cloneable{
-	private int special;
-	public int getSpecial() {
-		return special;
-	}
-	public void setSpecial(int special) {
-		this.special = special;
-	}
+	private HRACModel parent;
 	public HRACModel getModel() {
 		return model;
 	}
@@ -48,18 +42,20 @@ public class HRACForDup implements ISetN,IHeap, Cloneable{
 			HRACMemoryAddress ma = cmd.getTarget();			
 			if(ma!=null&&ma.isOffsetSpecial()) {
 				ma=ma.clone();
-				ma.setOffset(special);
+				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
 				ma.setOffsetSpecial(false);
 				cmd.setTarget(ma);
 			}
 			returnList.add(cmd);
 		}
 		if(model!=null) {
+			model.addAddDirectives(parent.getAllDirectives());
 			List<HRACForDup> childModelCommands = model.getCommands();
-			for (int i = 0; i < range.getRange(special).length; i++) {
-				int si = range.getRange(special)[i];
+			for (int i = 0; i < range.getRange(parent).length; i++) {
+				int si = range.getRange(parent)[i];
+				model.addAddDirective("i", si);
 				for (HRACForDup hracForDup : childModelCommands) {
-					hracForDup.setSpecial(si);
+					hracForDup.parent=model;
 					returnList.addAll(hracForDup.getCommands());
 				}				
 			}
@@ -71,8 +67,8 @@ public class HRACForDup implements ISetN,IHeap, Cloneable{
 	
 		if(model!=null) {
 			List<HRACSymbol> childModelCommands = model.getSymbolsInclFrCommands();
-			for (int i = 0; i < range.getRange(special).length; i++) {
-				int si = range.getRange(special)[i];
+			for (int i = 0; i < range.getRange(parent).length; i++) {
+				int si = range.getRange(parent)[i];
 				for (HRACSymbol hracForDup : childModelCommands) {
 					if(hracForDup.isBitCntSpecial()) {
 						hracForDup=hracForDup.clone();
@@ -96,7 +92,7 @@ public class HRACForDup implements ISetN,IHeap, Cloneable{
 			return cmd.asCode();
 		}
 		if(model!=null) {
-			String returnStr = String.format("for %s dup:\n%s\n", null);
+			return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(),model.asCode());
 		}
 		return "";
 	}
@@ -129,12 +125,21 @@ public class HRACForDup implements ISetN,IHeap, Cloneable{
 		if(model!=null) {
 			return model.getN();
 		}
-		return special;//assuming special is n
+		if(parent!=null) {
+			parent.getDirectiveAsInt("N");
+		}
+		return 0;//assuming special is n
 	}
 	@Override
 	public void setN(int n) {
 		if(model!=null) {
 			model.setN(n);
 		}
+	}
+	public HRACModel getParent() {
+		return parent;
+	}
+	public void setParent(HRACModel parent) {
+		this.parent = parent;
 	}
 }

@@ -30,6 +30,13 @@ public class HRACSymbol implements Cloneable{
 	private HRACMemoryAddress targetSymbol;
 	private int bitCnt;
 	private boolean bitCntSpecial;
+	/**
+	 * If bitCnt is special, contains the special (directive) name.
+	 */
+	private String specialName;
+	public void setSpecialName(String specialName) {
+		this.specialName = specialName;
+	}
 	public HRACSymbol(String generateHRACSymbolName) {
 		name=generateHRACSymbolName;
 	}
@@ -69,7 +76,7 @@ public class HRACSymbol implements Cloneable{
 	}
 	sb.append(name);
 	if(bitCntSpecial) {
-		sb.append("[@]");
+		sb.append(String.format("[;%s]", specialName));
 	}else {
 		sb.append(String.format("[%d]", bitCnt));
 	}
@@ -77,5 +84,8 @@ public class HRACSymbol implements Cloneable{
 		sb.append(String.format(" %s", targetSymbol));
 	}
 	return sb.toString();
+	}
+	public String getSpecialName() {
+		return specialName;
 	}
 }

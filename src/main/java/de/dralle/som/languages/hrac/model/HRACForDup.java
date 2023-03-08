@@ -38,7 +38,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	protected HRACForDup clone() {
 		HRACForDup clone = new HRACForDup();
 		if (cmd != null) {
-			clone.cmd = cmd;
+			clone.cmd = cmd.clone();
 		}
 		return clone;
 	}
@@ -50,10 +50,11 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		if (cmd != null) {
 			HRACMemoryAddress ma = cmd.getTarget();
 			if (ma != null && ma.isOffsetSpecial()) {
+				cmd=cmd.clone();
 				ma = ma.clone();
 				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
 				ma.setOffsetSpecial(false);
-				cmd.setTarget(ma);
+				cmd.setTarget(ma);				
 			}
 			returnList.add(cmd);
 		}

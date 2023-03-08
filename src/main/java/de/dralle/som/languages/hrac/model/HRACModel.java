@@ -140,6 +140,7 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private boolean checkN(int n) {
+		additionalDirectives.put("N", n+"");
 		int hs = getHeapSize();
 		if (n < getMinimumN()) {
 			return false;
@@ -179,9 +180,11 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	private int getCommandBitCount(int n) {
+		additionalDirectives.put("N", n+"");
 		int commandSize = getCommandSize(n);
 		int cmdCnt = 1;// one command will be added during the compile
 		for (HRACForDup hracForDup : commands) {
+			hracForDup.setParent(this);
 			cmdCnt += hracForDup.getCommands().size();
 		}
 		return (cmdCnt) * commandSize;

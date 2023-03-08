@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Directive_accessContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_numberContext;
 import de.dralle.som.languages.hrac.model.HRACCommand;
@@ -20,6 +21,18 @@ public HRACMemoryOffset visitOffset_specify_number(Offset_specify_numberContext 
 	if(ctx.NEG_INT()!=null) {
 		o.setOffset(Integer.parseInt(ctx.NEG_INT().getText()));
 	}
+	if(ctx.INT()!=null) {
+		o.setOffset(Integer.parseInt(ctx.INT().getText()));
+	}
+	if(ctx.directive_access()!=null) {
+		ctx.directive_access().accept(this);
+	}
+	return o;
+}
+
+@Override
+public HRACMemoryOffset visitCnt_specify(Cnt_specifyContext ctx) {
+	
 	if(ctx.INT()!=null) {
 		o.setOffset(Integer.parseInt(ctx.INT().getText()));
 	}

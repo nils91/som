@@ -28,7 +28,7 @@ public class HRACParser {
 		HRACGrammarLexer lexer = new HRACGrammarLexer(new ANTLRInputStream(is));
 		HRACGrammarParser parser = new HRACGrammarParser(new CommonTokenStream(lexer));
 		de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext pt = parser.program();
-		HRACModel model = pt.accept(new de.dralle.som.languages.hrac.visitors.ProgramVisitor());
+		HRACModel model = pt.accept(new de.dralle.som.languages.hrac.visitors.HRACProgramVisitor());
 		return model;
 	}
 	public HRACModel parse(String s) throws IOException {

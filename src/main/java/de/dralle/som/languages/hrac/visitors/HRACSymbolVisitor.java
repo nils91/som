@@ -4,7 +4,6 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
-import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
@@ -16,7 +15,6 @@ import de.dralle.som.languages.hrac.model.HRACSymbol;
 public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 	private HRACSymbol s;
 
-	
 	@Override
 	public HRACSymbol visitSymbol_dec(Symbol_decContext ctx) {
 		s = new HRACSymbol();
@@ -26,7 +24,7 @@ public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 		}
 		if (ctx.cnt_specify() != null) {
 			HRACMemoryOffset cnt = ctx.cnt_specify().accept(new HRACOSVisitor());
-			s.setBitCntSpecial(cnt.getDirectiveName()!=null);
+			s.setBitCntSpecial(cnt.getDirectiveName() != null);
 			s.setSpecialName(cnt.getDirectiveName());
 			s.setBitCnt(cnt.getOffset());
 		}

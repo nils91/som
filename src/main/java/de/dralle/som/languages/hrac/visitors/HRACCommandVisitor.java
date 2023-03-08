@@ -37,13 +37,6 @@ public class HRACCommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 		}
 		return c;
 	}
-
-	@Override
-	public HRACCommand visitCommadn_or_for(Commadn_or_forContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCommadn_or_for(ctx);
-	}
-
 	
 
 }

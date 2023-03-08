@@ -5,17 +5,13 @@ package de.dralle.som.languages.hrac.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.dralle.som.AbstractSomMemspace;
-import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IHeap;
-import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
-import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hras.model.Command;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -49,9 +45,9 @@ public class HRACModel implements ISetN, IHeap {
 			return 0;
 		}
 	}
-	
-	public Map<String,String> getAllDirectives(){
-		Map<String,String> retMap=new HashMap<>();
+
+	public Map<String, String> getAllDirectives() {
+		Map<String, String> retMap = new HashMap<>();
 		retMap.putAll(additionalDirectives);
 		retMap.putAll(directives);
 		return retMap;
@@ -339,6 +335,7 @@ public class HRACModel implements ISetN, IHeap {
 	public void addDirective(String name, int value) {
 		addDirective(name, value + "");
 	}
+
 	public void addAddDirective(String name, String value) {
 		additionalDirectives.put(name, value);
 	}
@@ -346,7 +343,8 @@ public class HRACModel implements ISetN, IHeap {
 	public void addAddDirective(String name, int value) {
 		addDirective(name, value + "");
 	}
-	public void addAddDirectives(Map<String,String> additionals) {
+
+	public void addAddDirectives(Map<String, String> additionals) {
 		additionalDirectives.putAll(additionals);
 	}
 }

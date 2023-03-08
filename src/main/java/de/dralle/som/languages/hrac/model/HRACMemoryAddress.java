@@ -89,7 +89,7 @@ public class HRACMemoryAddress implements Cloneable {
 
 	public String asHRACCode() {
 		if (offsetSpecial) {
-			return String.format("%s[$%s]", symbol.getName(),offsetSpecialnName);
+			return String.format("%s[$%s]", symbol.getName(), offsetSpecialnName);
 		}
 		if (offset != null) {
 			return String.format("%s[%d]", symbol.getName(), offset);

@@ -16,7 +16,7 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class MemoryAddressVisitor extends HRACGrammarBaseVisitor<HRACMemoryAddress> {
+public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<HRACMemoryAddress> {
 
 	private HRACMemoryAddress address;
 

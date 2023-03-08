@@ -16,7 +16,7 @@ import de.dralle.som.languages.hras.model.Command;
  * @author Nils
  *
  */
-public class CommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
+public class HRACCommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 	private HRACCommand c;
 
 	@Override
@@ -33,7 +33,7 @@ public class CommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 			c.setOp(Opcode.NAW);
 		}
 		if(ctx.symbol_os()!=null) {
-		c.setTarget(ctx.symbol_os().accept(new MemoryAddressVisitor()));
+		c.setTarget(ctx.symbol_os().accept(new HRACMemoryAddressVisitor()));
 		}
 		return c;
 	}

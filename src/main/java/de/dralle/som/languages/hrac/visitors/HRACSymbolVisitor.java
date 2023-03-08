@@ -36,7 +36,7 @@ public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 			ctx.cnt_specify().accept(this);
 		}
 		if (ctx.symbol_os() != null) {
-			s.setTargetSymbol(ctx.symbol_os().accept(new MemoryAddressVisitor()));
+			s.setTargetSymbol(ctx.symbol_os().accept(new HRACMemoryAddressVisitor()));
 		}
 		return s;
 	}

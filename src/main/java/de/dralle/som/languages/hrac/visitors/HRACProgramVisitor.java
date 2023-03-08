@@ -18,7 +18,7 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class ProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
+public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 
 	private HRACModel model;
 
@@ -28,7 +28,7 @@ public class ProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
 		}else if(ctx.commadn_or_for()!=null) {
-			model.addCommand(ctx.commadn_or_for().accept(new CommandVisitor()));
+			model.addCommand(ctx.commadn_or_for().accept(new HRACCommandVisitor()));
 		}else if(ctx.symbol_dec()!=null) {
 			model.addSymbol(ctx.symbol_dec().accept(new HRACSymbolVisitor()));
 		}

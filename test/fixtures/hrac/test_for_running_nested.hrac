@@ -1,0 +1,10 @@
+alloc A[$N]
+symbol A_MIR A[-1]
+for [1:$N] dup:
+{
+	NAW A_MIR[$i]
+	for [1:$i] dup:
+	{
+		NAW A_MIR[$i]	
+	}
+}

@@ -1,0 +1,8 @@
+alloc A[$N]
+symbol A_MIR A[-1]
+for[1:$N] dup:
+{
+	NAW A_MIR[$i]
+}
+NAR A
+NAR ACC

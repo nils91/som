@@ -108,7 +108,7 @@ public class HRACMemoryAddress implements Cloneable {
 		return offsetSpecialnName;
 	}
 
-	public void setOffsetSpecialnName(String offsetSpecialnName) {
+	public void setOffsetSpecialName(String offsetSpecialnName) {
 		this.offsetSpecialnName = offsetSpecialnName;
 	}
 }

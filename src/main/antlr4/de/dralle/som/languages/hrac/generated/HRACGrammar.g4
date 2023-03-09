@@ -100,7 +100,12 @@ cnt_specify
 
 directive_access
 :
-	SEMICOLON directive_name
+	DOLLAR directive_name
+;
+
+DOLLAR
+:
+	'$'
 ;
 
 directive_name

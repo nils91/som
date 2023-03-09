@@ -9,13 +9,31 @@ import de.dralle.som.Opcode;
  * @author Nils
  *
  */
-public class HRACCommand {
+public class HRACCommand implements Cloneable{
 	private HRACSymbol label;
 	private Opcode op;
 	private HRACMemoryAddress target;
 
 	public HRACSymbol getLabel() {
 		return label;
+	}
+
+	@Override
+	protected HRACCommand clone(){
+		HRACCommand copy = null;
+		try {
+			copy = (HRACCommand) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(label!=null) {
+			copy.label=label.clone();
+		}
+		if(target!=null) {
+			copy.target=target.clone();
+		}
+		return copy;
 	}
 
 	public void setLabel(HRACSymbol label) {

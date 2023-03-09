@@ -29,14 +29,7 @@ public class HRBSCommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 		if(ctx.commad_label()!=null) {
 			ctx.commad_label().accept(this);
 		}
-		boolean hasCmd = false;
-		if (ctx.NAR() != null) {
-			hasCmd = true;
-			c.setCmd(Opcode.NAR.name());
-		} else if (ctx.NAW() != null) {
-			hasCmd = true;
-			c.setCmd(Opcode.NAW.name());
-		} else if (ctx.custom_command_call_no_param()!=null) {
+		if (ctx.custom_command_call_no_param()!=null) {
 			ctx.custom_command_call_no_param().accept(this);
 		}
 		

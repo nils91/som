@@ -29,7 +29,7 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitImport_stmt(Import_stmtContext ctx) {
 		HRBSModel mtr=null;
-		if(ctx.NAME()!=null&&ctx.FILEPATH()==null) {
+		if(ctx.NAME()!=null&&ctx.DIRECTIVE_VALUE_STR()==null) {
 			try {
 				mtr= new FileLoader().loadHRBSByName(ctx.NAME(0).getText());
 			} catch (IOException e) {
@@ -39,8 +39,8 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				mtr.setName(ctx.NAME(1).getText());
 			}
 		}
-		else if(ctx.FILEPATH()!=null) {
-			String path=ctx.FILEPATH().getText();
+		else if(ctx.DIRECTIVE_VALUE_STR()!=null) {
+			String path=ctx.DIRECTIVE_VALUE_STR().getText();
 			path=path.replaceAll("\"|'", "");
 			try {
 				mtr= new FileLoader().readHRBSFile(path);

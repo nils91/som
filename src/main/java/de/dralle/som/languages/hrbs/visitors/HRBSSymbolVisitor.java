@@ -40,8 +40,6 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 	public HRBSSymbol visitCnt_specify(Cnt_specifyContext ctx) {
 		if (ctx.INT() != null) {
 			s.setBitCnt(Integer.parseInt(ctx.INT().getText()));
-		} else if (ctx.BI_N() != null) {
-			s.setBitCntISN(true);
 		}
 		return s;
 	}

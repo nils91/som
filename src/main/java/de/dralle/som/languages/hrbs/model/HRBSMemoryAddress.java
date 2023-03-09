@@ -101,7 +101,13 @@ public class HRBSMemoryAddress implements Cloneable{
 
 	@Override
 	public HRBSMemoryAddress clone() {
-		HRBSMemoryAddress copy = new HRBSMemoryAddress();
+		HRBSMemoryAddress copy = null;
+		try {
+			copy = (HRBSMemoryAddress) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(symbol!=null) {
 			copy.symbol=symbol.clone();
 		}		

@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
@@ -35,8 +36,7 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 	}
 
 	@Override
-	public HRBSMemoryAddress visitOffset_specify(
-			de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specifyContext ctx) {
+	public HRBSMemoryAddress visitOffset_specify(HRBSGrammarParser.Offset_specifyContext ctx) {
 		int offset = Integer.parseInt(ctx.getChild(1).getText());
 		if( nxtOffset==0) {
 			address.setOffset(offset);

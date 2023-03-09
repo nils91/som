@@ -5,8 +5,11 @@ package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_numberContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddress;
+import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
@@ -17,33 +20,36 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddress> {
+public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryAddressOffset> {
 
-	private HRBSMemoryAddress address;
-	private int nxtOffset;
+	private HRBSMemoryAddressOffset o;
 
-	public int getNxtOffset() {
-		return nxtOffset;
-	}
-	public void setNxtOffset(int nxtOffset) {
-		this.nxtOffset = nxtOffset;
-	}
 	public HRBSMemoryAddressOffsetSpecifyVisitor() {
-		address=new HRBSMemoryAddress();
+		o=new HRBSMemoryAddressOffset();
 	}
-	public HRBSMemoryAddressOffsetSpecifyVisitor(HRBSMemoryAddress address) {
-		this.address=address;
+	public HRBSMemoryAddressOffsetSpecifyVisitor(HRBSMemoryAddressOffset o) {
+		this.o=o;
 	}
 
 	@Override
-	public HRBSMemoryAddress visitOffset_specify(HRBSGrammarParser.Offset_specifyContext ctx) {
-		int offset = Integer.parseInt(ctx.getChild(1).getText());
-		if( nxtOffset==0) {
-			address.setOffset(offset);
-		}else {
-			address.setDerefOffset(offset);
+	public HRBSMemoryAddressOffset visitOffset_specify(HRBSGrammarParser.Offset_specifyContext ctx) {
+		ctx.offset_specify_number().accept(this);
+		return o;
+	}
+	@Override
+	public HRBSMemoryAddressOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
+		if(ctx.INT()!=null) {
+			o.setOffset(Integer.parseInt(ctx.INT().getText()));
 		}
-		return address;
+		if(ctx.directive_access()!=null) {
+			ctx.directive_access().accept(this);
+		}
+		return o;
+	}
+	@Override
+	public HRBSMemoryAddressOffset visitDirective_access(Directive_accessContext ctx) {
+		o.setDirectiveAccessName(ctx.directive_name().getText());
+		return o;
 	}
 
 

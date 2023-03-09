@@ -10,6 +10,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Instance_idConte
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_nnameContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddress;
+import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
@@ -36,10 +37,14 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 			ctx.symbol_target_nname().accept(this);
 		}
 		if(ctx.offset_specify()!=null) {
-			HRBSMemoryAddressOffsetSpecifyVisitor maov = new HRBSMemoryAddressOffsetSpecifyVisitor(address);
 			for (int i = 0; i < ctx.offset_specify().size();i++) {
-				maov.setNxtOffset(i);HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
-				os.accept(maov);
+		HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
+				HRBSMemoryAddressOffset ofs = os.accept(new HRBSMemoryAddressOffsetSpecifyVisitor());
+				if(i==0) {
+					address.setOffset(ofs);
+				}else {
+					address.setDerefOffset(ofs);
+				}
 			}
 		}
 		return address;

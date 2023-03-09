@@ -15,9 +15,9 @@ directive: SEMICOLON directive_name EQ (INT | DIRECTIVE_VALUE_STR);
 directive_name
 :
 	INT
-	| SYMBOL
+	| NAME
 ;
-command: commad_label? NEWLINE? (NAR|NAW|custom_command_call_no_param) ((symbol_os COMMA)* symbol_os)? SEMICOLON;
+command: commad_label? NEWLINE? custom_command_call_no_param ((symbol_os COMMA)* symbol_os)? SEMICOLON;
 custom_command_call_no_param:NAME instance_id?;
 instance_id: B_OPEN NAME B_CLOSE;
 
@@ -29,15 +29,13 @@ symbol_ns:def_scope? symbol_dec;
 
 symbol_os:AMP? symbol_target_nname offset_specify*;
 
-symbol_target_nname:(custom_command_call_no_param DOT)? (NAME|builtins);
+symbol_target_nname:(custom_command_call_no_param DOT)? (NAME);
 
 offset_specify:B_OPEN (NEG_INT|INT) B_CLOSE;
 
-cnt_specify:B_OPEN (INT|BI_N) B_CLOSE;
+cnt_specify:B_OPEN (INT) B_CLOSE;
 
-builtins:ACC|ADR_EVAL|WH_COM|WH_DIR|WH_EN|WH_SEL|ADR|HEAP_N|BI_N;
-
-import_stmt: IMPORT (NAME|FILEPATH) (AS NAME)? (USING NAME)? SEMICOLON;
+import_stmt: IMPORT (NAME|DIRECTIVE_VALUE_STR) (AS NAME)? (USING NAME)? SEMICOLON;
 
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
@@ -45,30 +43,10 @@ IMPORT:'import';
 ALLOC:'alloc'|'allocate';
 SYMBOL:'symbol'|'sym';
 USING:'using';
-ACC:'ACC';
-ADR_EVAL:'ADR_EVAL';
-WH_EN:'WH_EN';
-WH_COM:'WH_COM';
-WH_DIR:'WH_DIR';
-WH_SEL:'WH_SEL';
-HEAP_N:'HEAP';
-ADR:'ADR';
-NAR:'NAR';
-NAW:'NAW';
-HEAP:'heap';
 GLOBAL:'global';
 SHARED:'shared';
 LOCAL:'local';
-AS:'as';
-BI_N:'N';
-D_N:'n';
-SINGLE_QUOTE:'\'';
-DOUBLE_QUOTE:'\""';
-FILEPATH:[\'"] .+? [\'"];
-NAME:[a-zA-Z][a-zA-Z0-9_-]*;
-INT:[0-9]+;
-NEG_INT: DASH INT;
-DIRECTIVE_VALUE_STR
+AS:'as';DIRECTIVE_VALUE_STR
 :
 	(
 		'"'
@@ -79,6 +57,10 @@ DIRECTIVE_VALUE_STR
 		| '\''
 	)
 ;
+NAME:[a-zA-Z][a-zA-Z0-9_-]*;
+INT:[0-9]+;
+NEG_INT: DASH INT;
+
 EQ:'=';
 COLON:':';
 SEMICOLON:';';

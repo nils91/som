@@ -48,8 +48,6 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private Map<String, HRBSModel> childs;
 	private static Map<String, Integer> cmdUsageTracker;
-	private int heapSize;
-	private int minimumN;
 
 	public boolean addChild(HRBSModel c) {
 		return addChild(c.getName(), c);
@@ -136,7 +134,7 @@ public class HRBSModel implements ISetN, IHeap {
 		if (checked == null) {
 			checked = new HashSet<>();
 		}
-		int rn = minimumN;
+		int rn = getMinimumNDirect();
 		if (!checked.contains(name)) {
 			checked.add(name);
 			if (childs != null) {
@@ -150,13 +148,26 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		return rn;
 	}
-
+	/**
+	 * Get the minimum N for this model specifically.
+	 * @return
+	 */
+	public int getMinimumNDirect() {
+		return getDirectiveAsInt("n");
+	}
+	private int getDirectiveAsInt(String key) {
+		return Integer.parseInt(directives.getOrDefault(key, "0"));
+	}
+	/**
+	 * Get the minimum N for this model or its childs.
+	 * @return
+	 */
 	public int getMinimumN() {
 		return getMinimumN(null);
 	}
 
 	public void setMinimumN(int minimumN) {
-		this.minimumN = minimumN;
+		directives.put("n", minimumN+"");
 	}
 
 	public int getHeapSize(Set<String> added) {
@@ -165,7 +176,7 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (!added.contains(name)) {
 			added.add(name);
-			int rh = heapSize;
+			int rh = getHeapSizeDirect();
 			if (childs != null) {
 				for (HRBSModel hrbsModel : childs.values()) {
 					rh += hrbsModel.getHeapSize(added);
@@ -180,9 +191,11 @@ public class HRBSModel implements ISetN, IHeap {
 	public int getHeapSize() {
 		return getHeapSize(null);
 	}
-
+	public int getHeapSizeDirect() {
+		return getDirectiveAsInt("heap");
+	}
 	public void setHeapSize(int heapSize) {
-		this.heapSize = heapSize;
+		directives.put("heap", heapSize+"");
 	}
 
 	public HRBSModel() {
@@ -208,11 +221,11 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private String getHeapDirective() {
-		return ";heap = " + heapSize;
+		return ";heap = " + getHeapSizeDirect();
 	}
 
 	private String getNDirective() {
-		return ";n = " + minimumN;
+		return ";n = " + getMinimumNDirect();
 	}
 
 	private List<String> getSymbolsAsStrings() {
@@ -303,20 +316,20 @@ public class HRBSModel implements ISetN, IHeap {
 		additionalCommands.clear();
 		additionalSymbols.clear();
 		Map<String, String> lclSymbolNameMap = new HashMap<>();
-		HRACModel m = new HRACModel();
-		m.setN(getMinimumN());
-		m.setHeapSize(getHeapSize());
+		HRACModel m = new HRACModel();		
 		//copy all directives to hrac model
 		for (Entry<String, String> entry : directives.entrySet()) {
 			String key = entry.getKey();
 			String val = entry.getValue();
 			m.addDirective(key, val);
 		}
+		m.setN(getMinimumN());
+		m.setHeapSize(getHeapSize());
 		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
 				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));
 			}
-		}
+		}		
 		lclSymbols.addAll(additionalSymbols);
 		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();

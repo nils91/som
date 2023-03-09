@@ -2,6 +2,20 @@ package de.dralle.som.languages.hrbs.model;
 
 public class HRBSMemoryAddressOffset implements Cloneable {
 	private int offset;
+	public HRBSMemoryAddressOffset() {
+		this(0);
+	}
+	public HRBSMemoryAddressOffset(int offset) {
+		this(offset,null);
+	}
+	public HRBSMemoryAddressOffset(int offset, String directiveAccessName) {
+		super();
+		this.offset = offset;
+		this.directiveAccessName = directiveAccessName;
+	}public HRBSMemoryAddressOffset(String directiveAccessName) {
+		this(0,directiveAccessName);
+	}
+
 	private String directiveAccessName;
 	public int getOffset() {
 		return offset;
@@ -20,7 +34,13 @@ public class HRBSMemoryAddressOffset implements Cloneable {
 	}
 
 	public String asCode() {
-		return "";
+		String s = "[";
+		if(directiveAccessName!=null) {
+			s+=String.format("$%s", directiveAccessName);
+		}else {
+			s+=offset+"";
+		}
+		return s+"]";
 	}
 
 	@Override

@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Custom_command_call_no_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Instance_idContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
@@ -37,8 +38,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 		if(ctx.offset_specify()!=null) {
 			HRBSMemoryAddressOffsetSpecifyVisitor maov = new HRBSMemoryAddressOffsetSpecifyVisitor(address);
 			for (int i = 0; i < ctx.offset_specify().size();i++) {
-				maov.setNxtOffset(i);
-				de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
+				maov.setNxtOffset(i);HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
 				os.accept(maov);
 			}
 		}

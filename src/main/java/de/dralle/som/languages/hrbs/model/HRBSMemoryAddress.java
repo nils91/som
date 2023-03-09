@@ -31,12 +31,15 @@ public class HRBSMemoryAddress implements Cloneable{
 	private HRBSMemoryAddressOffset offset;
 	private HRBSMemoryAddressOffset derefOffset;
 
-	public Integer getOffset() {
+	public HRBSMemoryAddressOffset getOffset() {
 		return offset;
 	}
 
-	public void setOffset(Integer offset) {
+	public void setOffset(HRBSMemoryAddressOffset offset) {
 		this.offset = offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = new HRBSMemoryAddressOffset(offset);
 	}
 
 	public HRBSMemoryAddress(HRBSSymbol symbol) {
@@ -112,10 +115,10 @@ public class HRBSMemoryAddress implements Cloneable{
 			copy.symbol=symbol.clone();
 		}		
 		if(offset!=null) { 
-			copy.offset=offset.intValue();
+			copy.offset=offset.clone();
 		}		
 		if(derefOffset!=null) { 
-			copy.derefOffset=derefOffset.intValue();
+			copy.derefOffset=derefOffset.clone();
 		}		
 		copy.isDeref=isDeref;
 		copy.tgtCmd=tgtCmd;
@@ -153,13 +156,15 @@ public class HRBSMemoryAddress implements Cloneable{
 		this.isDeref = isDeref;
 	}
 
-	public Integer getDerefOffset() {
+	public HRBSMemoryAddressOffset getDerefOffset() {
 		return derefOffset;
 	}
 
-	public void setDerefOffset(Integer derefOffset) {
+	public void setDerefOffset(HRBSMemoryAddressOffset derefOffset) {
 		this.derefOffset = derefOffset;
 	}
-
+	public void setDerefOffset(int derefOffset) {
+		this.derefOffset = new HRBSMemoryAddressOffset(derefOffset);
+	}
 	
 }

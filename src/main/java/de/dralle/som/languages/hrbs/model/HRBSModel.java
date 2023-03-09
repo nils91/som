@@ -582,15 +582,12 @@ public class HRBSModel implements ISetN, IHeap {
 			odCommandLblSymbol.setName(odCommandLabelName);
 			odCommandLblSymbol.setType(HRBSSymbolType.local);
 			HRBSMemoryAddress odCommandLblTargetSymbol = new HRBSMemoryAddress(odCommandLblSymbol);
-			if (originalMemoryAddress.getDerefOffset() == null) {
-				odCommandLblTargetSymbol.setOffset(1);
-			} else {
-				odCommandLblTargetSymbol.setOffset(originalMemoryAddress.getDerefOffset() + 1);
-			}
+			odCommandLblTargetSymbol.setOffset(1);
 			odSymbol.setTargetSymbol(odCommandLblTargetSymbol);
 			addSymbols.add(odSymbol);
 
 			HRBSCommand odCommand = new HRBSCommand();
+			odCommand.setLabelType(HRBSSymbolType.local);
 			odCommand.setLabel(odCommandLabelName);
 			odCommand.setCmd(Opcode.NAR.name());
 			HRBSMemoryAddress odCommandTarget = new HRBSMemoryAddress(originalMemoryAddress.getSymbol());
@@ -598,7 +595,9 @@ public class HRBSModel implements ISetN, IHeap {
 			odCommand.addTarget(odCommandTarget);
 			addCommands.add(odCommand);
 
-			return new HRBSMemoryAddress(odSymbol);
+			HRBSMemoryAddress reta = new HRBSMemoryAddress(odSymbol);
+			reta.setOffset(originalMemoryAddress.getDerefOffset());
+			return reta;
 		} else {
 			return originalMemoryAddress;
 		}
@@ -667,14 +666,16 @@ public class HRBSModel implements ISetN, IHeap {
 		}else {
 			newTargetSymbol = getAsHRACSymbolNoTgt(originalMemoryAddress.getSymbol(), localSymbolNames);
 		}		
-		Integer newOffset = null;
+		HRBSMemoryAddressOffset newOffset = null;
 
 		if (originalMemoryAddress.getOffset() != null) {
 			newOffset = originalMemoryAddress.getOffset();
 		}
 		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
 		newTgtAddress.setSymbol(newTargetSymbol);
-		newTgtAddress.setOffset(newOffset);
+		newTgtAddress.setOffset(newOffset.getOffset());
+		newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName()!=null);
+		newTgtAddress.setOffsetSpecialName(newOffset.getDirectiveAccessName());
 		return newTgtAddress;
 	}
 

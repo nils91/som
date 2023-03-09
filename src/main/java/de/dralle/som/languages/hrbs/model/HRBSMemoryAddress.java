@@ -28,8 +28,8 @@ public class HRBSMemoryAddress implements Cloneable{
 		this.tgtCmd = tgtCmd;
 	}
 
-	private Integer offset;
-	private Integer derefOffset;
+	private HRBSMemoryAddressOffset offset;
+	private HRBSMemoryAddressOffset derefOffset;
 
 	public Integer getOffset() {
 		return offset;

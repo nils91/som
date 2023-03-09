@@ -44,13 +44,18 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	}
 
 	private HRACCommand cmd = null;
-
 	public List<HRACCommand> getCommands() {
+		return getCommands(true);
+	}
+	public List<HRACCommand> getCommands(boolean retainLabel) {
 		List<HRACCommand> returnList = new ArrayList<>();
 		if (cmd != null) {
 			HRACMemoryAddress ma = cmd.getTarget();
 			if (ma != null && ma.isOffsetSpecial()) {
 				HRACCommand ncmd = cmd.clone();
+				if(!retainLabel) {
+					ncmd.setLabel(null);
+				}
 				ma = ma.clone();
 				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
 				ma.setOffsetSpecial(false);
@@ -68,7 +73,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				model.addAddDirective("i", si);
 				for (HRACForDup hracForDup : childModelCommands) {
 					hracForDup.parent = model;
-					returnList.addAll(hracForDup.getCommands());
+					returnList.addAll(hracForDup.getCommands(i==0));
 				}
 			}
 		}

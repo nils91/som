@@ -104,6 +104,30 @@ command
 	)? SEMICOLON
 ;
 
+directive_access
+:
+	DOLLAR directive_name
+;
+
+DOLLAR
+:
+	'$'
+;
+
+offset_specify_number
+:
+	(
+		NEG_INT
+		| INT
+		| directive_access
+	)
+;
+
+offset_specify_range
+:
+	B_OPEN offset_specify_number COLON offset_specify_number B_CLOSE
+;
+
 custom_command_call_no_param
 :
 	NAME instance_id?
@@ -143,8 +167,7 @@ offset_specify
 :
 	B_OPEN
 	(
-		NEG_INT
-		| INT
+		offset_specify_number
 	) B_CLOSE
 ;
 
@@ -153,6 +176,7 @@ cnt_specify
 	B_OPEN
 	(
 		INT
+		| directive_access
 	) B_CLOSE
 ;
 

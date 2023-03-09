@@ -54,4 +54,17 @@ class HRACCompileTest {
 		HRASModel hras= c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
       		assertEquals(1+hras.getN()+2, hras.getCommandCount());//1 added by compiler, N in loop (upper and lower are included) and 2 at the end
 	}
+	@Test
+	void testNestedRunningForDup() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac",SOMFormats.HRAC);
+		HRASModel hras= c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
+      		assertEquals(1+hras.getN()+getSum(hras.getN()), hras.getCommandCount());//1 added by compiler, N in loop (upper and lower are included) and 2 at the end
+	}
+
+	private int getSum(int n) {
+		if(n==0) {
+			return 0;
+			
+		}return n+getSum(n-1);
+	}
 }

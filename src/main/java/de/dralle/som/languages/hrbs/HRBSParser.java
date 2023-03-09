@@ -28,7 +28,7 @@ public class HRBSParser {
 		HRBSGrammarLexer lexer = new HRBSGrammarLexer(new ANTLRInputStream(is));
 		HRBSGrammarParser parser = new HRBSGrammarParser(new CommonTokenStream(lexer));
 		de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext pt = parser.program();
-		HRBSModel model = pt.accept(new de.dralle.som.languages.hrbs.visitors.ProgramVisitor());
+		HRBSModel model = pt.accept(new de.dralle.som.languages.hrbs.visitors.HRBSProgramVisitor());
 		return model;
 	}
 	public HRBSModel parse(String s) throws IOException {

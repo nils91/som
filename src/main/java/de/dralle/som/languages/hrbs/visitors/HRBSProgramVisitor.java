@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_headContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_head_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandContext;
@@ -36,15 +37,15 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
+public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 
 	private HRBSModel model;
 
-	public ProgramVisitor() {
+	public HRBSProgramVisitor() {
 		model = new HRBSModel();
 	}
 
-	public ProgramVisitor(HRBSModel model) {
+	public HRBSProgramVisitor(HRBSModel model) {
 		this.model = model;
 	}
 
@@ -134,7 +135,7 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		}
 		if (ctx.command_def() != null) {
 			for (Command_defContext com : ctx.command_def()) {
-				HRBSModel lclModel = com.accept(new ProgramVisitor());
+				HRBSModel lclModel = com.accept(new HRBSProgramVisitor());
 				if ("MAIN".equalsIgnoreCase(lclModel.getName())) {
 					model = lclModel;
 				} else {
@@ -162,12 +163,18 @@ public class ProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	}
 
 	@Override
-	public HRBSModel visitDirective(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectiveContext ctx) {
-		if (ctx.HEAP() != null) {
-			model.setHeapSize(Integer.parseInt(ctx.INT().getText()));
-		} else if (ctx.D_N() != null) {
-			model.setMinimumN(Integer.parseInt(ctx.INT().getText()));
-		}
+	public HRBSModel visitDirective(HRBSGrammarParser.DirectiveContext ctx) {
+		if (ctx.directive_name() != null) {
+			String name=ctx.directive_name().getText();
+			String value=null;
+			if(ctx.INT()!=null) {
+				value=ctx.INT().getText();
+			}
+			if(ctx.DIRECTIVE_VALUE_STR()!=null) {
+				value=ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1);
+			}
+			model.addDirective(name,value);
+		} 
 		return model;
 	}
 

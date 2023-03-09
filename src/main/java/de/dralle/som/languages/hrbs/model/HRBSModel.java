@@ -38,6 +38,10 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
 public class HRBSModel implements ISetN, IHeap {
 
 	private String name;
+	/**
+	 * Map of all directives.
+	 */
+	private Map<String,String> directives=new HashMap<>();
 	private List<String> params;
 	/**
 	 * Maps available commands by their name to their models.
@@ -302,6 +306,12 @@ public class HRBSModel implements ISetN, IHeap {
 		HRACModel m = new HRACModel();
 		m.setN(getMinimumN());
 		m.setHeapSize(getHeapSize());
+		//copy all directives to hrac model
+		for (Entry<String, String> entry : directives.entrySet()) {
+			String key = entry.getKey();
+			String val = entry.getValue();
+			m.addDirective(key, val);
+		}
 		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
 				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));
@@ -347,14 +357,14 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 	}
 
-	private void addCommands(List<HRBSCommand> additionalCommands) {
+	public void addCommands(List<HRBSCommand> additionalCommands) {
 		for (HRBSCommand hrbsCommand : additionalCommands) {
 			addCommand(hrbsCommand);
 		}
 
 	}
 
-	private void addSymbols(List<HRBSSymbol> additionalSymbols) {
+	public void addSymbols(List<HRBSSymbol> additionalSymbols) {
 		for (HRBSSymbol hrbsSymbol : additionalSymbols) {
 			addSymbol(hrbsSymbol);
 		}
@@ -397,7 +407,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalCommands
 	 * @return
 	 */
-	private static HRACCommand convertNARCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
+	public static HRACCommand convertNARCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
 			Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
 		return convertStandardCommands(c, Opcode.NAR, parentCmdName, cmdExecId, symbolNameReplacementMap, m,
 				additionalCommands);
@@ -761,4 +771,14 @@ public class HRBSModel implements ISetN, IHeap {
 		this.childs = childs;
 	}
 
+	public Map<String,String> getDirectives() {
+		return directives;
+	}
+
+	public void setDirectives(Map<String,String> directives) {
+		this.directives = directives;
+	}
+	public void addDirective(String name, String value) {
+		directives.put(name, value);
+	}
 }

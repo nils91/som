@@ -67,6 +67,9 @@ public class HRASModel implements ISetN{
 	private Map<String, MemoryAddress> symbols;
 	private Map<MemoryAddress, Command> commands;
 
+	public int getCommandCount() {
+		return commands.size();
+	}
 	public void addSymbol(String name, MemoryAddress value) {
 		if (symbols == null) {
 			symbols = new LinkedHashMap<>();

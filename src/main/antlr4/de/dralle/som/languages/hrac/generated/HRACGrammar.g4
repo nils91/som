@@ -102,8 +102,11 @@ directive_access
 :
 	DOLLAR directive_name
 ;
-DOLLAR: '$';
 
+DOLLAR
+:
+	'$'
+;
 
 directive_name
 :

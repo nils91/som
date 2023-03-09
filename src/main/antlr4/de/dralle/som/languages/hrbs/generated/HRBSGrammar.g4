@@ -11,8 +11,12 @@ cmd_head_param:NAME;
 directives: (directive NEWLINE)+;
 symbol_dec: (ALLOC|SYMBOL) NAME cnt_specify? symbol_os?;
 def_scope:(GLOBAL|SHARED|LOCAL);
-directive: SEMICOLON (HEAP|D_N) EQ INT;
-
+directive: SEMICOLON directive_name EQ (INT | DIRECTIVE_VALUE_STR);
+directive_name
+:
+	INT
+	| SYMBOL
+;
 command: commad_label? NEWLINE? (NAR|NAW|custom_command_call_no_param) ((symbol_os COMMA)* symbol_os)? SEMICOLON;
 custom_command_call_no_param:NAME instance_id?;
 instance_id: B_OPEN NAME B_CLOSE;
@@ -64,6 +68,17 @@ FILEPATH:[\'"] .+? [\'"];
 NAME:[a-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 NEG_INT: DASH INT;
+DIRECTIVE_VALUE_STR
+:
+	(
+		'"'
+		| '\''
+	) .*?
+	(
+		'"'
+		| '\''
+	)
+;
 EQ:'=';
 COLON:':';
 SEMICOLON:';';

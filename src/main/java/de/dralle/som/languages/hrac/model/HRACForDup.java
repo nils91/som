@@ -87,12 +87,14 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			List<HRACSymbol> childModelCommands = model.getSymbolsInclFrCommands();
 			for (int i = 0; i < range.getRange(parent).length; i++) {
 				int si = range.getRange(parent)[i];
+				model.addAddDirective("i", si);
 				for (HRACSymbol hracForDup : childModelCommands) {
 					if (hracForDup.isBitCntSpecial()) {
 						hracForDup = hracForDup.clone();
 						hracForDup.setBitCntSpecial(false);
-						hracForDup.setBitCnt(si);
+						hracForDup.setBitCnt(model.getDirectiveAsInt(hracForDup.getSpecialName()));
 					}
+					returnList.add(hracForDup);
 				}
 			}
 		}

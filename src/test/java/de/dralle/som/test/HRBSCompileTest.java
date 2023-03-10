@@ -18,6 +18,7 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class HRBSCompileTest {
@@ -47,5 +48,9 @@ class HRBSCompileTest {
 	void test4bitAddCompileForDup() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs",SOMFormats.HRBS);
 		HRACModel hrac= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAC);
-      		assertNotNull(hrac);}
+		HRASModel hras= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAS);
+		HRAVModel hrav= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAV);
+      		assertNotNull(hrac);
+      		assertNotNull(hras);
+      		assertNotNull(hrav);}
 }

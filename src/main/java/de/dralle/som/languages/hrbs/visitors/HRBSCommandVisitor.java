@@ -29,6 +29,9 @@ public class HRBSCommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 		if(ctx.commad_label()!=null) {
 			ctx.commad_label().accept(this);
 		}
+		if(ctx.offset_specify_range()!=null) {
+		c.setRange(	ctx.offset_specify_range().accept(new HRBSRangeVisitor()));
+		}
 		if (ctx.custom_command_call_no_param()!=null) {
 			ctx.custom_command_call_no_param().accept(this);
 		}

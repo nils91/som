@@ -44,8 +44,8 @@ class HRBSCompileTest {
 	}
 
 	@Test
-	void testSimpleFforDup() throws IOException {
+	void test4bitAddCompileForDup() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs",SOMFormats.HRBS);
-		HRACModel hras= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAS);
-      		assertNotNull(hras);}
+		HRACModel hrac= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAC);
+      		assertNotNull(hrac);}
 }

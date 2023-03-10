@@ -96,7 +96,7 @@ directive_name
 
 command
 :
-	commad_label? NEWLINE? custom_command_call_no_param
+	commad_label? NEWLINE? offset_specify_range? custom_command_call_no_param
 	(
 		(
 			symbol_os COMMA

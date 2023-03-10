@@ -153,6 +153,10 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		}
 		for (HRBSModel hrbsModel : importedModels) {
 			model.addChild(hrbsModel);
+			for (HRBSModel hrbsModel0 : childModels) {//add all imported to all child				
+					hrbsModel0.addChild(hrbsModel);
+				}
+			
 		}
 		for (HRBSModel hrbsModel0 : childModels) {
 			for (HRBSModel hrbsModel1 : childModels) {

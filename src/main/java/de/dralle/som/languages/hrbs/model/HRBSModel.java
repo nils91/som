@@ -468,6 +468,9 @@ public class HRBSModel implements ISetN, IHeap {
 				instId=getCurrentCommandUsage(c) + "";
 			}
 			HRBSModel cmdModel = availChildsCommands.get(cmdName);
+			if(cmdModel==null) {
+				System.out.println("Warning: Command not found: "+cmdName);
+			}
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			HRACModel compiledCmdModel = cmdModel.compileToHRAC(instId,
 					assembleParamMap(cmdModel, c, symbolNameReplacementMap), lclSmblName);

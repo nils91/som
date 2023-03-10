@@ -673,9 +673,10 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
 		newTgtAddress.setSymbol(newTargetSymbol);
+		if(newOffset!=null) {
 		newTgtAddress.setOffset(newOffset.getOffset());
 		newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName()!=null);
-		newTgtAddress.setOffsetSpecialName(newOffset.getDirectiveAccessName());
+		newTgtAddress.setOffsetSpecialName(newOffset.getDirectiveAccessName());}
 		return newTgtAddress;
 	}
 

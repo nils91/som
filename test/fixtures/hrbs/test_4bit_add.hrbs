@@ -1,0 +1,38 @@
+import "test/fixtures/hrbs/individual_commands/ADD14.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND1.hrbs"
+import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
+import "test/fixtures/hrbs/individual_commands/COMPARE3.hrbs"
+import "test/fixtures/hrbs/individual_commands/SET1.hrbs"
+import "test/fixtures/hrbs/individual_commands/CLEAR1.hrbs"
+
+MAIN:
+#5 -> 0101
+	alloc A[4]
+#7 -> 0111
+	alloc B[4]
+#12 -> 1100
+	alloc E[4]
+	alloc R[4]
+	alloc CB
+	CLEAR1 A[0];
+	SET1 A[1];
+	CLEAR1 A[2];
+	SET1 A[3];
+	CLEAR1 B[0];
+	SET1 B[1];
+	SET1 B[2];
+	SET1 B[3];
+	SET1 E[0];
+	SET1 E[1];
+	CLEAR1 E[2];
+	CLEAR1 E[3];
+	ADD041424314 A, B, R, CB;
+	COMPARE04012 R, E;
+	
+COMPARE04142 A, B:
+	[0:3] COMPARE3 A[$i], B[$i], CR[$i];
+	SET0;
+	[0:3] AND1 CR[$i];
+	
+ADD041424314 I0, I1, O, CB:
+	[3:0] ADD14 I0[$i], I1[$i], O[$i], CB;

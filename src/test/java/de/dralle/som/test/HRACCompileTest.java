@@ -67,4 +67,9 @@ class HRACCompileTest {
 			
 		}return n+getSum(n-1);
 	}
+	@Test
+	void testFDSymbolGen() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac",SOMFormats.HRAC);
+		IMemspace m= c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+      		assertNotNull(m);	}
 }

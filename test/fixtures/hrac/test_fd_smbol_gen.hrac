@@ -1,0 +1,6 @@
+alloc A[5]
+for [0:4] dup:
+{
+	symbol A_MS A[$i]
+	NAW A_MS[$i] 
+}

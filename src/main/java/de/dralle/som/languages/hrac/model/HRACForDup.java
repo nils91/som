@@ -1,7 +1,10 @@
 package de.dralle.som.languages.hrac.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
@@ -13,6 +16,8 @@ import de.dralle.som.ISetN;
  *
  */
 public class HRACForDup implements ISetN, IHeap, Cloneable {
+	private static int runId;
+	private int id;
 	private HRACModel parent;
 
 	public HRACModel getModel() {
@@ -44,24 +49,43 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	}
 
 	private HRACCommand cmd = null;
+	private Map<String,String> localSymbolNameReplacementMap=new HashMap<>();
+
 	public List<HRACCommand> getCommands() {
-		return getCommands(true);
+		return getCommands(null,true);
 	}
-	public List<HRACCommand> getCommands(boolean retainLabel) {
+	
+	public static <V, K> void putNoOverwrite(Map<K,V> src,Map<K,V> tgt) {
+		if(src!=null) {
+			if(tgt!=null) {
+				for (Entry<K, V> entry : src.entrySet()) {
+					K key = entry.getKey();
+					V val = entry.getValue();
+					tgt.putIfAbsent(key, val);
+					
+				}
+			}
+		}
+	}
+
+	public List<HRACCommand> getCommands(Map<String, String> symbolNameReplacementMa,boolean retainLabel) {
 		List<HRACCommand> returnList = new ArrayList<>();
+		putNoOverwrite(symbolNameReplacementMa, localSymbolNameReplacementMap);		
 		if (cmd != null) {
 			HRACMemoryAddress ma = cmd.getTarget();
 			if (ma != null && ma.isOffsetSpecial()) {
 				HRACCommand ncmd = cmd.clone();
-				if(!retainLabel) {
+				if (!retainLabel) {
 					ncmd.setLabel(null);
 				}
 				ma = ma.clone();
 				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
 				ma.setOffsetSpecial(false);
-				ncmd.setTarget(ma);	
+				HRACSymbol symbol = ma.getSymbol();
+				symbol.setName(localSymbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));
+				ncmd.setTarget(ma);
 				returnList.add(ncmd);
-			}else {
+			} else {
 				returnList.add(cmd);
 			}
 		}
@@ -73,28 +97,39 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				model.addAddDirective("i", si);
 				for (HRACForDup hracForDup : childModelCommands) {
 					hracForDup.parent = model;
-					returnList.addAll(hracForDup.getCommands(i==0));
+					returnList.addAll(hracForDup.getCommands(localSymbolNameReplacementMap,i == 0));
 				}
 			}
 		}
 		return returnList;
 	}
-
 	public List<HRACSymbol> getSymbols() {
+		return getSymbols(null);
+	}
+	public List<HRACSymbol> getSymbols(Map<String, String> symbolNameReplacementMap) {
 		List<HRACSymbol> returnList = new ArrayList<>();
-
+		putNoOverwrite(symbolNameReplacementMap, localSymbolNameReplacementMap);
 		if (model != null) {
-			List<HRACSymbol> childModelCommands = model.getSymbolsInclFrCommands();
+			List<HRACForDup> childModelCommands = model.getCommands();
+			List<HRACSymbol> childModelSymbols = model.getSymbolsInclFrCommands();
 			for (int i = 0; i < range.getRange(parent).length; i++) {
 				int si = range.getRange(parent)[i];
 				model.addAddDirective("i", si);
-				for (HRACSymbol hracForDup : childModelCommands) {
-					if (hracForDup.isBitCntSpecial()) {
-						hracForDup = hracForDup.clone();
-						hracForDup.setBitCntSpecial(false);
-						hracForDup.setBitCnt(model.getDirectiveAsInt(hracForDup.getSpecialName()));
+				for (HRACSymbol symbol : childModelSymbols) {
+					symbol = symbol.clone();
+					String newSymbolName = symbol.getName() + "_FD" + id+"_"+si;
+					localSymbolNameReplacementMap.put(symbol.getName(), newSymbolName);
+					symbol.setName(newSymbolName);
+					if (symbol.isBitCntSpecial()) {
+						symbol.setBitCntSpecial(false);
+						symbol.setBitCnt(model.getDirectiveAsInt(symbol.getSpecialName()));
 					}
-					returnList.add(hracForDup);
+					if (symbol.getTargetSymbol() != null) {
+						HRACMemoryAddress ma = symbol.getTargetSymbol();
+						symbol=ma.getSymbol();
+						symbol.setName(localSymbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));
+					}
+					returnList.add(symbol);
 				}
 			}
 		}
@@ -104,6 +139,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	public HRACForDup(HRACCommand cmd) {
 		super();
 		this.cmd = cmd;
+		id = runId++;
 	}
 
 	public HRACForDup() {

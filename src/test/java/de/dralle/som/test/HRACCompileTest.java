@@ -70,6 +70,17 @@ class HRACCompileTest {
 	@Test
 	void testFDSymbolGen() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac",SOMFormats.HRAC);
+		HRASModel hras=c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
 		IMemspace m= c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
       		assertNotNull(m);	}
+	@Test
+	void testFDCorrectAllocNumm() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac",SOMFormats.HRAC);
+		HRASModel m= c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
+      	assertEquals(9+5, m.getSymbolCount());	}//9 symbols should be added by compiler
+	@Test
+	void testFDIndependentAlloc() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac",SOMFormats.HRAC);
+		IMemspace m= c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+      		assertNotNull(new SOMBitcodeRunner((ISomMemspace) m).execute());	}
 }

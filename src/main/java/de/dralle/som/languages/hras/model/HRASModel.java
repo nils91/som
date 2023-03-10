@@ -224,4 +224,8 @@ public class HRASModel implements ISetN{
 		}
 		return hrav;
 	}
+
+	public Integer getSymbolCount() {
+		return symbols.size();
+	}
 }

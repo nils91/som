@@ -21,7 +21,34 @@ import de.dralle.som.languages.hras.model.MemoryAddress;
  * @author Nils
  *
  */
-public class HRACModel implements ISetN, IHeap {
+public class HRACModel implements ISetN, IHeap,Cloneable {
+
+	@Override
+	public HRACModel clone() {
+		HRACModel clone=null;
+		try {
+			clone= (HRACModel) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		clone.builtins=new HashMap<>(builtins);
+		clone.directives=new HashMap<>(directives);
+		clone.additionalDirectives=new HashMap<>(additionalDirectives);
+		if(symbols!=null) {
+			clone.symbols=new ArrayList<>();
+			for (HRACSymbol hracForDup : symbols) {
+				clone.symbols.add(hracForDup.clone());
+			}
+		}
+		if(commands!=null) {
+			clone.commands=new ArrayList<>();
+			for (HRACForDup hracForDup : commands) {
+				clone.commands.add(hracForDup);
+			}
+		}
+		return clone;
+	}
 
 	private Map<String, Integer> builtins;
 	private Map<String, String> directives;// as parsed
@@ -241,7 +268,7 @@ public class HRACModel implements ISetN, IHeap {
 	}
 
 	public HRASModel compileToHRAS() {
-		HRASModel m = new HRASModel();
+		HRASModel m = new HRASModel();		
 		int n = findN();
 		// add calculate n as directive to be used later on
 		additionalDirectives.put("N", n + "");
@@ -330,6 +357,30 @@ public class HRACModel implements ISetN, IHeap {
 		}
 		return allSymbols;
 	}
+	
+	/**
+	 * Adds commands and symbols from one hrac model to another (from other to
+	 * target, returns target)
+	 * 
+	 * @param target
+	 * @param other
+	 * @return
+	 */
+	public    void addCommandsAndSymbolsFromOther(HRACModel other) {
+		List<HRACSymbol> osymbols = other.getSymbols();
+		List<HRACForDup> oCommands = other.getCommands();
+		if (osymbols != null) {
+			for (HRACSymbol s : osymbols) {
+				addSymbol(s);
+			}
+		}
+		if (oCommands != null) {
+			for (HRACForDup hracCommand : oCommands) {
+				addCommand(hracCommand);
+			}
+		}
+	}
+
 
 	public void addDirective(String name, String value) {
 		directives.put(name, value);
@@ -349,5 +400,59 @@ public class HRACModel implements ISetN, IHeap {
 
 	public void addAddDirectives(Map<String, String> additionals) {
 		additionalDirectives.putAll(additionals);
+	}
+
+	public Map<String, String> renameSymbols(Map<String, String> symbolNameReplacementMap, String suffix) {
+		if(symbolNameReplacementMap==null) {
+			symbolNameReplacementMap=new HashMap<>();
+		}
+		for (HRACSymbol hracForDup : symbols) {
+			String newName=hracForDup.getName()+suffix;
+			symbolNameReplacementMap.put(hracForDup.getName(), newName);
+			hracForDup.setName(newName);
+		}
+		return symbolNameReplacementMap;
+	}
+
+	public void replaceSymbolTargets(Map<String, String> symbolNameReplacementMap) {
+		for (HRACSymbol hracForDup : symbols) {
+			if(hracForDup.getTargetSymbol()!=null) {
+				HRACMemoryAddress ma = hracForDup.getTargetSymbol();
+				HRACSymbol mas = ma.getSymbol();
+				mas.setName(symbolNameReplacementMap.getOrDefault(mas.getName(), mas.getName()));
+			}
+		}		
+	}
+
+	public void replaceCommandTargets(Map<String, String> symbolNameReplacementMap) {
+		for (HRACForDup hracForDup : commands) {
+			hracForDup.replaceTargets(symbolNameReplacementMap);
+		}		
+		
+	}
+
+	public Map<String, String> renameLabels(Map<String, String> symbolNameReplacementMap, String suffix) {
+		if(symbolNameReplacementMap==null) {
+			symbolNameReplacementMap=new HashMap<>();
+		}
+		for (HRACForDup hracForDup : commands) {
+			symbolNameReplacementMap=hracForDup.renameLabels(symbolNameReplacementMap,suffix);
+		}
+		return symbolNameReplacementMap;
+	}
+	
+	/**
+	 * Resolves all for loops.
+	 */
+	public void flatten() {
+		List<HRACCommand> commandList=new ArrayList<>();
+		for (HRACForDup hracForDup : commands) {
+			if(hracForDup.getRange()==null) {
+				commandList.add(hracForDup.getCmd());
+			}else {
+				List<HRACModel> forModels=hracForDup.getConvertedModels();
+				
+			}
+		}
 	}
 }

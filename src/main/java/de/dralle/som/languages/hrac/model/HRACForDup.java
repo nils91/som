@@ -81,29 +81,15 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			}
 		}
 	}
-
-	public void replaceTargets(Map<String, String> symbolNameReplacementMap) {
+/**
+ * Note: Not Recursive on purpose.
+ * @param symbolNameReplacementMap
+ */
+	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {
 		if(cmd!=null) {
 			HRACMemoryAddress ma = cmd.getTarget();			
 			HRACSymbol symbol = ma.getSymbol();
 			symbol.setName(symbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));		
-		}
-		if(model!=null) {
-			if(range!=null) {
-				for (int i = 0; i < range.getRange(parent).length; i++) {
-					int si = range.getRange(parent)[i];
-					HRACModel modelClone = model.clone();
-					symbolNameReplacementMap = modelClone.renameSymbols(symbolNameReplacementMap, "_FD" + id+"_"+si);
-					symbolNameReplacementMap = modelClone.renameLabels(symbolNameReplacementMap, "_FD" + id+"_L_"+si);
-					modelClone.replaceSymbolTargets(symbolNameReplacementMap);
-					modelClone.replaceCommandTargets(symbolNameReplacementMap);
-				}
-			}else {
-				symbolNameReplacementMap = model.renameSymbols(symbolNameReplacementMap, "_FD" + id);
-				symbolNameReplacementMap = model.renameLabels(symbolNameReplacementMap, "_FD" + id+"_L");
-				model.replaceSymbolTargets(symbolNameReplacementMap);
-				model.replaceCommandTargets(symbolNameReplacementMap);
-			}
 		}
 	}
 
@@ -149,6 +135,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 		return retList;
 	}
+	/**
+	 * Note: Not recursive on purpose.
+	 * @param symbolNameReplacementMap
+	 * @param suffix
+	 * @return
+	 */
 	public Map<String, String> renameLabels(Map<String, String> symbolNameReplacementMap, String suffix) {
 		if(symbolNameReplacementMap==null) {
 			symbolNameReplacementMap=new HashMap<>();
@@ -160,7 +152,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				symbolNameReplacementMap.put(label.getName(), newName);
 				label.setName(newName);
 			}				
-		}		
+		}
 		return symbolNameReplacementMap;
 	}
 
@@ -324,6 +316,26 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				model.flatten();
 				retList.add(model);
 			}
+		}		
+		return retList;
+	}
+
+	public List<HRACModel> precompileChilds(String suffix,Map<String, String> symbolNameReplacementList) {
+		List<HRACModel> retList=new ArrayList<>();
+		if(model!=null) {
+			model.setMinimumN(parent.getN());
+			if(range!=null) {
+				for (int i = 0; i < range.getRange(parent).length; i++) {
+					int si = range.getRange(parent)[i];
+					HRACModel modelClone = model.clone();
+					modelClone.addAddDirective("i", si);
+					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList);
+					retList.add(modelClone);
+				}
+			}else {
+				model.precompile(suffix+"_FD"+id, symbolNameReplacementList);
+				retList.add(model);
+			}			
 		}		
 		return retList;
 	}

@@ -50,10 +50,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	private HRACCommand cmd = null;
 
-	public List<HRACCommand> getCommands() {
-		return getCommands(true);
-	}
-
+	
 	public static <V, K> void putNoOverwrite(Map<K, V> src, Map<K, V> tgt) {
 		if (src != null) {
 			if (tgt != null) {
@@ -62,21 +59,6 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 					V val = entry.getValue();
 					tgt.putIfAbsent(key, val);
 
-				}
-			}
-		}
-	}
-
-	public void convertSymbolNames(Map<String, String> symbolNameReplacementMap) {
-		Map<String, String> symbolNameReplacementMap = new HashMap<>();
-		if (model != null) {
-			List<HRACSymbol> symbols = model.getSymbols();
-			for (HRACSymbol hracSymbol : symbols) {
-				HRACSymbol symbol = hracSymbol.clone();
-				for (int i = 0; i < range.getRange(parent).length; i++) {
-					int si = range.getRange(parent)[i];
-					String newName = symbol.getName() + "_FD" + id + "_" + si;
-					symbolNameReplacementMap.put(hracSymbol.getName(), newName);
 				}
 			}
 		}
@@ -91,49 +73,6 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			HRACSymbol symbol = ma.getSymbol();
 			symbol.setName(symbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));		
 		}
-	}
-
-	public List<HRACModel> resolve(Map<String, String> symbolNameReplacementMap) {
-		if (symbolNameReplacementMap == null) {
-			symbolNameReplacementMap = new HashMap<>();
-		}
-		List<HRACModel> retList = new ArrayList<>();
-		if (range != null) {
-			for (int i = 0; i < range.getRange(parent).length; i++) {
-				int si = range.getRange(parent)[i];
-				if (cmd != null) {
-
-				} else if (model != null) {
-
-				}
-			}
-		} else {
-			if (model != null) {
-				HRACModel newModel = model.clone();
-				symbolNameReplacementMap = newModel.renameSymbols(symbolNameReplacementMap, "_FD" + id);
-				newModel.replaceSymbolTargets(symbolNameReplacementMap);
-				newModel.replaceCommandTargets(symbolNameReplacementMap);
-				retList.add(newModel);
-			}
-			if (cmd == null) {
-				HRACCommand ncmd = cmd.clone();
-				HRACMemoryAddress ma = ncmd.getTarget();
-				if (!retainLabel) {
-					ncmd.setLabel(null);
-				}
-				if (parent != null) {
-					ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
-					ma.setOffsetSpecial(false);
-				}
-				HRACSymbol symbol = ma.getSymbol();
-				symbol.setName(symbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));
-				ncmd.setTarget(ma);
-				HRACModel hrac = new HRACModel();
-				hrac.addCommand(ncmd);
-				retList.add(hrac);
-			}
-		}
-		return retList;
 	}
 	/**
 	 * Note: Not recursive on purpose.
@@ -155,73 +94,6 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 		return symbolNameReplacementMap;
 	}
-
-	public List<HRACCommand> getCommands(boolean retainLabel) {
-		List<HRACCommand> returnList = new ArrayList<>();
-		if (cmd != null) {
-			HRACMemoryAddress ma = cmd.getTarget();
-			if (ma != null && ma.isOffsetSpecial()) {
-				HRACCommand ncmd = cmd.clone();
-				if (!retainLabel) {
-					ncmd.setLabel(null);
-				}
-				ma = ma.clone();
-				ma.setOffset(parent.getDirectiveAsInt(ma.getOffsetSpecialnName()));
-				ma.setOffsetSpecial(false);
-				HRACSymbol symbol = ma.getSymbol();
-				// symbol.setName(localSymbolNameReplacementMap.getOrDefault(symbol.getName(),
-				// symbol.getName()));
-				ncmd.setTarget(ma);
-				returnList.add(ncmd);
-			} else {
-				returnList.add(cmd);
-			}
-		}
-		if (model != null) {
-			model.addAddDirectives(parent.getAllDirectives());
-			List<HRACForDup> childModelCommands = model.getCommands();
-			for (int i = 0; i < range.getRange(parent).length; i++) {
-				int si = range.getRange(parent)[i];
-				model.addAddDirective("i", si);
-				for (HRACForDup hracForDup : childModelCommands) {
-					hracForDup.parent = model;
-					returnList.addAll(hracForDup.getCommands(i == 0));
-				}
-			}
-		}
-		return returnList;
-	}
-
-	public List<HRACSymbol> getSymbols() {
-		return getSymbols(null);
-	}
-
-	public List<HRACSymbol> getSymbols(Map<String, String> symbolNameReplacementMap) {
-		List<HRACSymbol> returnList = new ArrayList<>();
-		if (model != null) {
-			List<HRACSymbol> childModelSymbols = model.getSymbolsInclFrCommands();
-			for (int i = 0; i < range.getRange(parent).length; i++) {
-				int si = range.getRange(parent)[i];
-				model.addAddDirective("i", si);
-				for (HRACSymbol symbol : childModelSymbols) {
-					symbol = symbol.clone();
-					symbol.set
-					if (symbol.isBitCntSpecial()) {
-						symbol.setBitCntSpecial(false);
-						symbol.setBitCnt(model.getDirectiveAsInt(symbol.getSpecialName()));
-					}
-					if (symbol.getTargetSymbol() != null) {
-						HRACMemoryAddress ma = symbol.getTargetSymbol();
-						symbol=ma.getSymbol();
-						//symbol.setName(localSymbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));
-					}
-					returnList.add(symbol);
-				}
-			}
-		}
-		return returnList;
-	}
-
 	public HRACForDup(HRACCommand cmd) {
 		super();
 		this.cmd = cmd;
@@ -296,30 +168,6 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	public void setParent(HRACModel parent) {
 		this.parent = parent;
 	}
-
-	public List<HRACModel> getConvertedModels() {
-		List<HRACModel> retList=new ArrayList<>();
-		if(model!=null) {
-			if(range!=null) {
-				for (int i = 0; i < range.getRange(parent).length; i++) {
-					int si = range.getRange(parent)[i];
-					HRACModel modelClone = model.clone();
-					Map<String,String> symbolNameReplacementMap=new HashMap<>();
-					symbolNameReplacementMap = modelClone.renameSymbols(symbolNameReplacementMap, "_FD" + id+"_"+si);
-					symbolNameReplacementMap = modelClone.renameLabels(symbolNameReplacementMap, "_FD" + id+"_L_"+si);
-					modelClone.replaceSymbolTargets(symbolNameReplacementMap);
-					modelClone.replaceCommandTargets(symbolNameReplacementMap);
-					modelClone.flatten();
-					retList.add(modelClone);
-				}
-			}else {
-				model.flatten();
-				retList.add(model);
-			}
-		}		
-		return retList;
-	}
-
 	public List<HRACModel> precompileChilds(String suffix,Map<String, String> symbolNameReplacementList) {
 		List<HRACModel> retList=new ArrayList<>();
 		if(model!=null) {
@@ -338,6 +186,41 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			}			
 		}		
 		return retList;
+	}
+
+	public int getCommandCountRecursive(int n) {
+		int cnt=0;
+		if(range==null) {
+			if(cmd!=null) {
+				cnt+=1;
+			}
+			if(model!=null) {
+				cnt+=model.getCommandCount(n);
+			}
+		}else {
+			int[] rng = range.getRange(parent);
+			if(cmd!=null) {
+				cnt+=rng.length;
+			}if(model!=null) {
+				cnt+=rng.length*model.getCommandCount(n);
+			}
+		}
+		return cnt;
+	}
+
+	public int getSymbolBitCount(int n) {
+		int cnt=0;
+		if(range==null) {			
+			if(model!=null) {
+				cnt+=model.getSymbolBitCnt(n);
+			}
+		}else {
+			int[] rng = range.getRange(parent);
+		if(model!=null) {
+				cnt+=rng.length*model.getSymbolBitCnt(n);
+			}
+		}
+		return cnt;
 	}
 
 	

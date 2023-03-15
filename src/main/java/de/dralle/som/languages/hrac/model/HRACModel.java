@@ -146,18 +146,23 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		addCommand(new HRACForDup(c));
 	}
 
-	private int getSymbolBitCnt(int n) {
+	int getSymbolBitCnt(int n) {
+		addAddDirective("N", n);
 		int cnt = 0;
-		for (HRACSymbol s : getSymbolsInclFrCommands()) {
+		for (HRACSymbol s : symbols) {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
 					if (s.isBitCntSpecial()) {
-						cnt += n;
+						cnt += getDirectiveAsInt(s.getSpecialName());
 					} else {
 						cnt += s.getBitCnt();
 					}
 				}
 			}
+		}
+		for (HRACForDup hracForDup : commands) {
+			hracForDup.setParent(this);
+			cnt+=hracForDup.getSymbolBitCount(n);
 		}
 		return cnt;
 	}
@@ -205,16 +210,25 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 	private int getHeapStartAddress(int n) {
 		return getFixedBitCount(n) + getSymbolBitCnt(n);
 	}
-
+/**
+ * Only works for precompiled models (or thos without any for). Update:Should work for all.
+ * @param n
+ * @return
+ */
 	private int getCommandBitCount(int n) {
-		additionalDirectives.put("N", n+"");
 		int commandSize = getCommandSize(n);
 		int cmdCnt = 1;// one command will be added during the compile
+		cmdCnt+=getCommandCount(n);
+		return (cmdCnt) * commandSize;
+	}
+	public int getCommandCount(int n) {
+		int cmdCnt=0;
+		addAddDirective("N", n);
 		for (HRACForDup hracForDup : commands) {
 			hracForDup.setParent(this);
-			cmdCnt += hracForDup.getCommands().size();
+			cmdCnt+=hracForDup.getCommandCountRecursive(n);
 		}
-		return (cmdCnt) * commandSize;
+		return cmdCnt;
 	}
 
 	private int getCommandSize(int n) {
@@ -268,6 +282,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 	}
 	
 	public void precompile(String suffix,Map<String,String> symbolNameReplacementList) {
+		addAddDirective("N",findN());
 		if(suffix==null) {
 			suffix="";
 		}
@@ -344,11 +359,11 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 
 	public HRASModel compileToHRAS() {
 		HRACModel toc = clone();
-		toc.precompile("", new HashMap<>());
-		HRASModel m = new HRASModel();		
 		int n = toc.findN();
-		// add calculate n as directive to be used later on
 		toc.additionalDirectives.put("N", n + "");
+		toc.precompile("", new HashMap<>());
+		HRASModel m = new HRASModel();			
+		// add calculate n as directive to be used later on		
 		m.setN(n);
 		m.setStartAddressExplicit(true);
 		int startAddress = toc.getStartAdress(n);
@@ -422,17 +437,6 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		setMinimumN(n);
 
 	}
-
-	public List<HRACSymbol> getSymbolsInclFrCommands() {
-		List<HRACSymbol> allSymbols = new ArrayList<>();
-		if (symbols != null) {
-			allSymbols.addAll(symbols);
-		}
-		for (HRACForDup hracSymbol : commands) {
-			allSymbols.addAll(hracSymbol.getSymbols());
-		}
-		return allSymbols;
-	}
 	
 	/**
 	 * Adds commands and symbols from one hrac model to another (from other to
@@ -478,57 +482,12 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		additionalDirectives.putAll(additionals);
 	}
 
-	public Map<String, String> renameSymbols(Map<String, String> symbolNameReplacementMap, String suffix) {
-		if(symbolNameReplacementMap==null) {
-			symbolNameReplacementMap=new HashMap<>();
-		}
+	public HRACSymbol getSymbolByName(String name) {
 		for (HRACSymbol hracForDup : symbols) {
-			String newName=hracForDup.getName()+suffix;
-			symbolNameReplacementMap.put(hracForDup.getName(), newName);
-			hracForDup.setName(newName);
-		}
-		return symbolNameReplacementMap;
-	}
-
-	public void replaceSymbolTargets(Map<String, String> symbolNameReplacementMap) {
-		for (HRACSymbol hracForDup : symbols) {
-			if(hracForDup.getTargetSymbol()!=null) {
-				HRACMemoryAddress ma = hracForDup.getTargetSymbol();
-				HRACSymbol mas = ma.getSymbol();
-				mas.setName(symbolNameReplacementMap.getOrDefault(mas.getName(), mas.getName()));
+			if(hracForDup.getName().equals(name)) {
+				return hracForDup;
 			}
-		}		
-	}
-
-	public void replaceCommandTargets(Map<String, String> symbolNameReplacementMap) {
-		for (HRACForDup hracForDup : commands) {
-			hracForDup.replaceTargets(symbolNameReplacementMap);
-		}		
-		
-	}
-
-	public Map<String, String> renameLabels(Map<String, String> symbolNameReplacementMap, String suffix) {
-		if(symbolNameReplacementMap==null) {
-			symbolNameReplacementMap=new HashMap<>();
-		}
-		for (HRACForDup hracForDup : commands) {
-			symbolNameReplacementMap=hracForDup.renameLabels(symbolNameReplacementMap,suffix);
-		}
-		return symbolNameReplacementMap;
-	}
-	
-	/**
-	 * Resolves all for loops.
-	 */
-	public void flatten() {
-		List<HRACCommand> commandList=new ArrayList<>();
-		for (HRACForDup hracForDup : commands) {
-			if(hracForDup.getRange()==null) {
-				commandList.add(hracForDup.getCmd());
-			}else {
-				List<HRACModel> forModels=hracForDup.getConvertedModels();
-				
-			}
-		}
+			
+		}return null;
 	}
 }

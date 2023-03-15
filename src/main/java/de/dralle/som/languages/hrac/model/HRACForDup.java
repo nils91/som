@@ -41,9 +41,21 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	@Override
 	protected HRACForDup clone() {
-		HRACForDup clone = new HRACForDup();
+		HRACForDup clone = null;
+		try {
+			clone = (HRACForDup) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (cmd != null) {
 			clone.cmd = cmd.clone();
+		}
+		if(model!=null) {
+			clone.model=model.clone();
+		}
+		if(range!=null) {
+			clone.range=(HRACForDupRange) range.clone();
 		}
 		return clone;
 	}
@@ -198,11 +210,15 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt+=model.getCommandCount(n);
 			}
 		}else {
-			int[] rng = range.getRange(parent);
+			int[] rng = range.getRange(parent);			
 			if(cmd!=null) {
 				cnt+=rng.length;
 			}if(model!=null) {
-				cnt+=rng.length*model.getCommandCount(n);
+				for (int i = 0; i < rng.length; i++) {
+					int j = rng[i];
+					model.addAddDirective("i", j);
+					cnt+=model.getCommandCount(n);
+				}
 			}
 		}
 		return cnt;
@@ -217,7 +233,11 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}else {
 			int[] rng = range.getRange(parent);
 		if(model!=null) {
-				cnt+=rng.length*model.getSymbolBitCnt(n);
+			for (int i = 0; i < rng.length; i++) {
+				int j = rng[i];
+				model.addAddDirective("i", j);
+				cnt+=model.getSymbolBitCnt(n);
+			}
 			}
 		}
 		return cnt;

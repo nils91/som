@@ -59,7 +59,6 @@ class HRBSCompileTest {
 	}
 
 	@Test
-	@Disabled
 	void test4bitAddExecute() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs", SOMFormats.HRBS);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);

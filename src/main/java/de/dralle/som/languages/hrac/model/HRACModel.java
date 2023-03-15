@@ -44,7 +44,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		if(commands!=null) {
 			clone.commands=new ArrayList<>();
 			for (HRACForDup hracForDup : commands) {
-				clone.commands.add(hracForDup);
+				clone.commands.add(hracForDup.clone());
 			}
 		}
 		return clone;

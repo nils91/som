@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrac.model;
 
-public class HRACForDupRange {
+public class HRACForDupRange implements Cloneable {
 	private int rangeStart;
 	private int rangeEnd;
 	private String rangeStartSpecial;
@@ -58,6 +58,18 @@ public class HRACForDupRange {
 			}
 		}
 		return rng;
+	}
+
+	@Override
+	public HRACForDupRange clone(){
+		// TODO Auto-generated method stub
+		try {
+			return (HRACForDupRange) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public String asCode() {

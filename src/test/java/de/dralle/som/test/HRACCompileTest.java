@@ -17,6 +17,7 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
+import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
 
@@ -54,6 +55,18 @@ class HRACCompileTest {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running.hrac",SOMFormats.HRAC);
 		HRASModel hras= c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
       		assertEquals(1+hras.getN()+2, hras.getCommandCount());//1 added by compiler, N in loop (upper and lower are included) and 2 at the end
+	}
+	@Test
+	void testRunningForDupRunningVarRepl() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_var_repl.hrac",SOMFormats.HRAC);
+		model.precompile("", null);
+		//command suffixes should increase by 1 each time
+		for (int i = 0; i < 4; i++) {
+			HRACForDup curCommand = model.getCommands().get(i);
+			HRACForDup nxtCommand = model.getCommands().get(i+1);
+			assertEquals(curCommand.getCmd().getTarget().getOffset()+1, nxtCommand.getCmd().getTarget().getOffset());
+		}
+      	
 	}
 	@Test
 	void testNestedRunningForDup() throws IOException {
@@ -95,4 +108,16 @@ class HRACCompileTest {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_alloc.hrac",SOMFormats.HRAC);
 		model.precompile("", null);
 		assertEquals(model.getN(),model.getSymbolByName("A").getBitCnt() ); }
+	@Test
+	void testNReplForD() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_fordup.hrac",SOMFormats.HRAC);
+		model.precompile("", null);
+		assertEquals(model.getN(),model.getCommandCount(model.getN())); }
+	@Test
+	void testNCorrectCalcNotPrec() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_fordup.hrac",SOMFormats.HRAC);
+		int nBeforePrec = model.getN();
+		model.precompile("", null);
+		int nAfterPrec=model.getN();
+		assertEquals(nAfterPrec,nBeforePrec); }
 }

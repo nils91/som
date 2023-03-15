@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.dralle.som.Compiler;
@@ -37,7 +38,7 @@ class HRBSCompileTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
-		f=new FileLoader();
+		f = new FileLoader();
 	}
 
 	@AfterEach
@@ -46,11 +47,23 @@ class HRBSCompileTest {
 
 	@Test
 	void test4bitAddCompileForDup() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs",SOMFormats.HRBS);
-		HRACModel hrac= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAC);
-		HRASModel hras= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAS);
-		HRAVModel hrav= c.compile(model,SOMFormats.HRBS,SOMFormats.HRAV);
-      		assertNotNull(hrac);
-      		assertNotNull(hras);
-      		assertNotNull(hrav);}
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	@Disabled
+	void test4bitAddExecute() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs", SOMFormats.HRBS);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		assertTrue(runner.execute());
+	}
 }

@@ -19,6 +19,7 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 class HRACCompileTest {
@@ -93,6 +94,21 @@ class HRACCompileTest {
 		HRASModel hras=c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
 		IMemspace m= c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
       		assertNotNull(m);	}
+	@Test
+	void testFDSymbolGenPrecompiledNaming() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac",SOMFormats.HRAC);
+		model.precompile("", null);
+		assertEquals(5, model.getCommands().size());
+		int eval=0;
+		for (HRACForDup s1 : model.getCommands()) {
+			for (HRACForDup s2 : model.getCommands()) {
+				if(s1!=s2) {
+					assertNotEquals(s1.getCmd().getTarget().getSymbol().getName(), s2.getCmd().getTarget().getSymbol().getName());
+				eval++;}
+			}
+		}
+		assertTrue(eval>0);
+	}
 	@Test
 	void testFDCorrectAllocNumm() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac",SOMFormats.HRAC);

@@ -169,88 +169,14 @@ public class Compiler {
 	}
 
 	private IMemspace Image2Memspace(RenderedImage sourceModel) {
-		BufferedImage bufferedImage = null;
-		if (sourceModel instanceof BufferedImage) {
-			bufferedImage = (BufferedImage) sourceModel;
-		} else {
-			// create a new BufferedImage from the RenderedImage
-			bufferedImage = new BufferedImage(sourceModel.getWidth(), sourceModel.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			bufferedImage.createGraphics().drawRenderedImage(sourceModel, new AffineTransform());
-		}
-		List<Integer> pixValues = new ArrayList<>();
-		for (int i = 0; i < bufferedImage.getWidth(); i++) {
-			for (int j2 = 0; j2 < bufferedImage.getHeight(); j2++) {
-				pixValues.add(bufferedImage.getRGB(i, j2));
-			}
-		}
-		// create the byte array from image
-		byte[] arr = new byte[pixValues.size() * 3];
-		for (int i = 0; i < pixValues.size(); i++) {
-			int rgb = pixValues.get(i);
-
-			// extract the red, green, and blue components from the RGB value
-			byte red = (byte) ((rgb >> 16) & 0xFF);
-			byte green = (byte) ((rgb >> 8) & 0xFF);
-			byte blue = (byte) (rgb & 0xFF);
-
-			arr[i * 3] = red;
-			arr[i * 3 + 1] = green;
-			arr[i * 3 + 2] = blue;
-
-		}
+		byte[] arr = Util.image2ByteArray(sourceModel);
 		ByteArrayMemspace mem = new ByteArrayMemspace(arr);
 		return mem;
 	}
 
 	private RenderedImage memspace2Image(IMemspace sourceModel) {
 		byte[] data = memspaceToByteArray(sourceModel);
-		int pxCNT = data.length / 3 + data.length % 3;
-		double sq = Math.sqrt(pxCNT);
-		int width = 0;
-		int height = 0;
-		if (sq != (int) sq) {
-			width = (int) sq;
-			height = width + 1;
-		} else {
-			width = (int) sq;
-			height = (int) sq;
-		}
-		while (width * height != pxCNT) {
-			int wh = width * height;
-			if (wh < pxCNT) {
-				width++;
-			}
-			if (wh > pxCNT) {
-				height--;
-				if (height < 1) {
-					height++;
-					width--;
-				}
-			}
-		}
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				int bARrIx = (i * width + j) * 3;
-				byte r = 0;
-				byte g = 0;
-				byte b = 0;
-				if (bARrIx < data.length) {
-					r = data[bARrIx];
-				}
-				if (bARrIx + 1 < data.length) {
-					g = data[bARrIx + 1];
-				}
-				if (bARrIx + 2 < data.length) {
-					b = data[bARrIx + 2];
-				}
-				int rgb = (r << 16) | (g << 8) | b;
-				img.setRGB(i, j, rgb);
-			}
-		}
-		img.flush();
-		return img;
+		return Util.byteArray2Image(data);
 	}
 
 	public HRACModel compileHRBStoHRAC(HRBSModel m) {

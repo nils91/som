@@ -151,14 +151,14 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<junit.jupiter.version>5.9.1</junit.jupiter.version>
+		<junit.jupiter.version>5.9.2</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
 		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>
 		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
-		<antlr.version>4.3</antlr.version>
+		<antlr.version>4.12.0</antlr.version>
 		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH.mm.ss Z</maven.build.timestamp.format>
 		<project.build.system>Maven</project.build.system>

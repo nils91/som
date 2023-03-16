@@ -79,6 +79,18 @@ The ascii binary format is a format where the bits are the characters '0' and '1
 
 Same thing as ascii binary, but instead of characters the bits are actual bits. The file does not need to be 2^n bits in size, it only needs to contain the bits necessary. If the bits that make up the program don´t come out to be a round number of bytes, the file should be padded with '0'´s to the next byte.
 
+### Base64 Binary (.b64)
+
+Base64 encoded version of the binary.
+
+### Compressed binary (.cbin)
+
+Binary in compressed form. The compression used is ZIP, the .cbin file is a zip file with a single entry called BIN which contains the binary data.
+
+### Image (.png)
+
+Encodes the binary as the RGB pixel values in an image.
+
 ### SOM bitlanguage (.hra)
 
 The bitlanguage replaces the opcode bits with human-readable letter codes. There are 2 versions of .hra: .hras and .hrac. In hras memory addresses still need to be written, while in hrac the compiller allocates the addresses used. The file only contains the commands, the compiler handles the accumulator bits. N is specified at the top of the file as `;n=5`. hra also allows  symbols in place of addresses. Builtin are the ones outlined in the table basic memory layout, more can be definded by the user. The start address can be set with `;start=26`. Comments are supported, but only as line comments starting with `'#'`. The following is a valid .hras program:

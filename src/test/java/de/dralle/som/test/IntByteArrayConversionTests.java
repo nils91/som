@@ -49,7 +49,7 @@ class IntByteArrayConversionTests {
 
 	@RepeatedTest(10)
 	void byteArrToImgConvTest() {
-		int len = r.nextInt(10, 1000000);
+		int len = 10+r.nextInt(1000000);
 		byte[] arr = new byte[len];
 		r.nextBytes(arr);
 		RenderedImage img = Util.byteArray2Image(arr);

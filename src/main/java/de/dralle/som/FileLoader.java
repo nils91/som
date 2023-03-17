@@ -119,6 +119,25 @@ public class FileLoader {
 	public HRBSModel loadHRBSByName(String name) throws IOException{
 		return readHRBSFileInternalFirst(Paths.get("includes", "hrbs", name+".hrbs").toString());
 	}
+	public <T> T loadByName(String name,SOMFormats format) throws IOException{
+		List<String> paths=new ArrayList<>();
+		String[] possibleFileExt = format.getFileExtensionString();
+		for (int i = 0; i < possibleFileExt.length; i++) {
+			String string = possibleFileExt[i];
+			if(!string.startsWith(".")) {
+				string="."+string;
+			}
+			paths.add(Paths.get("includes", format.name(),name+string).toString());
+			paths.add(Paths.get("includes", format.name().toLowerCase(),name+string).toString());
+			paths.add(Paths.get("includes", format.name().toUpperCase(),name+string).toString());
+			paths.add(Paths.get("includes", format.getShortName(),name+string).toString());
+			paths.add(Paths.get("includes", format.getShortName().toLowerCase(),name+string).toString());
+			paths.add(Paths.get("includes", format.getShortName().toUpperCase(),name+string).toString());
+		}
+		for (String string : paths) {
+			
+		}
+	}
 	public void writeHRACFile(HRACModel m, String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);

@@ -29,6 +29,7 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitImport_stmt(Import_stmtContext ctx) {
 		HRBSModel mtr=null;
+		String using=null;
 		if(ctx.NAME()!=null&&ctx.DIRECTIVE_VALUE_STR()==null) {
 			try {
 				mtr= new FileLoader().loadHRBSByName(ctx.NAME(0).getText());

@@ -66,9 +66,6 @@ public class Util {
 
 		// Extract the data from the byte array (excluding the length)
 		byte[] data = new byte[length];
-		System.out.println("Output pixel count: "+npixels.length);
-		System.out.println("Decoded: "+length);
-		System.out.println("Real: "+ndataWithLength.length);
 		for (int i = 0; i < data.length; i++) {
 			data[i]=ndataWithLength[i+4];
 		}
@@ -80,25 +77,11 @@ public class Util {
 	}
 
 	public static RenderedImage byteArray2Image(byte[] data) {
-		System.out.println("Input data length: "+data.length);
-		int dataLen = data.length;
 		// Prepend the length of the data to the byte array
 		byte[] dataWithLength = new byte[data.length + 4];
 		ByteBuffer.wrap(dataWithLength).putInt(data.length);
-		System.arraycopy(data, 0, dataWithLength, 4, data.length);
-		byte[] dataLenBytes = intToByteArray(dataLen);
-		byte[] dataAugment = new byte[dataLenBytes.length + data.length];
-		for (int i = 0; i < dataLenBytes.length; i++) {
-			byte b = dataLenBytes[i];
-			dataAugment[i] = b;
-
-		}
-		for (int j = 0; j < data.length; j++) {
-			byte b = data[j];
-			dataAugment[dataLenBytes.length + j] = b;
-		}
+		System.arraycopy(data, 0, dataWithLength, 4, data.length);		
 		int pxCNT = dataWithLength.length / 3;
-		System.out.println("Calculated min pixcount: "+pxCNT);
 		while(pxCNT*3<dataWithLength.length) {
 			pxCNT++;
 		}
@@ -135,13 +118,9 @@ public class Util {
 		while(width*height<pxCNT) {
 			width++;
 		}
-		System.out.println("Input image size: "+width+"x"+height);
-		System.out.println("Pixelcount(m): "+pxCNT);
-		System.out.println("Pixelcount(wh): "+width*height);
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// Set the pixels in the image
 		int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-		System.out.println("Pixelcount (r): "+pixels.length);
 		int index = 0;
 		for (int i = 0; i < pixels.length; i++) {
 			int r = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
@@ -149,34 +128,7 @@ public class Util {
 			int b = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
 			pixels[i] = (r << 16) | (g << 8) | b;
 		}
-		System.out.println("Pixels written: "+(index-1));
 		img.flush();
 		return img;
-	}
-
-	public static byte[] intToByteArray(int value) {
-		byte[] bytes = new byte[4];
-		ByteBuffer.wrap(bytes).putInt(value);
-		return bytes;
-	}
-
-	public static byte[] toRGBBytes(int rgbInt) {
-		int rgb = rgbInt;
-		// extract the red, green, and blue components from the RGB value
-		byte red = (byte) ((rgb >> 16) & 0xFF);
-		byte green = (byte) ((rgb >> 8) & 0xFF);
-		byte blue = (byte) (rgb & 0xFF);
-		return new byte[] { red, green, blue };
-	}
-
-	public static int fromRGBBytes(byte[] rgbBytes) {
-		byte[] newArr = new byte[4];
-		for (int i = 0; i < rgbBytes.length; i++) {
-			byte b = rgbBytes[i];
-			newArr[i + 1] = b;
-		}
-		int rgb = byteArrayToInt(newArr);
-		rgb = rgb & 0x00FFFFFF;
-		return rgb;
-	}
+	}	
 }

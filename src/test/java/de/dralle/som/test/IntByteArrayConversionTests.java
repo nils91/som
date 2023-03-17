@@ -39,18 +39,10 @@ class IntByteArrayConversionTests {
 	void tearDown() throws Exception {
 	}
 
-	@RepeatedTest(10000)
-	void intToByteArraTest() {
-		int origValue = r.nextInt();
-		byte[] yrr = Util.intToByteArray(origValue);
-		int convValue = Util.byteArrayToInt(yrr);
-		assertEquals(origValue, convValue);
-	}
 
 	@RepeatedTest(10)
 	void byteArrToImgConvTest() {
 		int len = (int) (10+r.nextDouble()*1000000);
-		System.out.println(len);
 		byte[] arr = new byte[len];
 		r.nextBytes(arr);
 		RenderedImage img = Util.byteArray2Image(arr);
@@ -63,18 +55,10 @@ class IntByteArrayConversionTests {
 		byte[] arr = new byte[10];
 		r.nextBytes(arr);
 		RenderedImage img = Util.byteArray2Image(arr);
-		System.out.println("----");
 		byte[] narr = Util.image2ByteArray(img);
 		assertArrayEquals(arr, narr);
 	}
 
-	@RepeatedTest(1000)
-	void RGBintToByteArraTest() {
-		int origValue =(int) (r.nextDouble()*50000);
-		byte[] yrr = Util.toRGBBytes(origValue);
-		int convValue = Util.fromRGBBytes(yrr);
-		assertEquals(origValue, convValue);
-	}
 
 	@RepeatedTest(1000)
 	void testImageAndBackLocal() {

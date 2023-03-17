@@ -49,7 +49,8 @@ class IntByteArrayConversionTests {
 
 	@RepeatedTest(10)
 	void byteArrToImgConvTest() {
-		int len = 10+r.nextInt(1000000);
+		int len = (int) (10+r.nextDouble()*1000000);
+		System.out.println(len);
 		byte[] arr = new byte[len];
 		r.nextBytes(arr);
 		RenderedImage img = Util.byteArray2Image(arr);
@@ -69,7 +70,7 @@ class IntByteArrayConversionTests {
 
 	@RepeatedTest(1000)
 	void RGBintToByteArraTest() {
-		int origValue = r.nextInt(0, 50000);
+		int origValue =(int) (r.nextDouble()*50000);
 		byte[] yrr = Util.toRGBBytes(origValue);
 		int convValue = Util.fromRGBBytes(yrr);
 		assertEquals(origValue, convValue);

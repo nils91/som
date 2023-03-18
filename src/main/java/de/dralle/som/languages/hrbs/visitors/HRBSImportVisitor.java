@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import de.dralle.som.FileLoader;
+import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
@@ -30,27 +31,53 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	public HRBSModel visitImport_stmt(Import_stmtContext ctx) {
 		HRBSModel mtr=null;
 		String using=null;
+		String loadName=null;
+		String reName=null;
 		if(ctx.NAME()!=null&&ctx.DIRECTIVE_VALUE_STR()==null) {
 			try {
-				mtr= new FileLoader().loadHRBSByName(ctx.NAME(0).getText());
-			} catch (IOException e) {
+				loadName = ctx.NAME(0).getText();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			if(ctx.NAME(1)!=null&&mtr!=null) {
-				mtr.setName(ctx.NAME(1).getText());
+			if(ctx.NAME(1)!=null) {
+				reName=ctx.NAME(1).getText();
+			}
+			if(ctx.NAME(2)!=null) {
+				using=ctx.NAME(2).getText();
+			}
+			SOMFormats format = SOMFormats.HRBS;
+			if(using!=null) {
+				format=new FileLoader().getFormatFromName(using);
+			}
+			try {
+				mtr=new FileLoader().loadByName(loadName, format);
+			} catch (IOException e) {
+			}
+			if(reName!=null&&mtr!=null) {
+				mtr.setName(reName);
 			}
 		}
 		else if(ctx.DIRECTIVE_VALUE_STR()!=null) {
 			String path=ctx.DIRECTIVE_VALUE_STR().getText();
-			path=path.replaceAll("\"|'", "");
-			try {
-				mtr= new FileLoader().readHRBSFile(path);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String reName1=null;
+			String using1=null;
+			path=path.replaceAll("\"|'", "");			
+			if(ctx.NAME(0)!=null) {
+				reName1=ctx.NAME(0).getText();
 			}
-			if(ctx.NAME(0)!=null&&mtr!=null) {
-				mtr.setName(ctx.NAME(0).getText());
+			if(ctx.NAME(1)!=null){
+				using1=ctx.NAME(1).getText();
+			}
+			SOMFormats format = SOMFormats.HRBS;
+			if(using1!=null) {
+				format=new FileLoader().getFormatFromName(using1);
+			}
+			try {
+				mtr=(HRBSModel) new FileLoader().loadFromFile(path,format);
+			} catch (IOException e) {
+			}
+			if(reName1!=null&&mtr!=null) {
+				mtr.setName(reName1);
 			}
 		}
 		return mtr;

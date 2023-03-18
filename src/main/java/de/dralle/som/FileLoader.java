@@ -457,5 +457,18 @@ public class FileLoader {
 		}
 		return null;
 	}
-
+	public SOMFormats getFormatFromName(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (SOMFormats format : SOMFormats.values()) {
+			if(format.name().toLowerCase().equals(name.toLowerCase())) {
+				return format;
+			}
+			if(format.getShortName().toLowerCase().equals(name.toLowerCase())) {
+				return format;
+			}
+		}
+		return null;
+	}
 }

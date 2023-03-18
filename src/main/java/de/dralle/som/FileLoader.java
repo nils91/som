@@ -82,7 +82,7 @@ public class FileLoader {
 		bis.close();
 		return m;
 	}
-	
+
 	public void writeHRBSFile(HRBSModel m, String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);
@@ -100,8 +100,9 @@ public class FileLoader {
 		bis.close();
 		return m;
 	}
+
 	public HRBSModel readHRBSFileFromInternal(String path) throws IOException {
-		ClassLoader cl=getClass().getClassLoader();
+		ClassLoader cl = getClass().getClassLoader();
 		InputStream is = cl.getResourceAsStream(path);
 		BufferedInputStream bis = new BufferedInputStream(is);
 		HRBSParser hp = new HRBSParser();
@@ -109,35 +110,58 @@ public class FileLoader {
 		bis.close();
 		return m;
 	}
-	public HRBSModel readHRBSFileInternalFirst(String path) throws IOException{
+
+	public HRBSModel readHRBSFileInternalFirst(String path) throws IOException {
 		try {
 			return readHRBSFileFromInternal(path);
-		} catch (IOException e) {			
+		} catch (IOException e) {
 		}
 		return readHRBSFile(path);
 	}
-	public HRBSModel loadHRBSByName(String name) throws IOException{
-		return readHRBSFileInternalFirst(Paths.get("includes", "hrbs", name+".hrbs").toString());
+
+	public HRBSModel loadHRBSByName(String name) throws IOException {
+		return readHRBSFileInternalFirst(Paths.get("includes", "hrbs", name + ".hrbs").toString());
 	}
-	public <T> T loadByName(String name,SOMFormats format) throws IOException{
-		List<String> paths=new ArrayList<>();
+
+	public <T> T loadByName(String name, SOMFormats format) throws IOException {
+		List<String> paths = new ArrayList<>();
 		String[] possibleFileExt = format.getFileExtensionString();
 		for (int i = 0; i < possibleFileExt.length; i++) {
 			String string = possibleFileExt[i];
-			if(!string.startsWith(".")) {
-				string="."+string;
+			if (!string.startsWith(".")) {
+				string = "." + string;
 			}
-			paths.add(Paths.get("includes", format.name(),name+string).toString());
-			paths.add(Paths.get("includes", format.name().toLowerCase(),name+string).toString());
-			paths.add(Paths.get("includes", format.name().toUpperCase(),name+string).toString());
-			paths.add(Paths.get("includes", format.getShortName(),name+string).toString());
-			paths.add(Paths.get("includes", format.getShortName().toLowerCase(),name+string).toString());
-			paths.add(Paths.get("includes", format.getShortName().toUpperCase(),name+string).toString());
+			paths.add(Paths.get("includes", format.name(), name + string).toString());
+			paths.add(Paths.get("includes", format.name().toLowerCase(), name + string).toString());
+			paths.add(Paths.get("includes", format.name().toUpperCase(), name + string).toString());
+			paths.add(Paths.get("includes", format.getShortName(), name + string).toString());
+			paths.add(Paths.get("includes", format.getShortName().toLowerCase(), name + string).toString());
+			paths.add(Paths.get("includes", format.getShortName().toUpperCase(), name + string).toString());
 		}
+		T model = null;
 		for (String string : paths) {
-			
+			try {
+				ClassLoader cl = getClass().getClassLoader();
+				InputStream is = cl.getResourceAsStream(string);
+				BufferedInputStream bis = new BufferedInputStream(is);
+				model = (T) loadFromInputStream(bis, format);
+				bis.close();
+			} catch (Exception e) {
+
+			}
 		}
+		if (model == null) {
+			for (String string : paths) {
+				try {
+					model = loadFromFile(string, format);
+				} catch (Exception e) {
+
+				}
+			}
+		}
+		return model;
 	}
+
 	public void writeHRACFile(HRACModel m, String path) throws IOException {
 		File f = new File(path);
 		FileWriter fis = new FileWriter(f);
@@ -159,6 +183,7 @@ public class FileLoader {
 		IMemspace m = c.byteListToMemspace(bytes);
 		return m;
 	}
+
 	public void writeBinaryFile(byte[] content, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
@@ -166,13 +191,15 @@ public class FileLoader {
 		bis.write(content);
 		bis.close();
 	}
+
 	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
 		writeBinaryFile(c.memspaceToByteArray(memspace), path);
 	}
+
 	public IMemspace loadCompressedBinaryFile(String path) throws IOException {
 		ZipFile f = new ZipFile(path);
 		ZipEntry somBinary = f.getEntry("BIN");
-		InputStream fis =f.getInputStream(somBinary);
+		InputStream fis = f.getInputStream(somBinary);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		List<Byte> bytes = new ArrayList<>();
 		int b;
@@ -183,7 +210,9 @@ public class FileLoader {
 		f.close();
 		IMemspace m = c.byteListToMemspace(bytes);
 		return m;
-	}public byte[] loadCompressedBinaryFileFromStream(InputStream is) throws IOException {
+	}
+
+	public byte[] loadCompressedBinaryFileFromStream(InputStream is) throws IOException {
 		ZipInputStream f = new ZipInputStream(is);
 		ZipEntry somBinary = f.getNextEntry();
 		List<Byte> bytes = new ArrayList<>();
@@ -195,11 +224,11 @@ public class FileLoader {
 		return c.byteListToByteArray(bytes);
 	}
 
-	public void writeCompressedBinaryFile(byte[] content,String path) throws IOException {
+	public void writeCompressedBinaryFile(byte[] content, String path) throws IOException {
 		File f = new File(path);
 		FileOutputStream fis = new FileOutputStream(f);
 		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		ZipOutputStream zos=new ZipOutputStream(bis);
+		ZipOutputStream zos = new ZipOutputStream(bis);
 		ZipEntry ze = new ZipEntry("BIN");
 		zos.putNextEntry(ze);
 		zos.write(content);
@@ -207,6 +236,7 @@ public class FileLoader {
 		zos.close();
 		bis.close();
 	}
+
 	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
 		File f = new File(path);
 		FileReader fis = new FileReader(f);
@@ -256,11 +286,12 @@ public class FileLoader {
 	public <T> T loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
 		return (T) loadFromFile(new File(path), sourceFormat);
 	}
+
 	public Object loadFromFile(File f) throws IOException {
-		return loadFromFile(f,getFormatFromFilename(f.getName()));
+		return loadFromFile(f, getFormatFromFilename(f.getName()));
 	}
 
-	public Object loadFromPath(Path p ) throws IOException {
+	public Object loadFromPath(Path p) throws IOException {
 		return loadFromFile(p.toFile());
 	}
 
@@ -303,7 +334,7 @@ public class FileLoader {
 			byte[] m = new Compiler().byteListToByteArray(bytes);
 			return m;
 		}
-		if(sourceFormat.equals(SOMFormats.IMAGE)) {
+		if (sourceFormat.equals(SOMFormats.IMAGE)) {
 			BufferedImage img = ImageIO.read(source);
 			return img;
 		}
@@ -328,21 +359,21 @@ public class FileLoader {
 				out.write(c);
 			}
 			return out;
-		} else if(format.equals(SOMFormats.CBIN)){
+		} else if (format.equals(SOMFormats.CBIN)) {
 			byte[] arr = (byte[]) obj;
 			for (int i = 0; i < arr.length; i++) {
 				byte c = arr[i];
 				out.write(c);
 			}
 			return out;
-		}else if(format.equals(SOMFormats.IMAGE)){
+		} else if (format.equals(SOMFormats.IMAGE)) {
 			// create the object of ByteArrayOutputStream class
-		      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
-		        
-		      // write the image into the object of ByteArrayOutputStream class
-		      ImageIO.write((RenderedImage)obj, "png", outStreamObj);
-		        
-		      // create the byte array from image
+			ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+
+			// write the image into the object of ByteArrayOutputStream class
+			ImageIO.write((RenderedImage) obj, "png", outStreamObj);
+
+			// create the byte array from image
 			byte[] arr = outStreamObj.toByteArray();
 			outStreamObj.close();
 			for (int i = 0; i < arr.length; i++) {
@@ -350,8 +381,7 @@ public class FileLoader {
 				out.write(c);
 			}
 			return out;
-		}
-		else {
+		} else {
 			OutputStreamWriter osw = new OutputStreamWriter(out);
 			osw = writeToOutputWriter(obj, format, osw);
 			osw.close();
@@ -402,15 +432,17 @@ public class FileLoader {
 		os.close();
 		return f;
 	}
+
 	public File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
 		return writeToFile(obj, format, p.toFile());
 	}
-	public File writeToFile(Object obj, SOMFormats format,String filePath) throws IOException {
+
+	public File writeToFile(Object obj, SOMFormats format, String filePath) throws IOException {
 		return writeToFile(obj, format, Paths.get(filePath));
 	}
 
 	public SOMFormats getFormatFromFilename(String name) {
-		if(name==null) {
+		if (name == null) {
 			return null;
 		}
 		for (SOMFormats format : SOMFormats.values()) {

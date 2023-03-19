@@ -170,22 +170,6 @@ public class HRASModel implements ISetN{
 		return sb.toString();
 	}
 
-	public IMemspace compileToMemspace() {
-		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
-		mem.setN(n);
-		mem.setNextAddress(getStartAdress().resolve(this));
-		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
-			MemoryAddress address = c.getKey();
-			Command command = c.getValue();
-			int cTgtAddress = getCommandTargetAddress(command);
-			mem.setBit(address.resolve(this), command.getOp().getBitValue());
-			mem.setBitsUnsigned(address.resolve(this) + 1, n, cTgtAddress);
-		}
-		mem.setAccumulatorValue(true);
-		mem.setAdrEval(true);
-		return mem;
-	}
-
 	@Override
 	public String toString() {
 		return asCode();

@@ -30,6 +30,7 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitImport_stmt(Import_stmtContext ctx) {
 		HRBSModel mtr=null;
+		Object loadedModel=null;
 		String using=null;
 		String loadName=null;
 		String reName=null;
@@ -50,8 +51,13 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				format=new FileLoader().getFormatFromName(using);
 			}
 			try {
-				mtr=new FileLoader().loadByName(loadName, format);
+				loadedModel=new FileLoader().loadByName(loadName, format);
 			} catch (IOException e) {
+			}
+			if(format!=SOMFormats.HRBS) {
+				mtr=new de.dralle.som.Compiler().compile(loadedModel, format, SOMFormats.HRBS);
+			}else {
+				mtr=(HRBSModel) loadedModel;
 			}
 			if(reName!=null&&mtr!=null) {
 				mtr.setName(reName);
@@ -73,8 +79,13 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				format=new FileLoader().getFormatFromName(using1);
 			}
 			try {
-				mtr=(HRBSModel) new FileLoader().loadFromFile(path,format);
+				loadedModel=new FileLoader().loadFromFile(path,format);
 			} catch (IOException e) {
+			}
+			if(format!=SOMFormats.HRBS) {
+				mtr=new de.dralle.som.Compiler().compile(loadedModel, format, SOMFormats.HRBS);
+			}else {
+				mtr=(HRBSModel) loadedModel;
 			}
 			if(reName1!=null&&mtr!=null) {
 				mtr.setName(reName1);

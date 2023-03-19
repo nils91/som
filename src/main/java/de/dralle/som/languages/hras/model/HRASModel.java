@@ -209,7 +209,7 @@ public class HRASModel implements ISetN{
 		}
 		return hrav;
 	}
-	public static HRACSymbol compileFromHRAV(HRAVModel model) {
+	public static HRASModel compileFromHRAV(HRAVModel model) {
 		Map<Integer,String> symbols=new HashMap<Integer,String>();
 		symbols.put(0, "ACC");
 		symbols.put(1, "ADR_EVAL");
@@ -237,7 +237,7 @@ public class HRASModel implements ISetN{
 			String val = entry.getValue();
 			newm.addSymbol(val, new MemoryAddress(key));			
 		}
-		return null;
+		return newm;
 	}
 
 	public Integer getSymbolCount() {

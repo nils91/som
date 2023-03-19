@@ -15,14 +15,16 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.Opcode;
+import de.dralle.som.Util;
 
 /**
  * @author Nils
  *
  */
-public class HRAVModel implements ISetN{
+public class HRAVModel implements ISetN {
 	public HRAVModel() {
-		
+
 	}
 
 	private int nextCommandAddress;
@@ -45,9 +47,25 @@ public class HRAVModel implements ISetN{
 		this.startAdress = startAdress;
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+	if(obj instanceof HRAVModel) {
+		HRAVModel other = (HRAVModel)(obj);
+		boolean equal = n==other.n;
+		equal=equal&&startAdress==other.startAdress;
+		for (Entry<Integer, HRAVCommand> entry : commands.entrySet()) {
+			Integer key = entry.getKey();
+			HRAVCommand val = entry.getValue();
+			HRAVCommand othercommand = other.commands.get(key);
+			equal=equal&&val.equals(othercommand);
+		}
+		return equal;
+	}
+	return super.equals(obj);
+	}
 
 	private int startAdress;
+
 	public int getStartAdress() {
 		return startAdress;
 	}
@@ -61,34 +79,26 @@ public class HRAVModel implements ISetN{
 	public void setStartAddressExplicit(boolean startAddressExplicit) {
 		this.startAddressExplicit = startAddressExplicit;
 	}
-	private Map<Integer,HRAVCommand> commands;
 
-
+	private Map<Integer, HRAVCommand> commands;
 
 	public int addCommand(HRAVCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
 		commands.put(nextCommandAddress, c);
-		nextCommandAddress+=getCommandSize();
-		return nextCommandAddress-getCommandSize();
+		nextCommandAddress += getCommandSize();
+		return nextCommandAddress - getCommandSize();
 	}
-
-	
 
 	private int getCommandTargetAddress(HRAVCommand c) {
 		int tgtAdddress = c.getAddress();
 		return tgtAdddress;
 	}
 
-	
-
-
 	private int getCommandSize() {
 		return 1 + n;
 	}
-
-	
 
 	private String getNDirective() {
 		return String.format(";n = %d", n);
@@ -101,7 +111,6 @@ public class HRAVModel implements ISetN{
 	private String getContinueDirective(int string) {
 		return String.format(";continue = %d", string);
 	}
-
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
@@ -119,7 +128,7 @@ public class HRAVModel implements ISetN{
 		sb.append(getNDirective());
 		sb.append(System.lineSeparator());
 		sb.append(getStartDirective());
-		sb.append(System.lineSeparator());		
+		sb.append(System.lineSeparator());
 		for (String symbolString : getCommandssAsStrings()) {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
@@ -143,12 +152,48 @@ public class HRAVModel implements ISetN{
 		return mem;
 	}
 
+	/**
+	 * The resulting model should never be expected to be the same as a HRAV model
+	 * which has been compiled to a memspace.
+	 * 
+	 * @param mem
+	 */
+	public static HRAVModel compileFromMemspace(ISomMemspace mem) {
+		HRAVModel model = new HRAVModel();
+		model.n = mem.getN();
+		model.setStartAdress(mem.getNextAddress());
+		model.setStartAddressExplicit(true);
+		model.setNextCommandAddress(mem.getNextAddress());
+		int commandSize = model.getCommandSize();
+		for (int i = mem.getNextAddress(); i < mem.getSize(); i += commandSize) {
+			boolean[] nxtCommand = new boolean[commandSize];
+			for (int j = 0; j < nxtCommand.length; j++) {
+				nxtCommand[j] = mem.getBit(i + j);
+			}
+			boolean[] ctgtAddressBit = new boolean[nxtCommand.length - 1];
+			for (int j = 0; j < ctgtAddressBit.length; j++) {
+				ctgtAddressBit[j] = nxtCommand[j + 1];
+			}
+			int cTgtAddress = Util.getAsUnsignedInt(ctgtAddressBit);
+			Opcode op = null;
+			if (nxtCommand[0] == false) {
+				op = Opcode.NAR;
+			} else {
+				op = Opcode.NAW;
+			}
+			HRAVCommand newc = new HRAVCommand();
+			newc.setOp(op);
+			newc.setAddress(cTgtAddress);
+			model.addCommand(newc);
+		}
+		return model;
+	}
+
 	@Override
 	public String toString() {
 		return asCode();
 	}
 
-	
 	@Override
 	public int getN() {
 		return n;

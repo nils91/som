@@ -16,6 +16,16 @@ public class HRAVCommand {
 	public int getAddress() {
 		return address;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof HRAVCommand) {
+			HRAVCommand other = (HRAVCommand)obj;
+			boolean equal = op.equals(other.op);
+			equal=equal&&address==other.address;
+			return equal;
+		}
+		return super.equals(obj);
+	}
 	public void setAddress(int address) {
 		this.address = address;
 	}

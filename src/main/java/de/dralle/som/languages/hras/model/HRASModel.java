@@ -15,6 +15,7 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 
@@ -223,6 +224,36 @@ public class HRASModel implements ISetN{
 			hrav.addCommand(hravCommand);
 		}
 		return hrav;
+	}
+	public static HRACSymbol compileFromHRAV(HRAVModel model) {
+		Map<Integer,String> symbols=new HashMap<Integer,String>();
+		symbols.put(0, "ACC");
+		symbols.put(1, "ADR_EVAL");
+		HRASModel newm = new HRASModel();
+		newm.setN(model.getN());
+		newm.setStartAdress(model.getStartAdress());
+		newm.setStartAddressExplicit(true);
+		newm.setNextCommandAddress(model.getStartAdress());
+		for (Entry<Integer, HRAVCommand> ce : model.getCommands().entrySet()) {
+			Integer cadr = ce.getKey();
+			HRAVCommand c = ce.getValue();
+			String symbolName=symbols.getOrDefault(cadr, "MA"+cadr);
+			symbols.put(cadr, symbolName);
+			newm.setNextCommandAddress(new MemoryAddress(symbolName));
+			symbolName=symbols.getOrDefault(c.getAddress(), "MA"+c.getAddress());
+			symbols.put(c.getAddress(), symbolName);
+			MemoryAddress ctgtadr = new MemoryAddress(symbolName);			
+			Command nc = new Command();
+			nc.setOp(c.getOp());
+			nc.setAddress(ctgtadr);
+			newm.addCommand(nc);
+		}
+		for (Entry<Integer, String> entry : symbols.entrySet()) {
+			Integer key = entry.getKey();
+			String val = entry.getValue();
+			newm.addSymbol(val, new MemoryAddress(key));			
+		}
+		return null;
 	}
 
 	public Integer getSymbolCount() {

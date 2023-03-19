@@ -83,6 +83,14 @@ public class HRAVModel implements ISetN {
 
 	private Map<Integer, HRAVCommand> commands;
 
+	public Map<Integer, HRAVCommand> getCommands() {
+		return commands;
+	}
+
+	public void setCommands(Map<Integer, HRAVCommand> commands) {
+		this.commands = commands;
+	}
+
 	public int addCommand(HRAVCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();

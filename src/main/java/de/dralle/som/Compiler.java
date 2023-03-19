@@ -82,7 +82,7 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
 							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE, SOMFormats.B64,SOMFormats.HRAV }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAV,
-							new SOMFormats[] { SOMFormats.BIN }),
+							new SOMFormats[] { SOMFormats.BIN,SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.HRAV }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
@@ -130,6 +130,9 @@ public class Compiler {
 		}
 		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) compileHRAVtoMemspace((HRAVModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.HRAS)) {
+			return (T) HRASModel.compileFromHRAV((HRAVModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.AB)) {
 			return (T) memSpaceToABString((IMemspace) sourceModel);

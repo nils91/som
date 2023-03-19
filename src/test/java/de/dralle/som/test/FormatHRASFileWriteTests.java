@@ -91,7 +91,7 @@ class FormatHRASFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
 			HRASModel m = f.readHRASFile(file.getPath());
-			IMemspace nm = m.compileToMemspace();
+			IMemspace nm =  c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
 			assertNotNull(nm);
 		}
 	}
@@ -101,7 +101,7 @@ class FormatHRASFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
 			HRASModel m = f.readHRASFile(file.getPath());
-			IMemspace nm = m.compileToMemspace();
+			IMemspace nm =   c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
 			assertNotNull(nm);
 			SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) nm);
 			runner.execute();
@@ -113,8 +113,8 @@ class FormatHRASFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hras")) {
 			HRASModel m = f.readHRASFile(file.getPath());
-			IMemspace nm = m.compileToMemspace();
-			IMemspace nm2 = m.compileToMemspace();
+			IMemspace nm  = c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}@ParameterizedTest
@@ -124,8 +124,8 @@ class FormatHRASFileWriteTests {
 		if (fileName.endsWith("hras")) {
 			HRASModel m = f.readHRASFile(file.getPath());
 			HRASModel m2 = f.readHRASFile(file.getPath());
-			IMemspace nm = m.compileToMemspace();
-			IMemspace nm2 = m2.compileToMemspace();
+			IMemspace nm =  c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAS, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}
@@ -138,8 +138,8 @@ class FormatHRASFileWriteTests {
 			String hrasCode = m.asCode();
 			HRASParser p = new HRASParser();
 			HRASModel m2 = p.parse(hrasCode);
-			IMemspace nm = m.compileToMemspace();
-			IMemspace nm2 = m2.compileToMemspace();
+			IMemspace nm =   c.compile(m, SOMFormats.HRAS, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAS, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}
@@ -152,7 +152,7 @@ class FormatHRASFileWriteTests {
 			String hrasCode = m.asCode();
 			HRASParser p = new HRASParser();
 			HRASModel m2 = p.parse(hrasCode);
-			IMemspace nm2 = m2.compileToMemspace();
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAS, SOMFormats.BIN);
 			assertNotNull(nm2);
 		}
 	}

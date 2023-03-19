@@ -91,7 +91,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace nm = m.compileToHRAS().compileToMemspace();
+			IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
 			assertNotNull(nm);
 		}
 	}
@@ -101,7 +101,7 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace nm = m.compileToHRAS().compileToMemspace();
+			IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
 			assertNotNull(nm);
 			SOMBitcodeRunner runner=new SOMBitcodeRunner((ISomMemspace) nm);
 			runner.execute();
@@ -113,8 +113,8 @@ class FormatHRACFileWriteTests {
 		String fileName = file.getName();
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
-			IMemspace nm = m.compileToHRAS().compileToMemspace();
-			IMemspace nm2 = m.compileToHRAS().compileToMemspace();
+			IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}@ParameterizedTest
@@ -124,8 +124,8 @@ class FormatHRACFileWriteTests {
 		if (fileName.endsWith("hrac")) {
 			HRACModel m = f.readHRACFile(file.getPath());
 			HRACModel m2 = f.readHRACFile(file.getPath());
-			IMemspace nm = m.compileToHRAS().compileToMemspace();
-			IMemspace nm2 = m2.compileToHRAS().compileToMemspace();
+			IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAC, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}
@@ -138,8 +138,8 @@ class FormatHRACFileWriteTests {
 			String hracCode = m.asCode();
 			HRACParser p = new HRACParser();
 			HRACModel m2 = p.parse(hracCode);
-			IMemspace nm = m.compileToHRAS().compileToMemspace();
-			IMemspace nm2 = m2.compileToHRAS().compileToMemspace();
+			IMemspace nm =  c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAC, SOMFormats.BIN);
 			assertTrue(nm.equalContent(nm2));
 		}
 	}
@@ -152,7 +152,7 @@ class FormatHRACFileWriteTests {
 			String hracCode = m.asCode();
 			HRACParser p = new HRACParser();
 			HRACModel m2 = p.parse(hracCode);
-			IMemspace nm2 = m2.compileToHRAS().compileToMemspace();
+			IMemspace nm2 =  c.compile(m2, SOMFormats.HRAC, SOMFormats.BIN);
 			assertNotNull(nm2);
 		}
 	}

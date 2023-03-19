@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.dralle.som.AbstractSomMemspace;
+import de.dralle.som.BooleanArrayMemspace;
 import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
@@ -197,5 +198,14 @@ public class HRAVModel implements ISetN {
 	@Override
 	public int getN() {
 		return n;
+	}
+
+	public static HRAVModel compileFromMemspace(IMemspace sourceModel) {
+		if(sourceModel instanceof ISomMemspace) {
+			return compileFromMemspace((ISomMemspace)sourceModel);
+		}
+		BooleanArrayMemspace newMem = new BooleanArrayMemspace();
+		newMem.copy(sourceModel);
+		return compileFromMemspace(newMem);
 	}
 }

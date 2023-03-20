@@ -13,9 +13,10 @@ import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
 import de.dralle.som.Opcode;
-import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.Util;
+import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
-import de.dralle.som.languages.hras.model.MemoryAddress;
+import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 
 /**
  * @author Nils
@@ -101,15 +102,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 	}
 
 	private void setupBuiltins() {
-		builtins = new HashMap<>();
-		builtins.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
-		builtins.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
-		builtins.put("WH_EN", AbstractSomMemspace.WH_EN);
-		builtins.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
-		builtins.put("WH_COM", AbstractSomMemspace.WH_COM);
-		builtins.put("WH_DIR", AbstractSomMemspace.WH_DIR);
-		builtins.put("WH_SEL", AbstractSomMemspace.WH_SEL);
-		builtins.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
+		builtins = new HashMap<>(Util.getBuiltinAdresses());
 	}
 
 	public int getStartAdress(int n) {
@@ -372,7 +365,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		for (Entry<String, Integer> entry : toc.builtins.entrySet()) {
 			String key = entry.getKey();
 			Integer val = entry.getValue();
-			m.addSymbol(key, new MemoryAddress(val));
+			m.addSymbol(key, new HRASMemoryAddress(val));
 		}
 		int nxtSymbolAddress = getFixedBitCount(n);
 		for (HRACSymbol s : toc.symbols) {
@@ -383,31 +376,31 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 				} else {
 					nxtSymbolAddress += s.getBitCnt();
 				}
-				m.addSymbol(s.getName(), new MemoryAddress(address));
+				m.addSymbol(s.getName(), new HRASMemoryAddress(address));
 			} else {
 				HRACMemoryAddress tgt = s.getTargetSymbol();
-				MemoryAddress tgHras = new MemoryAddress();
+				HRASMemoryAddress tgHras = new HRASMemoryAddress();
 				tgHras.setSymbol(tgt.getSymbol().getName());
 				tgHras.setAddressOffset(tgt.getOffset());
 				m.addSymbol(s.getName(), tgHras);
 			}
 		}
-		m.addSymbol("HEAP", new MemoryAddress(toc.getHeapStartAddress(n)));
+		m.addSymbol("HEAP", new HRASMemoryAddress(toc.getHeapStartAddress(n)));
 
-		Command clrAdrEval = new Command();
+		HRASCommand clrAdrEval = new HRASCommand();
 		clrAdrEval.setOp(Opcode.NAW);
-		clrAdrEval.setAddress(new MemoryAddress("ADR_EVAL"));
+		clrAdrEval.setAddress(new HRASMemoryAddress("ADR_EVAL"));
 		m.addCommand(clrAdrEval);
 
 		for (HRACForDup cf : toc.commands) {
 			if(cf.getCmd()!=null) {
 				HRACCommand c = cf.getCmd();
-				Command hrasc = new Command();
+				HRASCommand hrasc = new HRASCommand();
 				hrasc.setOp(c.getOp());
-				MemoryAddress address = new MemoryAddress(c.getTarget().getSymbol().getName());
+				HRASMemoryAddress address = new HRASMemoryAddress(c.getTarget().getSymbol().getName());
 				address.setAddressOffset(c.getTarget().getOffset());
 				hrasc.setAddress(address);
-				MemoryAddress assignedAddress = m.addCommand(hrasc);
+				HRASMemoryAddress assignedAddress = m.addCommand(hrasc);
 				if (c.getLabel() != null) {
 					m.addSymbol(c.getLabel().getName(), assignedAddress);
 				}
@@ -415,7 +408,39 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		}
 		return m;
 	}
-
+/**
+ * This method discards the info where a specific HRAS command will be written to.
+ * @param m
+ * @return
+ */
+	public static HRACModel compileFromHRAS(HRASModel m) {
+		HRACModel newm=new HRACModel();
+		newm.setMinimumN(m.getN());
+		Map<String, Integer> builtinsToCheck = Util.getBuiltinAdresses();
+		for (Entry<String, HRASMemoryAddress> s : m.getSymbols().entrySet()) {
+			if(!builtinsToCheck.containsKey(s.getKey())) {
+				HRACSymbol news = new HRACSymbol(s.getKey());
+				news.setBitCnt(1);
+				newm.addSymbol(news);
+			}
+		}
+		int i=0;
+		for (Entry<HRASMemoryAddress, HRASCommand> entry : m.getCommands().entrySet()) {
+			HRASMemoryAddress key = entry.getKey();
+			HRASCommand val = entry.getValue();
+			boolean omiot=false;
+			if(i++==0) {//check first command
+				if(val.getOp()==Opcode.NAW&&val.getAddress().equals(new HRASMemoryAddress("ADR_EVAL"))) {
+					omiot=true;
+				}
+			}
+			if(!omiot) {
+				newm.addCommand(new HRACCommand(val));
+			}
+		}
+		return newm;
+	}
+	
 	@Override
 	public String toString() {
 		return asCode();

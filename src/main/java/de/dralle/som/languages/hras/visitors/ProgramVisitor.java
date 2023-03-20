@@ -8,9 +8,9 @@ import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Symbol_decContext;
-import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
-import de.dralle.som.languages.hras.model.MemoryAddress;
+import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 
 /**
  * @author Nils
@@ -27,7 +27,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 		} else if (ctx.directive() != null) {
 			ctx.directive().accept(this);
 		} else if (ctx.command() != null) {
-			Command c = ctx.command().accept(new CommandVisitor());
+			HRASCommand c = ctx.command().accept(new CommandVisitor());
 			model.addCommand(c);
 		}
 		return model;
@@ -51,7 +51,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 	@Override
 	public HRASModel visitDirective(DirectiveContext ctx) {
 		if (ctx.int_or_symbol() != null) {
-			MemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
+			HRASMemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
 			if (ctx.START() != null) {
 				model.setStartAdress(address);
 				model.setStartAddressExplicit(true);

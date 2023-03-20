@@ -28,9 +28,9 @@ import de.dralle.som.languages.hrac.model.HRACForDupRange;
 import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
-import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
-import de.dralle.som.languages.hras.model.MemoryAddress;
+import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 
 /**
  * @author Nils

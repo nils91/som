@@ -3,6 +3,8 @@
  */
 package de.dralle.som.languages.hrac.model;
 
+import de.dralle.som.languages.hras.model.HRASMemoryAddress;
+
 /**
  * @author Nils
  *
@@ -35,6 +37,10 @@ public class HRACMemoryAddress implements Cloneable {
 
 	public HRACMemoryAddress() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public HRACMemoryAddress(HRASMemoryAddress address) {
+		symbol=new HRACSymbol(address.getSymbol());
 	}
 
 	public HRACSymbol getSymbol() {

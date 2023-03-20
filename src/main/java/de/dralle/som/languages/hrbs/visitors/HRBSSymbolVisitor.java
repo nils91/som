@@ -14,7 +14,7 @@ import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.HRBSSymbolType;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
-import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASCommand;
 
 /**
  * @author Nils

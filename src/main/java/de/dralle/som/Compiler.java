@@ -84,7 +84,7 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAV,
 							new SOMFormats[] { SOMFormats.BIN,SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
-							new SOMFormats[] { SOMFormats.HRAV }),
+							new SOMFormats[] { SOMFormats.HRAV,SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
 							new SOMFormats[] { SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
@@ -96,7 +96,9 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.B64,
 							new SOMFormats[] { SOMFormats.BIN }))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+public HRACModel compileHRAS2HRAC(HRASModel m) {
+	return HRACModel.compileFromHRAS(m);
+}
 	public <T> T compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		List<SOMFormats> cPath = findCompilePath(sourceFormat, targetFormat);
 		if (cPath == null || cPath.size() == 0) {
@@ -127,6 +129,9 @@ public class Compiler {
 		}
 		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
 			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAC)) {
+			return (T) compileHRAS2HRAC((HRASModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) compileHRAVtoMemspace((HRAVModel) sourceModel);

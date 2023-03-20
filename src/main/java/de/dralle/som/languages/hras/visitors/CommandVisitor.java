@@ -6,18 +6,18 @@ package de.dralle.som.languages.hras.visitors;
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
-import de.dralle.som.languages.hras.model.Command;
+import de.dralle.som.languages.hras.model.HRASCommand;
 
 /**
  * @author Nils
  *
  */
-public class CommandVisitor extends HRASGrammarBaseVisitor<Command> {
-	private Command c;
+public class CommandVisitor extends HRASGrammarBaseVisitor<HRASCommand> {
+	private HRASCommand c;
 
 	@Override
-	public Command visitCommand(CommandContext ctx) {
-		c = new Command();
+	public HRASCommand visitCommand(CommandContext ctx) {
+		c = new HRASCommand();
 		if (ctx.NAR() != null) {
 			c.setOp(Opcode.NAR);
 		} else if (ctx.NAW() != null) {

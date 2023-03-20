@@ -15,6 +15,7 @@ import de.dralle.som.ByteArrayMemspace;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
@@ -28,13 +29,13 @@ public class HRASModel implements ISetN{
 		symbols = new LinkedHashMap<>();
 	}
 
-	private MemoryAddress nextCommandAddress;
+	private HRASMemoryAddress nextCommandAddress;
 
-	public MemoryAddress getNextCommandAddress() {
+	public HRASMemoryAddress getNextCommandAddress() {
 		return nextCommandAddress;
 	}
 
-	public void setNextCommandAddress(MemoryAddress nextCommandAddress) {
+	public void setNextCommandAddress(HRASMemoryAddress nextCommandAddress) {
 		this.nextCommandAddress = nextCommandAddress;
 	}
 
@@ -44,14 +45,14 @@ public class HRASModel implements ISetN{
 		this.n = n;
 	}
 
-	public void setStartAdress(MemoryAddress startAdress) {
+	public void setStartAdress(HRASMemoryAddress startAdress) {
 		this.startAdress = startAdress;
 	}
 
 	
 
-	private MemoryAddress startAdress;
-	public MemoryAddress getStartAdress() {
+	private HRASMemoryAddress startAdress;
+	public HRASMemoryAddress getStartAdress() {
 		return startAdress;
 	}
 
@@ -65,24 +66,32 @@ public class HRASModel implements ISetN{
 		this.startAddressExplicit = startAddressExplicit;
 	}
 	
-	private Map<String, MemoryAddress> symbols;
-	private Map<MemoryAddress, Command> commands;
+	private Map<String, HRASMemoryAddress> symbols;
+	public Map<String, HRASMemoryAddress> getSymbols() {
+		return symbols;
+	}
+
+	public Map<HRASMemoryAddress, HRASCommand> getCommands() {
+		return commands;
+	}
+
+	private Map<HRASMemoryAddress, HRASCommand> commands;
 
 	public int getCommandCount() {
 		return commands.size();
 	}
-	public void addSymbol(String name, MemoryAddress value) {
+	public void addSymbol(String name, HRASMemoryAddress value) {
 		if (symbols == null) {
 			symbols = new LinkedHashMap<>();
 		}
 		symbols.put(name, value);
 	}
 
-	public MemoryAddress addCommand(Command c) {
+	public HRASMemoryAddress addCommand(HRASCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		MemoryAddress assignedCommandAddress = nextCommandAddress.clone();
+		HRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
 		commands.put(assignedCommandAddress, c);
 		Integer currentOffset=nextCommandAddress.getAddressOffset();
 		if(currentOffset!=null) {
@@ -99,13 +108,13 @@ public class HRASModel implements ISetN{
 
 
 
-	private int getCommandTargetAddress(Command c) {
+	private int getCommandTargetAddress(HRASCommand c) {
 		int tgtAdddress = c.getAddress().resolve(this);
 		return tgtAdddress;
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		MemoryAddress targetAddress = null;
+		HRASMemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
 		}
@@ -136,7 +145,7 @@ public class HRASModel implements ISetN{
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, MemoryAddress> symbol : symbols.entrySet()) {
+		for (Entry<String, HRASMemoryAddress> symbol : symbols.entrySet()) {
 			tmp.add(String.format("symbol %s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
 		}
 		return tmp;
@@ -144,9 +153,9 @@ public class HRASModel implements ISetN{
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
-			MemoryAddress address = c.getKey();
-			Command command = c.getValue();
+		for (Entry<HRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			HRASMemoryAddress address = c.getKey();
+			HRASCommand command = c.getValue();
 			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
 					command.asHRASCode()));
 		}
@@ -176,12 +185,12 @@ public class HRASModel implements ISetN{
 	}
 
 	public void setStartAdress(int startAdress2) {
-		setStartAdress(new MemoryAddress(startAdress2));
+		setStartAdress(new HRASMemoryAddress(startAdress2));
 		
 	}
 
 	public void setNextCommandAddress(int startAdress2) {
-		setNextCommandAddress(new MemoryAddress(startAdress2));
+		setNextCommandAddress(new HRASMemoryAddress(startAdress2));
 		
 	}
 
@@ -197,10 +206,10 @@ public class HRASModel implements ISetN{
 			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
 		}
-		for (Entry<MemoryAddress, Command> c : commands.entrySet()) {
-			MemoryAddress address = c.getKey();
+		for (Entry<HRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			HRASMemoryAddress address = c.getKey();
 			hrav.setNextCommandAddress(address.resolve(this));
-			Command command = c.getValue();
+			HRASCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
 			HRAVCommand hravCommand = new HRAVCommand();
 			hravCommand.setOp(command.getOp());
@@ -211,8 +220,7 @@ public class HRASModel implements ISetN{
 	}
 	public static HRASModel compileFromHRAV(HRAVModel model) {
 		Map<Integer,String> symbols=new HashMap<Integer,String>();
-		symbols.put(0, "ACC");
-		symbols.put(1, "ADR_EVAL");
+		symbols.putAll(Util.getBuiltinAdressesAddressKey());
 		HRASModel newm = new HRASModel();
 		newm.setN(model.getN());
 		newm.setStartAdress(model.getStartAdress());
@@ -223,11 +231,11 @@ public class HRASModel implements ISetN{
 			HRAVCommand c = ce.getValue();
 			String symbolName=symbols.getOrDefault(cadr, "MA"+cadr);
 			symbols.put(cadr, symbolName);
-			newm.setNextCommandAddress(new MemoryAddress(symbolName));
+			newm.setNextCommandAddress(new HRASMemoryAddress(symbolName));
 			symbolName=symbols.getOrDefault(c.getAddress(), "MA"+c.getAddress());
 			symbols.put(c.getAddress(), symbolName);
-			MemoryAddress ctgtadr = new MemoryAddress(symbolName);			
-			Command nc = new Command();
+			HRASMemoryAddress ctgtadr = new HRASMemoryAddress(symbolName);			
+			HRASCommand nc = new HRASCommand();
 			nc.setOp(c.getOp());
 			nc.setAddress(ctgtadr);
 			newm.addCommand(nc);
@@ -235,7 +243,7 @@ public class HRASModel implements ISetN{
 		for (Entry<Integer, String> entry : symbols.entrySet()) {
 			Integer key = entry.getKey();
 			String val = entry.getValue();
-			newm.addSymbol(val, new MemoryAddress(key));			
+			newm.addSymbol(val, new HRASMemoryAddress(key));			
 		}
 		return newm;
 	}

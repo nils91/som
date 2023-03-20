@@ -10,7 +10,10 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Nils Dralle
@@ -37,6 +40,25 @@ public class Util {
 			}
 		}
 		return n;
+	}
+	public static Map<String, Integer> getBuiltinAdresses() {
+		Map<String,Integer> map=new HashMap<>();		map.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
+		map.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
+		map.put("WH_EN", AbstractSomMemspace.WH_EN);
+		map.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
+		map.put("WH_COM", AbstractSomMemspace.WH_COM);
+		map.put("WH_DIR", AbstractSomMemspace.WH_DIR);
+		map.put("WH_SEL", AbstractSomMemspace.WH_SEL);
+		map.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
+		return map;
+	}
+	public static Map<Integer, String> getBuiltinAdressesAddressKey() {
+		Map<Integer, String> map=new HashMap<>();	for (Entry<String, Integer> entry : getBuiltinAdresses().entrySet()) {
+			String key = entry.getKey();
+			Integer val = entry.getValue();
+			map.put(val, key);
+		}
+		return map;
 	}
 
 	public static byte[] image2ByteArray(RenderedImage source) {

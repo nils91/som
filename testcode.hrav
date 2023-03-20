@@ -1,0 +1,8 @@
+;n = 6
+;start = 43
+;continue = 43
+NAW 1
+;continue = 50
+NAR 0
+;continue = 57
+NAR 0

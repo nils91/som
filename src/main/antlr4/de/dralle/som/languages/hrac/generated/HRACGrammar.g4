@@ -81,7 +81,7 @@ offset_specify_range
 
 for_duplication
 :
-	for_duplication_head NEWLINE? program_blk
+	for_duplication_head NEWLINE? program_blk NEWLINE?
 ;
 
 for_duplication_head

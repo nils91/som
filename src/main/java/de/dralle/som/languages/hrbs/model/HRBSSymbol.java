@@ -18,7 +18,7 @@ public class HRBSSymbol implements Cloneable {
 		HRBSSymbol clone = new HRBSSymbol();
 		clone.setName(name);
 		clone.setBitCnt(bitCnt);
-		clone.setBitCntISN(bitCntISN);
+		clone.setBitCntISSpecial(bitCntSpecialName);
 		clone.setType(type);
 		if(targetSymbol!=null) {
 			clone.setTargetSymbol(targetSymbol.clone());
@@ -32,7 +32,7 @@ public class HRBSSymbol implements Cloneable {
 	private HRBSMemoryAddress targetSymbol;
 	private HRBSSymbolType type;
 	private int bitCnt;
-	private boolean bitCntISN;
+	private String bitCntSpecialName;
 	public String getName() {
 		return name;
 	}
@@ -51,11 +51,11 @@ public class HRBSSymbol implements Cloneable {
 	public void setBitCnt(int bitCnt) {
 		this.bitCnt = bitCnt;
 	}
-	public boolean isBitCntISN() {
-		return bitCntISN;
+	public String isBitCntISSpecial() {
+		return bitCntSpecialName;
 	}
-	public void setBitCntISN(boolean bitCntISN) {
-		this.bitCntISN = bitCntISN;
+	public void setBitCntISSpecial(String bitCntISN) {
+		this.bitCntSpecialName = bitCntISN;
 	}
 	public String asCode() {
 	StringBuilder sb=new StringBuilder();
@@ -63,8 +63,8 @@ public class HRBSSymbol implements Cloneable {
 		sb.append(type+" ");
 	}
 	sb.append(name);
-	if(bitCntISN) {
-		sb.append("[N]");
+	if(bitCntSpecialName!=null) {
+		sb.append(String.format("[$%s]", bitCntSpecialName));
 	}else {
 		sb.append(String.format("[%d]", bitCnt));
 	}

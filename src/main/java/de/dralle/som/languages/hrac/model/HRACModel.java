@@ -53,6 +53,10 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 
 	private Map<String, Integer> builtins;
 	private Map<String, String> directives;// as parsed
+	public Map<String, String> getDirectives() {
+		return directives;
+	}
+
 	private Map<String, String> additionalDirectives;// additionals added at runtime
 
 	public int getMinimumN() {

@@ -113,7 +113,7 @@ class HRACCompileTest {
 	void testFDCorrectAllocNumm() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac",SOMFormats.HRAC);
 		HRASModel m= c.compile(model,SOMFormats.HRAC,SOMFormats.HRAS);
-      	assertEquals(9+5, m.getSymbolCount());	}//9 symbols should be added by compiler
+      	assertEquals(11+5, m.getSymbolCount());	}//11 (8builtins+2 start markers+1 heap marker) symbols should be added by compiler, 5 from input
 	@Test
 	void testFDIndependentAlloc() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac",SOMFormats.HRAC);

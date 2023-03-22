@@ -24,6 +24,7 @@ import de.dralle.som.languages.hras.model.HRASMemoryAddress;
  */
 public class HRACModel implements ISetN, IHeap,Cloneable {
 
+	private static final String HRAC_HEAP_START_MARKER = "HRAC_HEAP_START";
 	@Override
 	public HRACModel clone() {
 		HRACModel clone=null;
@@ -198,7 +199,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 		if (targetAddress != null) {
 			return targetAddress;
 		}
-		if (symbol.equals("HEAP")) {
+		if (symbol.equals(HRAC_HEAP_START_MARKER)) {
 			return getHeapStartAddress(n);
 		}
 		return -1;
@@ -389,13 +390,14 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 				m.addSymbol(s.getName(), tgHras);
 			}
 		}
-		m.addSymbol("HEAP", new HRASMemoryAddress(toc.getHeapStartAddress(n)));
+		m.addSymbol(HRAC_HEAP_START_MARKER, new HRASMemoryAddress(toc.getHeapStartAddress(n)));//place HRAC heap start marker
 
 		HRASCommand clrAdrEval = new HRASCommand();
 		clrAdrEval.setOp(Opcode.NAW);
 		clrAdrEval.setAddress(new HRASMemoryAddress("ADR_EVAL"));
-		m.addCommand(clrAdrEval);
-
+		HRASMemoryAddress assignedAddress =m.addCommand(clrAdrEval);
+		m.addSymbol("HRAS_PROGRAM_START", assignedAddress);
+		int i=0;
 		for (HRACForDup cf : toc.commands) {
 			if(cf.getCmd()!=null) {
 				HRACCommand c = cf.getCmd();
@@ -404,7 +406,10 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 				HRASMemoryAddress address = new HRASMemoryAddress(c.getTarget().getSymbol().getName());
 				address.setAddressOffset(c.getTarget().getOffset());
 				hrasc.setAddress(address);
-				HRASMemoryAddress assignedAddress = m.addCommand(hrasc);
+				assignedAddress = m.addCommand(hrasc);
+				if(i++==0) {
+					m.addSymbol("HRAC_PROGRAM_START", assignedAddress);//mark start of HRAC
+				}
 				if (c.getLabel() != null) {
 					m.addSymbol(c.getLabel().getName(), assignedAddress);
 				}

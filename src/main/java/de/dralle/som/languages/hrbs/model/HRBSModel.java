@@ -363,6 +363,75 @@ public class HRBSModel implements ISetN, IHeap {
 
 		return m;
 	}
+	public static HRBSModel compileFromHRAC(HRACModel m,String name) {
+		HRBSModel newm = new HRBSModel();
+		newm.setMinimumN(m.getN());
+		newm.setHeapSize(m.getHeapSize());
+		newm.setName(name);
+		newm.setDirectives(m.getDirectives());
+		for (HRACSymbol s : m.getSymbols()) {
+			HRBSSymbol news=convertHRACSymbolToHRBS(s);
+			newm.addSymbol(news);
+		}
+		for (HRACForDup c : m.getCommands()) {
+			HRBSCommand newc=convertHRACCommand2HRBS(c,newm);
+			newm.addCommand(newc);
+		}
+		return newm;
+	}
+
+	private static HRBSCommand convertHRACCommand2HRBS(HRACForDup c, HRBSModel model) {
+		HRBSCommand newc = new HRBSCommand();
+		if(c.getCmd()!=null) {
+			newc=convertHRACCommand2HRBS(c.getCmd());
+		}
+		if(c.getRange()!=null) {
+			newc.setRange(convertHRACRange2HRBS(c.getRange()));
+		}
+		if(c.getModel()!=null) {
+			HRBSModel newm = compileFromHRAC(c.getModel(),"FD"+c.getId());
+			model.addChild(newm);
+			newc.setCmd(newm.getName());
+		}
+		return newc;
+	}
+
+	private static HRBSRange convertHRACRange2HRBS(HRACForDupRange range) {
+	HRBSRange newr = new HRBSRange();
+	newr.setStart(new HRBSMemoryAddressOffset(range.getRangeStart(), range.getRangeStartSpecial()));
+	newr.setEnd(new HRBSMemoryAddressOffset(range.getRangeEnd(), range.getRangeEndSpecial()));
+	return newr;
+	}
+
+	private static HRBSCommand convertHRACCommand2HRBS(HRACCommand cmd) {
+		HRBSCommand newc = new HRBSCommand();newc.setCmd(cmd.getOp().name());
+		newc.addTarget(convertHRACMA2HRBS(cmd.getTarget()));
+	if(cmd.getLabel()!=null) {
+		newc.setLabel(cmd.getLabel().getName());
+	}
+	return newc;
+	}
+
+	private static HRBSSymbol convertHRACSymbolToHRBS(HRACSymbol s) {
+		HRBSSymbol news = new HRBSSymbol();
+		news.setType(HRBSSymbolType.local);
+		news.setBitCnt(s.getBitCnt());
+		news.setBitCntISSpecial(s.getSpecialName());
+		news.setName(s.getName());
+		if(s.getTargetSymbol()!=null) {
+			news.setTargetSymbol(convertHRACMA2HRBS(s.getTargetSymbol()));
+		}
+		return news;
+	}
+
+	private static HRBSMemoryAddress convertHRACMA2HRBS(HRACMemoryAddress targetSymbol) {
+		HRBSMemoryAddress newma = new HRBSMemoryAddress();
+		newma.setDeref(false);
+		newma.setOffset(targetSymbol.getOffset());
+		newma.setSymbol(convertHRACSymbolToHRBS(targetSymbol.getSymbol()));
+		return newma;
+		
+	}
 
 	private static void convertSymbols(String name, String uniqueUsageId, List<HRBSSymbol> lclSymbols,
 			Map<String, String> lclSymbolNameMap, HRACModel m, Map<String, HRBSModel> childs) {
@@ -710,7 +779,8 @@ public class HRBSModel implements ISetN, IHeap {
 		HRACSymbol s = new HRACSymbol();
 		s.setName(getTargetSymbolName(symbol.getName(), localSymbolNames));
 		s.setBitCnt(symbol.getBitCnt());
-		s.setBitCntSpecial(symbol.isBitCntISN());
+		s.setBitCntSpecial(symbol.isBitCntISSpecial()!=null);
+		s.setSpecialName(symbol.isBitCntISSpecial());
 		return s;
 	}
 

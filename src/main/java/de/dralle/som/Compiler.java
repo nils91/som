@@ -86,7 +86,7 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.HRAV,SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
-							new SOMFormats[] { SOMFormats.HRAS }),
+							new SOMFormats[] { SOMFormats.HRAS,SOMFormats.HRBS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
 							new SOMFormats[] { SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.CBIN,
@@ -126,6 +126,8 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 		}
 		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAS)) {
 			return (T) compileHRACtoHRAS((HRACModel) sourceModel);
+		}if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRBS)) {
+			return (T) compileHRAC2HRBS((HRACModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
 			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
@@ -167,6 +169,10 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 			return (T) memspace2Base64String((IMemspace) sourceModel);
 		}
 		return null;
+	}
+
+	private HRBSModel compileHRAC2HRBS(HRACModel sourceModel) {
+		return HRBSModel.compileFromHRAC(sourceModel, "MAIN");
 	}
 
 	private String memspace2Base64String(IMemspace sourceModel) {

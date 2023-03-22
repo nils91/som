@@ -18,6 +18,10 @@ import de.dralle.som.ISetN;
 public class HRACForDup implements ISetN, IHeap, Cloneable {
 	private static int runId;
 	private int id;
+	public int getId() {
+		return id;
+	}
+
 	private HRACModel parent;
 
 	public HRACModel getModel() {

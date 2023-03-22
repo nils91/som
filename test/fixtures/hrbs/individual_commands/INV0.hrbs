@@ -1,4 +1,4 @@
-import "test/fixtures/hrac/INV.hrac" as INV_HRAC using HRAC;
+import INV as INV_HRAC using HRAC;
 
 INV0:
 	INV_HRAC;

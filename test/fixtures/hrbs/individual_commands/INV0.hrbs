@@ -1,2 +1,4 @@
+import "test/fixtures/hrac/INV.hrac" as INV_HRAC using HRAC;
+
 INV0:
-	NAR ACC;
+	INV_HRAC;

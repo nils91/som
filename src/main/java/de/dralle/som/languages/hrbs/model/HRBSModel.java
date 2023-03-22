@@ -427,7 +427,9 @@ public class HRBSModel implements ISetN, IHeap {
 	private static HRBSMemoryAddress convertHRACMA2HRBS(HRACMemoryAddress targetSymbol) {
 		HRBSMemoryAddress newma = new HRBSMemoryAddress();
 		newma.setDeref(false);
-		newma.setOffset(targetSymbol.getOffset());
+		if(targetSymbol.getOffset()!=null){
+			newma.setOffset(targetSymbol.getOffset());
+		}
 		newma.setSymbol(convertHRACSymbolToHRBS(targetSymbol.getSymbol()));
 		return newma;
 		

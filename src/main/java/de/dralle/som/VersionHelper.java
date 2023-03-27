@@ -26,8 +26,8 @@ public class VersionHelper {
 		loadProperties();
 	}
 	private void loadProperties() {
-		InputStream mavenPropsFile = Main.class.getClassLoader().getResourceAsStream(MAVEN_PROPERTIES_FN);
-		InputStream appPropsFile=Main.class.getClassLoader().getResourceAsStream(APPLICATION_PROPERTIES_FN);
+		InputStream mavenPropsFile = getClass().getClassLoader().getResourceAsStream(MAVEN_PROPERTIES_FN);
+		InputStream appPropsFile=getClass().getClassLoader().getResourceAsStream(APPLICATION_PROPERTIES_FN);
 		mavenProps = new Properties();
 		appProps = new Properties();
 		if(mavenPropsFile!=null) {			

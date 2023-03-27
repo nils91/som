@@ -52,7 +52,7 @@ public class HRBSImportVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 			}
 			try {
 				loadedModel=new FileLoader().loadByName(loadName, format);
-			} catch (IOException e) {
+			} catch (Exception e) {
 			}
 			if(format!=SOMFormats.HRBS) {
 				mtr=new de.dralle.som.Compiler().compile(loadedModel, format, SOMFormats.HRBS);

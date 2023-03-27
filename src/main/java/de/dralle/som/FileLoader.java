@@ -120,10 +120,10 @@ public class FileLoader {
 	}
 
 	public HRBSModel loadHRBSByName(String name) throws IOException {
-		return readHRBSFileInternalFirst(Paths.get("includes", "hrbs", name + ".hrbs").toString());
+		return readHRBSFileInternalFirst("includes/hrbs/" + name + ".hrbs");
 	}
 
-	public <T> T loadByName(String name, SOMFormats format) throws IOException {
+	public <T> T loadByName(String name, SOMFormats format) {
 		List<String> paths = new ArrayList<>();
 		String[] possibleFileExt = format.getFileExtensionString();
 		for (int i = 0; i < possibleFileExt.length; i++) {
@@ -131,21 +131,55 @@ public class FileLoader {
 			if (!string.startsWith(".")) {
 				string = "." + string;
 			}
+			// Paths to be used to get ressources need forward slashes, so to mantain
+			// compatibility with windows, dont use Paths.get. It works with eclipse, but
+			// not with the exportet jar
+			paths.add("includes" + "/" + format.name() + "/" + name + string);
+			paths.add("includes" + "/" + format.name().toLowerCase() + "/" + name + string);
+			paths.add("includes" + "/" + format.name().toUpperCase() + "/" + name + string);
+			paths.add("includes" + "/" + format.getShortName() + "/" + name + string);
+			paths.add("includes" + "/" + format.getShortName().toLowerCase() + "/" + name + string);
+			paths.add("includes" + "/" + format.getShortName().toUpperCase() + "/" + name + string);
+
+			// Including this anyway because eclipse apparently messes with things
 			paths.add(Paths.get("includes", format.name(), name + string).toString());
 			paths.add(Paths.get("includes", format.name().toLowerCase(), name + string).toString());
 			paths.add(Paths.get("includes", format.name().toUpperCase(), name + string).toString());
 			paths.add(Paths.get("includes", format.getShortName(), name + string).toString());
 			paths.add(Paths.get("includes", format.getShortName().toLowerCase(), name + string).toString());
 			paths.add(Paths.get("includes", format.getShortName().toUpperCase(), name + string).toString());
+
 		}
+		// Alright then, why not include more shit, ECLIPSE?
+		List<String> apaths=new ArrayList<>();
+		for (String string : paths) {			
+			if (!string.startsWith("/")) {
+				apaths.add("/" + string);
+			}
+			apaths.add("/" + string);
+			apaths.add("\\" + string);
+		}
+		paths.addAll(apaths);
 		T model = null;
 		for (String string : paths) {
 			try {
 				ClassLoader cl = getClass().getClassLoader();
-				InputStream is = cl.getResourceAsStream(string);
+				String aStr = string;
+				InputStream is = cl.getResourceAsStream(aStr);
 				BufferedInputStream bis = new BufferedInputStream(is);
-				model = (T) loadFromInputStream(bis, format);
-				bis.close();
+				try {
+					model = (T) loadFromInputStream(bis, format);
+				} catch (Exception e) {
+				}
+				try {
+					bis.close();
+				} catch (Exception e) {
+				}
+				System.out.println(string);
+				System.out.println(model != null);
+				if (model != null) {
+					break;
+				}
 			} catch (Exception e) {
 
 			}
@@ -156,6 +190,9 @@ public class FileLoader {
 					model = loadFromFile(string, format);
 				} catch (Exception e) {
 
+				}
+				if (model != null) {
+					break;
 				}
 			}
 		}
@@ -457,15 +494,16 @@ public class FileLoader {
 		}
 		return null;
 	}
+
 	public SOMFormats getFormatFromName(String name) {
 		if (name == null) {
 			return null;
 		}
 		for (SOMFormats format : SOMFormats.values()) {
-			if(format.name().toLowerCase().equals(name.toLowerCase())) {
+			if (format.name().toLowerCase().equals(name.toLowerCase())) {
 				return format;
 			}
-			if(format.getShortName().toLowerCase().equals(name.toLowerCase())) {
+			if (format.getShortName().toLowerCase().equals(name.toLowerCase())) {
 				return format;
 			}
 		}

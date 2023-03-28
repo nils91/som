@@ -175,8 +175,6 @@ public class FileLoader {
 					bis.close();
 				} catch (Exception e) {
 				}
-				System.out.println(string);
-				System.out.println(model != null);
 				if (model != null) {
 					break;
 				}

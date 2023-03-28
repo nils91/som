@@ -12,7 +12,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -170,7 +172,7 @@ public class Main {
 		if (gitign.exists()) {
 			gitign.renameTo(timestampedBu);
 			try {
-				Files.copy(timestampedBu.toPath(), bu.toPath());
+				Files.copy(timestampedBu.toPath(), bu.toPath(),StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -196,8 +198,9 @@ public class Main {
 	}
 
 	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
-		gitignLines.add(0, "#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
 		gitignLines.add(0, "");
+		gitignLines.add(0,
+				"#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
 		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
 		gitignLines.add("");
 		addGeneratedLines(gitignLines, excludeFolders);
@@ -227,18 +230,17 @@ public class Main {
 		gitignLines.add("#GENERATED START");
 		for (int i = 0; i < SOMFormats.values().length; i++) {
 			SOMFormats string = SOMFormats.values()[i];
-			gitignLines.add("#Format " + i);
-			gitignLines.add("#Name (internal) " + string.name());
+			gitignLines.add("#Format " +string.name()+" ("+ i+")");
 			for (int j = 0; j < string.getFileExtensionString().length; j++) {
 				String string1 = string.getFileExtensionString()[j];
-				gitignLines.add("#File extension " + string1 + " (" + i + ")");
+				gitignLines.add("#File extension " + string1 + " (" + j + ")");
 				if (!string1.startsWith(".")) {
 					string1 = "." + string1;
 				}
 				gitignLines.add("*" + string1);
 				for (int k = 0; k < excludeFolders.length; k++) {
 					String string2 = excludeFolders[k];
-					gitignLines.add("#Exclude folder " + string2 + " (" + i + ")");
+					gitignLines.add("#Exclude folder " + string2 + " (" + k + ")");
 					gitignLines.add("!" + string2 + "**/*" + string1);
 				}
 			}

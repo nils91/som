@@ -35,7 +35,7 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
  * @author Nils
  *
  */
-class HRBSIndividualCommandsFixturesFiles {
+class HRBSIndividualCommandsFixturesFilesTests {
 
 	private Compiler c;
 	private FileLoader f;

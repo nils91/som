@@ -187,14 +187,18 @@ public class Main {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(gitign));
 		readGitignorePrototype(reader, gitignLines);
 		// Add new lines for somformats, except in test/ sample/ and src/
-		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
-		gitignLines.add("");
-		addGeneratedLines(gitignLines, excludeFolders);
+		generateAllNewLinesForFormatsAndExceludedFolders(gitignLines);
 		for (String string : gitignLines) {
 			writer.write(string);
 			writer.newLine();
 		}
 		writer.close();
+	}
+
+	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
+		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
+		gitignLines.add("");
+		addGeneratedLines(gitignLines, excludeFolders);
 	}
 
 	private static void readGitignorePrototype(BufferedReader reader, List<String> gitignLines) {

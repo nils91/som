@@ -1,3 +1,5 @@
+#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated
+
 #binary output folder
 /bin/
 
@@ -20,43 +22,136 @@
 #other
 *.bak
 
-#som code files not in test or sample
-*.hrac
-*.hras
-*.hrav
-*.bin
-*.cbin
-*.png
-*.hrbs
+#local gitignore backups
+.gitignore.*.backup
+
+#GENERATED START
+#Format AB (0)
+#File extension .ab (0)
 *.ab
-*.hra
-
-!test/**/*.hrac
-!test/**/*.hras
-!test/**/*.hrav
-!test/**/*.bin
-!test/**/*.cbin
-!test/**/*.png
-!test/**/*.hrbs
+#Exclude folder test/ (0)
 !test/**/*.ab
-!test/**/*.hra
-
-!sample/**/*.hrac
-!sample/**/*.hras
-!sample/**/*.hrav
-!sample/**/*.bin
-!sample/**/*.cbin
-!sample/**/*.png
-!sample/**/*.hrbs
+#Exclude folder sample/ (1)
 !sample/**/*.ab
-!sample/**/*.hra
-
-!src/**/*.hrac
-!src/**/*.hras
-!src/**/*.hrav
-!src/**/*.bin
-!src/**/*.cbin
-!src/**/*.png
-!src/**/*.hrbs
+#Exclude folder src/ (2)
 !src/**/*.ab
+#Exclude folder notes/ (3)
+!notes/**/*.ab
+
+#Format BIN (1)
+#File extension .bin (0)
+*.bin
+#Exclude folder test/ (0)
+!test/**/*.bin
+#Exclude folder sample/ (1)
+!sample/**/*.bin
+#Exclude folder src/ (2)
+!src/**/*.bin
+#Exclude folder notes/ (3)
+!notes/**/*.bin
+
+#Format HRAS (2)
+#File extension .hras (0)
+*.hras
+#Exclude folder test/ (0)
+!test/**/*.hras
+#Exclude folder sample/ (1)
+!sample/**/*.hras
+#Exclude folder src/ (2)
+!src/**/*.hras
+#Exclude folder notes/ (3)
+!notes/**/*.hras
+
+#Format HRAC (3)
+#File extension .hra (0)
+*.hra
+#Exclude folder test/ (0)
+!test/**/*.hra
+#Exclude folder sample/ (1)
+!sample/**/*.hra
+#Exclude folder src/ (2)
 !src/**/*.hra
+#Exclude folder notes/ (3)
+!notes/**/*.hra
+#File extension .hrac (1)
+*.hrac
+#Exclude folder test/ (0)
+!test/**/*.hrac
+#Exclude folder sample/ (1)
+!sample/**/*.hrac
+#Exclude folder src/ (2)
+!src/**/*.hrac
+#Exclude folder notes/ (3)
+!notes/**/*.hrac
+
+#Format HRBS (4)
+#File extension .hrbs (0)
+*.hrbs
+#Exclude folder test/ (0)
+!test/**/*.hrbs
+#Exclude folder sample/ (1)
+!sample/**/*.hrbs
+#Exclude folder src/ (2)
+!src/**/*.hrbs
+#Exclude folder notes/ (3)
+!notes/**/*.hrbs
+
+#Format HRAV (5)
+#File extension .hrav (0)
+*.hrav
+#Exclude folder test/ (0)
+!test/**/*.hrav
+#Exclude folder sample/ (1)
+!sample/**/*.hrav
+#Exclude folder src/ (2)
+!src/**/*.hrav
+#Exclude folder notes/ (3)
+!notes/**/*.hrav
+
+#Format IMAGE (6)
+#File extension .png (0)
+*.png
+#Exclude folder test/ (0)
+!test/**/*.png
+#Exclude folder sample/ (1)
+!sample/**/*.png
+#Exclude folder src/ (2)
+!src/**/*.png
+#Exclude folder notes/ (3)
+!notes/**/*.png
+
+#Format CBIN (7)
+#File extension .cbin (0)
+*.cbin
+#Exclude folder test/ (0)
+!test/**/*.cbin
+#Exclude folder sample/ (1)
+!sample/**/*.cbin
+#Exclude folder src/ (2)
+!src/**/*.cbin
+#Exclude folder notes/ (3)
+!notes/**/*.cbin
+#File extension .zip (1)
+*.zip
+#Exclude folder test/ (0)
+!test/**/*.zip
+#Exclude folder sample/ (1)
+!sample/**/*.zip
+#Exclude folder src/ (2)
+!src/**/*.zip
+#Exclude folder notes/ (3)
+!notes/**/*.zip
+
+#Format B64 (8)
+#File extension .b64 (0)
+*.b64
+#Exclude folder test/ (0)
+!test/**/*.b64
+#Exclude folder sample/ (1)
+!sample/**/*.b64
+#Exclude folder src/ (2)
+!src/**/*.b64
+#Exclude folder notes/ (3)
+!notes/**/*.b64
+
+#GENERATED END

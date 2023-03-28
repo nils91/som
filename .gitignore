@@ -22,6 +22,8 @@
 #other
 *.bak
 
+#local gitignore backups
+.gitignore.*.backup
 
 #GENERATED START
 #Format AB (0)

@@ -20,3 +20,5 @@
 #other
 *.bak
 
+#local gitignore backups
+.gitignore.*.backup

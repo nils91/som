@@ -196,6 +196,8 @@ public class Main {
 	}
 
 	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
+		gitignLines.add(0, "#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
+		gitignLines.add(0, "");
 		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
 		gitignLines.add("");
 		addGeneratedLines(gitignLines, excludeFolders);

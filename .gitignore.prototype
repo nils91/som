@@ -1,0 +1,22 @@
+#binary output folder
+/bin/
+
+#windows binaries
+*.exe
+
+#eclipse
+.project
+.classpath
+/.settings/
+
+#java
+*.class
+*.jar
+
+#maven
+/dependency-reduced-pom.xml
+/target/
+
+#other
+*.bak
+

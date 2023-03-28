@@ -507,4 +507,8 @@ public class FileLoader {
 		}
 		return null;
 	}
+
+	public SOMFormats getFormatFromFilename(File file) {
+		return getFormatFromFilename(file.getName());
+	}
 }

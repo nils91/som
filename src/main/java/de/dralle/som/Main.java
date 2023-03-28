@@ -185,6 +185,19 @@ public class Main {
 		}
 		List<String> gitignLines = new ArrayList<>();
 		BufferedWriter writer = new BufferedWriter(new FileWriter(gitign));
+		readGitignorePrototype(reader, gitignLines);
+		// Add new lines for somformats, except in test/ sample/ and src/
+		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
+		gitignLines.add("");
+		addGeneratedLines(gitignLines, excludeFolders);
+		for (String string : gitignLines) {
+			writer.write(string);
+			writer.newLine();
+		}
+		writer.close();
+	}
+
+	private static void readGitignorePrototype(BufferedReader reader, List<String> gitignLines) {
 		if (reader != null) {
 			String line;
 			try {
@@ -202,9 +215,9 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-		// Add new lines for somformats, except in test/ sample/ and src/
-		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
-		gitignLines.add("");
+	}
+
+	private static void addGeneratedLines(List<String> gitignLines, String[] excludeFolders) {
 		gitignLines.add("#GENERATED START");
 		for (int i = 0; i < SOMFormats.values().length; i++) {
 			SOMFormats string = SOMFormats.values()[i];
@@ -226,11 +239,6 @@ public class Main {
 			gitignLines.add("");
 		}
 		gitignLines.add("#GENERATED END");
-		for (String string : gitignLines) {
-			writer.write(string);
-			writer.newLine();
-		}
-		writer.close();
 	}
 
 	private static void printVersion(boolean verbose) {

@@ -138,7 +138,64 @@ class HRBSIndividualCommandsFixturesFiles {
 	private static Stream<Arguments> provideTruthTableSET0() {
 		return Stream.of(Arguments.of(false, true), Arguments.of(true, true));
 	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableNAR")
+	@Timeout(10)
+	void testNAR(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAR.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR A;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				return true;
+			}
+		});
+		runner.execute();
+		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
+		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
+	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableNAW")
+	@Timeout(10)
+	void testNAW(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAW.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW A;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				return true;
+			}
+		});
+		runner.execute();
+		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
+		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
+	}
+	private static Stream<Arguments> provideTruthTableNAR() {
+		return Stream.of(Arguments.of(false, false, true, false), Arguments.of(false, true, true, true),
+				Arguments.of(true, false, true, false), Arguments.of(true, true, false, true));
+	}
+	private static Stream<Arguments> provideTruthTableNAW() {
+		return Stream.of(Arguments.of(false, false, false, true), Arguments.of(false, true, false, true),
+				Arguments.of(true, false, true, true), Arguments.of(true, true, true, false));
+	}
 	@ParameterizedTest
 	@MethodSource("provideTruthTableINV1")
 	@Timeout(10)

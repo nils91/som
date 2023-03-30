@@ -1,0 +1,32 @@
+;n = 7
+;start = 24
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol WH_EN 2
+symbol WH_COM 8
+symbol WH_SEL 10
+symbol WH_DIR 9
+;continue = 24
+NAW ADR_EVAL
+;continue = 24[8]
+NAW WH_COM
+;continue = 24[16]
+NAW WH_DIR
+;continue = 24[24]
+NAW WH_SEL
+;continue = 24[32]
+NAW WH_EN
+;continue = 24[40]
+NAW WH_EN
+;continue = 24[48]
+NAW WH_COM
+;continue = 24[56]
+NAW WH_EN
+;continue = 24[64]
+NAW WH_EN
+;continue = 24[72]
+NAW WH_COM
+;continue = 24[80]
+NAW WH_EN
+;continue = 24[88]
+NAW WH_EN

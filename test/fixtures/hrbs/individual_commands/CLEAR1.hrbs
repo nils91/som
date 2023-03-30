@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/INV1.hrbs"
+import "test/fixtures/hrbs/individual_commands/SET1.hrbs"
+
+CLEAR1 A:
+	SET1 A;
+	INV1 A;

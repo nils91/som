@@ -9,11 +9,7 @@ package de.dralle.som;
  */
 public abstract class AbstractSomMemspace implements ISomMemspace {
 
-	private static final int ACC_ADDRESS = 0;
-	private static final int START_ADDRESS_START = 9;
-	private static final int ADDRESS_SIZE_END = 7;
-	private static final int ADDRESS_SIZE_START = 1;
-	private static final int ADR_EVAL_ADDRESS = 8;
+	
 
 	@Override
 	public int getAccumulatorAddress() {
@@ -54,22 +50,22 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 
 	@Override
 	public int getWriteHookEnabledAddress() {
-		return getAdrEvalAddress()+getN()+1;
+		return WH_EN;
 	}
 
 	@Override
 	public int getWriteHookDirectionAddress() {
-		return getWriteHookEnabledAddress()+1;
+		return WH_DIR;
 	}
 
 	@Override
 	public int getWriteHookCommunicationAddress() {
-		return getWriteHookDirectionAddress()+1;
+		return WH_COM;
 	}
 
 	@Override
 	public int getWriteHookSelectAddress() {
-		return getWriteHookCommunicationAddress()+1;
+		return WH_SEL;
 	}
 
 	@Override
@@ -144,12 +140,12 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 
 	@Override
 	public int getN() {
-		return getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1);
+		return getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START+ADDRESS_SIZE_BIT_COUNT)+ADDRESS_SIZE_OFFSET;
 	}
 
 	@Override
 	public void setN(int n) {
-		setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_END + 1, n);
+		setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START+ADDRESS_SIZE_BIT_COUNT, n-ADDRESS_SIZE_OFFSET);
 		}
 
 	@Override

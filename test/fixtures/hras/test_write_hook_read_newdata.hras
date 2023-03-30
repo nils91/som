@@ -1,0 +1,20 @@
+;n = 6
+;start = 22
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol WH_EN 2
+symbol WH_COM 8
+symbol WH_SEL 10
+symbol WH_DIR 9
+;continue = 22
+NAW ADR_EVAL
+;continue = 22[7]
+NAW WH_COM
+;continue = 22[14]
+NAW WH_SEL
+;continue = 22[21]
+NAW WH_EN
+;continue = 22[28]
+NAW WH_EN
+;continue = 22[35]
+NAR WH_DIR

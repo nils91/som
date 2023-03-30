@@ -1,0 +1,22 @@
+;n = 7
+;start = 64
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol TR 18
+symbol H 19
+;continue = 64
+NAW ADR_EVAL
+;continue = 64[8]
+NAW TR
+;continue = 64[16]
+NAW H
+;continue = 64[24]
+NAR ACC
+;continue = 64[32]
+NAW H
+;continue = 64[40]
+NAR H
+;continue = 64[48]
+NAR TR
+;continue = 64[56]
+NAR ACC

@@ -1,5 +1,4 @@
-1 000 0101 //ACC is one, N is 5
-1 11010 //ADR_EVAL is one, Address is 26
-0000 //Writehooks will not be used
-00000 000
-1 01000 //start here, NAW 8 (reset  ADR_EVAL to not loop)
+1 100 0001 //ACC is set, ADR-EVAL is set, WH will not be used, N is 5 (offset of 4)
+000 1 1010 //WH bits will not be used, address is 26
+0000 0000
+00 1 0 0001 //start here, NAW one (reset  ADR_EVAL to not loop)

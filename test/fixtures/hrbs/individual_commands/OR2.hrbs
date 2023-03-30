@@ -1,0 +1,7 @@
+import "test/fixtures/hrbs/individual_commands/CLEAR0.hrbs"
+import "test/fixtures/hrbs/individual_commands/OR1.hrbs"
+
+OR2 A, B:
+	CLEAR0;
+	OR1 A;
+	OR1 B;

@@ -1,0 +1,76 @@
+invert ACC:
+0 0
+or 
+1 0
+READ to ACC (from 1):
+1 2
+0 0
+1 2
+0 2 //ensure 1 in acc
+0 1
+0 0
+
+WRITE from ACC (to 1):
+1 1
+0 0
+1 1
+
+GET1 in ACC:
+1 2                   
+0 0
+1 2
+0 2 //ensure 1 in acc
+
+00 01 11 10 11 -> 1 in ACC
+01 01 11 10 11 -> 1 in ACC
+10 11 01 01 11 -> 1 in ACC
+11 10 00 01 11 -> 1 in ACC
+
+AND:
+0 1
+0 0
+
+OR: (a|b=! !a&!b)
+0 0
+WRITE 2
+READ 1
+0 0
+0 2
+
+XOR:
+WRITE 2
+NAND 1
+WRITE 3
+READ 2
+OR 1
+AND 3
+
+truth table NAND:
+00 1
+01 1
+10 1
+11 0
+
+truth table or
+00 0
+01 1
+10 1
+11 1
+
+truth table ! !a&!b
+00 0
+01 1
+10 1
+11 1
+
+truth table ! a&b
+00 1
+01 1
+10 1
+11 0
+
+truth table XOR:
+00 0
+01 1
+10 1
+00 0

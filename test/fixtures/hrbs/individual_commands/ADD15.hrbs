@@ -1,0 +1,8 @@
+import "test/fixtures/hrbs/individual_commands/ADD14.hrbs"
+import "test/fixtures/hrbs/individual_commands/COPY2.hrbs"
+
+ADD15 I0, I1, O, CI,CO:
+	shared alloc TCBS
+	COPY2 CI,TCBS;
+	ADD14 I0,I1,O,TCBS;
+	COPY2 TCBS,CO;

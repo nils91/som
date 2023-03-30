@@ -1,0 +1,16 @@
+MAIN:
+	CLEAR0;
+	NAR ACC;
+	
+#00 01 11 10 10
+#01 01 11 10 10
+#10 11 01 01 11
+#11 10 00 01 11
+CLEAR0:
+	shared alloc H
+	NAW H;
+	NAR ACC;
+	NAW H;
+	NAR H;
+	NAR ACC;
+	

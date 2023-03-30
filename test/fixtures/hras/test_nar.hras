@@ -1,0 +1,10 @@
+;n = 6
+;start = 43
+symbol ACC 0
+symbol ADR_EVAL 1
+;continue = 43
+NAW ADR_EVAL
+;continue = 43[7]
+NAR ACC
+;continue = 43[14]
+NAR ACC

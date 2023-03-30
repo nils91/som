@@ -1,0 +1,15 @@
+;n = 6
+;start = 29
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol TW 17
+;continue = 29
+NAW ADR_EVAL
+;continue = 29[7]
+NAW TW
+;continue = 29[14]
+NAR ACC
+;continue = 29[21]
+NAW TW
+;continue = 29[28]
+NAR ACC

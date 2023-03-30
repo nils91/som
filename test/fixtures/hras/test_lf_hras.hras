@@ -1,0 +1,16 @@
+;n = 7
+;start = 104
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol A 18
+symbol B 19
+symbol C B
+symbol D A[1]
+;continue = 104
+NAW ADR_EVAL
+;continue = 104[8]
+NAW ACC
+;continue = 96
+NAW ACC
+;continue = 120
+NAW ACC

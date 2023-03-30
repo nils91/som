@@ -4,16 +4,26 @@
 package de.dralle.som;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -28,40 +38,12 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-	public static String VERSION = "SNAPSHOT";
-
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		setupVersionInformation();
 		parseCli(args);
-	}
-
-	private static void setupVersionInformation() {
-		InputStream mavenPropsFile = Main.class.getClassLoader().getResourceAsStream("maven.properties");
-		InputStream appPropsFile=Main.class.getClassLoader().getResourceAsStream("application.properties");
-		Properties mavenProps = new Properties();
-		Properties appProps = new Properties();
-		if(mavenPropsFile!=null) {			
-			try {
-				mavenProps.load(mavenPropsFile);
-			} catch (IOException e) {
-			}
-		}
-		if(appPropsFile!=null) {			
-			try {
-				appProps.load(appPropsFile);
-			} catch (IOException e) {
-			}
-		}
-		String versionProp = mavenProps.getProperty("project.version");
-		if(versionProp==null) {
-			versionProp=appProps.getProperty("project.version");
-		}if(versionProp!=null) {
-			VERSION=versionProp;
-		}
 	}
 
 	private static void parseCli(String[] args) throws IOException {
@@ -74,9 +56,6 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (cmd.hasOption("version")) {
-			System.out.println(VERSION);
-		}
 		if (cmd.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("som-java", options);
@@ -85,75 +64,201 @@ public class Main {
 		if (cmd.hasOption("verbose")) {
 			verbose = true;
 		}
+		if (cmd.hasOption("version")) {
+			printVersion(verbose);
+		}
+		if (cmd.hasOption("regenerate-gitignore")) {
+			regenerateGitignire();
+		}
 		String infile = null;
 		if (cmd.hasOption("infile")) {
 			infile = cmd.getOptionValue("infile");
 		}
-		String outfile =null;
+		String outfile = null;
 		if (cmd.hasOption("outfile")) {
-			infile = cmd.getOptionValue("outfile");
+			outfile = cmd.getOptionValue("outfile");
 		}
 		String informat = null;
 		if (cmd.hasOption("informat")) {
 			informat = cmd.getOptionValue("informat");
 		}
-		String outformat =null;
+		String outformat = null;
 		if (cmd.hasOption("outformat")) {
 			outformat = cmd.getOptionValue("outformat");
 		}
-		if (cmd.hasOption("run")) {
-			runProgramFromFile(infile, verbose);
+		int to = 0;
+		if (cmd.hasOption("timeout")) {
+			to = Integer.parseInt(cmd.getOptionValue("timeout"));
+		}
+		boolean compile = cmd.hasOption("compile");
+		boolean run = cmd.hasOption("run");
+		int heap = 0;
+		if (cmd.hasOption("heap")) {
+			heap = Integer.parseInt(cmd.getOptionValue("heap"));
+		}
+		int n = -1;
+		if (cmd.hasOption("n")) {
+			n = Integer.parseInt(cmd.getOptionValue("n"));
+		}
+		SOMFormats inputFormat = new FileLoader().getFormatFromFilename(informat);
+		SOMFormats outputFormat = new FileLoader().getFormatFromFilename(outformat);
+		if (inputFormat == null) {
+			inputFormat = new FileLoader().getFormatFromFilename(infile);
+		}
+		if (outputFormat == null) {
+			outputFormat = new FileLoader().getFormatFromFilename(outfile);
+		}
+		if (run) {
+			Object model = new FileLoader().loadFromFile(infile, inputFormat);
+			if (model instanceof IMemspace) {
+				// Can be executed
+				int exitCode = 0;
+				if (n > -1 && model instanceof ISetN) {
+					((ISetN) model).setN(n);
+				}
+				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
+				boolean execSuccess = false;
+				if (to > 0) {
+					ExecutorService runnerExecutor = Executors.newSingleThreadExecutor();
+					Callable<Boolean> runnerCallable = () -> {
+						return runner.execute();
+					};
+					Future<Boolean> runnerFuture = runnerExecutor.submit(runnerCallable);
+					try {
+						execSuccess = runnerFuture.get(to, TimeUnit.SECONDS);
+					} catch (InterruptedException | ExecutionException | TimeoutException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					execSuccess = runner.execute();
+				}
+
+				if (verbose) {
+					System.out.println("Program successfull: " + execSuccess);
+				}
+				if (execSuccess) {
+					exitCode = 0;
+				} else {
+					exitCode = 1;
+				}
+				if (outfile != null) {
+					ISomMemspace memAfterExec = runner.getMemspace();
+					new FileLoader().writeToFile(memAfterExec, outputFormat, outfile);
+				}
+				System.exit(exitCode);
+			}
+		}
+		if (compile) {
+			Object sourceModel = new FileLoader().loadFromFile(infile, inputFormat);
+			if (n > -1 && sourceModel instanceof ISetN) {
+				((ISetN) sourceModel).setN(n);
+			}
+			if (heap > 0 && sourceModel instanceof IHeap) {
+				((IHeap) sourceModel).setHeapSize(heap);
+			}
+			Object targetModel = new Compiler().compile(sourceModel, inputFormat, outputFormat);
+			new FileLoader().writeToFile(targetModel, outputFormat, outfile);
 		}
 	}
 
-	private static void runProgramFromFile(String inputFile, boolean verbose) throws IOException {
-		File f = new File(inputFile);
+	private static void regenerateGitignire() throws IOException {
+		// (try) load prototype gitignore file
+		File proto = new File(".gitignore.prototype");
+		File gitign = new File(".gitignore");
+		File bu = new File(".gitignore.backup");
+		File timestampedBu = new File(".gitignore." + (System.currentTimeMillis() / 1000) + ".backup");
+		// if an old gitignore exists, backup
+		if (gitign.exists()) {
+			gitign.renameTo(timestampedBu);
+			try {
+				Files.copy(timestampedBu.toPath(), bu.toPath(),StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(proto));
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		List<String> gitignLines = new ArrayList<>();
+		BufferedWriter writer = new BufferedWriter(new FileWriter(gitign));
+		readGitignorePrototype(reader, gitignLines);
+		// Add new lines for somformats, except in test/ sample/ and src/
+		generateAllNewLinesForFormatsAndExceludedFolders(gitignLines);
+		for (String string : gitignLines) {
+			writer.write(string);
+			writer.newLine();
+		}
+		writer.close();
+	}
+
+	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
+		gitignLines.add(0, "");
+		gitignLines.add(0,
+				"#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
+		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
+		gitignLines.add("");
+		addGeneratedLines(gitignLines, excludeFolders);
+	}
+
+	private static void readGitignorePrototype(BufferedReader reader, List<String> gitignLines) {
+		if (reader != null) {
+			String line;
+			try {
+				while ((line = reader.readLine()) != null) {
+					gitignLines.add(line);
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static void addGeneratedLines(List<String> gitignLines, String[] excludeFolders) {
+		gitignLines.add("#GENERATED START");
+		for (int i = 0; i < SOMFormats.values().length; i++) {
+			SOMFormats string = SOMFormats.values()[i];
+			gitignLines.add("#Format " +string.name()+" ("+ i+")");
+			for (int j = 0; j < string.getFileExtensionString().length; j++) {
+				String string1 = string.getFileExtensionString()[j];
+				gitignLines.add("#File extension " + string1 + " (" + j + ")");
+				if (!string1.startsWith(".")) {
+					string1 = "." + string1;
+				}
+				gitignLines.add("*" + string1);
+				for (int k = 0; k < excludeFolders.length; k++) {
+					String string2 = excludeFolders[k];
+					gitignLines.add("#Exclude folder " + string2 + " (" + k + ")");
+					gitignLines.add("!" + string2 + "**/*" + string1);
+				}
+			}
+			gitignLines.add("");
+		}
+		gitignLines.add("#GENERATED END");
+	}
+
+	private static void printVersion(boolean verbose) {
+		VersionHelper vh = new VersionHelper();
+		System.out.println(vh.getVersion());
 		if (verbose) {
-			System.out.println("File: " + f);
-			System.out.println("File exist: " + f.exists());
+			System.out.println(String.format("Repository: %s", vh.getRepositoryName()));
+			System.out.println(String.format("Commit/Revision: %s", vh.getCommitHash()));
+			System.out.println(String.format("Build system: %s", vh.getBuildSystemName()));
+			System.out.println(String.format("Build type: %s", vh.getBuildType()));
+			System.out.println(String.format("Time of build: %s", vh.getBuildTime()));
 		}
-		List<Boolean> bits = new ArrayList<>();
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		int r = 0;
-		while ((r = br.read()) != -1) {
-			switch ((char) r) {
-			case '0':
-				bits.add(false);
-				break;
-			case '1':
-				bits.add(true);
-				break;
-			default:
-				break;
-			}
-		}
-		br.close();
-		runProgramFromBitList(bits,verbose);
-	}
-
-	private static void runProgramFromBitList(List<Boolean> bits, boolean verbose) {
-		SOMBitcodeRunner runner = new SOMBitcodeRunner(bits);
-		boolean execSuccess = runner.execute();
-		System.out.println("Program successfull: "+execSuccess);
-		if(execSuccess) {
-			System.exit(0);
-		}else {
-			System.exit(1);
-		}
-	}
-
-	private static int getAsUnsignedInt(List<Boolean> subList) {
-		return getAsUnsignedInt(subList.toArray(new Boolean[subList.size()]));
-	}
-
-	private static int getAsUnsignedInt(Boolean[] array) {
-		int n = 0;
-		for (int i = 0; i < array.length; i++) {
-			if (array[i]) {
-				n += Math.pow(2, array.length - i - 1);
-			}
-		}
-		return n;
 	}
 
 	private static Options setupCliOptions() {
@@ -167,6 +272,11 @@ public class Main {
 		options.addOption("of", "outformat", true, "Output file format");
 		options.addOption(null, "run", false, "Run a file");
 		options.addOption(null, "compile", false, "Compile a file");
+		options.addOption(null, "heap", true, "Force the use of a heap");
+		options.addOption("n", "n", true, "Set a minimum value for N");
+		options.addOption(null, "timeout", true, "Timeout after <value> in seconds");
+		options.addOption(null, "regenerate-gitignore", false,
+				"Regenerate the gitignore file with all the SOM file formats");
 		return options;
 	}
 }

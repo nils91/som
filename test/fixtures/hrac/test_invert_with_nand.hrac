@@ -1,0 +1,9 @@
+#1 100 0010 //ACC is set, ADR-EVAL is set, WH will not be used, N is 6 (offset of 4)
+#000 1 0101 //WH bits will not be used, address is 43
+#1 
+#00000000000000000000000000 //filler bits
+#1 000 001 //reset ADR_EVAL(not needed in HRAC)
+#0 000 000 //invert acc with NAW
+#0 000 000 //invert acc with NAR
+NAW ACC
+NAR ACC

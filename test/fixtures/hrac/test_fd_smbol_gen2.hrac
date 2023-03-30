@@ -1,0 +1,6 @@
+for [0:4] dup:
+{
+	alloc A
+	NAR A
+	NAW A
+}

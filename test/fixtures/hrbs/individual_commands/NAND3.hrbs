@@ -1,0 +1,10 @@
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/NAND2.hrbs"
+
+NAND3 I0, I1, O:
+	shared alloc H;
+	WRITE1 H;
+	NAND2 I0, I1;
+	WRITE1 O;
+	READ1 H;

@@ -1,0 +1,8 @@
+import "test/fixtures/hrbs/individual_commands/COPY2.hrbs"
+	
+SWAP2 A, B:
+	shared alloc H
+	COPY2 A, H;
+	COPY2 B, A;
+	COPY2 H, B;
+	

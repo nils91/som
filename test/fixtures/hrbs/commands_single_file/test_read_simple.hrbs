@@ -1,0 +1,12 @@
+MAIN:
+	alloc TR
+	NAW TR;
+	READ1 TR;
+	
+READ1 A:
+	local alloc H
+	NAW H;
+	NAR ACC;
+	NAR H;
+	NAR A;
+	NAR ACC;

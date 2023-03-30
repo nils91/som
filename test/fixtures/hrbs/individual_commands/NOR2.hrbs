@@ -1,0 +1,9 @@
+import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
+import "test/fixtures/hrbs/individual_commands/INV1.hrbs"
+
+NOR2 A, B:
+	INV1 A;
+	INV1 B;
+	AND2 A, B;
+	INV1 A;
+	INV1 B;

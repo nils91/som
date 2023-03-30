@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 
 	<modelVersion>4.0.0</modelVersion>
@@ -8,7 +6,7 @@
 	<artifactId>som-java</artifactId>
 	<packaging>jar</packaging>
 	<name>som-java</name>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.0.14-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -32,9 +30,9 @@
 							<filesets>
 								<fileset>
 									<directory>${project.mainResourceFolder}</directory>
-										<includes>
-											<include>${maven.properties.out.file.name}</include>
-										</includes>
+									<includes>
+										<include>${maven.properties.out.file.name}</include>
+									</includes>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -44,7 +42,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version>
+				<version>3.11.0</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
@@ -81,8 +79,7 @@
 						<configuration>
 							<shadedArtifactAttached>true</shadedArtifactAttached> <!-- Add all dependencies -->
 							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>de.dralle.som.Main</mainClass>
 								</transformer>
 							</transformers>
@@ -93,7 +90,24 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>${antlr.version}</version>
+				<executions>
+					<execution>
+						<id>antlr</id>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+						<configuration>
+							<arguments>-visitor</arguments>
+							<sourceDirectory>src/main/antlr4</sourceDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -122,16 +136,34 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.5.0</version>
 		</dependency>
+		<!-- ANTLR (for building grandmas)-->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>${antlr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>${antlr.version}</version>
+		</dependency>
 	</dependencies>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<junit.jupiter.version>5.9.1</junit.jupiter.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<junit.jupiter.version>5.9.2</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
 		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>
 		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
+		<antlr.version>4.12.0</antlr.version>
+		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH.mm.ss Z</maven.build.timestamp.format>
+		<project.build.system>Maven</project.build.system>
+		<project.build.type>Manual</project.build.type>
+		<project.build.commit></project.build.commit>
+		<project.repository>https://github.com/nils91/som</project.repository>
 	</properties>
 </project>

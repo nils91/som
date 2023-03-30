@@ -1,0 +1,18 @@
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/INV0.hrbs"
+import "test/fixtures/hrbs/individual_commands/INV1.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND1.hrbs"
+import "test/fixtures/hrbs/individual_commands/OR1.hrbs"
+
+XOR1 A:
+	shared alloc H[2]
+	WRITE1 H[0];
+	INV0;
+	AND1 A;
+	WRITE1 H[1];	
+	INV1 A;
+	READ1 H[0];
+	AND1 A;
+	OR1 H[1];
+	INV1 A;

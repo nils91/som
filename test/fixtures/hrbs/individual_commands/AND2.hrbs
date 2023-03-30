@@ -1,0 +1,7 @@
+import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
+import "test/fixtures/hrbs/individual_commands/AND1.hrbs"
+
+AND2 A, B:
+	SET0;
+	AND1 A;
+	AND1 B;

@@ -1,0 +1,5 @@
+import INV0
+
+NOOP:
+	INV0;
+	INV0;

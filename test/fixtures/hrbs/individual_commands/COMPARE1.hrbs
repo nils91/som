@@ -1,0 +1,6 @@
+import "test/fixtures/hrbs/individual_commands/XOR1.hrbs"
+import "test/fixtures/hrbs/individual_commands/INV0.hrbs"
+
+COMPARE1 A:
+	XOR1 A;
+	INV0;

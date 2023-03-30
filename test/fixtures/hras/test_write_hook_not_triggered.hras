@@ -1,0 +1,16 @@
+;n = 6
+;start = 36
+symbol ACC 0
+symbol ADR_EVAL 1
+symbol WH_EN 2
+symbol WH_COM 8
+symbol WH_SEL 10
+symbol WH_DIR 9
+;continue = 36
+NAW ADR_EVAL
+;continue = 36[7]
+NAW WH_COM
+;continue = 36[14]
+NAW WH_DIR
+;continue = 36[21]
+NAW WH_SEL

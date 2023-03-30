@@ -1,0 +1,24 @@
+MAIN:
+	SET1 WH_COM;
+	SET1 WH_DIR;
+	SET1 WH_SEL;
+
+SET0:
+	shared alloc H
+	NAW H;
+	NAR ACC;
+	NAW H;
+	NAR H;
+	
+SET1 A:
+	SET0;
+	WRITE1 A;
+	
+WRITE1 A:
+	NAW A;
+	INV0;
+	NAW A;
+	INV0;
+	
+INV0:
+	NAR ACC;

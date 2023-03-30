@@ -14,7 +14,12 @@ import de.dralle.som.writehooks.IWriteHook;
  */
 public class SOMBitcodeRunner {
 	private ISomMemspace memspace;
-	private WriteHookManager writeHookManager=new WriteHookManager();
+	private List<AbstractUnconditionalDebugPoint> dps=new ArrayList<>();
+	public void addDebugPoint(AbstractUnconditionalDebugPoint dp) {
+		dps.add(dp);
+	}
+	private WriteHookManager writeHookManager = new WriteHookManager();
+
 	public WriteHookManager getWriteHookManager() {
 		return writeHookManager;
 	}
@@ -30,18 +35,10 @@ public class SOMBitcodeRunner {
 	public void setMemspace(ISomMemspace memspace) {
 		this.memspace = memspace;
 	}
-	
-	
-
-	
-	public SOMBitcodeRunner(int n, int startAddress) {
-		ISomMemspace memSpace = initMemspaceFromAddressSizeAndStartAddress(n, startAddress);
-		this.memspace = memSpace;
-	}
 
 	private ISomMemspace initMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress) {
 		int bitCnt = (int) Math.pow(2, addressSizeBits);
-		ISomMemspace memSpace = new BooleanArrayMemspace(bitCnt);
+		ISomMemspace memSpace = new ByteArrayMemspace(bitCnt);
 		memSpace = initEmptyMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress, memSpace);
 		return memSpace;
 	}
@@ -60,7 +57,7 @@ public class SOMBitcodeRunner {
 	}
 
 	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {
-		int addressSizeBits =memSpace.getN();
+		int addressSizeBits = memSpace.getN();
 		int startAddress = memSpace.getNextAddress();
 		ISomMemspace origMemSpace = memSpace.clone();
 		memSpace = initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
@@ -68,49 +65,11 @@ public class SOMBitcodeRunner {
 		return memSpace;
 	}
 
-	public SOMBitcodeRunner(boolean[] bits) {
-		ISomMemspace memSpace = initFromBooleanArray(bits);
-		this.memspace = memSpace;
-	}
-
-	private ISomMemspace initFromBooleanArray(boolean[] bits) {
-		ISomMemspace memSpace = new BooleanArrayMemspace(bits.length);
-		for (int i = 0; i < bits.length; i++) {
-			boolean b = bits[i];
-			memSpace.setBit(i, b);
-		}
-		memSpace = initFromExistingPartialMemspace(memSpace);
-		return memSpace;
-	}
-
-	private ISomMemspace initFromBooleanArray(Boolean[] bits) {
-		boolean[] realBooleanArray = new boolean[bits.length];
-		for (int i = 0; i < realBooleanArray.length; i++) {
-			realBooleanArray[i] = bits[i];
-		}
-		return initFromBooleanArray(realBooleanArray);
-	}
-
-	public SOMBitcodeRunner(List<Boolean> bits) {
-		ISomMemspace memSpace = initFromBooleanArray(bits.toArray(new Boolean[bits.size()]));
-		this.memspace = memSpace;
-	}
-
-	public SOMBitcodeRunner(String bits) {
-		bits = bits.replaceAll("[^0-1]", "");
-		boolean[] boolArr = new boolean[bits.length()];
-		for (int i = 0; i < bits.length(); i++) {
-			boolean b = bits.charAt(i) != '0';
-			boolArr[i] = b;
-		}
-		this.memspace = initFromBooleanArray(boolArr);
-	}
 	public boolean execute() {
 		int programCounter = 0;
 		boolean accumulator = false;
 		int addressSize = 0;
-		do {
-			accumulator = memspace.getAccumulatorValue();
+		do {			
 			addressSize = memspace.getN();
 			int startAddress = memspace.getNextAddress();
 			boolean addressEval = memspace.isAdrEvalSet();
@@ -130,6 +89,11 @@ public class SOMBitcodeRunner {
 				tgtAddress[i] = nextCommand[i + opcodeSize];
 			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
+			//update debug points
+			for (AbstractUnconditionalDebugPoint dp : dps) {
+				dp.update(programCounter, opCode?Opcode.NAW:Opcode.NAR, tgtAddressValue, memspace);
+			}
+			accumulator = memspace.getAccumulatorValue();
 			boolean tgtBitValue = memspace.getBit(tgtAddressValue);
 			boolean nand = !(accumulator && tgtBitValue);
 			if (!opCode)// NAR
@@ -159,10 +123,12 @@ public class SOMBitcodeRunner {
 						IWriteHook currentlySelectedWriteHook = writeHookManager.getSelectedWriteHook();
 						if (currentlySelectedWriteHook != null) {
 							boolean hasNew = currentlySelectedWriteHook.hasDataAvailable();
-							boolean readBit = currentlySelectedWriteHook.read(this);
-							memspace.setWriteHookCommunicationBit(readBit);
+							if (hasNew) {
+								boolean readBit = currentlySelectedWriteHook.read(this);
+								memspace.setWriteHookCommunicationBit(readBit);
+							}
 							memspace.setWriteHookDirectionBit(!hasNew);
-						}else {
+						} else {
 							memspace.setWriteHookDirectionBit(true);
 						}
 					}
@@ -170,12 +136,12 @@ public class SOMBitcodeRunner {
 					// wh switch mode
 					if (whDir) {
 						// switch selected write hook
-							boolean comValue = memspace.getWriteHookCommunicationBit();
-							if (comValue) {
-								writeHookManager.switchToNextWriteHook();
-							} else {
-								writeHookManager.switchToPreviousWriteHook();
-							}
+						boolean comValue = memspace.getWriteHookCommunicationBit();
+						if (comValue) {
+							writeHookManager.switchToNextWriteHook();
+						} else {
+							writeHookManager.switchToPreviousWriteHook();
+						}
 					} else {
 						// last switching success
 						memspace.setWriteHookCommunicationBit(writeHookManager.isLastSwitchSuccess());

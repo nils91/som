@@ -1,22 +1,22 @@
-1 0000111
-1 0100000
-0001
-00000 00000 00
-1 0001000
+110 0 0011 (acc is set, ard eval set, wh en not set, address 7)
+001 01000 00//only wh bit set is wh_sel, address is 32
 
-1 0010000
-1 0010000
+00 00000 00000 00 //filler
+1 0000001 //reset adr eval
 
-0 0010010
-0 0000000
+1 0000010 //set wh rn 
+1 0000010 //reset wh en
 
-1 0010000
-1 0010000
+0 0001000 //read wh com
+0 0000000 //invert acc
 
-0 0010010
+1 0000010 //set wh rn 
+1 0000010 //reset wh en
 
-1 0010000
-1 0010000
+0 0001000 //read wh com
 
-0 0010010
-0 0000000
+1 0000010 //set wh rn 
+1 0000010 //reset wh en
+
+0 0001000 //read wh com
+0 0000000 //invert acc for successful exit

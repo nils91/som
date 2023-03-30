@@ -1,0 +1,10 @@
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/HADD13.hrbs"
+
+HADD14 I0, I1, O, CB:
+	shared alloc H;
+	WRITE1 H;
+	HADD13 I0,I1,O;
+	WRITE1 CB;
+	READ1 H;

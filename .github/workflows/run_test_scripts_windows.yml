@@ -13,7 +13,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Build with Maven
-      run: mvn clean install -DskipTests -Dproject.build.commit=${GITHUB_SHA} -Dproject.build.system=GH_ACTIONS/Maven -Dproject.build.type=CI -Dproject.repository="${{ github.server_url }}/${{ github.repository }}"
+      run: mvn clean install -DskipTests -Dproject.build.commit=${GITHUB_SHA} -Dproject.build.system=GH_ACTIONS/Maven -Dproject.build.type=CI -Dproject.repository=$${{ github.server_url }}/$${{ github.repository }}"
     - name: Copy
       run: Copy-Item -Path ./target/som-java-*-shaded.jar -Destination ./test/
     - name: Rename

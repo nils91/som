@@ -21,7 +21,9 @@ jobs:
     - name: Make script runner executable
       run: chmod +x script-runner-sample.sh
     - name: Make all sample scripts executable
-      run: chmod +x sample/**/*.sh
+      run: chmod +x sample/*.sh || true
+    - name: Make all sample scripts executable (r)
+      run: chmod +x sample/**/*.sh || true
     - name: Run sample script runner
       run: ./script-runner-sample.sh
     - name: Clean up

@@ -1,0 +1,38 @@
+name: "Run test scripts"
+on:
+    [push, pull_request]
+jobs:
+  build:
+    name: Run test scripts
+    runs-on: ubuntu-latest        
+    steps:
+    - uses: actions/checkout@v3.5.0
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn clean install -DskipTests -Dproject.build.commit=${GITHUB_SHA} -Dproject.build.system=GH_ACTIONS/Maven -Dproject.build.type=CI -Dproject.repository=${{ github.server_url }}/${{ github.repository }}
+    - name: Copy
+      run: cp ./target/som-java-*-shaded.jar ./test/
+    - name: Rename
+      run: mv test/som-java-*-shaded.jar test/som-java.jar
+    - name: Install dos2unix
+      run: sudo apt-get install -y dos2unix
+    - name: Convert line endings script runner
+      run: dos2unix script-runner-test.sh
+    - name: Convert line endings all test scripts 
+      run: dos2unix test/*.sh || true
+    - name: Convert line endings all test scripts (r)
+      run: dos2unix test/**/*.sh || true
+    - name: Make script runner executable
+      run: chmod +x script-runner-test.sh
+    - name: Make all sample scripts executable
+      run: chmod +x test/*.sh || true
+    - name: Make all sample scripts executable (r)
+      run: chmod +x test/**/*.sh || true
+    - name: Run test script runner
+      run: ./script-runner-test.sh
+    - name: Clean up
+      run: rm test/som-java.jar

@@ -18,6 +18,10 @@ jobs:
       run: cp ./target/som-java-*-shaded.jar ./sample/
     - name: Rename
       run: mv sample/som-java-*-shaded.jar sample/som-java.jar
+    - name: Make script runner executable
+      run: chmod +x script-runner-sample.sh
+    - name: Make all sample scripts executable
+      run: chmod +x sample/**/*.sh
     - name: Run sample script runner
       run: ./script-runner-sample.sh
     - name: Clean up

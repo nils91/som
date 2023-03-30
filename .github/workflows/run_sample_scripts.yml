@@ -1,0 +1,24 @@
+name: "Run sample scripts"
+on:
+    [push, pull_request]
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest        
+    steps:
+    - uses: actions/checkout@v3.5.0
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn clean install -DskipTests -Dproject.build.commit=${GITHUB_SHA} -Dproject.build.system=GH_ACTIONS/Maven -Dproject.build.type=CI -Dproject.repository=${{ github.server_url }}/${{ github.repository }}
+    - name: Copy
+      run: cp ./target/som-java-*-shaded.jar ./sample/
+    - name: Rename
+      run: mv sample/som-java-*-shaded.jar sample/som-java.jar
+    - name: Run sample script runner
+      run: ./script-runner-sample.sh
+    - name: Clean up
+      run: rm sample/som-java.jar

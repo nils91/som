@@ -10,7 +10,9 @@ for file in $(find sample -type f -name "*.sh"); do
     dir=$(dirname "$file")
     lfile=$(basename "$file")
     cd "$dir"
+    echo "--------------------------"
     echo "Running $file"
+    echo "--------------------------"
     if bash "$lfile"; then
         echo "$file succeeded"
         (( success++ ))
@@ -20,6 +22,7 @@ for file in $(find sample -type f -name "*.sh"); do
     fi
     (( total++ ))
     cd - >/dev/null
+    echo "--------------------------"
 done
 echo "${success}/${total} successful"
 if [[ $failed -gt 0 ]]; then

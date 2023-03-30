@@ -10,6 +10,7 @@ for file in $(find test -type f -name "*.sh" ! -path "*/fixtures/*" ! -path "*/t
     dir=$(dirname "$file")
     lfile=$(basename "$file")
     cd "$dir"
+    echo "--------------------------"
     echo "Running $file"
     if bash "$lfile"; then
         echo "$file succeeded"
@@ -20,6 +21,7 @@ for file in $(find test -type f -name "*.sh" ! -path "*/fixtures/*" ! -path "*/t
     fi
     (( total++ ))
     cd - >/dev/null
+    echo "--------------------------"
 done
 echo "${success}/${total} successful"
 if [[ $failed -gt 0 ]]; then

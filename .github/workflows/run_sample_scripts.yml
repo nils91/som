@@ -3,7 +3,7 @@ on:
     [push, pull_request]
 jobs:
   build:
-    name: build
+    name: Run sample scripts
     runs-on: ubuntu-latest        
     steps:
     - uses: actions/checkout@v3.5.0
@@ -18,6 +18,14 @@ jobs:
       run: cp ./target/som-java-*-shaded.jar ./sample/
     - name: Rename
       run: mv sample/som-java-*-shaded.jar sample/som-java.jar
+    - name: Install dos2unix
+      run: sudo apt-get install -y dos2unix
+    - name: Convert line endings script runner
+      run: dos2unix script-runner-sample.sh
+    - name: Convert line endings all sample scripts 
+      run: dos2unix sample/*.sh || true
+    - name: Convert line endings all sample scripts (r)
+      run: dos2unix sample/**/*.sh || true
     - name: Make script runner executable
       run: chmod +x script-runner-sample.sh
     - name: Make all sample scripts executable

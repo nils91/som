@@ -1,1 +1,1 @@
-java -jar som-java.jar --version
+java -jar som-java.jar --version --verbose

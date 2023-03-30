@@ -1,0 +1,32 @@
+name: "Run test powershell scripts on windows"
+on:
+  [push, pull_request]
+jobs:
+  build:
+    name: Run test scripts
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3.5.0
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn clean install -DskipTests -Dproject.build.commit=${GITHUB_SHA} -Dproject.build.system=GH_ACTIONS/Maven -Dproject.build.type=CI -Dproject.repository=${{ github.server_url }}/${{ github.repository }}
+    - name: Copy
+      run: Copy-Item -Path ./target/som-java-*-shaded.jar -Destination ./test/
+    - name: Rename
+      run: Rename-Item ./test/som-java-*-shaded.jar ./test/som-java.jar
+    - name: Convert line endings script runner
+      run: (Get-Content ps-runner-test.ps1) | Set-Content ps-runner-test.ps1 -Encoding ASCII
+    - name: Convert line endings all test scripts
+      run: Get-ChildItem test -Recurse -Include *.ps1 | ForEach-Object { (Get-Content $_.FullName) | Set-Content $_.FullName -Encoding ASCII }
+    - name: Make script runner executable
+      run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser && Unblock-File ps-runner-test.ps1
+    - name: Make all sample scripts executable
+      run: Get-ChildItem test -Recurse -Include *.ps1 | ForEach-Object { Unblock-File $_.FullName }
+    - name: Run test script runner
+      run: ./ps-runner-test.ps1
+    - name: Clean up
+      run: Remove-Item ./test/som-java.jar

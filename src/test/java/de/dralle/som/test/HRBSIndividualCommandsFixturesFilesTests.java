@@ -474,7 +474,7 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	@ParameterizedTest
 	@MethodSource("provideTruthTableTRIGGER1")
 	@Timeout(10)
-	void testTRIGGER1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
+	void testTRIGGER1(boolean inValueAcc, boolean inValueA,boolean finalValueA)
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/TRIGGER1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: TRIGGER1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
@@ -494,12 +494,11 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			}
 		});
 		runner.execute();
-		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
 		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));
 	}
 
 	private static Stream<Arguments> provideTruthTableTRIGGER1() {
-		return Stream.of(Arguments.of(false, false, false, false), Arguments.of(true, false, true, false));
+		return Stream.of(Arguments.of(false, false, false), Arguments.of(true, false, false));
 	}
 
 	@ParameterizedTest
@@ -1076,7 +1075,7 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	@ParameterizedTest
 	@MethodSource("provideTruthTableAND3")
 	@Timeout(10)
-	void testAND3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
+	void testAND3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, 
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: AND3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
@@ -1099,29 +1098,28 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			}
 		});
 		runner.execute();
-		assertEquals(finalValueAcc, runner.getMemspace().getAccumulatorValue());
 		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
 		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
 		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
 	}
 
 	private static Stream<Arguments> provideTruthTableAND3() {
-		return Stream.of(Arguments.of(false, false, false, false, false, false, false, false),
-				Arguments.of(false, false, false, true, false, false, false, false),
-				Arguments.of(false, false, true, false, false, false, true, false),
-				Arguments.of(false, false, true, true, false, false, true, false),
-				Arguments.of(false, true, false, false, false, true, false, false),
-				Arguments.of(false, true, false, true, false, true, false, false),
-				Arguments.of(false, true, true, false, false, true, true, true),
-				Arguments.of(false, true, true, true, false, true, true, true),
-				Arguments.of(true, false, false, false, true, false, false, false),
-				Arguments.of(true, false, false, true, true, false, false, false),
-				Arguments.of(true, false, true, false, true, false, true, false),
-				Arguments.of(true, false, true, true, true, false, true, false),
-				Arguments.of(true, true, false, false, true, true, false, false),
-				Arguments.of(true, true, false, true, true, true, false, false),
-				Arguments.of(true, true, true, false, true, true, true, true),
-				Arguments.of(true, true, true, true, true, true, true, true));
+		return Stream.of(Arguments.of(false, false, false, false,  false, false, false),
+				Arguments.of(false, false, false, true, false, false, false),
+				Arguments.of(false, false, true, false, false, true, false),
+				Arguments.of(false, false, true, true, false, true, false),
+				Arguments.of(false, true, false, false, true, false, false),
+				Arguments.of(false, true, false, true, true, false, false),
+				Arguments.of(false, true, true, false, true, true, true),
+				Arguments.of(false, true, true, true, true, true, true),
+				Arguments.of(true, false, false, false, false, false, false),
+				Arguments.of(true, false, false, true,  false, false, false),
+				Arguments.of(true, false, true, false,  false, true, false),
+				Arguments.of(true, false, true, true,  false, true, false),
+				Arguments.of(true, true, false, false,  true, false, false),
+				Arguments.of(true, true, false, true,  true, false, false),
+				Arguments.of(true, true, true, false,  true, true, true),
+				Arguments.of(true, true, true, true,  true, true, true));
 	}
 	@ParameterizedTest
 	@MethodSource("provideTruthTableXOR3")

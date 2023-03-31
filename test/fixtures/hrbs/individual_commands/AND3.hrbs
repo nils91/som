@@ -1,5 +1,7 @@
 import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 
+#AND between I0 and I1, result in O
 AND3 I0, I1, O:
 	AND2 I0, I1;
 	WRITE1 O;

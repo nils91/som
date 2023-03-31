@@ -1,5 +1,6 @@
 import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
 
+#Assuming A is cleared, sets A and immidiatly clears it. Useful for functionality like writehooks.
 TRIGGER1 A:
 	SET0;
 	NAW A;

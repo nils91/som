@@ -89,7 +89,7 @@ class HRBSCommandsIncludedTests {
 	@MethodSource("provideTruthTableNOOP0")
 	@Timeout(10)
 	void testNOOP0(boolean inAcc, boolean finalAcc) throws IOException {
-		String hrbsCode = "import NOOP\n\nMAIN:\n\tglobal DEBUG: NOOP;";
+		String hrbsCode = "import NOOP0\n\nMAIN:\n\tglobal DEBUG: NOOP0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -115,7 +115,7 @@ class HRBSCommandsIncludedTests {
 	@MethodSource("provideTruthTableNAR")
 	@Timeout(10)
 	void testNAR(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import NAR\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR A;";
+		String hrbsCode = "import NAR1\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -140,7 +140,7 @@ class HRBSCommandsIncludedTests {
 	@MethodSource("provideTruthTableNAW")
 	@Timeout(10)
 	void testNAW(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import NAW\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW A;";
+		String hrbsCode = "import NAW1\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);

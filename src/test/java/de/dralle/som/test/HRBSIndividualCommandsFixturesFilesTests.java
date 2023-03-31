@@ -141,8 +141,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	@ParameterizedTest
 	@MethodSource("provideTruthTableNAR")
 	@Timeout(10)
-	void testNAR(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAR.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR A;";
+	void testNAR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -166,8 +166,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	@ParameterizedTest
 	@MethodSource("provideTruthTableNAW")
 	@Timeout(10)
-	void testNAW(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAW.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW A;";
+	void testNAW1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAW1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
@@ -199,7 +199,7 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	@ParameterizedTest
 	@MethodSource("provideTruthTableINV1")
 	@Timeout(10)
-	void testINV1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+	void testINV1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: INV1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -218,18 +218,17 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			}
 		});
 		runner.execute();
-		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
 		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
 	}
 
 	private static Stream<Arguments> provideTruthTableINV1() {
-		return Stream.of(Arguments.of(false, false, false, true), Arguments.of(false, true, false, false),
-				Arguments.of(true, false, true, true), Arguments.of(true, true, true, false));
+		return Stream.of(Arguments.of(false, false,  true), Arguments.of(false, true,  false),
+				Arguments.of(true, false,  true), Arguments.of(true, true,  false));
 	}
 	@ParameterizedTest
 	@MethodSource("provideTruthTableFLUIP1")
 	@Timeout(10)
-	void testFLIP1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
+	void testFLIP1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: FLIP1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -248,13 +247,12 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			}
 		});
 		runner.execute();
-		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
-		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
+		assertEquals(finalValueA,runner.getMemspace().getBit(aAdr));
 	}
 
 	private static Stream<Arguments> provideTruthTableFLUIP1() {
-		return Stream.of(Arguments.of(false, false, false, false), Arguments.of(false, true, false, true),
-				Arguments.of(true, false, true, true), Arguments.of(true, true, true, false));
+		return Stream.of(Arguments.of(false, false,  false), Arguments.of(false, true,  true),
+				Arguments.of(true, false,  true), Arguments.of(true, true,  false));
 	}
 	@ParameterizedTest
 	@MethodSource("provideTruthTableNOT1")
@@ -309,8 +307,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			}
 		});
 		runner.execute();
-		assertTrue(runner.getMemspace().getAccumulatorValue() == finalValueAcc);
-		assertTrue(runner.getMemspace().getBit(aAdr) == finalValueA);
+		assertEquals(finalValueAcc,runner.getMemspace().getAccumulatorValue()  );
+		assertEquals(finalValueA,runner.getMemspace().getBit(aAdr)  );
 	}
 
 	private static Stream<Arguments> provideTruthTableOR1() {
@@ -382,17 +380,17 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	}
 
 	@ParameterizedTest
-	@MethodSource("provideTruthTableWRITE1")
+	@MethodSource("provideTruthTableWRITEPE1")
 	@Timeout(10)
-	void testWRITE1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
+	void testWRITEPE1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA)
 			throws IOException {
-		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITE1.hrbs\"\n\nMAIN:\n\tglobal alloc alloc A\n\tDEBUG: WRITE1 A;";
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITEPE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: WRITEPE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
 		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
 		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
-		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
@@ -408,11 +406,40 @@ class HRBSIndividualCommandsFixturesFilesTests {
 		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));
 	}
 
-	private static Stream<Arguments> provideTruthTableWRITE1() {
+	private static Stream<Arguments> provideTruthTableWRITEPE1() {
 		return Stream.of(Arguments.of(false, false, false, false), Arguments.of(false, true, false, false),
 				Arguments.of(true, false, true, true), Arguments.of(true, true, true, true));
 	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableWRITE1")
+	@Timeout(10)
+	void testWRITE1(boolean inValueAcc, boolean inValueA,  boolean finalValueA)
+			throws IOException {
+		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: WRITE1 A;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int aAdr = hrasModel.resolveSymbolToAddress("A");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
 
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(aAdr, inValueA);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueA, runner.getMemspace().getBit(aAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableWRITE1() {
+		return Stream.of(Arguments.of(false, false,  false), Arguments.of(false, true,  false),
+				Arguments.of(true, false,  true), Arguments.of(true, true,  true));
+	}
 	@ParameterizedTest
 	@MethodSource("provideTruthTableXOR1")
 	@Timeout(10)

@@ -1,11 +1,6 @@
 import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
-import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
-import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 
 TRIGGER1 A:
-	shared alloc H
-	WRITE1 H;
 	SET0;
 	NAW A;
 	NAW A;
-	READ1 H;

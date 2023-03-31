@@ -17,7 +17,7 @@ jobs:
     - name: Copy
       run: Copy-Item -Path ./target/som-java-*-shaded.jar -Destination ./test/
     - name: Rename
-      run: Rename-Item ./test/som-java-*-shaded.jar ./test/som-java.jar
+      run: Get-ChildItem -Path "./test/" -Filter "som-java-*-shaded.jar" | Rename-Item -NewName "som-java.jar"
     - name: Convert line endings script runner
       run: (Get-Content ps-runner-test.ps1) | Set-Content ps-runner-test.ps1 -Encoding ASCII
     - name: Convert line endings all test scripts

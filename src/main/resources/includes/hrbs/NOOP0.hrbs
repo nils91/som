@@ -1,5 +1,5 @@
 import INV0
 
-NOOP:
+NOOP0:
 	INV0;
 	INV0;

@@ -197,7 +197,7 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 	}
 
 	public HRACModel compileHRBStoHRAC(HRBSModel m) {
-		return m.compileToHRAC("GL", null, null);
+		return m.compileToHRAC("GL", null, "HRBS_START");
 	}
 
 	public HRASModel compileHRACtoHRAS(HRACModel m) {

@@ -354,14 +354,6 @@ public class HRBSModel implements ISetN, IHeap {
 				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
-		if(label==null) {
-			label="HRBS_"+name+"_START";
-		}else {
-			HRBSSymbol adds = new HRBSSymbol("HRBS_"+name+"_START");
-			adds.setType(HRBSSymbolType.local);
-			adds.setTargetSymbol(new HRBSMemoryAddress(new HRBSSymbol(label)));
-			lclSymbols.add(adds);
-		}
 		convertSymbols(name, uniqueUsageId, lclSymbols, lclSymbolNameMap, m, childs);
 		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, uniqueUsageId);
 		for (int i = 0; i < lclCommands.size(); i++) {

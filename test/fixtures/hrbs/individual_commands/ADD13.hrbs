@@ -1,5 +1,10 @@
 import "test/fixtures/hrbs/individual_commands/ADD14.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 
-#single bit full adder. carry is written to accumulator.
-ADD13 I0, I1, O:	
-	ADD14 I0,I1,O,ACC;
+#single bit full adder. carry is written to (and taken from) accumulator.
+ADD13 I0, I1, O:
+	local alloc CB;
+	WRITE1 CB;	
+	ADD14 I0,I1,O,CB;
+	READ1 CB;

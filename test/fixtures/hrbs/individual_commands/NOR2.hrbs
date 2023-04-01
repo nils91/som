@@ -1,9 +1,14 @@
 import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
 import "test/fixtures/hrbs/individual_commands/INV1.hrbs"
+import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
+import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 
 NOR2 A, B:
+	local alloc H
 	INV1 A;
 	INV1 B;
 	AND2 A, B;
+	WRITE1 H;
 	INV1 A;
 	INV1 B;
+	READ1 H;

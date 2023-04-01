@@ -1,9 +1,9 @@
-import "test/fixtures/hrbs/individual_commands/ADD14.hrbs"
-import "test/fixtures/hrbs/individual_commands/AND1.hrbs"
-import "test/fixtures/hrbs/individual_commands/SET0.hrbs"
-import "test/fixtures/hrbs/individual_commands/COMPARE3.hrbs"
-import "test/fixtures/hrbs/individual_commands/SET1.hrbs"
-import "test/fixtures/hrbs/individual_commands/CLEAR1.hrbs"
+import ADD14
+import AND1
+import SET0
+import COMPARE3
+import SET1
+import CLEAR1
 
 MAIN:
 #5 -> 0101

@@ -1,0 +1,7 @@
+import CLEAR0
+import OR1
+
+OR2 A, B:
+	CLEAR0;
+	OR1 A;
+	OR1 B;

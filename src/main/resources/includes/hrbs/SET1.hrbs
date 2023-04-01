@@ -1,0 +1,6 @@
+import SET0
+import WRITE1
+
+SET1 A:
+	SET0;
+	WRITE1 A;

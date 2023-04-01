@@ -1,0 +1,14 @@
+import AND2
+import INV1
+import WRITE1
+import READ1
+
+NOR2 A, B:
+	local alloc H
+	INV1 A;
+	INV1 B;
+	AND2 A, B;
+	WRITE1 H;
+	INV1 A;
+	INV1 B;
+	READ1 H;

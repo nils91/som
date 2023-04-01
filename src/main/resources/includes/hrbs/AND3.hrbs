@@ -1,0 +1,7 @@
+import AND2
+import WRITE1
+
+#AND between I0 and I1, result in O
+AND3 I0, I1, O:
+	AND2 I0, I1;
+	WRITE1 O;

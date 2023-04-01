@@ -1,0 +1,20 @@
+import WRITE1
+import READ1
+import XOR2
+import XOR1
+import AND3
+import AND2
+import OR1
+
+#single bit full added. Input is I0 and I1, output is O (result) and CB (carry bit)
+ADD14 I0, I1, O, CB:
+	local alloc H[2];
+	XOR2 I0, I1;
+	XOR1 CB;
+	WRITE1 O;
+	AND3 I0, I1, H[0];
+	AND3 I0, CB, H[1];
+	AND2 I1, CB;
+	OR1 H[0];
+	OR1 H[1];
+	WRITE1 CB;

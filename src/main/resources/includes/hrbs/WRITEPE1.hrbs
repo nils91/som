@@ -1,0 +1,6 @@
+import WRITE1
+import INV0
+
+WRITEPE1 A:
+	WRITE1 A;
+	INV0;

@@ -1,0 +1,9 @@
+import ADD14
+import COPY2
+
+#single bit adder. carry bit split in in and out.
+ADD15 I0, I1, O, CI,CO:
+	local alloc TCBS
+	COPY2 CI,TCBS;
+	ADD14 I0,I1,O,TCBS;
+	COPY2 TCBS,CO;

@@ -1,0 +1,6 @@
+import NOT1
+import WRITE1
+
+INV1 A:
+	NOT1 A;
+	WRITE1 A;

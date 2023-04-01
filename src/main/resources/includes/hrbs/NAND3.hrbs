@@ -1,0 +1,6 @@
+import WRITE1
+import NAND2
+
+NAND3 I0, I1, O:
+	NAND2 I0, I1;
+	WRITE1 O;

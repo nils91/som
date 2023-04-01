@@ -1,0 +1,6 @@
+import INV0
+import READ1
+
+NOT1 A:
+	READ1 A;
+	INV0;

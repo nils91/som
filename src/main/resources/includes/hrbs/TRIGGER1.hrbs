@@ -1,0 +1,7 @@
+import SET0
+
+#Assuming A is cleared, sets A and immidiatly clears it. Useful for functionality like writehooks.
+TRIGGER1 A:
+	SET0;
+	NAW A;
+	NAW A;

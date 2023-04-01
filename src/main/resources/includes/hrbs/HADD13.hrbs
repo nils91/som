@@ -1,0 +1,7 @@
+import XOR3
+import AND2
+
+#single bit half adder with carry output in ACC
+HADD13 I0, I1, O:	
+	XOR3 I0,I1,O;
+	AND2 I0,I1;

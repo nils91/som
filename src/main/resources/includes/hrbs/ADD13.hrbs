@@ -1,0 +1,10 @@
+import ADD14
+import READ1
+import WRITE1
+
+#single bit full adder. carry is written to (and taken from) accumulator.
+ADD13 I0, I1, O:
+	local alloc CB;
+	WRITE1 CB;	
+	ADD14 I0,I1,O,CB;
+	READ1 CB;

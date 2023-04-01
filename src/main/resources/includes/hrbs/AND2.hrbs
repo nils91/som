@@ -1,0 +1,7 @@
+import SET0
+import AND1
+
+AND2 A, B:
+	SET0;
+	AND1 A;
+	AND1 B;

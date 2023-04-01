@@ -1,0 +1,7 @@
+import READ1
+import WRITE1
+	
+COPY2 I, O:
+	READ1 I;	
+	WRITE1 O;
+	

@@ -1,0 +1,6 @@
+import OR1
+import INV0
+
+NOR1 A:
+	OR1 A;
+	INV0;

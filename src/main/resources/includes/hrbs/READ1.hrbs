@@ -1,0 +1,7 @@
+import INV0
+import SET0
+
+READ1 A:
+	SET0;
+	NAR A;
+	INV0;

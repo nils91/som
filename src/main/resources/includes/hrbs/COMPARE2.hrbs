@@ -1,0 +1,6 @@
+import READ1
+import COMPARE1
+
+COMPARE2 A, B:
+	READ1 A;
+	COMPARE1 B;

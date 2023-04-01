@@ -1,0 +1,7 @@
+import READ1
+import FLIP1
+
+#Flip I when F is set
+FLIP2 I, F:
+	READ1 I;
+	FLIP1 F;

@@ -1,0 +1,5 @@
+import INV0
+
+AND1 A:
+	NAR A;
+	INV0;

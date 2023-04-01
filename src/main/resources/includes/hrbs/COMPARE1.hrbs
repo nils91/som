@@ -1,0 +1,6 @@
+import XOR1
+import INV0
+
+COMPARE1 A:
+	XOR1 A;
+	INV0;

@@ -1,0 +1,9 @@
+import COPY2
+
+#swap bits A and B
+SWAP2 A, B:
+	shared alloc H
+	COPY2 A, H;
+	COPY2 B, A;
+	COPY2 H, B;
+	

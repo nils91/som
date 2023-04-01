@@ -1,0 +1,6 @@
+import INV1
+import SET1
+
+CLEAR1 A:
+	SET1 A;
+	INV1 A;

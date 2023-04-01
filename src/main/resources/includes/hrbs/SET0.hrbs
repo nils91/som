@@ -1,0 +1,8 @@
+import INV0
+
+SET0:
+	local alloc H
+	NAW H;
+	INV0;
+	NAW H;
+	NAR H;

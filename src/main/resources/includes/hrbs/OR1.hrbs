@@ -1,0 +1,15 @@
+import INV0
+import INV1
+import READ1
+import WRITE1
+
+OR1 A:
+	local alloc H;
+	WRITE1 H;
+	INV1 A;
+	READ1 H;
+	INV0;
+	NAR A;
+	WRITE1 H;
+	INV1 A;
+	READ1 H;

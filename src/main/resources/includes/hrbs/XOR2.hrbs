@@ -1,0 +1,11 @@
+import OR2
+import AND1
+import WRITE1
+import NAND2
+
+XOR2 A, B:
+	local alloc H
+	OR2 A, B;
+	WRITE1 H;
+	NAND2 A, B;
+	AND1 H;

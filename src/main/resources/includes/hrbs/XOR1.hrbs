@@ -1,0 +1,24 @@
+import READ1
+import WRITE1
+import WRITEPE1
+import INV0
+import INV1
+import AND1
+import OR1
+
+#Perform XOr between A and ACC and write result to acc
+#00xx 000x 100x 000x x000 x100 0100 0100 0100 0100 x000 0000
+
+XOR1 A:
+	local alloc H[2]
+	WRITEPE1 H[0];
+	INV0;
+	AND1 A;
+	WRITE1 H[1];	
+	INV1 A;
+	READ1 H[0];
+	AND1 A;
+	OR1 H[1];
+	WRITE1 H[0];
+	INV1 A;
+	READ1 H[0];

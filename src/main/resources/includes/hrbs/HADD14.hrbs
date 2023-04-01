@@ -1,0 +1,8 @@
+import WRITE1
+import READ1
+import HADD13
+
+#single bit half adder with carry output
+HADD14 I0, I1, O, CB:
+	HADD13 I0,I1,O;
+	WRITE1 CB;

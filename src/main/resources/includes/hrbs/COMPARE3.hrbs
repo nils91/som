@@ -1,0 +1,6 @@
+import WRITE1
+import COMPARE2
+
+COMPARE3 I0, I1, O:
+	COMPARE2 I0, I1;
+	WRITE1 O;

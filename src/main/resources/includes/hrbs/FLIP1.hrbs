@@ -1,0 +1,11 @@
+import WRITE1
+import XOR1
+
+#Flip A if ACC i set
+#00 00 x0
+#01 11 x1
+#10 10 x1
+#11 01 x0
+FLIP1 A:
+	XOR1 A;
+	WRITE1 A;

@@ -1,0 +1,6 @@
+import INV0
+import SET0
+
+CLEAR0:
+	SET0;
+	INV0;

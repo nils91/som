@@ -1,0 +1,6 @@
+import WRITE1
+import XOR2
+
+XOR3 I0, I1, O:
+	XOR2 I0, I1;
+	WRITE1 O;

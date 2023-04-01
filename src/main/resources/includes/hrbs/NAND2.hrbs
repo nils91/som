@@ -1,0 +1,6 @@
+import INV0
+import AND2
+
+NAND2 A, B:
+	AND2 A, B;
+	INV0;

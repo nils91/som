@@ -6,8 +6,9 @@ import "test/fixtures/hrbs/individual_commands/AND3.hrbs"
 import "test/fixtures/hrbs/individual_commands/AND2.hrbs"
 import "test/fixtures/hrbs/individual_commands/OR1.hrbs"
 
-ADD1U4 I0, I1, O, CB:
-	shared alloc H[2];
+#single bit full added. Input is I0 and I1, output is O (result) and CB (carry bit)
+ADD14 I0, I1, O, CB:
+	local alloc H[2];
 	XOR2 I0, I1;
 	XOR1 CB;
 	WRITE1 O;

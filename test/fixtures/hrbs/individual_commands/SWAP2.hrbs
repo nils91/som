@@ -1,5 +1,6 @@
 import "test/fixtures/hrbs/individual_commands/COPY2.hrbs"
-	
+
+#swap bits A and B
 SWAP2 A, B:
 	shared alloc H
 	COPY2 A, H;

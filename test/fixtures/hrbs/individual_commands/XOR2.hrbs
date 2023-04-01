@@ -4,7 +4,7 @@ import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 import "test/fixtures/hrbs/individual_commands/NAND2.hrbs"
 
 XOR2 A, B:
-	shared alloc H
+	local alloc H
 	OR2 A, B;
 	WRITE1 H;
 	NAND2 A, B;

@@ -1,10 +1,7 @@
-import "test/fixtures/hrbs/individual_commands/WRITE1.hrbs"
 import "test/fixtures/hrbs/individual_commands/READ1.hrbs"
 import "test/fixtures/hrbs/individual_commands/FLIP1.hrbs"
 
+#Flip I when F is set
 FLIP2 I, F:
-	local alloc H
-	WRITE1 H;
 	READ1 I;
 	FLIP1 F;
-	READ1 H;

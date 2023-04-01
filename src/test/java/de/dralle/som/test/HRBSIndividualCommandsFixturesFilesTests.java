@@ -1422,7 +1422,7 @@ class HRBSIndividualCommandsFixturesFilesTests {
 				Arguments.of(true, true, true, true, true, true, true, false));
 	}
 	@ParameterizedTest
-	@MethodSource("provideTruthTableADD13")
+	@MethodSource("provideTruthTableADD1U13")
 	@Timeout(10)
 	void testADD13(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueAcc,
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {

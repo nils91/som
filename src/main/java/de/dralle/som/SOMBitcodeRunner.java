@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.dralle.som.writehooks.IWriteHook;
+import de.dralle.som.writehooks.StdWriteHook;
 
 /**
  * @author Nils Dralle
@@ -54,6 +55,8 @@ public class SOMBitcodeRunner {
 	public SOMBitcodeRunner(ISomMemspace memSpace) {
 		memSpace = initFromExistingPartialMemspace(memSpace);
 		this.memspace = memSpace;
+		
+		writeHookManager.registerWriteHook(1, new StdWriteHook());
 	}
 
 	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {

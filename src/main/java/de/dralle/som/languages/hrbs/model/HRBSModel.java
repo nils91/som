@@ -247,7 +247,6 @@ public class HRBSModel implements ISetN, IHeap {
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
 		for (HRBSCommand c : commands) {
-
 			tmp.add(String.format("%s", c.asCode()));
 		}
 		return tmp;

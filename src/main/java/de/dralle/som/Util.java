@@ -20,6 +20,9 @@ import java.util.Map.Entry;
  *
  */
 public class Util {
+	public static boolean getBit(int value,int position) {
+		return ((value >> position) & 1)>0;
+	}
 	public static int getAsUnsignedInt(List<Boolean> bits) {
 		return getAsUnsignedInt(bits.toArray(new Boolean[bits.size()]));
 	}

@@ -54,6 +54,7 @@ public class StdWriteHook extends AbstractWriteHook {
 		writebuffer.add(accumulatorValue);
 		if(writebuffer.size()>=8) {
 			int c=Util.getAsUnsignedInt(writebuffer);
+			writebuffer.clear();
 			System.out.print((char)c);
 		}
 		return false;

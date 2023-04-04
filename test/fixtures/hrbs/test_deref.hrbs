@@ -1,0 +1,7 @@
+MAIN:
+	alloc A;
+	symbol B &A;
+	NAR A;
+	NAR B;
+	NAR &A;
+	NAR &B;

@@ -565,7 +565,13 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		incCommandUsage(c);
 	}
-
+/**
+ * Localize command labels based on their type. Only add the localized names to the symbol name map, wont change the symbols
+ * @param command
+ * @param symbolNameReplacementMap
+ * @param parentCmdName
+ * @param cmdExecId
+ */
 	private static void localizeCommandLabels(List<HRBSCommand> command, Map<String, String> symbolNameReplacementMap,
 			String parentCmdName, String cmdExecId) {
 		for (HRBSCommand hrbsCommand : command) {
@@ -715,11 +721,13 @@ public class HRBSModel implements ISetN, IHeap {
 			List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 			List<HRBSCommand> additionalCommands = new ArrayList<>();
 			originalMemoryAddress = resolveDeref(additionalSymbols, additionalCommands, originalMemoryAddress);
-			for (HRBSSymbol s : additionalSymbols) {
-				HRACSymbol hracS = getAsHRACSymbol(s, localSymbolNames, parentCmdName, cmdExecId, m,
-						additionalAvailableCommands);
-				m.addSymbol(hracS);
-			}
+			localizeCommandLabels(additionalCommands, localSymbolNames, parentCmdName, cmdExecId); //generaTE LOCALIZED COMMAND LABEL NAMES
+			convertSymbols(parentCmdName, cmdExecId, additionalSymbols, localSymbolNames, m, additionalAvailableCommands); //make sure to also generate local symbol names
+//			for (HRBSSymbol s : additionalSymbols) {
+//				HRACSymbol hracS = getAsHRACSymbol(s, localSymbolNames, parentCmdName, cmdExecId, m,
+//						additionalAvailableCommands);
+//				m.addSymbol(hracS);
+//			}
 			for (HRBSCommand hrbsCommand : additionalCommands) {
 				convertAnyCommand(hrbsCommand, parentCmdName, cmdExecId, null, localSymbolNames,
 						additionalAvailableCommands, m);

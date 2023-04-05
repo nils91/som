@@ -77,4 +77,42 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+	@Test
+	void testJumpCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+	@Test
+	void testMSOfsCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ms_ofs.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+	@Test
+	void testAdrSetToLabelAfterExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int labelArd=hras.resolveSymbolToAddress("LABEL");
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotEquals(((ISomMemspace)bin).getNextAddress(), labelArd);//no change before exec
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+		bin=runner.getMemspace();
+		assertEquals(labelArd,((ISomMemspace)bin).getNextAddress());//written to label expectesd after exec
+	}
 }

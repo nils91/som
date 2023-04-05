@@ -1,0 +1,3 @@
+MAIN:
+	alloc A;
+	symbol B A[-1];

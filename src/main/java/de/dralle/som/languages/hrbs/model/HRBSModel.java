@@ -721,7 +721,7 @@ public class HRBSModel implements ISetN, IHeap {
 				m.addSymbol(hracS);
 			}
 			for (HRBSCommand hrbsCommand : additionalCommands) {
-				convertAnyCommand(hrbsCommand, parentCmdName, cmdExecId, cmdExecId, localSymbolNames,
+				convertAnyCommand(hrbsCommand, parentCmdName, cmdExecId, null, localSymbolNames,
 						additionalAvailableCommands, m);
 			}
 

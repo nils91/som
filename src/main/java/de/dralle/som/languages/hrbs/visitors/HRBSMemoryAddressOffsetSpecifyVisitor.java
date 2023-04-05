@@ -41,6 +41,9 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 		if(ctx.INT()!=null) {
 			o.setOffset(Integer.parseInt(ctx.INT().getText()));
 		}
+		if(ctx.NEG_INT()!=null) {
+			o.setOffset(Integer.parseInt(ctx.NEG_INT().getText()));
+		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);
 		}

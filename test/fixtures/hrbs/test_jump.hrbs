@@ -2,9 +2,8 @@ import CLEAR1;
 import SET1;
 import READ1;
 import INV0;
-import COPY2;
-import TRIGGER1;
-import SET1;
+import JUMP0N1;
+import JUMPTARGET0;
 
 MAIN:
 	alloc F;
@@ -12,17 +11,8 @@ MAIN:
 	JUMP0N1 LABEL;
 	SET1 F;
 	JUMP0N1 LABEL;
+#label needs to be global here for test to find it
 	global LABEL: JUMPTARGET0;
 	READ1 F;
 	INV0;
-	
-JUMPTARGET0:
-	NAW ADR_EVAL;
-	
-JUMP0N1 T:
-	symbol TM1_MS &T[0][-1];
-	symbol ADR_OFS_M1_MS ADR[-1]
-	[1:$N] COPY2 TM1_MS[$i], ADR_OFS_M1_MS[$i];
-	TRIGGER1 ADR_EVAL;
-	
 

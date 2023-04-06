@@ -1,0 +1,8 @@
+import COPY2;
+import TRIGGER1;
+
+JUMP0N1 T:
+	symbol TM1_MS &T[0][-1];
+	symbol ADR_OFS_M1_MS ADR[-1]
+	[1:$N] COPY2 TM1_MS[$i], ADR_OFS_M1_MS[$i];
+	TRIGGER1 ADR_EVAL;

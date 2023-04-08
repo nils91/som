@@ -1,0 +1,4 @@
+import JUMP0N1;
+
+JUMPADR1 T:
+	JUMP0N1 &T;

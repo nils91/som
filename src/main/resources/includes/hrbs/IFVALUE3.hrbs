@@ -1,9 +1,19 @@
 import AND1;
-import OR1;
+import OR3;
 import WRITE1;
+import READ1;
+import INV0;
+import WRITEPE1;
 
 #set O to I0 or I1 depending on the accumulator value. I0 if acc is set
 IFVALUE3 I0,I1,O:
+	local alloc ACC_H[2];
+	local alloc ZE_H[2];
+	WRITEPE1 ACC_H[0];	
 	AND1 I0;
-	OR1 I1;
-	WRITE1 O;
+	WRITE1 ZE_H[0];
+	READ1 ACC_H[0];
+	INV0;
+	AND1 I1;
+	WRITE1 ZE_H[1];
+	OR3 ZE_H[0],ZE_H[1],O;

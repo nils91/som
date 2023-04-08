@@ -1195,6 +1195,56 @@ class HRBSCommandsIncludedTests {
 		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
 		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
 	}
+	@ParameterizedTest
+	@MethodSource("provideTruthTableIFVALUE3")
+	@Timeout(10)
+	void testIFVALUE3(boolean inValueAcc, boolean inValueI0, boolean inValueI1, boolean inValueO, boolean finalValueI0,
+			boolean finalValueI1, boolean finalValueO) throws IOException {
+		String hrbsCode = "import IFVALUE3\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: IFVALUE3 I[0], I[1], O;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		int iAdr = hrasModel.resolveSymbolToAddress("I");
+		int oAdr = hrasModel.resolveSymbolToAddress("O");
+		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
+
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				memspace.setAccumulatorValue(inValueAcc);
+				memspace.setBit(iAdr, inValueI0);
+				memspace.setBit(iAdr + 1, inValueI1);
+				memspace.setBit(oAdr, inValueO);
+				return true;
+			}
+		});
+		runner.execute();
+		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
+		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
+		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
+	}
+
+	private static Stream<Arguments> provideTruthTableIFVALUE3() {
+		return Stream.of(Arguments.of(false, false, false, false, false, false, false),
+				Arguments.of(false, false, false, true, false, false, false),
+				Arguments.of(false, false, true, false, false, true, true),
+				Arguments.of(false, false, true, true, false, true, true),
+				Arguments.of(false, true, false, false, true, false, false),
+				Arguments.of(false, true, false, true, true, false, false),
+				Arguments.of(false, true, true, false, true, true, true),
+				Arguments.of(false, true, true, true, true, true, true),
+				Arguments.of(true, false, false, false, false, false, false),
+				Arguments.of(true, false, false, true, false, false, false),
+				Arguments.of(true, false, true, false, false, true, false),
+				Arguments.of(true, false, true, true, false, true, false),
+				Arguments.of(true, true, false, false, true, false, true),
+				Arguments.of(true, true, false, true, true, false, true),
+				Arguments.of(true, true, true, false, true, true, true),
+				Arguments.of(true, true, true, true, true, true, true));
+	}
+
 
 	private static Stream<Arguments> provideTruthTableOR3() {
 		return Stream.of(Arguments.of(false, false, false, false, false, false, false),

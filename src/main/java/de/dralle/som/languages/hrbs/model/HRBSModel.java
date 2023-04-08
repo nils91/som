@@ -310,12 +310,13 @@ public class HRBSModel implements ISetN, IHeap {
 		Map<String, HRBSMemoryAddress> modifiedParamMap = new HashMap<String, HRBSMemoryAddress>();
 		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 		List<HRBSCommand> additionalCommands = new ArrayList<>();
-		if (params != null) { // convert all params that are derefs
+		if (params != null) { // convert all params that are derefs to mirror symbols to let the symbol conversion do the work
 			for (Map.Entry<String, HRBSMemoryAddress> entry : params.entrySet()) {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
-				HRBSMemoryAddress dedereffed = resolveDeref(additionalSymbols, additionalCommands, val);
-				modifiedParamMap.put(key, dedereffed);
+				
+					modifiedParamMap.put(key, val);
+							
 			}
 		}
 		lclSymbols.addAll(additionalSymbols);
@@ -341,7 +342,7 @@ public class HRBSModel implements ISetN, IHeap {
 		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
-		if (modifiedParamMap != null) { // create mirror symbol for each param
+		if (modifiedParamMap != null) { // create mirror symbol (downstream, hrac) for each param
 			for (Entry<String, HRBSMemoryAddress> entry : modifiedParamMap.entrySet()) {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();

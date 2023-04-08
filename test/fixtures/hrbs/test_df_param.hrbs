@@ -1,0 +1,9 @@
+import SET0;
+
+MAIN:
+	alloc VAR;
+	SUB &VAR;
+	SET0;
+
+SUB A:
+	NAR A;

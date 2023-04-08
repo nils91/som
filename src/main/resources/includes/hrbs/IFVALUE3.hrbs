@@ -1,0 +1,9 @@
+import AND1;
+import OR1;
+import WRITE1;
+
+#set O to I0 or I1 depending on the accumulator value. I0 if acc is set
+IFVALUE3 I0,I1,O:
+	AND1 I0;
+	OR1 I1;
+	WRITE1 O;

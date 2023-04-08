@@ -1,0 +1,7 @@
+import READ1;
+import IFVALUE3;
+
+#set O to I0 or I1 depending on the value of IF. I0 if IF is set
+IFVALUE4 IF,I0,I1,O:
+	READ1 IF;
+	IFVALUE3 I0,I1,O;

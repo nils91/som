@@ -357,7 +357,7 @@ public class HRACModel implements ISetN, IHeap,Cloneable {
 
 	public HRASModel compileToHRAS() {
 		HRACModel toc = clone();
-		int n = toc.findN();
+		int n = toc.findN()+1;
 		toc.additionalDirectives.put("N", n + "");
 		toc.precompile("", new HashMap<>());
 		HRASModel m = new HRASModel();			

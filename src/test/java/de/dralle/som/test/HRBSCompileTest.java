@@ -145,19 +145,21 @@ class HRBSCompileTest {
 			@Override
 			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
 				System.out.println("-----------");
+				System.out.println(String.format("Current command address: %d", cmdAddress));
 				System.out.println(String.format("Label address: %d value: %d", labelArd,memspace.getBitsUnsigned(labelArd, memspace.getN())));
 				System.out.println(String.format("Contlabel address: %d value: %d", cAdr,memspace.getBitsUnsigned(cAdr, memspace.getN())));
 				System.out.println(String.format("Acttgt address: %d value: %d", aAdr,memspace.getBitsUnsigned(aAdr, memspace.getN())));
 				System.out.println(String.format("Next address: %d value: %d", ISomMemspace.START_ADDRESS_START,memspace.getNextAddress()));
 				System.out.println(String.format("Jump performed %b", memspace.getBit(memspace.getAdrEvalAddress())));
 				System.out.println("-----------");
+				boolean jumP=memspace.getBit(memspace.getAdrEvalAddress());
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return true;
+				return  !memspace.getBit(memspace.getAdrEvalAddress());
 			}
 		});
 		runner.execute();

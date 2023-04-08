@@ -140,30 +140,20 @@ class HRBSCompileTest {
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		runner.addDebugPoint(new AbstractUnconditionalDebugPoint("DEBUG") {
-			
-			@Override
-			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
-				System.out.println("-----------");
-				System.out.println(String.format("Current command address: %d", cmdAddress));
-				System.out.println(String.format("Label address: %d value: %d", labelArd,memspace.getBitsUnsigned(labelArd, memspace.getN())));
-				System.out.println(String.format("Contlabel address: %d value: %d", cAdr,memspace.getBitsUnsigned(cAdr, memspace.getN())));
-				System.out.println(String.format("Acttgt address: %d value: %d", aAdr,memspace.getBitsUnsigned(aAdr, memspace.getN())));
-				System.out.println(String.format("Next address: %d value: %d", ISomMemspace.START_ADDRESS_START,memspace.getNextAddress()));
-				System.out.println(String.format("Jump performed %b", memspace.getBit(memspace.getAdrEvalAddress())));
-				System.out.println("-----------");
-				boolean jumP=memspace.getBit(memspace.getAdrEvalAddress());
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return  !memspace.getBit(memspace.getAdrEvalAddress());
-			}
-		});
 		runner.execute();
 		bin=runner.getMemspace();
 		assertEquals(labelArd,((ISomMemspace)bin).getNextAddress());//written to label expectesd after exec
 	}
+	@Test
+	void testConditionalJumpExecutePositive() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int labelArd=hras.resolveSymbolToAddress("LABEL");
+		int aAdr=hras.resolveSymbolToAddress("ACTUALTARGET");
+		int cAdr=hras.resolveSymbolToAddress("CONTLABEL");
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		assertTrue(runner.execute());}
 }

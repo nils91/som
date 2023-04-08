@@ -14,6 +14,7 @@ import COPY2;
 import JUMPADR1;
 import AND1;
 import OR1;
+import IFVALUE4;
 
 MAIN:
 	alloc F;
@@ -35,19 +36,6 @@ CJUMP0N1 T:
 	local symbol CLMS &CONTLABEL[0][-1];
 	WRITEPE1 H[0];
 	WRITE1 H[1];
-	[1:$N] CLEAR1 ATMS[$i];
-	[1:$N] AND3 H[0], TMS[$i], ATMS[$i];
-	[1:$N] OR3 ATMS[$i], CLMS[$i], ATMS[$i];
+	[1:$N] IFVALUE4 H[0], TMS[$i], CLMS[$i], ATMS[$i];
 	JUMP0N1 ACTUALTARGET;
 	global CONTLABEL: JUMPTARGET0;
-	
-#set O to I0 or I1 depending on the accumulator value. I0 if acc is set
-IFVALUE3 I0,I1,O:
-	AND1 I0;
-	OR1 I1;
-	WRITE1 O;
-	
-#set O to I0 or I1 depending on the value of IF. I0 if IF is set
-IFVALUE4 IF,I0,I1,O:
-	READ1 IF;
-	IFVALUE3 I0,I1,O;

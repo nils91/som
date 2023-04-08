@@ -1,0 +1,39 @@
+import WRITEPE1;
+import WRITE1;
+import CLEAR1;
+import AND3;
+import OR3;
+import JUMP0N1;
+import JUMPTARGET0;
+import CLEAR0;
+import SET1;
+import READ1;
+import INV0;
+import TRIGGER1;
+import COPY2;
+
+MAIN:
+	alloc F;
+	CLEAR1 F;
+	CLEAR0;
+	INV0;
+	CJUMP0N1 LABEL;
+	SET1 F;
+	JUMP0N1 LABEL;
+	global LABEL: JUMPTARGET0;
+	READ1 F;
+	INV0;
+	
+CJUMP0N1 T:
+	local alloc H[2];
+	global alloc ACTUALTARGET[$N];
+	local symbol ATMS ACTUALTARGET[-1];
+	local symbol TMS &T[0][-1];
+	local symbol CLMS &CONTLABEL[0][-1];
+	WRITEPE1 H[0];
+	WRITE1 H[1];
+	[1:$N] CLEAR1 ATMS[$i];
+	[1:$N] AND3 H[0], TMS[$i], ATMS[$i];
+	[1:$N] OR3 ATMS[$i], CLMS[$i], ATMS[$i];
+	JUMP0N1 ACTUALTARGET;
+	global CONTLABEL: JUMPTARGET0;

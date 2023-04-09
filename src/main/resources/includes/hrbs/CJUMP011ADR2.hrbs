@@ -1,0 +1,5 @@
+import CJUMP011N2;
+
+#perform jump to ADR if IF is set
+CJUMP011ADR2 IF,ADR:
+	CJUMP011N2 IF,&ADR;

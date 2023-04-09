@@ -1,0 +1,13 @@
+import IFVALUE4;
+import JUMP0N1;
+import JUMPTARGET0;
+
+#perform a jump to the address denoted by T[0:N-1] if IF is set
+CJUMP011N2 IF, T:
+	local alloc ACTUALTARGET[$N];
+	local symbol ATMS ACTUALTARGET[-1];
+	local symbol TMS T[-1];
+	local symbol CLMS &CONTLABEL[0][-1];
+	[1:$N] IFVALUE4 IF, TMS[$i], CLMS[$i], ATMS[$i];
+	JUMP0N1 ACTUALTARGET;
+	CONTLABEL: JUMPTARGET0;

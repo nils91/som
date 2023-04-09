@@ -1,0 +1,8 @@
+import WRITE1;
+import CJUMP011ADR2;
+
+#perform jump if ACC is set
+CJUMP0ADR1 ADR:
+	local alloc H;
+	WRITE1 H;
+	CJUMP011ADR2 H,ADR;

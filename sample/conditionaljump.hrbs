@@ -1,0 +1,64 @@
+import WRITEPE1;
+import WRITE1;
+import CLEAR1;
+import AND3;
+import OR3;
+import JUMP0N1;
+import JUMPTARGET0;
+import CLEAR0;
+import SET1;
+import READ1;
+import INV0;
+import TRIGGER1;
+import COPY2;
+import JUMPADR1;
+import AND1;
+import OR1;
+import IFVALUE4;
+import CJUMP0ADR1;
+
+MAIN:
+	alloc F;
+	alloc C[8];
+	SETCHAR_H C;
+	SELECTHOOK;
+	CLEAR1 F;
+	CLEAR0;
+	INV0;
+	CJUMP0ADR1 LABEL;
+	SET1 F;
+	WRITECHAR C;
+	JUMPADR1 LABEL;
+	LABEL: JUMPTARGET0;
+	READ1 F;
+	INV0;
+	
+SELECTHOOK:
+#write hook selection mode
+	CLEAR1 WH_SEL;
+#write mode
+	SET1 WH_DIR;
+#switch to next
+	SET1 WH_COM;
+#execute SWITCH
+	TRIGGER1 WH_EN;
+#go back to write hook use
+	SET1 WH_SEL;
+	
+WRITEBITOFSTR BOS:
+	COPY2 BOS, WH_COM;
+	TRIGGER1 WH_EN;
+	
+WRITECHAR STR:
+	[0:7] WRITEBITOFSTR STR[$i];
+	
+# H
+SETCHAR_H C:
+    CLEAR1 C[0];
+    SET1 C[1];
+    CLEAR1 C[2];
+    CLEAR1 C[3];
+    SET1 C[4];
+    CLEAR1 C[5];
+    CLEAR1 C[6];
+    CLEAR1 C[7];

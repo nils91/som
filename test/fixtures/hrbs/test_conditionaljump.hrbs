@@ -21,21 +21,23 @@ MAIN:
 	CLEAR1 F;
 	CLEAR0;
 	INV0;
-	CJUMP0N1 LABEL;
+	CJUMP0ADR1 LABEL;
 	SET1 F;
 	JUMPADR1 LABEL;
 	global LABEL: JUMPTARGET0;
 	READ1 F;
 	INV0;
+
+CJUMP0ADR1 ADR:
+	local alloc H;
+	WRITE1 H;
+	CJUMP011N2 H,&ADR;
 	
-CJUMP0N1 T:
-	local alloc H[2];
+CJUMP011N2 IF, T:
 	global alloc ACTUALTARGET[$N];
 	local symbol ATMS ACTUALTARGET[-1];
-	local symbol TMS &T[0][-1];
+	local symbol TMS T[-1];
 	local symbol CLMS &CONTLABEL[0][-1];
-	WRITEPE1 H[0];
-	WRITE1 H[1];
-	[1:$N] IFVALUE4 H[0], TMS[$i], CLMS[$i], ATMS[$i];
+	[1:$N] IFVALUE4 IF, TMS[$i], CLMS[$i], ATMS[$i];
 	JUMP0N1 ACTUALTARGET;
 	global CONTLABEL: JUMPTARGET0;

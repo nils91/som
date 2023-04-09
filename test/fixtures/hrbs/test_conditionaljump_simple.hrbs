@@ -1,0 +1,20 @@
+import CLEAR1;
+import JUMPTARGET0;
+import CLEAR0;
+import SET1;
+import READ1;
+import INV0;
+import JUMPADR1;
+import CJUMP0ADR1;
+
+MAIN:
+	alloc F;
+	CLEAR1 F;
+	CLEAR0;
+	INV0;
+	CJUMP0ADR1 LABEL;
+	SET1 F;
+	JUMPADR1 LABEL;
+	LABEL: JUMPTARGET0;
+	READ1 F;
+	INV0;

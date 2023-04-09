@@ -146,12 +146,9 @@ class HRBSCompileTest {
 	}
 	@Test
 	void testConditionalJumpExecutePositive() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump_simple.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int labelArd=hras.resolveSymbolToAddress("LABEL");
-		int aAdr=hras.resolveSymbolToAddress("ACTUALTARGET");
-		int cAdr=hras.resolveSymbolToAddress("CONTLABEL");
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);

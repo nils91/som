@@ -1,0 +1,20 @@
+import WRITE1;
+import JUMPADR1;
+import JUMPTARGET0;
+import EXITSUCCESS1;
+import EXITFAIL1;
+import READ1;
+
+#when used as the last command in a program, the program can be exited at any time by jumping to one of the jump markers EXIT_JUST_EXIT, EXIT_SUCCESS or EXIT_FAIL using the JUMPADR1 command.
+EXIT0:
+	local alloc H;
+	WRITE1 H;
+	JUMPADR1 EXIT_JUST_EXIT;
+	global EXIT_SUCCESS: JUMPTARGET0;
+	EXITSUCCESS1 H;
+	JUMPADR1 EXIT_JUST_EXIT;
+	global EXIT_FAIL: JUMPTARGET0;
+	EXITFAIL1 H;
+	JUMPADR1 EXIT_JUST_EXIT;
+	global EXIT_JUST_EXIT: JUMPTARGET0;
+	READ1 H;

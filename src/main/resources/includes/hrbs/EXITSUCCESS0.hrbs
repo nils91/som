@@ -1,0 +1,5 @@
+import SET0;
+
+#Sets the accumulator, which is required for a succesful exit.
+EXITSUCCESS0:
+	SET0;

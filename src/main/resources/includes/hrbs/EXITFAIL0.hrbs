@@ -1,0 +1,5 @@
+import CLEAR0;
+
+#clears the accumulator, which at program end will result in a non-zero return code.
+EXITFAIL0:
+	CLEAR0;

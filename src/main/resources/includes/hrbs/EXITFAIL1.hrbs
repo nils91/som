@@ -1,0 +1,7 @@
+import EXITFAIL0;
+import WRITE1;
+
+#clears the 1st param A
+EXITFAIL1 A:
+	EXITFAIL0;
+	WRITE1 A;

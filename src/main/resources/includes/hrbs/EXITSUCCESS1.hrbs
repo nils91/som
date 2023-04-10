@@ -1,0 +1,7 @@
+import EXITSUCCESS0;
+import WRITE1;
+
+#Sets the first param
+EXITSUCCESS1 A:
+	EXITSUCCESS0;
+	WRITE1 A;

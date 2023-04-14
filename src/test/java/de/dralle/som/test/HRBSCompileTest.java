@@ -153,4 +153,12 @@ class HRBSCompileTest {
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
 		assertTrue(runner.execute());}
+	@Test
+	void testLblOnRngCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(bin); }
 }

@@ -1,0 +1,28 @@
+import SET1;
+import CLEAR1;
+import INV1;
+import JUMP0N1;
+import JUMPTARGET0;
+import EXIT0;
+import CJUMP011ADR2;
+import CJUMP011N2;
+
+MAIN:
+	alloc A;
+	SET1 A;
+	IF011N2 A,&ENDIF;
+	JUMP0N1 &EXIT_FAIL;
+	JUMP0N1 &ENDIF;
+	local ENDIF: JUMPTARGET0;
+	JUMP0N1 &EXIT_SUCCESS;
+	EXIT0;
+	
+#if. first param is single bit, 2nd is an address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
+IF011ADR2 A,ADR:
+	INV1 A;
+	CJUMP011ADR2 A,ADR;
+	
+#if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
+IF011N2 IF,T:
+	INV1 IF;
+	CJUMP011N2 IF,T;

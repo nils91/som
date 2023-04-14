@@ -6,23 +6,26 @@ import JUMPTARGET0;
 import EXIT0;
 import CJUMP011ADR2;
 import CJUMP011N2;
+import COPY2;
 
 MAIN:
 	alloc A;
 	SET1 A;
-	IF011N2 A,&ENDIF;
-	JUMP0N1 &EXIT_FAIL;
+	INIT_ENDIF0N1[IF] &ENDIF;
+	IF011N2 A,&IF;
 	JUMP0N1 &ENDIF;
+	local IF: JUMP0N1 &EXIT_FAIL;
+	JUMP0N1 INIT_ENDIF0N1[IF].PT;
 	local ENDIF: JUMPTARGET0;
 	JUMP0N1 &EXIT_SUCCESS;
 	EXIT0;
 	
-#if. first param is single bit, 2nd is an address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
-IF011ADR2 A,ADR:
-	INV1 A;
-	CJUMP011ADR2 A,ADR;
-	
 #if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
 IF011N2 IF,T:
-	INV1 IF;
 	CJUMP011N2 IF,T;
+	
+INIT_ENDIF0N1 T:
+	symbol MS_T T[-1];
+	alloc PT[$N];
+	symbol MS_PT PT[-1];
+	[1:$N] COPY2 MS_T[$i], MS_PT[$i];

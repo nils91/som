@@ -2,8 +2,11 @@ import NOOP0;
 import COPY2;
 MAIN:
 	global alloc COPYINHERE[$N];
-	global symbol COPYINHERE_MIRROR COPYINHERE[-1];
-	global symbol LABEL_ADR &LABEL;
-	global symbol LABEL_MIRROR LABEL_ADR[-1];
 	global LABEL: NOOP0;
-	[1:$N] COPY2 LABEL_MIRROR[$i], COPYINHERE_MIRROR[$i];
+	COPYADR0N1N2 &LABEL,COPYINHERE;
+
+#Copies n bits from I to O. Since n is the size of an address and this is rather useful for copying addresses, its called COPYADR
+COPYADR0N1N2 I,O:
+	symbol MIRROR_I I[-1];
+	symbol MIRROR_O O[-1];
+	[1:$N] COPY2 MIRROR_I[$i],MIRROR_O[$i];

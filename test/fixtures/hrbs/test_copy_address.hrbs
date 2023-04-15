@@ -1,0 +1,9 @@
+import NOOP0;
+import COPY2;
+MAIN:
+	global alloc COPYINHERE[$N];
+	global symbol COPYINHERE_MIRROR COPYINHERE[-1];
+	global symbol LABEL_ADR &LABEL;
+	global symbol LABEL_MIRROR LABEL_ADR[-1];
+	global LABEL: NOOP0;
+	[1:$N] COPY2 LABEL_MIRROR[$i], COPYINHERE_MIRROR[$i];

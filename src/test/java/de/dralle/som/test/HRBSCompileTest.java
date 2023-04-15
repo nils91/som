@@ -235,13 +235,11 @@ class HRBSCompileTest {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		int lblAR = hras.resolveSymbolToAddress("LABEL_ADR");
+		int lblAR = hras.resolveSymbolToAddress("LABEL");
 		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
 		int n = hrav.getN();
-	
-		int lblVal=((ISomMemspace) bin).getBitsUnsigned(lblAR, n);
 		int copyVal=	((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
-		assertNotEquals(lblVal,
+		assertNotEquals(lblAR,
 				copyVal);
 	}
 	@Test
@@ -251,15 +249,14 @@ class HRBSCompileTest {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		int lblAR = hras.resolveSymbolToAddress("LABEL_ADR");
+		int lblAR = hras.resolveSymbolToAddress("LABEL");
 		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
 		int n = hrav.getN();
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
 		runner.execute();
 		bin=runner.getMemspace();
-		int lblVal=((ISomMemspace) bin).getBitsUnsigned(lblAR, n);
 		int copyVal=	((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
-		assertEquals(lblVal,
+		assertEquals(lblAR,
 				copyVal);
 	}
 }

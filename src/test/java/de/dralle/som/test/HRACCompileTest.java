@@ -60,7 +60,7 @@ class HRACCompileTest {
 	@Test
 	void testRunningForDupRunningVarRepl() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_var_repl.hrac",SOMFormats.HRAC);
-		model.precompile("", null);
+		model.precompile("", null,true);
 		//command suffixes should increase by 1 each time
 		for (int i = 0; i < 4; i++) {
 			HRACForDup curCommand = model.getCommands().get(i);
@@ -78,7 +78,7 @@ class HRACCompileTest {
 	@Test
 	void testNestedRunningForDupPrecompiler() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac",SOMFormats.HRAC);
-		HRACModel prec = model.clone();prec.precompile("", new HashMap<>());
+		HRACModel prec = model.clone();prec.precompile("", new HashMap<>(),true);
 		System.out.println(prec);
 		}
 
@@ -97,7 +97,7 @@ class HRACCompileTest {
 	@Test
 	void testFDSymbolGenPrecompiledNaming() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac",SOMFormats.HRAC);
-		model.precompile("", null);
+		model.precompile("", null,true);
 		assertEquals(5, model.getCommands().size());
 		int eval=0;
 		for (HRACForDup s1 : model.getCommands()) {
@@ -122,18 +122,18 @@ class HRACCompileTest {
 	@Test
 	void testNReplAlloc() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_alloc.hrac",SOMFormats.HRAC);
-		model.precompile("", null);
+		model.precompile("", null,true);
 		assertEquals(model.getN(),model.getSymbolByName("A").getBitCnt() ); }
 	@Test
 	void testNReplForD() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_fordup.hrac",SOMFormats.HRAC);
-		model.precompile("", null);
+		model.precompile("", null,true);
 		assertEquals(model.getN(),model.getCommandCount(model.getN())); }
 	@Test
 	void testNCorrectCalcNotPrec() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_fordup.hrac",SOMFormats.HRAC);
 		int nBeforePrec = model.getN();
-		model.precompile("", null);
+		model.precompile("", null,true);
 		int nAfterPrec=model.getN();
 		assertEquals(nAfterPrec,nBeforePrec); }
 }

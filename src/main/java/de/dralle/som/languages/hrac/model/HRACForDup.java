@@ -110,6 +110,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 		return symbolNameReplacementMap;
 	}
+	
 	public HRACForDup(HRACCommand cmd) {
 		super();
 		this.cmd = cmd;
@@ -193,11 +194,11 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 					int si = range.getRange(parent)[i];
 					HRACModel modelClone = model.clone();
 					modelClone.addAddDirective("i", si);
-					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList);
+					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList,i==0);
 					retList.add(modelClone);
 				}
 			}else {
-				model.precompile(suffix+"_FD"+id, symbolNameReplacementList);
+				model.precompile(suffix+"_FD"+id, symbolNameReplacementList,true);
 				retList.add(model);
 			}			
 		}		

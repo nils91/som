@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import de.dralle.som.AbstractUnconditionalDebugPoint;
 import de.dralle.som.Compiler;
@@ -67,6 +68,7 @@ class HRBSCompileTest {
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
 		assertTrue(runner.execute());
 	}
+
 	@Test
 	void testDerefCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_deref.hrbs", SOMFormats.HRBS);
@@ -79,6 +81,7 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testJumpCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
@@ -91,6 +94,7 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testMSOfsCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ms_ofs.hrbs", SOMFormats.HRBS);
@@ -103,6 +107,7 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testDerefParamCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_df_param.hrbs", SOMFormats.HRBS);
@@ -115,35 +120,38 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testAdrSetToLabelAfterExec() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int labelArd=hras.resolveSymbolToAddress("LABEL");
+		int labelArd = hras.resolveSymbolToAddress("LABEL");
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotEquals(((ISomMemspace)bin).getNextAddress(), labelArd);//no change before exec
+		assertNotEquals(((ISomMemspace) bin).getNextAddress(), labelArd);// no change before exec
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
 		runner.execute();
-		bin=runner.getMemspace();
-		assertEquals(labelArd,((ISomMemspace)bin).getNextAddress());//written to label expectesd after exec
+		bin = runner.getMemspace();
+		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
 	}
+
 	@Test
 	void testConditionalJumpOut() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int labelArd=hras.resolveSymbolToAddress("LABEL");
-		int aAdr=hras.resolveSymbolToAddress("ACTUALTARGET");
-		int cAdr=hras.resolveSymbolToAddress("CONTLABEL");
+		int labelArd = hras.resolveSymbolToAddress("LABEL");
+		int aAdr = hras.resolveSymbolToAddress("ACTUALTARGET");
+		int cAdr = hras.resolveSymbolToAddress("CONTLABEL");
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
 		runner.execute();
-		bin=runner.getMemspace();
-		assertEquals(labelArd,((ISomMemspace)bin).getNextAddress());//written to label expectesd after exec
+		bin = runner.getMemspace();
+		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
 	}
+
 	@Test
 	void testConditionalJumpExecutePositive() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump_simple.hrbs", SOMFormats.HRBS);
@@ -152,7 +160,9 @@ class HRBSCompileTest {
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		assertTrue(runner.execute());}
+		assertTrue(runner.execute());
+	}
+
 	@Test
 	void testLblOnRngCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
@@ -160,5 +170,96 @@ class HRBSCompileTest {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(bin); }
+		assertNotNull(bin);
+	}
+
+	@Test
+	void testLblExist() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		boolean exists = false;
+		try {
+			hras.resolveSymbolToAddress("LBL");
+			exists = true;
+		} catch (Exception e) {
+
+		}
+		assertTrue(exists);
+	}
+
+	@Test
+	void testLblOnRngGenOnce() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int cnt = 0;
+		for (String entry : hras.getSymbols().keySet()) {
+			if (entry.equals("LBL")) {
+				cnt++;
+			}
+
+		}
+		assertEquals(1, cnt);
+	}
+
+	@Test
+	void testCopyAdrCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	@Timeout(10)
+	void testCopyAdrExecutePossible() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+	}
+
+	@Test
+	void testCopyAdrLabelCopyCmpBeforeExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int lblAR = hras.resolveSymbolToAddress("LABEL_ADR");
+		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
+		int n = hrav.getN();
+	
+		int lblVal=((ISomMemspace) bin).getBitsUnsigned(lblAR, n);
+		int copyVal=	((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
+		assertNotEquals(lblVal,
+				copyVal);
+	}
+	@Test
+	void testCopyAdrLabelCopyCmpAfterExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int lblAR = hras.resolveSymbolToAddress("LABEL_ADR");
+		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
+		int n = hrav.getN();
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+		bin=runner.getMemspace();
+		int lblVal=((ISomMemspace) bin).getBitsUnsigned(lblAR, n);
+		int copyVal=	((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
+		assertEquals(lblVal,
+				copyVal);
+	}
 }

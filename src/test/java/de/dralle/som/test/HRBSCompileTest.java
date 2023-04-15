@@ -288,6 +288,34 @@ class HRBSCompileTest {
 				hracSA.isBitCntSpecial());
 	}
 	@Test
+	void testNAllocPassdownParse() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		HRBSSymbol hrbsSA=null;
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if(hracSymbol.getName().equals("A")) {
+				hrbsSA=hracSymbol;
+			}
+		}
+		assertEquals("N",hrbsSA.isBitCntISSpecial());
+	}
+	@Test
+	void testNAllocPassdownParseIsRecognized() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		HRBSSymbol hrbsSA=null;
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if(hracSymbol.getName().equals("A")) {
+				hrbsSA=hracSymbol;
+			}
+		}
+		assertTrue(hrbsSA.isBitCntISSpecial()!=null);
+	}
+	@Test
 	void testNAllocPassdownName() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);

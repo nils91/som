@@ -7,6 +7,7 @@ import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Def_scopeContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
 import de.dralle.som.languages.hrbs.model.HRBSCommand;
@@ -41,6 +42,15 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 		if (ctx.INT() != null) {
 			s.setBitCnt(Integer.parseInt(ctx.INT().getText()));
 		}
+		if(ctx.directive_access()!=null) {
+			ctx.directive_access().accept(this);
+		}
+		return s;
+	}
+
+	@Override
+	public HRBSSymbol visitDirective_access(Directive_accessContext ctx) {
+		s.setBitCntISSpecial(ctx.directive_name().getText());
 		return s;
 	}
 

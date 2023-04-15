@@ -3,6 +3,7 @@ package de.dralle.som.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -21,9 +22,11 @@ import de.dralle.som.Opcode;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
+import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 
 class HRBSCompileTest {
 
@@ -243,6 +246,7 @@ class HRBSCompileTest {
 				copyVal);
 	}
 	@Test
+	@Timeout(10)
 	void testCopyAdrLabelCopyCmpAfterExec() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -258,5 +262,64 @@ class HRBSCompileTest {
 		int copyVal=	((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
 		assertEquals(lblAR,
 				copyVal);
+	}
+	@Test
+	void testNAllocPassdownMArk() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		HRBSSymbol hrbsSA=null;
+		HRACSymbol hracSA=null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if(hracSymbol.getName().equals("A")) {
+				hracSA=hracSymbol;
+			}
+		}
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if(hracSymbol.getName().equals("A")) {
+				hrbsSA=hracSymbol;
+			}
+		}
+		assertEquals(hrbsSA.isBitCntISSpecial()!=null,
+				hracSA.isBitCntSpecial());
+	}
+	@Test
+	void testNAllocPassdownName() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		HRBSSymbol hrbsSA=null;
+		HRACSymbol hracSA=null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if(hracSymbol.getName().equals("A")) {
+				hracSA=hracSymbol;
+			}
+		}
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if(hracSymbol.getName().equals("A")) {
+				hrbsSA=hracSymbol;
+			}
+		}
+		assertEquals(hrbsSA.isBitCntISSpecial(),
+				hracSA.getSpecialName());
+	}
+	@Test
+	void testNAllocEnoughAllocated() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int aDR = hras.resolveSymbolToAddress("A");
+		int bAdr = hras.resolveSymbolToAddress("B");
+		assertEquals(hrav.getN(),bAdr-aDR);
 	}
 }

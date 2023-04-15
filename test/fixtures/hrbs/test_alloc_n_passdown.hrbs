@@ -1,0 +1,6 @@
+import NOOP0;
+
+MAIN:
+	global alloc A[$N];
+	global alloc B;
+	NOOP0;

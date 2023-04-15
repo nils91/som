@@ -7,6 +7,7 @@ import EXIT0;
 import CJUMP011ADR2;
 import CJUMP011N2;
 import COPY2;
+import COPYADR0N1N2;
 
 MAIN:
 	alloc A;
@@ -27,7 +28,5 @@ IF011N2 IF,T:
 	CJUMP011N2 IF,T;
 	
 INIT_ENDIF0N1 T:
-	symbol MS_T T[-1];
 	alloc PT[$N];
-	symbol MS_PT PT[-1];
-	[1:$N] COPY2 MS_T[$i], MS_PT[$i];
+	COPYADR0N1N2 T,PT;

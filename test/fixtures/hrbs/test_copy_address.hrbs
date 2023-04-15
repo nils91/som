@@ -1,5 +1,6 @@
 import NOOP0;
 import COPYADR0N1N2;
+
 MAIN:
 	global alloc COPYINHERE[$N];
 	global LABEL: NOOP0;

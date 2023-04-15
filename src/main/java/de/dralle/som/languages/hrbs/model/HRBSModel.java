@@ -212,6 +212,10 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private List<HRBSSymbol> symbols;
+	public List<HRBSSymbol> getSymbols() {
+		return symbols;
+	}
+
 	private List<HRBSCommand> commands;
 
 	public void addSymbol(HRBSSymbol symbol) {

@@ -59,6 +59,10 @@ public class SOMBitcodeRunner {
 		writeHookManager.registerWriteHook(1, new StdWriteHook());
 	}
 
+	public SOMBitcodeRunner(IMemspace bin) {
+		this((ISomMemspace)bin);
+	}
+
 	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {
 		int addressSizeBits = memSpace.getN();
 		int startAddress = memSpace.getNextAddress();

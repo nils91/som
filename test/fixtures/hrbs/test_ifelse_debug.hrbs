@@ -1,0 +1,48 @@
+import SET1;
+import CLEAR1;
+import INV1;
+import JUMP0N1;
+import JUMPTARGET0;
+import EXIT0;
+import CJUMP011ADR2;
+import CJUMP011N2;
+import COPY2;
+import COPYADR0N1N2;
+import READ1;
+
+MAIN:
+	global alloc IFV;
+	global alloc A;
+	SET1 IFV;
+	INIT_ENDIF0N1[IF] &ENDIF;
+	IFELSE011N2N3 IFV,&IF,&ELSE;
+	global IF: JUMPTARGET0;	
+	SET1 A;
+	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	global ELSE: JUMPTARGET0;
+	CLEAR1 A;
+	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	global ENDIF: JUMPTARGET0;
+	INIT_ENDIF0N1[IF] &ENDIF2;
+	IFELSE011N2N3 A,&IF2,&ELSE2;
+	global IF2: JUMPTARGET0;	
+	JUMP0N1 &EXIT_SUCCESS;
+	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	global ELSE2: JUMPTARGET0;
+	JUMP0N1 &EXIT_FAIL;
+	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	global ENDIF2: JUMPTARGET0;
+#	JUMP0N1 &EXIT_FAIL;
+	EXIT0;
+	
+#if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
+IF011N2 IF,T:
+	CJUMP011N2 IF,T;
+	
+IFELSE011N2N3 IF,T,E:
+	IF011N2 IF,T;
+	JUMP0N1 E;
+	
+INIT_ENDIF0N1 T:
+	alloc PT[$N];
+	COPYADR0N1N2 T,PT;

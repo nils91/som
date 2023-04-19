@@ -13,7 +13,7 @@ import READ1;
 MAIN:
 	alloc IFV;
 	alloc A;
-	SET1 IFV;
+	CLEAR1 IFV;
 	INIT_ENDIF0N1[IF] &ENDIF;
 	IFELSE011N2N3 IFV,&IF,&ELSE;
 	local IF: JUMPTARGET0;	
@@ -23,16 +23,15 @@ MAIN:
 	CLEAR1 A;
 	JUMP0N1 INIT_ENDIF0N1[IF].PT;
 	local ENDIF: JUMPTARGET0;
-	INIT_ENDIF0N1[IF] &ENDIF2;
+	INIT_ENDIF0N1[IF2] &ENDIF2;
 	IFELSE011N2N3 A,&IF2,&ELSE2;
 	local IF2: JUMPTARGET0;	
 	JUMP0N1 &EXIT_SUCCESS;
-	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	JUMP0N1 INIT_ENDIF0N1[IF2].PT;
 	local ELSE2: JUMPTARGET0;
 	JUMP0N1 &EXIT_FAIL;
-	JUMP0N1 INIT_ENDIF0N1[IF].PT;
+	JUMP0N1 INIT_ENDIF0N1[IF2].PT;
 	local ENDIF2: JUMPTARGET0;
-#	JUMP0N1 &EXIT_FAIL;
 	EXIT0;
 	
 #if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.

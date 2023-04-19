@@ -350,4 +350,52 @@ class HRBSCompileTest {
 		int bAdr = hras.resolveSymbolToAddress("B");
 		assertEquals(hrav.getN(),bAdr-aDR);
 	}
+	@Test
+	void testIfElseCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ifelse_debug.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+	@Test
+	void testIfElseExecute() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ifelse_debug.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int n=hras.getN();
+		int IFADR=hras.resolveSymbolToAddress("IF");
+		int ELSEADR=hras.resolveSymbolToAddress("ELSE");
+		int ENDIFADR=hras.resolveSymbolToAddress("ENDIF");
+		int IF2ADR=hras.resolveSymbolToAddress("IF2");
+		int ELSE2ADR=hras.resolveSymbolToAddress("ELSE2");
+		int ENDIF2ADR=hras.resolveSymbolToAddress("ENDIF2");
+		System.out.println(String.format("IFADR: %d", IFADR));
+		System.out.println(String.format("ELSEADR: %d", ELSEADR));
+		System.out.println(String.format("ENDIFADR: %d", ENDIFADR));
+		System.out.println(String.format("IF2ADR: %d", IF2ADR));
+		System.out.println(String.format("ELSE2ADR: %d", ELSE2ADR));
+		System.out.println(String.format("ENDIF2ADR: %d", ENDIF2ADR));
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner(bin);
+		final ISomMemspace sbin =runner.getMemspace();
+		runner.addDebugPoint(new AbstractUnconditionalDebugPoint("JUMPCATCH") {
+			
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				boolean jump=sbin.isAdrEvalSet();
+				if(jump) {
+					int tgt = sbin.getNextAddress();
+					System.out.println(String.format("jump target: %d", tgt));
+				}
+				return true;
+			}
+		});
+		runner.execute();
+	}
 }

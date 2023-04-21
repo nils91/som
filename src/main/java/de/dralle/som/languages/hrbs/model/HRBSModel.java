@@ -43,6 +43,10 @@ public class HRBSModel implements ISetN, IHeap {
 	 * Map of all directives.
 	 */
 	private Map<String, String> directives = new HashMap<>();
+	/**
+	 * Map of additional directives added at compile time directives.
+	 */
+	private Map<String, String> addDirectives = new HashMap<>();
 	private List<String> params;
 	/**
 	 * Maps available commands by their name to their models.
@@ -300,8 +304,20 @@ public class HRBSModel implements ISetN, IHeap {
 	public String asCode() {
 		return asCode(null);
 	}
+	public String getStringFromDirectives(String name) {
+		String id = directives.get(name);
+		if(id==null) {
+			id=addDirectives.get(name);
+		}
+		return id;
+	}
 
-	public HRACModel compileToHRAC(String uniqueUsageId, Map<String, HRBSMemoryAddress> params, String label) {
+	public HRACModel compileToHRAC(String instanceId, Map<String, HRBSMemoryAddress> params, String label) {
+		String instanceIdOverride = getStringFromDirectives("instanceid");
+		if(instanceIdOverride!=null) {
+			instanceId=instanceIdOverride;
+		}
+		addDirectives.put("instanceid", instanceId);
 		// copy symbols n commands in local lists
 		List<HRBSSymbol> lclSymbols = new ArrayList<>();
 		List<HRBSCommand> lclCommands = new ArrayList<>();
@@ -351,20 +367,24 @@ public class HRBSModel implements ISetN, IHeap {
 				String key = entry.getKey();
 				HRBSMemoryAddress val = entry.getValue();
 				HRACSymbol s = new HRACSymbol();
-				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, uniqueUsageId) + "_MS";
+				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, instanceId) + "_MS";
 				s.setName(convertedName);
-				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, uniqueUsageId, lclSymbolNameMap, m, childs));
+				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, instanceId, lclSymbolNameMap, m, childs));
 				m.addSymbol(s);
 				lclSymbolNameMap.put(key, convertedName);
 			}
 		}
-		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, uniqueUsageId);
-		convertSymbols(name, uniqueUsageId, lclSymbols, lclSymbolNameMap, m, childs);
+		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, instanceId);
+		convertSymbols(name, instanceId, lclSymbols, lclSymbolNameMap, m, childs);
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
-			convertAnyCommand(c, name, uniqueUsageId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
+			if(c.isInstIdDirective()) {
+				c.setInstIdDirective(false);
+				c.setCllInstId(getStringFromDirectives(c.getCllInstId()));
+			}
+			convertAnyCommand(c, name, instanceId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
 		}
-
+		addDirectives.remove("instanceid");
 		return m;
 	}
 

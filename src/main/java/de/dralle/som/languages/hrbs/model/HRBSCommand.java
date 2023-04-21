@@ -41,7 +41,10 @@ private HRBSRange range; //if this command is to be executed multiple times
 	public void setCllInstId(String cllInstId) {
 		this.cllInstId = cllInstId;
 	}
-
+	/**
+	 * If true, cllInstId is interpreted as directive name which contains the instance id.
+	 */
+private boolean instIdDirective;
 	private HRBSSymbolType labelType;
 	public HRBSSymbolType getLabelType() {
 		return labelType;
@@ -122,5 +125,13 @@ private HRBSRange range; //if this command is to be executed multiple times
 
 	public void setRange(HRBSRange range) {
 		this.range = range;
+	}
+
+	public boolean isInstIdDirective() {
+		return instIdDirective;
+	}
+
+	public void setInstIdDirective(boolean instIdDirective) {
+		this.instIdDirective = instIdDirective;
 	}
 }

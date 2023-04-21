@@ -135,7 +135,7 @@ custom_command_call_no_param
 
 instance_id
 :
-	B_OPEN NAME B_CLOSE
+	B_OPEN (NAME|directive_access) B_CLOSE
 ;
 
 commad_label

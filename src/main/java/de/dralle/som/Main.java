@@ -277,6 +277,8 @@ public class Main {
 		options.addOption(null, "timeout", true, "Timeout after <value> in seconds");
 		options.addOption(null, "regenerate-gitignore", false,
 				"Regenerate the gitignore file with all the SOM file formats");
+		options.addOption(null, "visualize", true,
+				"Export the memspace as png after each step and stitch them together as a gif. Use with --run and --outfile. Length in seconds (of the animation) is the parameter.");
 		return options;
 	}
 }

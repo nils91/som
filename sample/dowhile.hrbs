@@ -1,0 +1,29 @@
+import CLEAR1;
+import SET1;
+import JUMP0N1;
+import JUMPTARGET0;
+import FLIP2;
+import COPY2;
+import READ1;
+import SET0;
+import CJUMP011N2;
+
+MAIN:
+	alloc A;
+	alloc B;
+	alloc C;
+	CLEAR1 A;
+	SET1 B;
+	SET1 C;
+	JUMP0N1 &STARTWHILE;
+	local STARTWHILE:JUMPTARGET0;	
+	FLIP2 A,B;
+	SET1 A;
+	COPY2 B,C;
+	IF011N2 C,&STARTWHILE;	
+	READ1 B;
+	
+#if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
+IF011N2 IF,T:
+	CJUMP011N2 IF,T;
+	

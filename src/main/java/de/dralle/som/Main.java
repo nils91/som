@@ -3,6 +3,7 @@
  */
 package de.dralle.som;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +103,12 @@ public class Main {
 		if (cmd.hasOption("n")) {
 			n = Integer.parseInt(cmd.getOptionValue("n"));
 		}
+		boolean visualize=false;
+		int visualizationTime;
+		if (cmd.hasOption("visualize")) {
+			visualize=true;
+			visualizationTime = Integer.parseInt(cmd.getOptionValue("visualize"));
+		}
 		SOMFormats inputFormat = new FileLoader().getFormatFromFilename(informat);
 		SOMFormats outputFormat = new FileLoader().getFormatFromFilename(outformat);
 		if (inputFormat == null) {
@@ -117,6 +126,26 @@ public class Main {
 					((ISetN) model).setN(n);
 				}
 				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
+				if(visualize) {
+					final int[] frameCnt=new int[] {0};
+					final String outfileFrameBaseName=outfile;
+					final File tmpFrameFolder=new File("tmp_visualizer");tmpFrameFolder.mkdir();
+					runner.addDebugPoint(new AbstractUnconditionalDebugPoint("VISUALIZERHOOK") {
+						
+						@Override
+						public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+							BufferedImage img=new Compiler().compile(memspace, SOMFormats.BIN, SOMFormats.IMAGE);
+							Path frameName = Paths.get("tmp_visualizer", outfileFrameBaseName+".frame"+frameCnt[0]+++".png");
+						try {
+							new FileLoader().writeToFile(img, SOMFormats.IMAGE, frameName);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+							return true;
+						}
+					});
+				}
 				boolean execSuccess = false;
 				if (to > 0) {
 					ExecutorService runnerExecutor = Executors.newSingleThreadExecutor();

@@ -1,0 +1,26 @@
+import SET1;
+import CLEAR1;
+import READ1;
+import WRITE1;
+import SET0;
+import COPY2;
+import INV0;
+
+MAIN:
+	alloc A;
+	alloc B;
+	SET1 A;
+	CLEAR1 B;
+	READPTR0N112 &A,B;
+	READ1 B;
+	
+READPTR0N112 PTR,T:
+	READPTR0N1 PTR;
+	WRITE1 T;
+	
+READPTR0N1 PTR:
+	symbol PTR_MIRROR PTR[-1];		
+	[1:$N] COPY2 PTR_MIRROR[$i],POINTER_READ_LABEL[$i];
+	SET0;
+	local POINTER_READ_LABEL:NAR PTR;
+	INV0;

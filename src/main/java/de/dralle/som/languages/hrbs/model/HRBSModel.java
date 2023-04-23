@@ -461,7 +461,7 @@ public class HRBSModel implements ISetN, IHeap {
 
 	}
 
-	private static void convertSymbols(String name, String uniqueUsageId, List<HRBSSymbol> lclSymbols,
+	private void convertSymbols(String name, String uniqueUsageId, List<HRBSSymbol> lclSymbols,
 			Map<String, String> lclSymbolNameMap, HRACModel m, Map<String, HRBSModel> childs) {
 		for (HRBSSymbol s : lclSymbols) { //JUST CONVERT THE NAMES HERE
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);
@@ -530,7 +530,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param m
 	 * @return
 	 */
-	private static void convertAnyCommand(HRBSCommand c, String parentCmdName, String cmdExecId, String label,
+	private void convertAnyCommand(HRBSCommand c, String parentCmdName, String cmdExecId, String label,
 			Map<String, String> symbolNameReplacementMap, Map<String, HRBSModel> availChildsCommands, HRACModel m) {
 		String cmdName = c.getCmd();
 		boolean standardCommand = false;
@@ -644,7 +644,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalCommands
 	 * @return
 	 */
-	private static HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
+	private HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
 			Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
 		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, symbolNameReplacementMap, m,
 				additionalCommands);
@@ -663,7 +663,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalCommands
 	 * @return
 	 */
-	private static HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName,
+	private HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName,
 			String cmdExecId, Map<String, String> symbolNameReplacementMap, HRACModel m,
 			Map<String, HRBSModel> additionalCommands) {
 		HRACCommand tgtC = new HRACCommand();
@@ -738,7 +738,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalAvailableCommands
 	 * @return
 	 */
-	private static HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
+	private HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
 			String parentCmdName, String cmdExecId, Map<String, String> localSymbolNames, HRACModel m,
 			Map<String, HRBSModel> additionalAvailableCommands) {
 
@@ -775,14 +775,18 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalAvailableCommands
 	 * @return
 	 */
-	private static HRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
+	private HRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
 			Map<String, String> localSymbolNames) {
 		HRACSymbol newTargetSymbol = null;
 		String symbName = "";
 		if (originalMemoryAddress.getTgtCmd() != null) {
 			symbName += originalMemoryAddress.getTgtCmd() + "_";
 			if (originalMemoryAddress.getTgtCmdInst() != null) {
-				symbName += originalMemoryAddress.getTgtCmdInst() + "_";
+				String cmdInstName = originalMemoryAddress.getTgtCmdInst();
+				if(originalMemoryAddress.isTgtCmdInstIsDirective()) {
+					cmdInstName=addDirectives.get(cmdInstName);
+				}
+				symbName += cmdInstName + "_";
 			}
 			symbName += originalMemoryAddress.getSymbol().getName();
 			newTargetSymbol = new HRACSymbol(symbName);
@@ -804,7 +808,7 @@ public class HRBSModel implements ISetN, IHeap {
 		return newTgtAddress;
 	}
 
-	private static HRACSymbol getAsHRACSymbol(HRBSSymbol symbol, Map<String, String> localSymbolNames,
+	private HRACSymbol getAsHRACSymbol(HRBSSymbol symbol, Map<String, String> localSymbolNames,
 			String parentCmdName, String execId, HRACModel m, Map<String, HRBSModel> additionalCommands) {
 		HRACSymbol s = new HRACSymbol();
 		s = getAsHRACSymbolNoTgt(symbol, localSymbolNames);

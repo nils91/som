@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrbs.visitors;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Custom_command_call_no_paramContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Instance_idContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_nnameContext;
@@ -69,7 +70,19 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<HRBSMemoryA
 	}
 	@Override
 	public HRBSMemoryAddress visitInstance_id(Instance_idContext ctx) {
-		address.setTgtCmdInst(ctx.NAME().getText());
+		if(ctx.NAME()!=null) {
+			address.setTgtCmdInst(ctx.NAME().getText());
+			address.setTgtCmdInstIsDirective(false);
+		}else if(ctx.directive_access()!=null) {
+			address.setTgtCmdInstIsDirective(true);
+			ctx.directive_access().accept(this);
+		}
+		return address;
+	}
+	@Override
+	public HRBSMemoryAddress visitDirective_access(Directive_accessContext ctx) {
+		address.setTgtCmdInst(ctx.directive_name().getText());
+		address.setTgtCmdInstIsDirective(true);
 		return address;
 	}
 	@Override

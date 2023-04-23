@@ -12,6 +12,7 @@ public class HRBSMemoryAddress implements Cloneable{
 	private HRBSSymbol symbol;
 	private String tgtCmd;
 	private String tgtCmdInst;
+	private boolean tgtCmdInstIsDirective; 
 	public String getTgtCmdInst() {
 		return tgtCmdInst;
 	}
@@ -165,6 +166,14 @@ public class HRBSMemoryAddress implements Cloneable{
 	}
 	public void setDerefOffset(int derefOffset) {
 		this.derefOffset = new HRBSMemoryAddressOffset(derefOffset);
+	}
+
+	public boolean isTgtCmdInstIsDirective() {
+		return tgtCmdInstIsDirective;
+	}
+
+	public void setTgtCmdInstIsDirective(boolean tgtCmdInstIsDirective) {
+		this.tgtCmdInstIsDirective = tgtCmdInstIsDirective;
 	}
 	
 }

@@ -19,6 +19,11 @@
 /dependency-reduced-pom.xml
 /target/
 
+#visualizer
+*.gif
+/tmp_visualizer/
+/tmp_visualizer/*.png
+
 #other
 *.bak
 

@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,6 +28,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -71,7 +76,7 @@ public class Main {
 			printVersion(verbose);
 		}
 		if (cmd.hasOption("regenerate-gitignore")) {
-			regenerateGitignire();
+			regenerateGitignore();
 		}
 		String infile = null;
 		if (cmd.hasOption("infile")) {
@@ -103,10 +108,10 @@ public class Main {
 		if (cmd.hasOption("n")) {
 			n = Integer.parseInt(cmd.getOptionValue("n"));
 		}
-		boolean visualize=false;
-		int visualizationTime;
+		boolean visualize = false;
+		int visualizationTime = 0;
 		if (cmd.hasOption("visualize")) {
-			visualize=true;
+			visualize = true;
 			visualizationTime = Integer.parseInt(cmd.getOptionValue("visualize"));
 		}
 		SOMFormats inputFormat = new FileLoader().getFormatFromFilename(informat);
@@ -126,22 +131,14 @@ public class Main {
 					((ISetN) model).setN(n);
 				}
 				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) model);
-				if(visualize) {
-					final int[] frameCnt=new int[] {0};
-					final String outfileFrameBaseName=outfile;
-					final File tmpFrameFolder=new File("tmp_visualizer");tmpFrameFolder.mkdir();
+				final List<BufferedImage> frames = new ArrayList<>();
+				if (visualize) {
 					runner.addDebugPoint(new AbstractUnconditionalDebugPoint("VISUALIZERHOOK") {
-						
+
 						@Override
 						public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
-							BufferedImage img=new Compiler().compile(memspace, SOMFormats.BIN, SOMFormats.IMAGE);
-							Path frameName = Paths.get("tmp_visualizer", outfileFrameBaseName+".frame"+frameCnt[0]+++".png");
-						try {
-							new FileLoader().writeToFile(img, SOMFormats.IMAGE, frameName);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+							BufferedImage img = new Compiler().compile(memspace, SOMFormats.BIN, SOMFormats.IMAGE);
+							frames.add(img);
 							return true;
 						}
 					});
@@ -162,7 +159,20 @@ public class Main {
 				} else {
 					execSuccess = runner.execute();
 				}
-
+				if (visualize) { // export as gif
+					int timePerFrame = (int) ((double)((double)(visualizationTime*1000))/(double)frames.size());
+					FileOutputStream os = new FileOutputStream(outfile);
+					ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+					GifSequenceWriter gsw = new GifSequenceWriter(ios, frames.get(0).getType(), timePerFrame,
+							true);
+					for (BufferedImage bufferedImage : frames) {
+						gsw.writeToSequence(bufferedImage);
+					}
+					gsw.close();
+					ios.close();
+					os.close();
+					outfile=null;
+				}
 				if (verbose) {
 					System.out.println("Program successfull: " + execSuccess);
 				}
@@ -191,7 +201,7 @@ public class Main {
 		}
 	}
 
-	private static void regenerateGitignire() throws IOException {
+	private static void regenerateGitignore() throws IOException {
 		// (try) load prototype gitignore file
 		File proto = new File(".gitignore.prototype");
 		File gitign = new File(".gitignore");
@@ -201,7 +211,7 @@ public class Main {
 		if (gitign.exists()) {
 			gitign.renameTo(timestampedBu);
 			try {
-				Files.copy(timestampedBu.toPath(), bu.toPath(),StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(timestampedBu.toPath(), bu.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -259,7 +269,7 @@ public class Main {
 		gitignLines.add("#GENERATED START");
 		for (int i = 0; i < SOMFormats.values().length; i++) {
 			SOMFormats string = SOMFormats.values()[i];
-			gitignLines.add("#Format " +string.name()+" ("+ i+")");
+			gitignLines.add("#Format " + string.name() + " (" + i + ")");
 			for (int j = 0; j < string.getFileExtensionString().length; j++) {
 				String string1 = string.getFileExtensionString()[j];
 				gitignLines.add("#File extension " + string1 + " (" + j + ")");
@@ -296,7 +306,7 @@ public class Main {
 		options.addOption("h", "help", false, "Display all available CLI options");
 		options.addOption(null, "verbose", false, "Enable verbose mode");
 		options.addOption("in", "infile", true, "Specify input file");
-		options.addOption("out", "outfile", true, "Spacify output file");
+		options.addOption("out", "outfile", true, "Specify output file");
 		options.addOption("if", "informat", true, "Input file format");
 		options.addOption("of", "outformat", true, "Output file format");
 		options.addOption(null, "run", false, "Run a file");
@@ -307,7 +317,7 @@ public class Main {
 		options.addOption(null, "regenerate-gitignore", false,
 				"Regenerate the gitignore file with all the SOM file formats");
 		options.addOption(null, "visualize", true,
-				"Export the memspace as png after each step and stitch them together as a gif. Use with --run and --outfile. Length in seconds (of the animation) is the parameter.");
+				"Export the memspace as image after each step and stitch them together as a gif. Use with --run and --outfile. Length in seconds (of the animation) is the parameter.");
 		return options;
 	}
 }

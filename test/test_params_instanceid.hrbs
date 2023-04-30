@@ -1,0 +1,10 @@
+MAIN:
+	CMDA[T];
+	CMDB CMDA[T].S;
+
+CMDA:
+	alloc S;
+	CMDB[$instanceid] S;
+
+CMDB A:
+	NAR A;

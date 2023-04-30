@@ -1,0 +1,11 @@
+MAIN:
+	CMDA[T];
+	CMDB[T];
+
+CMDA:
+	alloc S;
+
+CMDB:
+	symbol S CMDA[$instanceid].S;
+	CMDA;
+	NAR S;

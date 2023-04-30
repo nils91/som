@@ -64,31 +64,42 @@ class HRBSLanguageFeaturesTests {
 	}
 
 	@Test
-	void testMinNCalculation() throws IOException {//see file
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
+	void testMinNCalculation() throws IOException {// see file
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
 
-		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAS);
-		
-		ISomMemspace space=c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertTrue(hrasModel.getN()>=11);
-		assertTrue(space.getN()>=11);
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+
+		ISomMemspace space = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertTrue(hrasModel.getN() >= 11);
+		assertTrue(space.getN() >= 11);
 	}
 
 	@Test
 	void testHeapCalculation() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
 
-		HRACModel hracModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAC);
-		
+		HRACModel hracModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+
 		assertEquals(37, hracModel.getHeapSize());
 	}
+
 	@Test
 	void testInstIdCompile() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/test_struct.hrbs");
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/test_struct.hrbs");
 
-		HRACModel hracModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAC);
-		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAS);	HRAVModel hravModel = c.compile(model, SOMFormats.HRBS	, SOMFormats.HRAV);
+		HRACModel hracModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hravModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		assertNotNull(hravModel);
 	}
-	
+
+	@Test
+	void testInstIdFrDirectiveAsParamCompile() throws IOException {
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/test_params_instanceid.hrbs");
+
+		HRACModel hracModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hravModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		assertNotNull(hravModel);
+	}
 }

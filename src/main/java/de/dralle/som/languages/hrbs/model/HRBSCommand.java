@@ -102,12 +102,19 @@ public class HRBSCommand implements Cloneable {
 			if (labelType != null) {
 				code += labelType + " ";
 			}
-			code += label + ":\n ";
+			code += label + ": ";
 		}
 		if (range != null) {
 			code += range + " ";
 		}
 		code += command;
+		if(cllInstId!=null) {
+			code+="[";
+			if(instIdDirective) {
+				code+="$";
+			}
+			code+=cllInstId+"]";
+		}
 		if (targets != null) {
 			code += " ";
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {

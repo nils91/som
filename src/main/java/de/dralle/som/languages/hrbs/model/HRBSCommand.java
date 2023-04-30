@@ -14,26 +14,35 @@ import de.dralle.som.Opcode;
  */
 public class HRBSCommand implements Cloneable {
 	@Override
-	public HRBSCommand clone(){
-		HRBSCommand clone = new HRBSCommand();
+	public HRBSCommand clone() {
+		HRBSCommand clone = null;
+		try {
+			clone = (HRBSCommand) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		clone.setCmd(command);
-		clone.label=label;
-		clone.labelType=labelType;
-		clone.cllInstId=cllInstId;
-		if(targets!=null) {
-			clone.targets=new ArrayList<>();
+		clone.label = label;
+		clone.labelType = labelType;
+		clone.cllInstId = cllInstId;
+		clone.instIdDirective = instIdDirective;
+		if (targets != null) {
+			clone.targets = new ArrayList<>();
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
 				clone.targets.add(hrbsMemoryAddress.clone());
 			}
 		}
-		if(range!=null) {
-			clone.range=range.clone();
+		if (range != null) {
+			clone.range = range.clone();
 		}
 		return clone;
 	}
-private HRBSRange range; //if this command is to be executed multiple times
+
+	private HRBSRange range; // if this command is to be executed multiple times
 	private String label;
 	private String cllInstId;
+
 	public String getCllInstId() {
 		return cllInstId;
 	}
@@ -41,11 +50,14 @@ private HRBSRange range; //if this command is to be executed multiple times
 	public void setCllInstId(String cllInstId) {
 		this.cllInstId = cllInstId;
 	}
+
 	/**
-	 * If true, cllInstId is interpreted as directive name which contains the instance id.
+	 * If true, cllInstId is interpreted as directive name which contains the
+	 * instance id.
 	 */
-private boolean instIdDirective;
+	private boolean instIdDirective;
 	private HRBSSymbolType labelType;
+
 	public HRBSSymbolType getLabelType() {
 		return labelType;
 	}
@@ -87,22 +99,22 @@ private boolean instIdDirective;
 	public String asCode() {
 		String code = "";
 		if (label != null) {
-			if(labelType!=null) {
-				code+=labelType+" ";
+			if (labelType != null) {
+				code += labelType + " ";
 			}
 			code += label + ":\n ";
 		}
-		if(range!=null) {
-			code+=range+" ";
+		if (range != null) {
+			code += range + " ";
 		}
 		code += command;
-		if(targets!=null) {
-			code+=" ";
+		if (targets != null) {
+			code += " ";
 			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
-				code+=hrbsMemoryAddress.asHRBSCode()+",";
+				code += hrbsMemoryAddress.asHRBSCode() + ",";
 			}
-			code=code.substring(0, code.length()-1);
-		}		
+			code = code.substring(0, code.length() - 1);
+		}
 		return code;
 	}
 
@@ -116,7 +128,7 @@ private boolean instIdDirective;
 	}
 
 	public void setLabelType(HRBSSymbolType labelType) {
-		this.labelType=labelType;
+		this.labelType = labelType;
 	}
 
 	public HRBSRange getRange() {

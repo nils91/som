@@ -1,0 +1,14 @@
+MAIN:
+	CMDC[T];
+	CMDA[T];
+	CMDB CMDA[T].S;
+
+CMDA:
+	alloc S;
+	CMDB[$instanceid] CMDC[$instanceid].C;
+
+CMDB A:
+	NAR A;
+	
+CMDC:
+	alloc C;

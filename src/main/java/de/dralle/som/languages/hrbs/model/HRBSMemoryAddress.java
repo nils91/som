@@ -135,7 +135,7 @@ public class HRBSMemoryAddress implements Cloneable{
 		if(tgtCmd!=null) {
 			s+=tgtCmd;
 			if(tgtCmdInst!=null) {
-				s+=String.format("[%s]", tgtCmdInst);
+				s+=String.format("[%s%s]", tgtCmdInstIsDirective?"$":"", tgtCmdInst);
 			}
 			s+=".";
 		}

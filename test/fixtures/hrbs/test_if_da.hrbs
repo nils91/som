@@ -1,0 +1,39 @@
+import SET1;
+import CLEAR1;
+import INV1;
+import JUMP0N1;
+import JUMPTARGET0;
+import EXIT0;
+import CJUMP011ADR2;
+import CJUMP011N2;
+import COPY2;
+import COPYADR0N1N2;
+import READ1;
+
+MAIN:
+	alloc A;
+	SET1 A;
+	INIT_IF0N1N2[IF] &IF,&ENDIF;
+	IF011N2[IF] A;
+	global IF: JUMPTARGET0;
+	CLEAR1 A;
+	JUMP0N1 INIT_IF0N1N2[IF].ENDIFADR;
+	global ENDIF: JUMPTARGET0;
+	READ1 A;
+	
+INIT_IF0N1N2 IF,ENDIF:
+	alloc IFADR[$N];
+	alloc ENDIFADR[$N];
+	symbol IF_READ_MIRROR IF[-1];
+	symbol ENDIF_READ_MIRROR ENDIF[-1];
+	[1:$N] COPY2 IF_READ_MIRROR[$i],IFADR[$i];
+	[1:$N] COPY2 ENDIF_READ_MIRROR[$i],ENDIFADR[$i];
+	
+#if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
+IF011N2 IF:
+	CJUMP011N2 IF,INIT_IF0N1N2[$instanceid].IFADR;
+	JUMP0N1 INIT_IF0N1N2[$instanceid].ENDIFADR;
+	
+INIT_ENDIF0N1 T:
+	alloc PT[$N];
+	COPYADR0N1N2 T,PT;

@@ -24,10 +24,8 @@ MAIN:
 INIT_IF0N1N2 IF,ENDIF:
 	alloc IFADR[$N];
 	alloc ENDIFADR[$N];
-	symbol IF_READ_MIRROR IF[-1];
-	symbol ENDIF_READ_MIRROR ENDIF[-1];
-	[1:$N] COPY2 IF_READ_MIRROR[$i],IFADR[$i];
-	[1:$N] COPY2 ENDIF_READ_MIRROR[$i],ENDIFADR[$i];
+	COPYADR0N1N2 IF,IFADR;
+	COPYADR0N1N2 ENDIF,ENDIFADR;
 	
 #if. first param is single bit, 2nd is n bits interpreted as address. This works by allowing execution to continue w/o jump if A is set, otherwise a jump is performed, where ADR is the continuation address after the if.
 IF011N2 IF:

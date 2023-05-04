@@ -378,9 +378,17 @@ public class HRBSModel implements ISetN, IHeap {
 		convertSymbols(name, instanceId, lclSymbols, lclSymbolNameMap, m, childs);
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
-			if(c.isInstIdDirective()) {
+			if(c.isInstIdDirective()) { //resolve directive access on called command
 				c.setInstIdDirective(false);
 				c.setCllInstId(getStringFromDirectives(c.getCllInstId()));
+			}
+			if(c.getTarget()!=null) {//resolve directive access on called command params
+				for (HRBSMemoryAddress hrbsCommand : c.getTarget()) {
+					if(hrbsCommand.isTgtCmdInstIsDirective()) {
+						hrbsCommand.setTgtCmdInstIsDirective(false);
+						hrbsCommand.setTgtCmdInst(getStringFromDirectives(hrbsCommand.getTgtCmdInst()));
+					}
+				}
 			}
 			convertAnyCommand(c, name, instanceId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
 		}
@@ -615,9 +623,12 @@ public class HRBSModel implements ISetN, IHeap {
 
 	private static Map<String, HRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c,
 			Map<String, String> lclSymbolReplacementMap) {
-		List<HRBSMemoryAddress> cTargets = c.getTarget();
-		List<String> modelParams = m.getParams();
 		Map<String, HRBSMemoryAddress> retMap = new HashMap<>();
+		if(m==null) {
+			System.out.println("Warning: Cant get prototype param list for "+c);
+		}
+		List<String> modelParams = m.getParams();
+		List<HRBSMemoryAddress> cTargets = c.getTarget();				
 		if (modelParams != null) {
 			for (int i = 0; i < modelParams.size(); i++) {
 				String p = modelParams.get(i);

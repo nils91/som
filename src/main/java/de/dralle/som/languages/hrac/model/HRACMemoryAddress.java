@@ -84,6 +84,10 @@ public class HRACMemoryAddress implements Cloneable {
 	@Override
 	public HRACMemoryAddress clone() {
 		HRACMemoryAddress copy = new HRACMemoryAddress();
+		try {
+			copy=(HRACMemoryAddress) super.clone();
+		} catch (CloneNotSupportedException e) {
+		}
 		if(symbol!=null) {
 			copy.symbol = symbol.clone();
 		}

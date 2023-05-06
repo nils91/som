@@ -9,8 +9,7 @@ import de.dralle.som.languages.hras.model.HRASMemoryAddress;
  * @author Nils
  *
  */
-public class HRACMemoryAddress implements Cloneable {
-	private HRACSymbol symbol;
+public class AbstractHRACMemoryAddress implements Cloneable {
 	private Integer offset;
 	private boolean offsetSpecial;
 	private String offsetSpecialnName;
@@ -30,30 +29,13 @@ public class HRACMemoryAddress implements Cloneable {
 	public void setOffset(Integer offset) {
 		this.offset = offset;
 	}
-
-	public HRACMemoryAddress(HRACSymbol symbol) {
-		this.symbol = symbol;
-	}
-
-	public HRACMemoryAddress() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public HRACMemoryAddress(HRASMemoryAddress address) {
-		symbol=new HRACSymbol(address.getSymbol());
-	}
-
-	public HRACSymbol getSymbol() {
-		return symbol;
-	}
-
-	public void setSymbol(HRACSymbol symbol) {
-		this.symbol = symbol;
+	protected AbstractHRACMemoryAddress() {
+		
 	}
 
 	@Override
 	public int hashCode() {
-		int hashc = symbol.hashCode();
+		int hashc=0;
 		if (offset != null) {
 			hashc += offset.hashCode();
 		}
@@ -62,16 +44,16 @@ public class HRACMemoryAddress implements Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof HRACMemoryAddress) {
-			HRACMemoryAddress other = (HRACMemoryAddress) obj;
-			boolean equal = symbol.equals(((HRACMemoryAddress) obj).symbol);
+		if (obj != null && obj instanceof AbstractHRACMemoryAddress) {
+			AbstractHRACMemoryAddress other = (AbstractHRACMemoryAddress) obj;
+			boolean equal = true;
 			if (equal && isOffsetSpecial()) {
 				return offsetSpecialnName.equals(other.offsetSpecialnName);
 			}
 			if (equal && offset != null) {
-				return offset.equals(((HRACMemoryAddress) obj).offset);
+				return offset.equals(((AbstractHRACMemoryAddress) obj).offset);
 			}
-			return equal;
+			return super.equals(obj);
 		}
 		return false;
 	}
@@ -82,14 +64,11 @@ public class HRACMemoryAddress implements Cloneable {
 	}
 
 	@Override
-	public HRACMemoryAddress clone() {
-		HRACMemoryAddress copy = new HRACMemoryAddress();
+	public AbstractHRACMemoryAddress clone() {
+		AbstractHRACMemoryAddress copy = new AbstractHRACMemoryAddress();
 		try {
-			copy=(HRACMemoryAddress) super.clone();
+			copy=(AbstractHRACMemoryAddress) super.clone();
 		} catch (CloneNotSupportedException e) {
-		}
-		if(symbol!=null) {
-			copy.symbol = symbol.clone();
 		}
 		copy.offsetSpecial = offsetSpecial;
 		if (offset != null) {
@@ -101,12 +80,12 @@ public class HRACMemoryAddress implements Cloneable {
 
 	public String asHRACCode() {
 		if (offsetSpecial) {
-			return String.format("%s[$%s]", symbol.getName(), offsetSpecialnName);
+			return String.format("[$%s]",  offsetSpecialnName);
 		}
 		if (offset != null) {
-			return String.format("%s[%d]", symbol.getName(), offset);
+			return String.format("[%d]", offset);
 		} else {
-			return symbol.getName();
+			return "";
 		}
 	}
 

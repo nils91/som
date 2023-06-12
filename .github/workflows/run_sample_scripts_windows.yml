@@ -6,7 +6,7 @@ jobs:
     name: Run sample scripts
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3.5.2
+    - uses: actions/checkout@v3.5.3
     - name: Set up Java
       uses: actions/setup-java@v3
       with:

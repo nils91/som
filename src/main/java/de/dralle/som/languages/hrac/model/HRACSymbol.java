@@ -28,7 +28,7 @@ public class HRACSymbol implements Cloneable {
 	/**
 	 * Potential target symbol. Might be null.
 	 */
-	private HRACMemoryAddress targetSymbol;
+	private AbstractHRACMemoryAddress targetSymbol;
 	private int bitCnt;
 	private boolean bitCntSpecial;
 	/**
@@ -56,11 +56,11 @@ public class HRACSymbol implements Cloneable {
 		this.name = name;
 	}
 
-	public HRACMemoryAddress getTargetSymbol() {
+	public AbstractHRACMemoryAddress getTargetSymbol() {
 		return targetSymbol;
 	}
 
-	public void setTargetSymbol(HRACMemoryAddress mirrorSymbol) {
+	public void setTargetSymbol(AbstractHRACMemoryAddress mirrorSymbol) {
 		this.targetSymbol = mirrorSymbol;
 	}
 

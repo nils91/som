@@ -85,9 +85,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
  */
 	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {
 		if(cmd!=null) {
-			HRACMemoryAddress ma = cmd.getTarget();			
-			HRACSymbol symbol = ma.getSymbol();
-			symbol.setName(symbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));		
+			AbstractHRACMemoryAddress ma = cmd.getTarget();			
+			if(ma instanceof NamedHRACMemoryAddress) {
+				String name=((NamedHRACMemoryAddress) ma).getName();
+				String resolvedNamed = symbolNameReplacementMap.getOrDefault(name, name);
+				((NamedHRACMemoryAddress) ma).setName(resolvedNamed);
+			}
 		}
 	}
 	/**

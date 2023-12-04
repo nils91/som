@@ -4,8 +4,10 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.MemadrContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
@@ -16,6 +18,11 @@ import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
  */
 public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRACMemoryAddress> {
 
+	@Override
+	public AbstractHRACMemoryAddress visitMemadr(MemadrContext ctx) {
+		return new FixedHRACMemoryAddress(Integer.parseInt(ctx.INT().getText()));
+	}
+
 	private AbstractHRACMemoryAddress address;
 
 	@Override
@@ -24,7 +31,7 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRA
 			address=new NamedHRACMemoryAddress(ctx.SYMBOL().getText());
 		}
 		if(ctx.memadr()!=null) {
-			ctx.memadr().accept(this);
+			address=ctx.memadr().accept(this);
 		}
 		if (ctx.offset_specify() != null) {
 			ctx.offset_specify().accept(this);

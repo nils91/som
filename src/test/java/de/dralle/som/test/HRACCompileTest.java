@@ -108,6 +108,20 @@ class HRACCompileTest {
 		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		assertNotNull(m);
 	}
+	@Test
+	void testCompileFixedAdressOnCommand() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fixed_adr_on_command.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
+		assertNotNull(m);
+	}
+	@Test
+	void testCompileFixedAdressOnMirrorSymbol() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fixed_adr_on_mirror_symbol.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
+		assertNotNull(m);
+	}
 
 	@Test
 	void testFDSymbolGenPrecompiledNaming() throws IOException {

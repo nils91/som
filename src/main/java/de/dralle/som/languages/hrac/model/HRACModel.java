@@ -441,6 +441,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				HRASMemoryAddress tgHras = new HRASMemoryAddress();
 				if (tgt instanceof NamedHRACMemoryAddress) {
 					tgHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
+				}else if(tgt instanceof FixedHRACMemoryAddress){
+					tgHras.setSymbol(((FixedHRACMemoryAddress) tgt).getAddress()+"");					
 				}
 				tgHras.setAddressOffset(tgt.getOffset());
 				m.addSymbol(s.getName(), tgHras);

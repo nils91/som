@@ -80,7 +80,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 	}
 /**
- * Note: Not Recursive on purpose.
+ * Note: Not Recursive on purpose. Change Commad targets during compile. FixedMemoryAddresses do not need to be changed.
  * @param symbolNameReplacementMap
  */
 	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {

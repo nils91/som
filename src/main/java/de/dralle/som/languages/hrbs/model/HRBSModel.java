@@ -741,7 +741,7 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	/**
-	 * Convert the HRBS Address to a HRAC address (includinng required name and
+	 * Convert the HRBS Address to a HRAC address (including required name and
 	 * offset changes). if the hrbs address is a deref, this will also generate the
 	 * required commands and symbols and add them to the hrac model.
 	 * 

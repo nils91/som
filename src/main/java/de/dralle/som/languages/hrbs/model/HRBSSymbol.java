@@ -29,7 +29,7 @@ public class HRBSSymbol implements Cloneable {
 	/**
 	 * Potential target symbol. Might be null.
 	 */
-	private HRBSMemoryAddress targetSymbol;
+	private AbstractHRBSMemoryAddress targetSymbol;
 	private HRBSSymbolType type;
 	private int bitCnt;
 	private String bitCntSpecialName;
@@ -39,10 +39,10 @@ public class HRBSSymbol implements Cloneable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public HRBSMemoryAddress getTargetSymbol() {
+	public AbstractHRBSMemoryAddress getTargetSymbol() {
 		return targetSymbol;
 	}
-	public void setTargetSymbol(HRBSMemoryAddress mirrorSymbol) {
+	public void setTargetSymbol(AbstractHRBSMemoryAddress mirrorSymbol) {
 		this.targetSymbol = mirrorSymbol;
 	}
 	public int getBitCnt() {

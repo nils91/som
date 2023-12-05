@@ -150,7 +150,7 @@ symbol_ns
 
 target_argument
 :
-	AMP? (symbol_target_name|fixed_address) offset_specify*
+	(symbol_target|fixed_address) offset_specify*
 ;
 
 symbol_target: AMP? symbol_target_name;

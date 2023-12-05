@@ -63,8 +63,8 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 		if (ctx.cnt_specify() != null) {
 			ctx.cnt_specify().accept(this);
 		}
-		if (ctx.symbol_os() != null) {
-			s.setTargetSymbol(ctx.symbol_os().accept(new HRBSMemoryAddressVisitor()));
+		if (ctx.target_argument() != null) {
+			s.setTargetSymbol(ctx.target_argument().accept(new HRBSMemoryAddressVisitor()));
 		}
 		return s;
 	}

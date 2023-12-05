@@ -7,7 +7,7 @@ package de.dralle.som.languages.hrbs.model;
  * @author Nils
  *
  */
-public class HRBSMemoryAddress implements Cloneable{
+public class AbstractHRBSMemoryAddress implements Cloneable{
 	private boolean isDeref=false;
 	private HRBSSymbol symbol;
 	private String tgtCmd;
@@ -43,11 +43,11 @@ public class HRBSMemoryAddress implements Cloneable{
 		this.offset = new HRBSMemoryAddressOffset(offset);
 	}
 
-	public HRBSMemoryAddress(HRBSSymbol symbol) {
+	public AbstractHRBSMemoryAddress(HRBSSymbol symbol) {
 		this.symbol = symbol;
 	}
 
-	public HRBSMemoryAddress() {
+	public AbstractHRBSMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -80,8 +80,8 @@ public class HRBSMemoryAddress implements Cloneable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj!=null&&obj instanceof HRBSMemoryAddress) {
-			HRBSMemoryAddress other = (HRBSMemoryAddress)obj;
+		if(obj!=null&&obj instanceof AbstractHRBSMemoryAddress) {
+			AbstractHRBSMemoryAddress other = (AbstractHRBSMemoryAddress)obj;
 			boolean equal = symbol.equals(other.symbol);
 			equal=equal&&(isDeref==other.isDeref);
 			if(equal&&offset!=null) {
@@ -104,10 +104,10 @@ public class HRBSMemoryAddress implements Cloneable{
 	}
 
 	@Override
-	public HRBSMemoryAddress clone() {
-		HRBSMemoryAddress copy = null;
+	public AbstractHRBSMemoryAddress clone() {
+		AbstractHRBSMemoryAddress copy = null;
 		try {
-			copy = (HRBSMemoryAddress) super.clone();
+			copy = (AbstractHRBSMemoryAddress) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

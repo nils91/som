@@ -3,19 +3,14 @@
  */
 package de.dralle.som.languages.hrbs.visitors;
 
-import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Commad_labelContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Custom_command_call_no_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Instance_idContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_osContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Target_argumentContext;
 import de.dralle.som.languages.hrbs.model.HRBSCommand;
-import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.HRBSSymbolType;
-import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
-import de.dralle.som.languages.hras.generated.HRASGrammarParser.CommandContext;
-import de.dralle.som.languages.hras.model.HRASCommand;
 
 /**
  * @author Nils
@@ -37,9 +32,9 @@ public class HRBSCommandVisitor extends HRBSGrammarBaseVisitor<HRBSCommand> {
 			ctx.custom_command_call_no_param().accept(this);
 		}
 		
-		if (ctx.symbol_os() != null) {
-			for (Symbol_osContext soc : ctx.symbol_os()) {
-				c.addTarget(soc.accept(new HRBSMemoryAddressVisitor()));
+		if (ctx.target_argument() != null) {
+			for (Target_argumentContext tac : ctx.target_argument()) {
+				c.addTarget(tac.accept(new HRBSMemoryAddressVisitor()));
 			}
 		}
 		return c;

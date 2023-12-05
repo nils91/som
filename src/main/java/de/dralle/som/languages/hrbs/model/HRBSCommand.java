@@ -29,7 +29,7 @@ public class HRBSCommand implements Cloneable {
 		clone.instIdDirective = instIdDirective;
 		if (targets != null) {
 			clone.targets = new ArrayList<>();
-			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
+			for (AbstractHRBSMemoryAddress hrbsMemoryAddress : targets) {
 				clone.targets.add(hrbsMemoryAddress.clone());
 			}
 		}
@@ -63,7 +63,7 @@ public class HRBSCommand implements Cloneable {
 	}
 
 	private String command;
-	private List<HRBSMemoryAddress> targets;
+	private List<AbstractHRBSMemoryAddress> targets;
 
 	public String getLabel() {
 		return label;
@@ -73,15 +73,15 @@ public class HRBSCommand implements Cloneable {
 		this.label = label;
 	}
 
-	public List<HRBSMemoryAddress> getTarget() {
+	public List<AbstractHRBSMemoryAddress> getTarget() {
 		return targets;
 	}
 
-	public void setTarget(List<HRBSMemoryAddress> target) {
+	public void setTarget(List<AbstractHRBSMemoryAddress> target) {
 		this.targets = target;
 	}
 
-	public void addTarget(HRBSMemoryAddress target) {
+	public void addTarget(AbstractHRBSMemoryAddress target) {
 		if (targets == null) {
 			targets = new ArrayList<>();
 		}
@@ -117,7 +117,7 @@ public class HRBSCommand implements Cloneable {
 		}
 		if (targets != null) {
 			code += " ";
-			for (HRBSMemoryAddress hrbsMemoryAddress : targets) {
+			for (AbstractHRBSMemoryAddress hrbsMemoryAddress : targets) {
 				code += hrbsMemoryAddress.asHRBSCode() + ",";
 			}
 			code = code.substring(0, code.length() - 1);

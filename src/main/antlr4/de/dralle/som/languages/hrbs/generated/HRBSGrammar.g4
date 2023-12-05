@@ -67,7 +67,7 @@ symbol_dec
 	(
 		ALLOC
 		| SYMBOL
-	) NAME cnt_specify? symbol_os?
+	) NAME cnt_specify? target_argument?
 ;
 
 def_scope
@@ -99,8 +99,8 @@ command
 	commad_label? NEWLINE? offset_specify_range? custom_command_call_no_param
 	(
 		(
-			symbol_os COMMA
-		)* symbol_os
+			target_argument COMMA
+		)* target_argument
 	)? SEMICOLON
 ;
 
@@ -148,12 +148,18 @@ symbol_ns
 	def_scope? symbol_dec
 ;
 
-symbol_os
+target_argument
 :
-	AMP? symbol_target_nname offset_specify*
+	AMP? (symbol_target_name|fixed_address) offset_specify*
 ;
 
-symbol_target_nname
+symbol_target: AMP? symbol_target_name;
+
+fixed_address: AT INT;
+AT: '@';
+
+
+symbol_target_name
 :
 	(
 		custom_command_call_no_param DOT

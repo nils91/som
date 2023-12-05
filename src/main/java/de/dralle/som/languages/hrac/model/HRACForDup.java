@@ -80,14 +80,17 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 	}
 /**
- * Note: Not Recursive on purpose.
+ * Note: Not Recursive on purpose. Change Commad targets during compile. FixedMemoryAddresses do not need to be changed.
  * @param symbolNameReplacementMap
  */
 	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {
 		if(cmd!=null) {
-			HRACMemoryAddress ma = cmd.getTarget();			
-			HRACSymbol symbol = ma.getSymbol();
-			symbol.setName(symbolNameReplacementMap.getOrDefault(symbol.getName(), symbol.getName()));		
+			AbstractHRACMemoryAddress ma = cmd.getTarget();			
+			if(ma instanceof NamedHRACMemoryAddress) {
+				String name=((NamedHRACMemoryAddress) ma).getName();
+				String resolvedNamed = symbolNameReplacementMap.getOrDefault(name, name);
+				((NamedHRACMemoryAddress) ma).setName(resolvedNamed);
+			}
 		}
 	}
 	/**

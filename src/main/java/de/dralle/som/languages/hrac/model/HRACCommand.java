@@ -13,7 +13,7 @@ import de.dralle.som.languages.hras.model.HRASCommand;
 public class HRACCommand implements Cloneable{
 	private HRACSymbol label;
 	private Opcode op;
-	private HRACMemoryAddress target;
+	private AbstractHRACMemoryAddress target;
 
 	public HRACSymbol getLabel() {
 		return label;
@@ -41,11 +41,11 @@ public class HRACCommand implements Cloneable{
 		this.label = label;
 	}
 
-	public HRACMemoryAddress getTarget() {
+	public AbstractHRACMemoryAddress getTarget() {
 		return target;
 	}
 
-	public void setTarget(HRACMemoryAddress target) {
+	public void setTarget(AbstractHRACMemoryAddress target) {
 		this.target = target;
 	}
 
@@ -77,6 +77,6 @@ public class HRACCommand implements Cloneable{
 
 	public HRACCommand(HRASCommand val) {
 		op=val.getOp();
-		target=new HRACMemoryAddress(val.getAddress());
+		target=new NamedHRACMemoryAddress(val.getAddress().getSymbol());
 	}
 }

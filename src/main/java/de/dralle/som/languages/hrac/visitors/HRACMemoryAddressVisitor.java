@@ -4,26 +4,34 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.MemadrContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext;
-import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 
 /**
  * @author Nils
  *
  */
-public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<HRACMemoryAddress> {
-
-	private HRACMemoryAddress address;
+public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRACMemoryAddress> {
 
 	@Override
-	public HRACMemoryAddress visitSymbol_os(Symbol_osContext ctx) {
-		address = new HRACMemoryAddress();
-		if (ctx.SYMBOL() != null) {
-			HRACSymbol s = new HRACSymbol();
-			s.setName(ctx.SYMBOL().getText());
-			address.setSymbol(s);
+	public AbstractHRACMemoryAddress visitMemadr(MemadrContext ctx) {
+		return new FixedHRACMemoryAddress(Integer.parseInt(ctx.INT().getText()));
+	}
+
+	private AbstractHRACMemoryAddress address;
+
+	@Override
+	public AbstractHRACMemoryAddress visitSymbol_os(Symbol_osContext ctx) {
+		if (ctx.SYMBOL() != null) { //is a named address
+			address=new NamedHRACMemoryAddress(ctx.SYMBOL().getText());
+		}
+		if(ctx.memadr()!=null) {
+			address=ctx.memadr().accept(this);
 		}
 		if (ctx.offset_specify() != null) {
 			ctx.offset_specify().accept(this);
@@ -32,7 +40,7 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<HRACMemoryA
 	}
 
 	@Override
-	public HRACMemoryAddress visitOffset_specify(
+	public AbstractHRACMemoryAddress visitOffset_specify(
 			de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specifyContext ctx) {
 		if (ctx.offset_specify_number() != null) {
 			HRACMemoryOffset offset = ctx.offset_specify_number().accept(new HRACOSVisitor());

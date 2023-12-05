@@ -317,17 +317,20 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					if (lbl != null) {
 						newLabelName = lbl.getName();
 						HRACSymbol originalLblMirror = new HRACSymbol(oldLabelName);
-						originalLblMirror.setTargetSymbol(new HRACMemoryAddress(new HRACSymbol(newLabelName)));
+						originalLblMirror.setTargetSymbol(new NamedHRACMemoryAddress((newLabelName)));
 						symbols.add(originalLblMirror);
 					}
 				}
 			}
 		}
-		for (HRACSymbol hracForDup : symbols) {// replace target symbols
+		for (HRACSymbol hracForDup : symbols) {// replace target symbols, no need to touch fixed addresses
 			if (hracForDup.getTargetSymbol() != null) {
-				HRACMemoryAddress ma = hracForDup.getTargetSymbol();
-				HRACSymbol target = ma.getSymbol();
-				target.setName(localSymbolNameReplacementList.getOrDefault(target.getName(), target.getName()));
+				AbstractHRACMemoryAddress ma = hracForDup.getTargetSymbol();
+				if (ma instanceof NamedHRACMemoryAddress) {
+					String name = ((NamedHRACMemoryAddress) ma).getName();
+					String localName = localSymbolNameReplacementList.getOrDefault(name, name);
+					((NamedHRACMemoryAddress) ma).setName(localName);
+				}
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// replace command targets
@@ -339,19 +342,19 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				hracForDup.setBitCnt(getDirectiveAsInt(hracForDup.getSpecialName()));
 			}
 		}
-		for (HRACSymbol hracForDup : symbols) {// resolve symbols targets
-			if (hracForDup.getTargetSymbol() != null) {
-				HRACMemoryAddress ma = hracForDup.getTargetSymbol();
+		for (HRACSymbol symbol : symbols) {// resolve symbols targets
+			if (symbol.getTargetSymbol() != null) {
+				AbstractHRACMemoryAddress ma = symbol.getTargetSymbol();
 				if (ma.isOffsetSpecial()) {
 					ma.setOffset(getDirectiveAsInt(ma.getOffsetSpecialnName()));
 					ma.setOffsetSpecial(false);
 				}
 			}
 		}
-		for (HRACForDup hracForDup : commands) {// resolve command targets
+		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
 			if (hracForDup.getCmd() != null) {
 				HRACCommand cmd = hracForDup.getCmd();
-				HRACMemoryAddress ma = cmd.getTarget();
+				AbstractHRACMemoryAddress ma = cmd.getTarget();
 				if (ma.isOffsetSpecial()) {
 					ma.setOffset(getDirectiveAsInt(ma.getOffsetSpecialnName()));
 					ma.setOffsetSpecial(false);
@@ -402,6 +405,28 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			m.addSymbol(key, new HRASMemoryAddress(val));
 		}
 		int nxtSymbolAddress = getFixedBitCount(n);
+		// iterate over all symbols and block all directly used addresses
+		for (HRACSymbol s : toc.symbols) {
+			if (s.getTargetSymbol() != null) {
+				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
+
+				if (tgt instanceof FixedHRACMemoryAddress) {
+					int adr = 0;
+					Integer ofs = tgt.getOffset();
+					if (ofs != null) {
+						adr = ofs.intValue();
+					}
+					// if offset is directive, get that
+					if (tgt.isOffsetSpecial()) {
+						adr = getDirectiveAsInt(tgt.getOffsetSpecialnName());
+					}
+					adr += ((FixedHRACMemoryAddress) tgt).getAddress();
+					if(adr>nxtSymbolAddress) {
+						nxtSymbolAddress=adr+1;
+					}
+				}
+			}
+		}
 		for (HRACSymbol s : toc.symbols) {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
@@ -412,9 +437,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				}
 				m.addSymbol(s.getName(), new HRASMemoryAddress(address));
 			} else {
-				HRACMemoryAddress tgt = s.getTargetSymbol();
+				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
 				HRASMemoryAddress tgHras = new HRASMemoryAddress();
-				tgHras.setSymbol(tgt.getSymbol().getName());
+				if (tgt instanceof NamedHRACMemoryAddress) {
+					tgHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
+				}else if(tgt instanceof FixedHRACMemoryAddress){
+					tgHras.setSymbol(((FixedHRACMemoryAddress) tgt).getAddress()+"");					
+				}
 				tgHras.setAddressOffset(tgt.getOffset());
 				m.addSymbol(s.getName(), tgHras);
 			}
@@ -433,7 +462,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				HRACCommand c = cf.getCmd();
 				HRASCommand hrasc = new HRASCommand();
 				hrasc.setOp(c.getOp());
-				HRASMemoryAddress address = new HRASMemoryAddress(c.getTarget().getSymbol().getName());
+				AbstractHRACMemoryAddress hracCmdTgt = c.getTarget();
+				HRASMemoryAddress address = null;
+				if (hracCmdTgt instanceof NamedHRACMemoryAddress) {
+					address = new HRASMemoryAddress(((NamedHRACMemoryAddress) hracCmdTgt).getName());
+				}
+				if (hracCmdTgt instanceof FixedHRACMemoryAddress) {
+					address = new HRASMemoryAddress(((FixedHRACMemoryAddress)hracCmdTgt).getAddress());
+				}
 				address.setAddressOffset(c.getTarget().getOffset());
 				hrasc.setAddress(address);
 				assignedAddress = m.addCommand(hrasc);

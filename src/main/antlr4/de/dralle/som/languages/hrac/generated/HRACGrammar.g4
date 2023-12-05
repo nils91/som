@@ -57,8 +57,10 @@ command
 
 symbol_os
 :
-	SYMBOL offset_specify?
+	(SYMBOL|memadr) offset_specify?
 ;
+
+memadr:AT INT;
 
 offset_specify
 :

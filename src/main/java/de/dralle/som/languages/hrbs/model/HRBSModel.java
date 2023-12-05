@@ -25,9 +25,10 @@ import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACForDupRange;
-import de.dralle.som.languages.hrac.model.HRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.HRASMemoryAddress;
@@ -458,13 +459,17 @@ public class HRBSModel implements ISetN, IHeap {
 		return news;
 	}
 
-	private static HRBSMemoryAddress convertHRACMA2HRBS(HRACMemoryAddress targetSymbol) {
+	private static HRBSMemoryAddress convertHRACMA2HRBS(AbstractHRACMemoryAddress targetSymbol) {
 		HRBSMemoryAddress newma = new HRBSMemoryAddress();
 		newma.setDeref(false);
 		if (targetSymbol.getOffset() != null) {
 			newma.setOffset(targetSymbol.getOffset());
 		}
-		newma.setSymbol(convertHRACSymbolToHRBS(targetSymbol.getSymbol()));
+		HRACSymbol hracSymbol = new HRACSymbol();
+		if(targetSymbol instanceof NamedHRACMemoryAddress) {
+			hracSymbol.setName(((NamedHRACMemoryAddress)targetSymbol).getName());
+		}
+		newma.setSymbol(convertHRACSymbolToHRBS(hracSymbol));
 		return newma;
 
 	}
@@ -548,7 +553,7 @@ public class HRBSModel implements ISetN, IHeap {
 			} else {
 				HRACSymbol newSymbol = new HRACSymbol(label);
 				String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
-				newSymbol.setTargetSymbol(new HRACMemoryAddress(new HRACSymbol(lclSmblName)));
+				newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(lclSmblName));
 				m.addSymbol(newSymbol);
 			}
 		}
@@ -683,7 +688,7 @@ public class HRBSModel implements ISetN, IHeap {
 			tgtC.setLabel(new HRACSymbol(lclSmblName));
 		}
 		tgtC.setOp(opcode);
-		HRACMemoryAddress tgtAdr = calculateHRACMemoryAddress(c.getTarget().get(0), parentCmdName, cmdExecId,
+		AbstractHRACMemoryAddress tgtAdr = calculateHRACMemoryAddress(c.getTarget().get(0), parentCmdName, cmdExecId,
 				symbolNameReplacementMap, m, additionalCommands);
 		tgtC.setTarget(tgtAdr);
 
@@ -736,7 +741,7 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	/**
-	 * Convert the HRBS Address to a HRAC address (includinng required name and
+	 * Convert the HRBS Address to a HRAC address (including required name and
 	 * offset changes). if the hrbs address is a deref, this will also generate the
 	 * required commands and symbols and add them to the hrac model.
 	 * 
@@ -749,7 +754,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalAvailableCommands
 	 * @return
 	 */
-	private HRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
+	private AbstractHRACMemoryAddress calculateHRACMemoryAddress(HRBSMemoryAddress originalMemoryAddress,
 			String parentCmdName, String cmdExecId, Map<String, String> localSymbolNames, HRACModel m,
 			Map<String, HRBSModel> additionalAvailableCommands) {
 
@@ -786,7 +791,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @param additionalAvailableCommands
 	 * @return
 	 */
-	private HRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
+	private AbstractHRACMemoryAddress calculateHRACMemoryAddressNoDeref(HRBSMemoryAddress originalMemoryAddress,
 			Map<String, String> localSymbolNames) {
 		HRACSymbol newTargetSymbol = null;
 		String symbName = "";
@@ -809,8 +814,8 @@ public class HRBSModel implements ISetN, IHeap {
 		if (originalMemoryAddress.getOffset() != null) {
 			newOffset = originalMemoryAddress.getOffset();
 		}
-		HRACMemoryAddress newTgtAddress = new HRACMemoryAddress();
-		newTgtAddress.setSymbol(newTargetSymbol);
+		AbstractHRACMemoryAddress newTgtAddress = new NamedHRACMemoryAddress();
+		((NamedHRACMemoryAddress)newTgtAddress).setName(newTargetSymbol.getName());
 		if (newOffset != null) {
 			newTgtAddress.setOffset(newOffset.getOffset());
 			newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName() != null);

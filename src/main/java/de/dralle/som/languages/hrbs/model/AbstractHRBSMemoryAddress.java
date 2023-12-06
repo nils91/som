@@ -7,12 +7,12 @@ package de.dralle.som.languages.hrbs.model;
  * @author Nils
  *
  */
-public class AbstractHRBSMemoryAddress implements Cloneable{
-	private boolean isDeref=false;
-	private HRBSSymbol symbol;
+public abstract class AbstractHRBSMemoryAddress implements Cloneable {
+	private boolean isDeref = false;
 	private String tgtCmd;
 	private String tgtCmdInst;
-	private boolean tgtCmdInstIsDirective; 
+	private boolean tgtCmdInstIsDirective;
+
 	public String getTgtCmdInst() {
 		return tgtCmdInst;
 	}
@@ -39,59 +39,46 @@ public class AbstractHRBSMemoryAddress implements Cloneable{
 	public void setOffset(HRBSMemoryAddressOffset offset) {
 		this.offset = offset;
 	}
+
 	public void setOffset(int offset) {
 		this.offset = new HRBSMemoryAddressOffset(offset);
-	}
-
-	public AbstractHRBSMemoryAddress(HRBSSymbol symbol) {
-		this.symbol = symbol;
 	}
 
 	public AbstractHRBSMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRBSSymbol getSymbol() {
-		return symbol;
-	}
-
-	public void setSymbol(HRBSSymbol symbol) {
-		this.symbol = symbol;
-	}
-
-
 	@Override
 	public int hashCode() {
-		int hashc = symbol.hashCode();
-		if(tgtCmd!=null) {
-			hashc+=tgtCmd.hashCode();
+		int hashc = 0;
+		if (tgtCmd != null) {
+			hashc += tgtCmd.hashCode();
 		}
-		if(offset!=null) {
-			hashc+=offset.hashCode();
+		if (offset != null) {
+			hashc += offset.hashCode();
 		}
-		if(derefOffset!=null) {
-			hashc+=derefOffset.hashCode();
+		if (derefOffset != null) {
+			hashc += derefOffset.hashCode();
 		}
-		if(isDeref) {
-			hashc*=1337;
+		if (isDeref) {
+			hashc *= 1337;
 		}
 		return hashc;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj!=null&&obj instanceof AbstractHRBSMemoryAddress) {
-			AbstractHRBSMemoryAddress other = (AbstractHRBSMemoryAddress)obj;
-			boolean equal = symbol.equals(other.symbol);
-			equal=equal&&(isDeref==other.isDeref);
-			if(equal&&offset!=null) {
-				equal= offset.equals(other.offset);
+		if (obj != null && obj instanceof AbstractHRBSMemoryAddress) {
+			AbstractHRBSMemoryAddress other = (AbstractHRBSMemoryAddress) obj;
+			boolean equal = (isDeref == other.isDeref);
+			if (equal && offset != null) {
+				equal = offset.equals(other.offset);
 			}
-			if(equal&&derefOffset!=null) {
-				equal= derefOffset.equals(other.derefOffset);
+			if (equal && derefOffset != null) {
+				equal = derefOffset.equals(other.derefOffset);
 			}
-			if(equal&&tgtCmd!=null) {
-				equal=tgtCmd.equals(other.tgtCmd);
+			if (equal && tgtCmd != null) {
+				equal = tgtCmd.equals(other.tgtCmd);
 			}
 			return equal;
 		}
@@ -112,40 +99,46 @@ public class AbstractHRBSMemoryAddress implements Cloneable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(symbol!=null) {
-			copy.symbol=symbol.clone();
-		}		
-		if(offset!=null) { 
-			copy.offset=offset.clone();
-		}		
-		if(derefOffset!=null) { 
-			copy.derefOffset=derefOffset.clone();
-		}		
-		copy.isDeref=isDeref;
-		copy.tgtCmd=tgtCmd;
-		copy.tgtCmdInst=tgtCmdInst;
+		if (offset != null) {
+			copy.offset = offset.clone();
+		}
+		if (derefOffset != null) {
+			copy.derefOffset = derefOffset.clone();
+		}
+		copy.isDeref = isDeref;
+		copy.tgtCmd = tgtCmd;
+		copy.tgtCmdInst = tgtCmdInst;
 		return copy;
 	}
 
 	public String asHRBSCode() {
+		return getFirstPartHRBSCode() + getSecondPartHRBSCode();
+	}
+
+	protected String getFirstPartHRBSCode() {
 		String s = "";
-		if(isDeref) {
-			s+="&";
+		if (isDeref) {
+			s += "&";
 		}
-		if(tgtCmd!=null) {
-			s+=tgtCmd;
-			if(tgtCmdInst!=null) {
-				s+=String.format("[%s%s]", tgtCmdInstIsDirective?"$":"", tgtCmdInst);
+		if (tgtCmd != null) {
+			s += tgtCmd;
+			if (tgtCmdInst != null) {
+				s += String.format("[%s%s]", tgtCmdInstIsDirective ? "$" : "", tgtCmdInst);
 			}
-			s+=".";
+			s += ".";
 		}
-		s+=symbol.getName();
-		if(offset!=null) {
-			s+="["+offset+"]";
-		}if(derefOffset!=null) {
-			s+="["+derefOffset+"]";
+		return s;
+	}
+
+	protected String getSecondPartHRBSCode() {
+		String s = "";
+		if (offset != null) {
+			s += "[" + offset + "]";
 		}
-		s+=";";
+		if (derefOffset != null) {
+			s += "[" + derefOffset + "]";
+		}
+		s += ";";
 		return s;
 	}
 
@@ -164,6 +157,7 @@ public class AbstractHRBSMemoryAddress implements Cloneable{
 	public void setDerefOffset(HRBSMemoryAddressOffset derefOffset) {
 		this.derefOffset = derefOffset;
 	}
+
 	public void setDerefOffset(int derefOffset) {
 		this.derefOffset = new HRBSMemoryAddressOffset(derefOffset);
 	}
@@ -175,5 +169,5 @@ public class AbstractHRBSMemoryAddress implements Cloneable{
 	public void setTgtCmdInstIsDirective(boolean tgtCmdInstIsDirective) {
 		this.tgtCmdInstIsDirective = tgtCmdInstIsDirective;
 	}
-	
+
 }

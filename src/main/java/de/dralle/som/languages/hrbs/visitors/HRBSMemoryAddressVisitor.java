@@ -15,6 +15,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Target_argumentC
 import de.dralle.som.languages.hrbs.model.AbstractHRBSMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
+import de.dralle.som.languages.hrbs.model.NamedHRBSMemoryAddress;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
@@ -68,12 +69,12 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 	private AbstractHRBSMemoryAddress address;
 
 	public HRBSMemoryAddressVisitor() {
-		address = new AbstractHRBSMemoryAddress();
+		address = new NamedHRBSMemoryAddress();
 	}
 
 	@Override
 	public AbstractHRBSMemoryAddress visitSymbol_target_name(Symbol_target_nameContext ctx) {		
-		address.setSymbol(new HRBSSymbol(ctx.NAME().getText()));
+		((NamedHRBSMemoryAddress)address).setName(ctx.NAME().getText());
 		if (ctx.custom_command_call_no_param() != null) {
 			ctx.custom_command_call_no_param().accept(this);
 		}

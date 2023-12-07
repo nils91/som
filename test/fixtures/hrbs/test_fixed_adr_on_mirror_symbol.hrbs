@@ -1,0 +1,3 @@
+MAIN:
+	symbol A @0;
+	NAW A;

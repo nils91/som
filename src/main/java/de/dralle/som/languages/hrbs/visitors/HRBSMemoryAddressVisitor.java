@@ -13,6 +13,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_targetCon
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_nameContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Target_argumentContext;
 import de.dralle.som.languages.hrbs.model.AbstractHRBSMemoryAddress;
+import de.dralle.som.languages.hrbs.model.HRBSFixedMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.NamedHRBSMemoryAddress;
@@ -28,8 +29,7 @@ import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRBSMemoryAddress> {
 
 	@Override
-	public AbstractHRBSMemoryAddress visitSymbol_target(Symbol_targetContext ctx) {
-		
+	public AbstractHRBSMemoryAddress visitSymbol_target(Symbol_targetContext ctx) {		
 		if(ctx.symbol_target_name()!=null) {
 			ctx.symbol_target_name().accept(this);
 		}
@@ -38,8 +38,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitFixed_address(Fixed_addressContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitFixed_address(ctx);
+		return address=new HRBSFixedMemoryAddress(Integer.parseInt(ctx.INT().getText()));
 	}
 
 	@Override

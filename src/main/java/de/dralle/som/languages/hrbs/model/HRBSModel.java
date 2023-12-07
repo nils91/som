@@ -26,6 +26,7 @@ import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACForDupRange;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
@@ -39,6 +40,7 @@ import de.dralle.som.languages.hras.model.HRASMemoryAddress;
  */
 public class HRBSModel implements ISetN, IHeap {
 
+	private static final String FIXED_MEMORY_ADDRESS_HRAC_PREFIX = "FMA";
 	private String name;
 	/**
 	 * Map of all directives.
@@ -338,9 +340,7 @@ public class HRBSModel implements ISetN, IHeap {
 			for (Map.Entry<String, AbstractHRBSMemoryAddress> entry : params.entrySet()) {
 				String key = entry.getKey();
 				AbstractHRBSMemoryAddress val = entry.getValue();
-
 				modifiedParamMap.put(key, val);
-
 			}
 		}
 		lclSymbols.addAll(additionalSymbols);
@@ -467,6 +467,9 @@ public class HRBSModel implements ISetN, IHeap {
 		if (targetSymbol instanceof NamedHRACMemoryAddress) {
 			newma = new NamedHRBSMemoryAddress();
 			((NamedHRBSMemoryAddress) newma).setTargetSymbolName(((NamedHRACMemoryAddress) targetSymbol).getName());
+		}
+		if (targetSymbol instanceof FixedHRACMemoryAddress) {
+			newma = new HRBSFixedMemoryAddress(((FixedHRACMemoryAddress )targetSymbol).getAddress());
 		}
 		newma.setDeref(false);
 		if (targetSymbol.getOffset() != null) {
@@ -630,26 +633,34 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 	}
-
+ /**
+  * m is CMD A, c is CMD B.
+  * m is CMD A, c is CMD '@0'
+  * @param m
+  * @param c
+  * @param lclSymbolReplacementMap
+  * @return
+  */
+	
 	private static Map<String, AbstractHRBSMemoryAddress> assembleParamMap(HRBSModel m, HRBSCommand c,
 			Map<String, String> lclSymbolReplacementMap) {
 		Map<String, AbstractHRBSMemoryAddress> retMap = new HashMap<>();
 		if (m == null) {
 			System.out.println("Warning: Cant get prototype param list for " + c);
 		}
-		List<String> modelParams = m.getParams();
-		List<AbstractHRBSMemoryAddress> cTargets = c.getTarget();
+		List<String> modelParams = m.getParams(); //A
+		List<AbstractHRBSMemoryAddress> cTargets = c.getTarget();// B | @0
 		if (modelParams != null) {
 			for (int i = 0; i < modelParams.size(); i++) {
-				String p = modelParams.get(i);
-				AbstractHRBSMemoryAddress cTgt = cTargets.get(i);
+				String p = modelParams.get(i); //A
+				AbstractHRBSMemoryAddress cTgt = cTargets.get(i);//B @0
 				if (cTgt instanceof NamedHRBSMemoryAddress) {
 					String name = ((NamedHRBSMemoryAddress) cTgt).getTargetSymbolName();
 					String convertedName = getTargetSymbolName(name, lclSymbolReplacementMap);
 					((NamedHRBSMemoryAddress) cTgt).setTargetSymbolName(convertedName);
-					;
 				}
-				retMap.put(p, cTgt);
+				//No need to convert fixed adderesses
+				retMap.put(p, cTgt);//A->B
 			}
 		}
 		return retMap;
@@ -721,7 +732,10 @@ public class HRBSModel implements ISetN, IHeap {
 				odCommandLabelName = "DRFL_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
 				odSymbolName = "DRFS_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
 			}
-
+			if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
+				odCommandLabelName = "DRFL_" + FIXED_MEMORY_ADDRESS_HRAC_PREFIX+((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
+				odSymbolName = "DRFS_" +  FIXED_MEMORY_ADDRESS_HRAC_PREFIX+((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
+			}
 			HRBSSymbol odSymbol = new HRBSSymbol();
 			odSymbol.setType(HRBSSymbolType.local);
 			odSymbol.setName(odSymbolName);
@@ -739,6 +753,10 @@ public class HRBSModel implements ISetN, IHeap {
 			if (originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
 				odCommandTarget = new NamedHRBSMemoryAddress(
 						((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName());
+			}
+			if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
+				odCommandTarget = new HRBSFixedMemoryAddress(
+						((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress());
 			}
 			odCommandTarget.setOffset(originalMemoryAddress.getOffset());
 			odCommand.addTarget(odCommandTarget);
@@ -795,7 +813,7 @@ public class HRBSModel implements ISetN, IHeap {
 
 	/**
 	 * Convert the HRBS Address to a HRAC address (includinng required name and
-	 * offset changes). Assumes no deref.
+	 * offset changes). Assumes no deref. Fixed memory addresses turn into fixed addresses in HRAC.
 	 * 
 	 * @param originalMemoryAddress
 	 * @param parentCmdName
@@ -822,11 +840,17 @@ public class HRBSModel implements ISetN, IHeap {
 			if (originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
 				symbName += ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
 			}
+			if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
+				symbName += FIXED_MEMORY_ADDRESS_HRAC_PREFIX+((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
+			}
 			newTargetSymbol = new HRACSymbol(symbName);
 		} else {
 			String name="";
 			if(originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
 				name=((NamedHRBSMemoryAddress)originalMemoryAddress).getTargetSymbolName();
+			}
+			if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
+				name= FIXED_MEMORY_ADDRESS_HRAC_PREFIX+((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
 			}
 			newTargetSymbol = new HRACSymbol(getTargetSymbolName(name, localSymbolNames));
 		}
@@ -835,8 +859,19 @@ public class HRBSModel implements ISetN, IHeap {
 		if (originalMemoryAddress.getOffset() != null) {
 			newOffset = originalMemoryAddress.getOffset();
 		}
-		AbstractHRACMemoryAddress newTgtAddress = new NamedHRACMemoryAddress();
-		((NamedHRACMemoryAddress) newTgtAddress).setName(newTargetSymbol.getName());
+		AbstractHRACMemoryAddress newTgtAddress = null;
+		if(originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
+			newTgtAddress=new NamedHRACMemoryAddress();
+			((NamedHRACMemoryAddress) newTgtAddress).setName(newTargetSymbol.getName());
+		}
+		if(originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
+			if(originalMemoryAddress.getTgtCmd()==null) {
+				newTgtAddress=new FixedHRACMemoryAddress(((HRBSFixedMemoryAddress)originalMemoryAddress).getAddress());
+			}else {
+				newTgtAddress=new NamedHRACMemoryAddress();
+				((NamedHRACMemoryAddress) newTgtAddress).setName(newTargetSymbol.getName());
+			}
+		}
 		if (newOffset != null) {
 			newTgtAddress.setOffset(newOffset.getOffset());
 			newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName() != null);

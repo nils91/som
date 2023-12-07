@@ -42,15 +42,14 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 	}
 
 	@Override
-	public AbstractHRBSMemoryAddress visitTarget_argument(Target_argumentContext ctx) {
-		if (ctx.AMP() != null) {
-			address.setDeref(true);
-		}
+	public AbstractHRBSMemoryAddress visitTarget_argument(Target_argumentContext ctx) {		
 		if(ctx.symbol_target()!=null) {
 			ctx.symbol_target().accept(this);
 		}
 		if(ctx.fixed_address()!=null) {
 			ctx.fixed_address().accept(this);
+		}if (ctx.AMP() != null) {
+			address.setDeref(true);
 		}
 		if (ctx.offset_specify() != null) {
 			for (int i = 0; i < ctx.offset_specify().size(); i++) {

@@ -1,17 +1,17 @@
 package de.dralle.som.languages.hrbs.model;
 
 public class NamedHRBSMemoryAddress extends AbstractHRBSMemoryAddress {
-	private String name;
+	private String targetSymbolName;
 
 	public NamedHRBSMemoryAddress(String name) {
 		super();
-		this.name = name;
+		this.targetSymbolName = name;
 	}
 
 	@Override
 	public int hashCode() {
-		if (name != null) {
-			return name.hashCode() + super.hashCode() * 97;
+		if (targetSymbolName != null) {
+			return targetSymbolName.hashCode() + super.hashCode() * 97;
 		}
 		return super.hashCode();
 	}
@@ -20,10 +20,10 @@ public class NamedHRBSMemoryAddress extends AbstractHRBSMemoryAddress {
 	public boolean equals(Object obj) {
 		if(obj instanceof NamedHRBSMemoryAddress) {
 			boolean equals=super.equals(obj);
-			if(name!=null) {
-				return equals&&name.equals(((NamedHRBSMemoryAddress)obj).getName());
+			if(targetSymbolName!=null) {
+				return equals&&targetSymbolName.equals(((NamedHRBSMemoryAddress)obj).getTargetSymbolName());
 			}
-			return equals&&name==((NamedHRBSMemoryAddress)obj).name;
+			return equals&&targetSymbolName==((NamedHRBSMemoryAddress)obj).targetSymbolName;
 		}
 		return super.equals(obj);
 	}
@@ -31,25 +31,25 @@ public class NamedHRBSMemoryAddress extends AbstractHRBSMemoryAddress {
 	@Override
 	public NamedHRBSMemoryAddress clone() {
 		NamedHRBSMemoryAddress clone= (NamedHRBSMemoryAddress) super.clone();
-		clone.name=name;
+		clone.targetSymbolName=targetSymbolName;
 		return clone;
 	}
 
 	@Override
 	public String asHRBSCode() {
-		return super.getFirstPartHRBSCode()+name+super.getSecondPartHRBSCode();
+		return super.getFirstPartHRBSCode()+targetSymbolName+super.getSecondPartHRBSCode();
 	}
 
 	public NamedHRBSMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getName() {
-		return name;
+	public String getTargetSymbolName() {
+		return targetSymbolName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTargetSymbolName(String name) {
+		this.targetSymbolName = name;
 	}
 
 }

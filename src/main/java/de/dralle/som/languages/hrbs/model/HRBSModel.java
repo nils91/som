@@ -466,7 +466,7 @@ public class HRBSModel implements ISetN, IHeap {
 		AbstractHRBSMemoryAddress newma = null;
 		if (targetSymbol instanceof NamedHRACMemoryAddress) {
 			newma = new NamedHRBSMemoryAddress();
-			((NamedHRBSMemoryAddress) newma).setName(((NamedHRACMemoryAddress) targetSymbol).getName());
+			((NamedHRBSMemoryAddress) newma).setTargetSymbolName(((NamedHRACMemoryAddress) targetSymbol).getName());
 		}
 		newma.setDeref(false);
 		if (targetSymbol.getOffset() != null) {
@@ -644,9 +644,9 @@ public class HRBSModel implements ISetN, IHeap {
 				String p = modelParams.get(i);
 				AbstractHRBSMemoryAddress cTgt = cTargets.get(i);
 				if (cTgt instanceof NamedHRBSMemoryAddress) {
-					String name = ((NamedHRBSMemoryAddress) cTgt).getName();
+					String name = ((NamedHRBSMemoryAddress) cTgt).getTargetSymbolName();
 					String convertedName = getTargetSymbolName(name, lclSymbolReplacementMap);
-					((NamedHRBSMemoryAddress) cTgt).setName(convertedName);
+					((NamedHRBSMemoryAddress) cTgt).setTargetSymbolName(convertedName);
 					;
 				}
 				retMap.put(p, cTgt);
@@ -718,8 +718,8 @@ public class HRBSModel implements ISetN, IHeap {
 			String odCommandLabelName = null;
 			String odSymbolName = null;
 			if (originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
-				odCommandLabelName = "DRFL_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getName();
-				odSymbolName = "DRFS_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getName();
+				odCommandLabelName = "DRFL_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
+				odSymbolName = "DRFS_" + ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
 			}
 
 			HRBSSymbol odSymbol = new HRBSSymbol();
@@ -738,7 +738,7 @@ public class HRBSModel implements ISetN, IHeap {
 			AbstractHRBSMemoryAddress odCommandTarget = null;
 			if (originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
 				odCommandTarget = new NamedHRBSMemoryAddress(
-						((NamedHRBSMemoryAddress) originalMemoryAddress).getName());
+						((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName());
 			}
 			odCommandTarget.setOffset(originalMemoryAddress.getOffset());
 			odCommand.addTarget(odCommandTarget);
@@ -820,13 +820,13 @@ public class HRBSModel implements ISetN, IHeap {
 				symbName += cmdInstName + "_";
 			}
 			if (originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
-				symbName += ((NamedHRBSMemoryAddress) originalMemoryAddress).getName();
+				symbName += ((NamedHRBSMemoryAddress) originalMemoryAddress).getTargetSymbolName();
 			}
 			newTargetSymbol = new HRACSymbol(symbName);
 		} else {
 			String name="";
 			if(originalMemoryAddress instanceof NamedHRBSMemoryAddress) {
-				name=((NamedHRBSMemoryAddress)originalMemoryAddress).getName();
+				name=((NamedHRBSMemoryAddress)originalMemoryAddress).getTargetSymbolName();
 			}
 			newTargetSymbol = new HRACSymbol(getTargetSymbolName(name, localSymbolNames));
 		}

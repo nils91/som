@@ -74,7 +74,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitSymbol_target_name(Symbol_target_nameContext ctx) {		
-		((NamedHRBSMemoryAddress)address).setName(ctx.NAME().getText());
+		((NamedHRBSMemoryAddress)address).setTargetSymbolName(ctx.NAME().getText());
 		if (ctx.custom_command_call_no_param() != null) {
 			ctx.custom_command_call_no_param().accept(this);
 		}

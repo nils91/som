@@ -135,7 +135,11 @@ custom_command_call_no_param
 
 instance_id
 :
-	B_OPEN (NAME|directive_access) B_CLOSE
+	B_OPEN
+	(
+		NAME
+		| directive_access
+	) B_CLOSE
 ;
 
 commad_label
@@ -150,14 +154,26 @@ symbol_ns
 
 target_argument
 :
-	(symbol_target|fixed_address) offset_specify*
+	AMP?(
+		symbol_target
+		| fixed_address
+	) offset_specify*
 ;
 
-symbol_target: AMP? symbol_target_name;
+symbol_target
+:
+	 symbol_target_name
+;
 
-fixed_address: AT INT;
-AT: '@';
+fixed_address
+:
+	AT INT
+;
 
+AT
+:
+	'@'
+;
 
 symbol_target_name
 :

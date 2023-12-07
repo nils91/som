@@ -29,9 +29,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitSymbol_target(Symbol_targetContext ctx) {
-		if (ctx.AMP() != null) {
-			address.setDeref(true);
-		}
+		
 		if(ctx.symbol_target_name()!=null) {
 			ctx.symbol_target_name().accept(this);
 		}
@@ -46,6 +44,9 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitTarget_argument(Target_argumentContext ctx) {
+		if (ctx.AMP() != null) {
+			address.setDeref(true);
+		}
 		if(ctx.symbol_target()!=null) {
 			ctx.symbol_target().accept(this);
 		}

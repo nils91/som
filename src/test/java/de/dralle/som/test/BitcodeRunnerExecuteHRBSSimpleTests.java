@@ -1,6 +1,7 @@
 package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -18,6 +19,9 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
+import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class BitcodeRunnerExecuteHRBSSimpleTests {
@@ -111,4 +115,13 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+	@Test
+	void testDerefFixValueInsertionOutCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		assertTrue(runner.execute());}
 }

@@ -1,0 +1,35 @@
+import SET0;
+import SET1;
+import CLEAR1;
+import TRIGGER1;
+import COPY2;
+
+MAIN:
+;n=8
+#H
+	alloc H_STR[8];
+	symbol H_STRlast H_STR[7];
+	symbol H &@72;
+	symbol Hm1 H[-1];
+	symbol Hlast Hm1[$N];
+	SELECTHOOK;
+	[0:-7] COPY2 Hlast[$i],H_STRlast[$i];
+	[0:7] WRITEBITOFSTR H_STR[$i];	
+	SET0;
+	
+SELECTHOOK:
+#write hook selection mode
+	CLEAR1 WH_SEL;
+#write mode
+	SET1 WH_DIR;
+#switch to next
+	SET1 WH_COM;
+#execute SWITCH
+	TRIGGER1 WH_EN;
+#go back to write hook use
+	SET1 WH_SEL;
+	
+WRITEBITOFSTR BOS:
+	COPY2 BOS, WH_COM;
+	TRIGGER1 WH_EN;
+

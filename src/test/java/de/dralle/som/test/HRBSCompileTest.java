@@ -445,4 +445,16 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+	@Test
+	void testDerefFixValueInsertionOutCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
 }

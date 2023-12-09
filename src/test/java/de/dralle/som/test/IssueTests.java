@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BooleanSupplier;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -13,9 +16,12 @@ import org.junit.jupiter.api.Test;
 
 import de.dralle.som.Compiler;
 import de.dralle.som.FileLoader;
+import de.dralle.som.Opcode;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASCommand;
+import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 class IssueTests {
@@ -71,5 +77,56 @@ class IssueTests {
 			}
 		}
 		assertFalse(pc);
+	}
+	@Test
+	void testIssue85_HRACCompileToHRAS() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		assertNotNull(hras);
+	}
+	@Test
+	void testIssue85_HRACCompileAllocDirectiveReplace() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		Map<String, HRASMemoryAddress> symbols = hras.getSymbols();
+		boolean repl=false;
+		int aAdr=0;
+		int cAdr=0;
+		for (Entry<String, HRASMemoryAddress> iterable_element : symbols.entrySet()) {
+			if(iterable_element.getKey().equals("A")) {
+				aAdr=Integer.parseInt(iterable_element.getValue().getSymbol());
+			}
+			if(iterable_element.getKey().equals("C")) {
+				cAdr=Integer.parseInt(iterable_element.getValue().getSymbol());
+			}
+		}
+		repl=cAdr-aAdr==5;
+		assertTrue(repl);
+	}
+	@Test
+	void testIssue85_HRACCompileMSDirectiveReplace() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		Map<String, HRASMemoryAddress> symbols = hras.getSymbols();
+		boolean repl=false;
+		for (Entry<String, HRASMemoryAddress> iterable_element : symbols.entrySet()) {
+			if(iterable_element.getKey().equals("B")) {
+				repl=iterable_element.getValue().getAddressOffset().equals(5);
+			}
+		}
+		assertTrue(repl);
+	}
+	@Test
+	void testIssue85_HRACCompileOffsetAfCommandDirectiveReplace() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		Map<HRASMemoryAddress, HRASCommand> symbols = hras.getCommands();
+		boolean repl=false;
+		for (Entry<HRASMemoryAddress, HRASCommand> iterable_element : symbols.entrySet()) {
+			if(iterable_element.getValue().getOp().equals(Opcode.NAR)&&iterable_element.getValue().getAddress().getSymbol().equals("B")) {
+				repl=iterable_element.getValue().getAddress().getAddressOffset().equals(5);
+			}
+		}
+		assertTrue(repl);
 	}
 }

@@ -1,0 +1,5 @@
+;d=5
+alloc A[$d]
+alloc C
+symbol B A[$d] 
+NAR B[$d]

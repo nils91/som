@@ -338,6 +338,9 @@ public class FileLoader {
 		if (sourceFormat.equals(SOMFormats.HRAC)) {
 			return new HRACParser().parse(source);
 		}
+		if (sourceFormat.equals(SOMFormats.HRAP)) {
+			return new HRACParser().parse(source);
+		}
 		if (sourceFormat.equals(SOMFormats.HRAS)) {
 			return new HRASParser().parse(source);
 		}
@@ -427,6 +430,11 @@ public class FileLoader {
 	public OutputStreamWriter writeToOutputWriter(Object obj, SOMFormats format, OutputStreamWriter out)
 			throws IOException {
 		if (format.equals(SOMFormats.HRAC)) {
+			HRACModel m = (HRACModel) obj;
+			String str = m.asCode();
+			out.write(str);
+		}
+		if (format.equals(SOMFormats.HRAP)) {
 			HRACModel m = (HRACModel) obj;
 			String str = m.asCode();
 			out.write(str);

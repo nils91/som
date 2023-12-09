@@ -86,7 +86,9 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
 							new SOMFormats[] { SOMFormats.HRAV,SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
-							new SOMFormats[] { SOMFormats.HRAS,SOMFormats.HRBS }),
+							new SOMFormats[] { SOMFormats.HRAS,SOMFormats.HRBS, SOMFormats.HRAP }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAP,
+							new SOMFormats[] { SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
 							new SOMFormats[] { SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.CBIN,
@@ -128,6 +130,12 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 			return (T) compileHRACtoHRAS((HRACModel) sourceModel);
 		}if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRBS)) {
 			return (T) compileHRAC2HRBS((HRACModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAP)) {
+			return (T) compileHRAC2HRAP((HRACModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAP) && targetFormat.equals(SOMFormats.HRAC)) {
+			return (T) ((HRACModel) sourceModel); //no compilation needed. HRAP is no language in itself, but a modified ("precompiled") version of HRAC
 		}
 		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
 			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
@@ -173,6 +181,11 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 
 	private HRBSModel compileHRAC2HRBS(HRACModel sourceModel) {
 		return HRBSModel.compileFromHRAC(sourceModel, "MAIN");
+	}
+	private HRACModel compileHRAC2HRAP(HRACModel sourceModel) {
+		HRACModel clopne = sourceModel.clone();
+		clopne.precompile("", new HashMap<>(), true);
+		return clopne;
 	}
 
 	private String memspace2Base64String(IMemspace sourceModel) {

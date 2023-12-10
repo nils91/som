@@ -148,7 +148,7 @@ class IssueTests {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue89_deref_label_gen_loc.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACForDup> coms = hrac.getCommands();
-		assertEquals("HRBS_PROGRAM_START",coms.get(0).getCmd().getLabel());
+		assertEquals("HRBS_START",coms.get(0).getCmd().getLabel().getName());
 	}
 
 	@Test

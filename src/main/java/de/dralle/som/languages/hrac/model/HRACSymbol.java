@@ -89,7 +89,7 @@ public class HRACSymbol implements Cloneable {
 		}
 		sb.append(name);
 		if (bitCntSpecial) {
-			sb.append(String.format("[;%s]", specialName));
+			sb.append(String.format("[$%s]", specialName));
 		} else {
 			sb.append(String.format("[%d]", bitCnt));
 		}

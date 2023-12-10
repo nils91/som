@@ -28,6 +28,7 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class IssueTests {
 
@@ -140,6 +141,14 @@ class IssueTests {
 			}
 		}
 		assertTrue(repl);
+	}
+	
+	@Test
+	void testIssue89_DerefLabelGenLoc() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue89_deref_label_gen_loc.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<HRACForDup> coms = hrac.getCommands();
+		assertEquals("HRBS_PROGRAM_START",coms.get(0).getCmd().getLabel());
 	}
 
 	@Test

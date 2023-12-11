@@ -394,14 +394,15 @@ public class HRBSModel implements ISetN, IHeap {
 		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
-		if (modifiedParamMap != null) { // create mirror symbol (downstream, hrac) for each param
+		HRACModel tempModel = new HRACModel();
+		if (modifiedParamMap != null) { // create mirror symbol (downstream, hrac) for each param, but defer the creation of commands in the hracmodel until after commands are compiled.
 			for (Entry<String, AbstractHRBSMemoryAddress> entry : modifiedParamMap.entrySet()) {
 				String key = entry.getKey();
 				AbstractHRBSMemoryAddress val = entry.getValue();
 				HRACSymbol s = new HRACSymbol();
 				String convertedName = generateHRACSymbolName(key, HRBSSymbolType.local, name, instanceId) + "_MS";
 				s.setName(convertedName);
-				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, instanceId, lclSymbolNameMap, m, childs));
+				s.setTargetSymbol(calculateHRACMemoryAddress(val, name, instanceId, lclSymbolNameMap, tempModel, childs));
 				m.addSymbol(s);
 				lclSymbolNameMap.put(key, convertedName);
 			}
@@ -424,6 +425,7 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 			convertAnyCommand(c, name, instanceId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
 		}
+		m=addCommandsAndSymbolsFromOther(m, tempModel);//merge tempModel (which has been created for the sole purpoose of holding commands for dereffing params) into this one
 		addDirectives.remove("instanceid");
 		return m;
 	}

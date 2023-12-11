@@ -347,34 +347,34 @@ public class HRBSModel implements ISetN, IHeap {
 		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
-		// fix for issue 89
-		// detect trigger condition
-		if (label != null) {
-			if (lclCommands.size() > 0) {
-				HRBSCommand firstCommand = lclCommands.get(0);
-				List<AbstractHRBSMemoryAddress> tgts = firstCommand.getTarget();
-				if (tgts != null) {
-					for (int i = 0; i < tgts.size(); i++) {
-						AbstractHRBSMemoryAddress abstractHRBSMemoryAddress = tgts.get(i);
-						if (abstractHRBSMemoryAddress.isDeref()) {
-							String iss89ReplaceName = "ISS89_PREVENT_DRFS_";
-							if (abstractHRBSMemoryAddress instanceof NamedHRBSMemoryAddress) {
-								iss89ReplaceName += ((NamedHRBSMemoryAddress) abstractHRBSMemoryAddress)
-										.getTargetSymbolName();
-							}
-							if (abstractHRBSMemoryAddress instanceof HRBSFixedMemoryAddress) {
-								iss89ReplaceName += ((HRBSFixedMemoryAddress) abstractHRBSMemoryAddress).getAddress();
-							}
-							HRBSSymbol iss89ReplaceSymbol = new HRBSSymbol(iss89ReplaceName);
-							iss89ReplaceSymbol.setType(HRBSSymbolType.local);
-							iss89ReplaceSymbol.setTargetSymbol(abstractHRBSMemoryAddress);
-							lclSymbols.add(iss89ReplaceSymbol);
-							tgts.set(i, new NamedHRBSMemoryAddress(iss89ReplaceName));
-						}
-					}
-				}
-			}
-		}
+//		// fix for issue 89
+//		// detect trigger condition
+//		if (label != null) {
+//			if (lclCommands.size() > 0) {
+//				HRBSCommand firstCommand = lclCommands.get(0);
+//				List<AbstractHRBSMemoryAddress> tgts = firstCommand.getTarget();
+//				if (tgts != null) {
+//					for (int i = 0; i < tgts.size(); i++) {
+//						AbstractHRBSMemoryAddress abstractHRBSMemoryAddress = tgts.get(i);
+//						if (abstractHRBSMemoryAddress.isDeref()) {
+//							String iss89ReplaceName = "ISS89_PREVENT_DRFS_";
+//							if (abstractHRBSMemoryAddress instanceof NamedHRBSMemoryAddress) {
+//								iss89ReplaceName += ((NamedHRBSMemoryAddress) abstractHRBSMemoryAddress)
+//										.getTargetSymbolName();
+//							}
+//							if (abstractHRBSMemoryAddress instanceof HRBSFixedMemoryAddress) {
+//								iss89ReplaceName += ((HRBSFixedMemoryAddress) abstractHRBSMemoryAddress).getAddress();
+//							}
+//							HRBSSymbol iss89ReplaceSymbol = new HRBSSymbol(iss89ReplaceName);
+//							iss89ReplaceSymbol.setType(HRBSSymbolType.local);
+//							iss89ReplaceSymbol.setTargetSymbol(abstractHRBSMemoryAddress);
+//							lclSymbols.add(iss89ReplaceSymbol);
+//							tgts.set(i, new NamedHRBSMemoryAddress(iss89ReplaceName));
+//						}
+//					}
+//				}
+//			}
+//		}
 		Map<String, String> lclSymbolNameMap = new HashMap<>();
 		HRACModel m = new HRACModel();
 		// copy all directives to hrac model
@@ -578,6 +578,7 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private void convertAnyCommand(HRBSCommand c, String parentCmdName, String cmdExecId, String label,
 			Map<String, String> symbolNameReplacementMap, Map<String, HRBSModel> availChildsCommands, HRACModel m) {
+		HRACModel tempModel = new HRACModel();
 		String cmdName = c.getCmd();
 		boolean standardCommand = false;
 		if (label != null) {
@@ -587,7 +588,7 @@ public class HRBSModel implements ISetN, IHeap {
 				HRACSymbol newSymbol = new HRACSymbol(label);
 				String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 				newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(lclSmblName));
-				m.addSymbol(newSymbol);
+				tempModel.addSymbol(newSymbol);
 			}
 		}
 		HRACForDup fd = null;
@@ -604,7 +605,7 @@ public class HRBSModel implements ISetN, IHeap {
 		for (Opcode op : Opcode.values()) {
 			if (op.name().equals(cmdName)) {
 				HRACCommand converted = convertStandardCommands(c, op, parentCmdName, cmdExecId,
-						symbolNameReplacementMap, m, availChildsCommands);
+						symbolNameReplacementMap, tempModel, availChildsCommands);
 				standardCommand = true;
 				if (fd != null) {
 					fd.setCmd(converted);
@@ -634,6 +635,7 @@ public class HRBSModel implements ISetN, IHeap {
 				m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 			}
 		}
+		m=addCommandsAndSymbolsFromOther(m, tempModel);
 		incCommandUsage(c);
 	}
 

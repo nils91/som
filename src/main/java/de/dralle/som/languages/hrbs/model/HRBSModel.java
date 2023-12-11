@@ -333,8 +333,6 @@ public class HRBSModel implements ISetN, IHeap {
 			lclCommands.add(hrbsCommand.clone());
 		}
 		Map<String, AbstractHRBSMemoryAddress> modifiedParamMap = new HashMap<String, AbstractHRBSMemoryAddress>();
-		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
-		List<HRBSCommand> additionalCommands = new ArrayList<>();
 		if (params != null) { // convert all params that are derefs to mirror symbols to let the symbol
 								// conversion do the work
 			for (Map.Entry<String, AbstractHRBSMemoryAddress> entry : params.entrySet()) {
@@ -343,10 +341,6 @@ public class HRBSModel implements ISetN, IHeap {
 				modifiedParamMap.put(key, val);
 			}
 		}
-		lclSymbols.addAll(additionalSymbols);
-		lclCommands.addAll(additionalCommands);
-		additionalCommands.clear();
-		additionalSymbols.clear();
 		// fix for issue 89
 		// detect trigger condition
 		if (label != null) {
@@ -385,6 +379,8 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		m.setN(getMinimumN());
 		m.setHeapSize(getHeapSize());
+		List<HRBSSymbol> additionalSymbols = new ArrayList<>();
+		List<HRBSCommand> additionalCommands = new ArrayList<>();
 		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
 				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol()));

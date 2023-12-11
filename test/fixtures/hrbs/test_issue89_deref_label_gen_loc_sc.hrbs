@@ -1,6 +1,4 @@
- import INV1;
-
 MAIN:
 	alloc A;
 	symbol B &A;
-	INV1 &B;
+	NAR &B;

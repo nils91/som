@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,6 +26,7 @@ import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -159,6 +161,40 @@ class IssueTests {
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACForDup> coms = hrac.getCommands();
 		assertEquals("HRBS_START", coms.get(0).getCmd().getLabel().getName());
+	}
+	@Test
+	void testIssue90_NoDuplicateSymbolsInHRAC() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue90_duplicate_symbol.hrbs",
+				SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<HRACSymbol> coms = hrac.getSymbols();
+		int duplicates=0;
+		for (HRACSymbol hracSymbol : coms) {
+			for (HRACSymbol hracSymbol2 : coms) {
+				if(hracSymbol!=hracSymbol2&& hracSymbol.getName().equals(hracSymbol2.getName())){
+					duplicates++;
+				}
+			}
+		}
+		assertEquals(0, duplicates);
+	}
+	@Test
+	void testIssue90_NoDuplicateSymbolsInHRAS() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue90_duplicate_symbol.hrbs",
+				SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		Map<String, HRASMemoryAddress> coms = hras.getSymbols();
+		int duplicates=0;
+		for (int i=0;i<coms.keySet().size();i++) {
+			String s1 = new ArrayList<String>(coms.keySet()).get(i);
+			for (int j=0;j<coms.keySet().size();j++) {
+				String s2 = new ArrayList<String>(coms.keySet()).get(j);
+				if(s1.equals(s2)&&i!=j){
+					duplicates++;
+				}
+			}
+		}
+		assertEquals(0, duplicates);
 	}
 
 	@Test

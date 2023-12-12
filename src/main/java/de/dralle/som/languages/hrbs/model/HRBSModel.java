@@ -903,8 +903,12 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
 			if (originalMemoryAddress.getTgtCmd() == null) {
+				int tgtAdr = ((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
+				if(tgtAdr<0) {
+					System.out.println("Warning: (HRBS -> HRAC) Negative memory address. ("+originalMemoryAddress+")");
+				}
 				newTgtAddress = new FixedHRACMemoryAddress(
-						((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress());
+						tgtAdr);
 			} else {
 				newTgtAddress = new NamedHRACMemoryAddress();
 				((NamedHRACMemoryAddress) newTgtAddress).setName(newTargetSymbol.getName());

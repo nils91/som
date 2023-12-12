@@ -213,6 +213,9 @@ public class HRASModel implements ISetN {
 			int cTgtAddress = getCommandTargetAddress(command);
 			HRAVCommand hravCommand = new HRAVCommand();
 			hravCommand.setOp(command.getOp());
+			if(cTgtAddress<0) {
+				System.out.println("Warning: (HRAS -> HRAV) Negative memory address in command at address "+address+".");
+			}
 			hravCommand.setAddress(cTgtAddress);
 			hrav.addCommand(hravCommand);
 		}

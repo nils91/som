@@ -153,6 +153,9 @@ public class HRAVModel implements ISetN {
 			Integer address = c.getKey();
 			HRAVCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
+			if(cTgtAddress<0) {
+				System.out.println("Warning: (HRAV -> Memspace) Negative memory address in command at address "+address+".");
+			}
 			mem.setBit(address, command.getOp().getBitValue());
 			mem.setBitsUnsigned(address + 1, n, cTgtAddress);
 		}

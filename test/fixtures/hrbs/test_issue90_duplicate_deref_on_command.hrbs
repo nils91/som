@@ -1,0 +1,4 @@
+MAIN:
+	alloc A;
+	NAR &A;
+	NAR &A;

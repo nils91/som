@@ -1,0 +1,4 @@
+MAIN:
+	alloc A;
+	symbol B &A;
+	symbol C &A;

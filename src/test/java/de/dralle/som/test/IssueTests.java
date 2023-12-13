@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -154,6 +155,13 @@ class IssueTests {
 		assertEquals("HRBS_START", coms.get(0).getCmd().getLabel().getName());
 	}
 
+	static Stream<String> issue90FileNameProvider() {
+		return Stream.of("test/fixtures/hrbs/test_issue90_duplicate_deref_mixed.hrbs",
+				"test/fixtures/hrbs/test_issue90_duplicate_deref_on_command.hrbs",
+				"test/fixtures/hrbs/test_issue90_duplicate_deref.hrbs",
+				"test/fixtures/hrbs/test_issue90_duplicate_symbol.hrbs");
+	}
+
 	@Test
 	void testIssue89_DerefLabelGenLocChildCommands() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue89_deref_label_gen_loc_cc.hrbs",
@@ -162,34 +170,36 @@ class IssueTests {
 		List<HRACForDup> coms = hrac.getCommands();
 		assertEquals("HRBS_START", coms.get(0).getCmd().getLabel().getName());
 	}
-	@Test
-	void testIssue90_NoDuplicateSymbolsInHRAC() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue90_duplicate_symbol.hrbs",
-				SOMFormats.HRBS);
+
+	@ParameterizedTest
+	@MethodSource("issue90FileNameProvider")
+	void testIssue90_NoDuplicateSymbolsInHRAC(String filename) throws IOException {
+		HRBSModel model = f.loadFromFile(filename, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACSymbol> coms = hrac.getSymbols();
-		int duplicates=0;
+		int duplicates = 0;
 		for (HRACSymbol hracSymbol : coms) {
 			for (HRACSymbol hracSymbol2 : coms) {
-				if(hracSymbol!=hracSymbol2&& hracSymbol.getName().equals(hracSymbol2.getName())){
+				if (hracSymbol != hracSymbol2 && hracSymbol.getName().equals(hracSymbol2.getName())) {
 					duplicates++;
 				}
 			}
 		}
 		assertEquals(0, duplicates);
 	}
-	@Test
-	void testIssue90_NoDuplicateSymbolsInHRAS() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_issue90_duplicate_symbol.hrbs",
-				SOMFormats.HRBS);
+
+	@ParameterizedTest
+	@MethodSource("issue90FileNameProvider")
+	void testIssue90_NoDuplicateSymbolsInHRAS(String filename) throws IOException {
+		HRBSModel model = f.loadFromFile(filename, SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		Map<String, HRASMemoryAddress> coms = hras.getSymbols();
-		int duplicates=0;
-		for (int i=0;i<coms.keySet().size();i++) {
+		int duplicates = 0;
+		for (int i = 0; i < coms.keySet().size(); i++) {
 			String s1 = new ArrayList<String>(coms.keySet()).get(i);
-			for (int j=0;j<coms.keySet().size();j++) {
+			for (int j = 0; j < coms.keySet().size(); j++) {
 				String s2 = new ArrayList<String>(coms.keySet()).get(j);
-				if(s1.equals(s2)&&i!=j){
+				if (s1.equals(s2) && i != j) {
 					duplicates++;
 				}
 			}

@@ -324,7 +324,7 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		addDirectives.put("instanceid", instanceId);
 		// copy symbols n commands in local lists
-		Collection<HRBSSymbol> lclSymbols = new HashSet<>();
+		List<HRBSSymbol> lclSymbols = new ArrayList<>();
 		List<HRBSCommand> lclCommands = new ArrayList<>();
 		for (HRBSSymbol s : symbols) {
 			lclSymbols.add(s.clone());
@@ -509,7 +509,7 @@ public class HRBSModel implements ISetN, IHeap {
 
 	}
 
-	private void convertSymbols(String name, String uniqueUsageId, Collection<HRBSSymbol> lclSymbols,
+	private void convertSymbols(String name, String uniqueUsageId, List<HRBSSymbol> lclSymbols,
 			Map<String, String> lclSymbolNameMap, HRACModel m, Map<String, HRBSModel> childs) {
 		for (HRBSSymbol s : lclSymbols) { // JUST CONVERT THE NAMES HERE
 			String symbolName = generateHRACSymbolName(s, name, uniqueUsageId);

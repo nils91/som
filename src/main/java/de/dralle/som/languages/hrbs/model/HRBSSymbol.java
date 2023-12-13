@@ -24,12 +24,11 @@ public class HRBSSymbol implements Cloneable {
 		if (bitCntSpecialName != null) {
 			hashc += bitCntSpecialName.hashCode() * 255;
 		}
-		hashc += type.hashCode();
+		hashc += type.toString().hashCode();
 		if (targetSymbol != null) {
 			hashc += targetSymbol.hashCode() * 97;
 		}
 		return hashc;
-
 	}
 
 	@Override

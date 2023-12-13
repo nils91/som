@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -326,7 +327,7 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		addDirectives.put("instanceid", instanceId);
 		// copy symbols n commands in local lists
-		Collection<HRBSSymbol> lclSymbols = new HashSet<>();
+		Collection<HRBSSymbol> lclSymbols = new LinkedHashSet<>();
 		List<HRBSCommand> lclCommands = new ArrayList<>();
 		for (HRBSSymbol s : symbols) {
 			lclSymbols.add(s.clone());

@@ -9,6 +9,9 @@
 .classpath
 /.settings/
 
+#intellij
+/.idea
+
 #java
 *.class
 *.jar

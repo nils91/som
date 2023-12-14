@@ -11,6 +11,9 @@
 .classpath
 /.settings/
 
+#intellij
+/.idea
+
 #java
 *.class
 *.jar
@@ -67,7 +70,19 @@
 #Exclude folder notes/ (3)
 !notes/**/*.hras
 
-#Format HRAC (3)
+#Format HRAP (3)
+#File extension .hrap (0)
+*.hrap
+#Exclude folder test/ (0)
+!test/**/*.hrap
+#Exclude folder sample/ (1)
+!sample/**/*.hrap
+#Exclude folder src/ (2)
+!src/**/*.hrap
+#Exclude folder notes/ (3)
+!notes/**/*.hrap
+
+#Format HRAC (4)
 #File extension .hra (0)
 *.hra
 #Exclude folder test/ (0)
@@ -89,7 +104,7 @@
 #Exclude folder notes/ (3)
 !notes/**/*.hrac
 
-#Format HRBS (4)
+#Format HRBS (5)
 #File extension .hrbs (0)
 *.hrbs
 #Exclude folder test/ (0)
@@ -101,7 +116,7 @@
 #Exclude folder notes/ (3)
 !notes/**/*.hrbs
 
-#Format HRAV (5)
+#Format HRAV (6)
 #File extension .hrav (0)
 *.hrav
 #Exclude folder test/ (0)
@@ -113,7 +128,7 @@
 #Exclude folder notes/ (3)
 !notes/**/*.hrav
 
-#Format IMAGE (6)
+#Format IMAGE (7)
 #File extension .png (0)
 *.png
 #Exclude folder test/ (0)
@@ -125,7 +140,7 @@
 #Exclude folder notes/ (3)
 !notes/**/*.png
 
-#Format CBIN (7)
+#Format CBIN (8)
 #File extension .cbin (0)
 *.cbin
 #Exclude folder test/ (0)
@@ -147,7 +162,7 @@
 #Exclude folder notes/ (3)
 !notes/**/*.zip
 
-#Format B64 (8)
+#Format B64 (9)
 #File extension .b64 (0)
 *.b64
 #Exclude folder test/ (0)

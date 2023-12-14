@@ -2,7 +2,6 @@ grammar HRAVGrammar;
 
 program : line+ EOF?;
 line: (directive|command);
-
 directive: SEMICOLON ((D_N EQ DECIMAL_INT)|((START|CONT) EQ number));
 
 command: (NAR|NAW) number;

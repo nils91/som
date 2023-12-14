@@ -486,11 +486,10 @@ class MemspaceTests {
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceNoCopy(ISomMemspace memSpace, int n) {
 		ISomMemspace clone = memSpace.clone();
-		Random r = new Random();
 		memSpace.setN(n);
-		// fill with random crap
+		// set each bit to the inverse of clone. If clone() works as expected, they are different objects and content equals should return false afterwards
 		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
+			memSpace.setBit(i, !clone.getBit(i));
 		}
 		assertFalse(memSpace.equalContent(clone));
 	}

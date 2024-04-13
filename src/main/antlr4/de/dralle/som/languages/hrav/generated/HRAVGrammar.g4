@@ -11,7 +11,7 @@ number: based_int|binary_int|octal_int|hex_int|decimal_int;
 based_int:INT 'b' (INT|EINT);
 binary_int:'0b' INT;
 octal_int:'0o' INT;
-hex_int:'0h' (INT|EINT);
+hex_int:('0h'|'0x') (INT|EINT);
 decimal_int:'0d'? INT;
 
 COMMENT:((('#'|'//') .*? [\r\n]+)|('/*' .*? '*/')) ->skip;

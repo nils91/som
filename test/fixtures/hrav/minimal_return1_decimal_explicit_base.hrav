@@ -1,0 +1,6 @@
+;n = 10d5
+;start = 10d20
+;continue = 10d20
+NAW 10d1
+;continue = 10b26
+NAW 10b0

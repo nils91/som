@@ -1,0 +1,6 @@
+;n = 5
+;start = 20
+;continue = 20
+NAW 1
+;continue = 26
+NAW 0

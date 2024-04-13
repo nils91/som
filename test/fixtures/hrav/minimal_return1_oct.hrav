@@ -1,0 +1,6 @@
+;n = 0o5
+;start = 0o24
+;continue = 0o24
+NAW 0o1
+;continue = 0o32
+NAW 0o0

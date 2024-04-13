@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarLexer;
@@ -25,7 +27,7 @@ import de.dralle.som.languages.hras.visitors.ProgramVisitor;
  */
 public class HRACParser {
 	public HRACModel parse(InputStream is) throws IOException {
-		HRACGrammarLexer lexer = new HRACGrammarLexer(new ANTLRInputStream(is));
+		HRACGrammarLexer lexer = new HRACGrammarLexer(CharStreams.fromStream(is));
 		HRACGrammarParser parser = new HRACGrammarParser(new CommonTokenStream(lexer));
 		de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext pt = parser.program();
 		HRACModel model = pt.accept(new de.dralle.som.languages.hrac.visitors.HRACProgramVisitor());

@@ -40,8 +40,8 @@ public class HRAVProgramVisitor extends HRAVGrammarBaseVisitor<HRAVModel> {
 
 	@Override
 	public HRAVModel visitDirective(DirectiveContext ctx) {
-		if (ctx.INT() != null) {
-			int address = Integer.parseInt(ctx.INT().getText());
+		if (ctx.number() != null) {
+			int address = ctx.number().accept(new HRAVNumberVisitor());
 			if (ctx.START() != null) {
 				model.setStartAdress(address);
 				model.setStartAddressExplicit(true);

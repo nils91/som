@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import de.dralle.som.languages.hrav.generated.HRAVGrammarLexer;
@@ -22,7 +23,7 @@ import de.dralle.som.languages.hrav.visitors.HRAVProgramVisitor;
  */
 public class HRAVParser {
 	public HRAVModel parse(InputStream is) throws IOException {
-		HRAVGrammarLexer lexer = new HRAVGrammarLexer(new ANTLRInputStream(is));
+		HRAVGrammarLexer lexer = new HRAVGrammarLexer(CharStreams.fromStream(is));
 		HRAVGrammarParser parser = new HRAVGrammarParser(new CommonTokenStream(lexer));
 		ProgramContext pt = parser.program();
 		HRAVModel model = pt.accept(new HRAVProgramVisitor());

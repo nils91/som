@@ -23,8 +23,8 @@ public class HRAVCommandVisitor extends HRAVGrammarBaseVisitor<HRAVCommand> {
 		} else if (ctx.NAW() != null) {
 			c.setOp(Opcode.NAW);
 		}
-		if (ctx.INT() != null) {
-			c.setAddress(Integer.parseInt(ctx.INT().getText()));
+		if (ctx.number() != null) {
+			c.setAddress(ctx.number().accept(new HRAVNumberVisitor()));
 			return c;
 		}
 		return null;

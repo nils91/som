@@ -2,10 +2,17 @@ grammar HRAVGrammar;
 
 program : line+ EOF?;
 line: (directive|command);
+directive: SEMICOLON (((D_N|START|CONT) EQ number));
 
-directive: SEMICOLON ((D_N|START|CONT) EQ INT);
+command: (NAR|NAW) number;
 
-command: (NAR|NAW) INT;
+number: based_int|binary_int|octal_int|hex_int|decimal_int;
+
+based_int:INT 'b' (INT|EINT);
+binary_int:'0b' INT;
+octal_int:'0o' INT;
+hex_int:('0h'|'0x') (INT|EINT);
+decimal_int:'0d'? INT;
 
 COMMENT:((('#'|'//') .*? [\r\n]+)|('/*' .*? '*/')) ->skip;
 NAR:'NAR';
@@ -14,11 +21,10 @@ CONT:'continue'|'cont';
 START:'start';
 D_N:'n';
 INT:[0-9]+;
-NEG_INT: DASH INT;
+EINT:[A-Z0-9]+;
 EQ:'=';
 SEMICOLON:';';
 B_OPEN:'[';
 B_CLOSE:']';
-DASH:'-';
 
 WS : [ \f\t\r\n]+ -> skip;

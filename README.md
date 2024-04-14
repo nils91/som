@@ -169,6 +169,6 @@ Needs Maven and Java (>=11).
 
 `mvn clean install`
 or
-`mvn clean install -DskipTest` to build without tests (might be needed when running maven through eclipse).
+`mvn clean install -DskipTests` to build without tests (might be needed when running maven through eclipse).
 
-The finished exececutable jar file is in the ```target``` subfolder (som-java-<VERSION>-shaded.jar). Theres also another jar file without the ```-shaded```, but that one is not executable.
+The finished exececutable jar file is in the ```target``` subfolder (som-java-\<VERSION\>-shaded.jar). Theres also another jar file without the ```-shaded```, but that one is not executable.

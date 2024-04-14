@@ -1,0 +1,8 @@
+;n = 5
+;start = 20
+symbol ACC 0
+symbol ADR_EVAL 1
+;continue = 20
+NAW ADR_EVAL
+;continue = 20[6]
+NAW ACC

@@ -18,10 +18,10 @@ public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<HRASMemoryAddre
 
 	@Override
 	public HRASMemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
-		if (ctx.NEG_INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.NEG_INT().getText()));
-		} else if (ctx.INT() != null) {
-			address.setAddressOffset(Integer.parseInt(ctx.INT().getText()));
+		if (ctx.neg_integer() != null) {
+			address.setAddressOffset(ctx.neg_integer().accept(new HRASNumberVisitor()));
+		} else if (ctx.integer() != null) {
+			address.setAddressOffset(ctx.integer().accept(new HRASNumberVisitor()));
 		}
 		return address;
 	}

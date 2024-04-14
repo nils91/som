@@ -121,8 +121,24 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 			return (T) somModel;
 		}
 	}
+	/**
+	 * This version of a compile method will try to automatically determine the correct source model type.
+	 * @param <T>
+	 * @param sourceModel
+	 * @param targetFormat
+	 * @return
+	 */
+	public <T> T compile(Object sourceModel ,SOMFormats targetFormat) {
+		SOMFormats sourceFormat = null;
+		for (SOMFormats iterable_element : SOMFormats.values()) {
+			if(sourceModel.getClass().isAssignableFrom(iterable_element.getInternalClazz().getClass())) {
+				sourceFormat=iterable_element;
+			}
+		}
+		return compile(sourceModel, sourceFormat, targetFormat);
+	}
 
-	public <T> T compileDirect(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
+	public <S,T> T compileDirect(S sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		if (sourceFormat.equals(SOMFormats.HRBS) && targetFormat.equals(SOMFormats.HRAC)) {
 			return (T) compileHRBStoHRAC((HRBSModel) sourceModel);
 		}
@@ -183,9 +199,9 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 		return HRBSModel.compileFromHRAC(sourceModel, "MAIN");
 	}
 	private HRACModel compileHRAC2HRAP(HRACModel sourceModel) {
-		HRACModel clopne = sourceModel.clone();
-		clopne.precompile("", new HashMap<>(), true);
-		return clopne;
+		HRACModel clone = sourceModel.clone();
+		clone.precompile("", new HashMap<>(), true);
+		return clone;
 	}
 
 	private String memspace2Base64String(IMemspace sourceModel) {

@@ -322,16 +322,17 @@ public class FileLoader {
 		return (T) loadFromFile(new File(path), sourceFormat);
 	}
 
+	
+	public <T> T loadFromFile(String path) throws IOException {
+		return (T) loadFromFile(new File(path));
+	}
+
 	public Object loadFromFile(File f) throws IOException {
 		return loadFromFile(f, getFormatFromFilename(f.getName()));
 	}
 
 	public Object loadFromPath(Path p) throws IOException {
 		return loadFromFile(p.toFile());
-	}
-
-	public Object loadFromFile(String path) throws IOException {
-		return loadFromFile(new File(path));
 	}
 
 	public Object loadFromInputStream(InputStream source, SOMFormats sourceFormat) throws IOException {

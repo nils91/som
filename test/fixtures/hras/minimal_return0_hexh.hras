@@ -1,5 +1,5 @@
-;n = 5
-;start = 26
-symbol ADR_EVAL 1
-;continue = 26
+;n = 0h5
+;start = 0h1A
+symbol ADR_EVAL 0h1
+;continue = 0h1A
 NAW ADR_EVAL

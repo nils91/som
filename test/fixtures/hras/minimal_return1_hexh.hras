@@ -1,8 +1,8 @@
-;n = 5
-;start = 20
-symbol ACC 0
-symbol ADR_EVAL 1
-;continue = 20
+;n = 0h5
+;start = 0h20
+symbol ACC 0h0
+symbol ADR_EVAL 0h1
+;continue = 0h14
 NAW ADR_EVAL
-;continue = 20[6]
+;continue = 0h14[0h6]
 NAW ACC

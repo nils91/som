@@ -156,4 +156,12 @@ public class Util {
 		img.flush();
 		return img;
 	}	
+	/**
+	 * Takes prefixes of the form '2b', '3b' etc. and returns the number. Lower (inclusice) bound is 2.
+	 * @param prefix
+	 * @return
+	 */
+	public static int getBaseFromPrefix(String prefix) {
+		return Integer.parseInt(prefix.substring(0, prefix.length()-1));
+	}
 }

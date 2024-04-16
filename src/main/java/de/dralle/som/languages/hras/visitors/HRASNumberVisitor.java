@@ -1,5 +1,6 @@
 package de.dralle.som.languages.hras.visitors;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Based_intContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Binary_intContext;
@@ -24,15 +25,15 @@ public class HRASNumberVisitor extends HRASGrammarBaseVisitor<Integer>{
 
 	@Override
 	public Integer visitBased_int(Based_intContext ctx) {
-		String base=null;
+		int base=10;
 		String n=null;
-		base=ctx.INT().get(0).getText();
+		base=Util.getBaseFromPrefix(ctx.BASE_NUMBER_PREFIX().getText());
 		if(ctx.EINT()!=null) {
 			n=ctx.EINT().getText();
 		}else {
-			n=ctx.INT().get(1).getText();
+			n=ctx.INT().getText();
 		}
-		return Integer.parseInt(n, Integer.parseInt(base));
+		return Integer.parseInt(n, base);
 	}
 
 	@Override

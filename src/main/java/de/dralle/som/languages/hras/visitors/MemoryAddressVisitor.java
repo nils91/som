@@ -32,11 +32,14 @@ public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<HRASMemoryAddre
 		if (ctx.offset_specify() != null) {
 			ctx.offset_specify().accept(this);
 		}
-		if (ctx.getChild(0) != null) {
-			address.setSymbol(ctx.getChild(0).getText());
+		if(ctx.integer()!=null) {
+			address.setSymbol(ctx.integer().accept(new HRASNumberVisitor()));
 			return address;
 		}
-		return null;
+		else  {
+			address.setSymbol(ctx.SYMBOL().getText());
+			return address;
+		}
 	}
 
 	

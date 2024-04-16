@@ -122,7 +122,7 @@ class HRASMemAddressVariantsTests {
 	}
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_explicit_base.hras",SOMFormats.HRAS);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_base_explicit.hras",SOMFormats.HRAS);
 		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
@@ -130,7 +130,7 @@ class HRASMemAddressVariantsTests {
 
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_explicit_base.hras",SOMFormats.HRAS);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_base_explicit.hras",SOMFormats.HRAS);
 		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());

@@ -1,5 +1,5 @@
 ;n = 0x5
-;start = 0x26
+;start = 0x1A
 symbol ADR_EVAL 0x1
 ;continue = 0x1A
 NAW ADR_EVAL

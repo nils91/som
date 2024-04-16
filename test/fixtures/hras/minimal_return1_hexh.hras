@@ -1,5 +1,5 @@
 ;n = 0h5
-;start = 0h20
+;start = 0h14
 symbol ACC 0h0
 symbol ADR_EVAL 0h1
 ;continue = 0h14

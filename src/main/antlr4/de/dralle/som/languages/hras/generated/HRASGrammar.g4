@@ -14,11 +14,11 @@ offset_specify:B_OPEN (neg_integer|integer) B_CLOSE;
 neg_integer: DASH integer;
 integer: binary_int|based_int|octal_int|hex_int|decimal_int;
 
-based_int:INT 'b' (INT|EINT);
-binary_int:'0b' INT;
-octal_int:'0o' INT;
-hex_int:('0h'|'0x') (INT|EINT);
-decimal_int:'0d'? INT;
+based_int:BASE_NUMBER_PREFIX (INT|EINT);
+binary_int:BINARY_NUMBER_PREFIX INT;
+octal_int:OCTAL_NUMBER_PREFIX INT;
+hex_int:HEX_NUMBER_PREFIX (INT|EINT);
+decimal_int:DECIMAL_NUMBER_PREFIX? INT;
 
 NEWLINE: '\r\n'|'\n';
 COMMENT:'#' .*? (NEWLINE|EOF) ->skip;
@@ -31,6 +31,11 @@ D_N:'n';
 SYMBOL:[a-mo-zA-Z][a-zA-Z0-9_-]*;
 INT:[0-9]+;
 EINT:[A-Z0-9]+;
+BINARY_NUMBER_PREFIX:'0b';
+OCTAL_NUMBER_PREFIX:'0o';
+HEX_NUMBER_PREFIX:'0h'|'0x';
+DECIMAL_NUMBER_PREFIX:'0d';
+BASE_NUMBER_PREFIX:INT 'b';
 EQ:'=';
 SEMICOLON:';';
 B_OPEN:'[';

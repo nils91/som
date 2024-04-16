@@ -90,4 +90,8 @@ public class HRASMemoryAddress implements Cloneable{
 			return symbol;
 		}
 	}
+
+	public void setSymbol(int address) {
+		setSymbol(address+"");		
+	}
 }

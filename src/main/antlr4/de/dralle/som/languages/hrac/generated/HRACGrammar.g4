@@ -57,10 +57,16 @@ command
 
 symbol_os
 :
-	(SYMBOL|memadr) offset_specify?
+	(
+		SYMBOL
+		| memadr
+	) offset_specify?
 ;
 
-memadr:AT INT;
+memadr
+:
+	AT INT
+;
 
 offset_specify
 :
@@ -104,8 +110,6 @@ directive_access
 :
 	DOLLAR directive_name
 ;
-
-
 
 directive_name
 :
@@ -171,20 +175,50 @@ SYMBOL
 	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
 
-SIMPLE_INT:[1-9][0-9]*;
 
-BINARY_NUMBER_PREFIX:'0b';
-OCTAL_NUMBER_PREFIX:'0o';
-HEX_NUMBER_PREFIX:'0h'|'0x';
-DECIMAL_NUMBER_PREFIX:'0d';
-BASE_NUMBER_PREFIX:SIMPLE_INT 'b';
+
+BINARY_NUMBER_PREFIX
+:
+	'0b'
+;
+
+OCTAL_NUMBER_PREFIX
+:
+	'0o'
+;
+
+HEX_NUMBER_PREFIX
+:
+	'0h'
+	| '0x'
+;
+
+DECIMAL_NUMBER_PREFIX
+:
+	'0d'
+;
+BASE_NUMBER_PREFIX
+:
+	[0-9]+ 'b'
+;
 
 INT
 :
-	SIMPLE_INT|((BINARY_NUMBER_PREFIX|OCTAL_NUMBER_PREFIX|HEX_NUMBER_PREFIX|DECIMAL_NUMBER_PREFIX|BASE_NUMBER_PREFIX)? [0-9a-zA-Z]+);
+	
+		(
+			BINARY_NUMBER_PREFIX
+			| OCTAL_NUMBER_PREFIX
+			| HEX_NUMBER_PREFIX
+			| DECIMAL_NUMBER_PREFIX
+			| BASE_NUMBER_PREFIX
+		)? [0-9a-zA-Z]+
+	
+;
 
-NEG_INT:DASH INT;
-
+NEG_INT
+:
+	DASH INT
+;
 
 DIRECTIVE_VALUE_STR
 :
@@ -197,7 +231,6 @@ DIRECTIVE_VALUE_STR
 		| '\''
 	)
 ;
-
 
 EQ
 :

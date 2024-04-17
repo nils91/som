@@ -20,9 +20,10 @@ import java.util.Map.Entry;
  *
  */
 public class Util {
-	public static boolean getBit(int value,int position) {
-		return ((value >> position) & 1)>0;
+	public static boolean getBit(int value, int position) {
+		return ((value >> position) & 1) > 0;
 	}
+
 	public static int getAsUnsignedInt(List<Boolean> bits) {
 		return getAsUnsignedInt(bits.toArray(new Boolean[bits.size()]));
 	}
@@ -44,8 +45,10 @@ public class Util {
 		}
 		return n;
 	}
+
 	public static Map<String, Integer> getBuiltinAdresses() {
-		Map<String,Integer> map=new HashMap<>();		map.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
+		Map<String, Integer> map = new HashMap<>();
+		map.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
 		map.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
 		map.put("WH_EN", AbstractSomMemspace.WH_EN);
 		map.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
@@ -55,8 +58,10 @@ public class Util {
 		map.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
 		return map;
 	}
+
 	public static Map<Integer, String> getBuiltinAdressesAddressKey() {
-		Map<Integer, String> map=new HashMap<>();	for (Entry<String, Integer> entry : getBuiltinAdresses().entrySet()) {
+		Map<Integer, String> map = new HashMap<>();
+		for (Entry<String, Integer> entry : getBuiltinAdresses().entrySet()) {
 			String key = entry.getKey();
 			Integer val = entry.getValue();
 			map.put(val, key);
@@ -92,7 +97,7 @@ public class Util {
 		// Extract the data from the byte array (excluding the length)
 		byte[] data = new byte[length];
 		for (int i = 0; i < data.length; i++) {
-			data[i]=ndataWithLength[i+4];
+			data[i] = ndataWithLength[i + 4];
 		}
 		return data;
 	}
@@ -105,9 +110,9 @@ public class Util {
 		// Prepend the length of the data to the byte array
 		byte[] dataWithLength = new byte[data.length + 4];
 		ByteBuffer.wrap(dataWithLength).putInt(data.length);
-		System.arraycopy(data, 0, dataWithLength, 4, data.length);		
+		System.arraycopy(data, 0, dataWithLength, 4, data.length);
 		int pxCNT = dataWithLength.length / 3;
-		while(pxCNT*3<dataWithLength.length) {
+		while (pxCNT * 3 < dataWithLength.length) {
 			pxCNT++;
 		}
 		double sq = Math.sqrt(pxCNT);
@@ -140,7 +145,7 @@ public class Util {
 				pxCNT++;
 			}
 		}
-		while(width*height<pxCNT) {
+		while (width * height < pxCNT) {
 			width++;
 		}
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -155,13 +160,61 @@ public class Util {
 		}
 		img.flush();
 		return img;
-	}	
+	}
+
 	/**
-	 * Takes prefixes of the form '2b', '3b' etc. and returns the number. Lower (inclusice) bound is 2.
+	 * Takes prefixes of the form '2b', '3b' etc. and returns the number. Lower
+	 * (inclusice) bound is 2.
+	 * 
 	 * @param prefix
 	 * @return
 	 */
 	public static int getBaseFromPrefix(String prefix) {
-		return Integer.parseInt(prefix.substring(0, prefix.length()-1));
+		return Integer.parseInt(prefix.substring(0, prefix.length() - 1));
+	}
+
+	/**
+	 * Parses an integer with a prefix specifying the base. If the string starts
+	 * with a '-', the integer is negative. The following prefixes are supported:
+	 * '0b' for base 2, '0o' for base 8, '0d' for base 10, '0h' and '0x' for base
+	 * 16. Other bases can also be specified with the 'b' prefix: '2b' would be base
+	 * 2, 'b3' base 3 and so on. If no base is specified, 10 is assumed to be the
+	 * base.
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static int decodeInt(String str) {
+		boolean neg = str.startsWith("-");
+		if (str.startsWith("-")) {
+			str = str.substring(1);
+		}
+		int base = 10;
+		if (str.startsWith("0b")) {
+			base = 2;
+			str = str.substring(2, str.length());
+		} else if (str.startsWith("0o")) {
+			base = 8;
+			str = str.substring(2, str.length());
+		} else if (str.startsWith("0d")) {
+			base = 10;
+			str = str.substring(2, str.length());
+		} else if (str.startsWith("0h")) {
+			base = 16;
+			str = str.substring(2, str.length());
+		} else if (str.startsWith("0x")) {
+			base = 16;
+			str = str.substring(2, str.length());
+		} else if (str.contains("b")) {
+			int idx = str.indexOf("b");
+			base = getBaseFromPrefix(str.substring(0, idx + 1));
+			str = str.substring(idx + 1, str.length());
+		}
+		int i = Integer.parseInt(str, base);
+		if (neg) {
+			return i * -1;
+		} else {
+			return i;
+		}
 	}
 }

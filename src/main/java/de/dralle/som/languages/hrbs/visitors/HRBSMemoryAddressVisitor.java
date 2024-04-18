@@ -39,7 +39,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitFixed_address(Fixed_addressContext ctx) {
-		return address=new HRBSFixedMemoryAddress(Integer.parseInt(ctx.INT().getText()));
+		return address=new HRBSFixedMemoryAddress(Util.decodeInt(ctx.INT().getText()));
 	}
 
 	@Override

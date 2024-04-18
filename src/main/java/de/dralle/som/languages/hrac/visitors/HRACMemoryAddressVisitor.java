@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrac.visitors;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.MemadrContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext;
@@ -20,7 +21,7 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRA
 
 	@Override
 	public AbstractHRACMemoryAddress visitMemadr(MemadrContext ctx) {
-		return new FixedHRACMemoryAddress(Integer.parseInt(ctx.INT().getText()));
+		return new FixedHRACMemoryAddress(Util.decodeInt(ctx.INT().getText()));
 	}
 
 	private AbstractHRACMemoryAddress address;

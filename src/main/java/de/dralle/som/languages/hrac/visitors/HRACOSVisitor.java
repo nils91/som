@@ -1,5 +1,6 @@
 package de.dralle.som.languages.hrac.visitors;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Directive_accessContext;
@@ -22,10 +23,10 @@ public class HRACOSVisitor extends HRACGrammarBaseVisitor<HRACMemoryOffset> {
 	@Override
 	public HRACMemoryOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
 		if (ctx.NEG_INT() != null) {
-			o.setOffset(Integer.parseInt(ctx.NEG_INT().getText()));
+			o.setOffset(Util.decodeInt(ctx.NEG_INT().getText()));
 		}
 		if (ctx.INT() != null) {
-			o.setOffset(Integer.parseInt(ctx.INT().getText()));
+			o.setOffset(Util.decodeInt(ctx.INT().getText()));
 		}
 		if (ctx.directive_access() != null) {
 			ctx.directive_access().accept(this);
@@ -37,15 +38,11 @@ public class HRACOSVisitor extends HRACGrammarBaseVisitor<HRACMemoryOffset> {
 	public HRACMemoryOffset visitCnt_specify(Cnt_specifyContext ctx) {
 
 		if (ctx.INT() != null) {
-			o.setOffset(Integer.parseInt(ctx.INT().getText()));
+			o.setOffset(Util.decodeInt(ctx.INT().getText()));
 		}
 		if (ctx.directive_access() != null) {
 			ctx.directive_access().accept(this);
 		}
 		return o;
-	}
-
-	{
-
 	}
 }

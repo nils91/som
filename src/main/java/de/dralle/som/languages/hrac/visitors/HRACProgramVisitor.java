@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrac.visitors;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Program_blkContext;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -48,7 +49,7 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		String name = ctx.directive_name().getText();
 		String value = "";
 		if (ctx.INT() != null) {
-			value = ctx.INT().getText();
+			value = Util.decodeInt(ctx.INT().getText())+"";
 		}
 		if (ctx.DIRECTIVE_VALUE_STR() != null) {
 			value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);

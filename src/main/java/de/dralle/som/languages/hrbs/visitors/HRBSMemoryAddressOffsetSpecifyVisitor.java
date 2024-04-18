@@ -10,6 +10,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_n
 import de.dralle.som.languages.hrbs.model.AbstractHRBSMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
+import de.dralle.som.Util;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
@@ -38,10 +39,10 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 	@Override
 	public HRBSMemoryAddressOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
 		if(ctx.INT()!=null) {
-			o.setOffset(Integer.parseInt(ctx.INT().getText()));
+			o.setOffset(Util.decodeInt(ctx.INT().getText()));
 		}
 		if(ctx.NEG_INT()!=null) {
-			o.setOffset(Integer.parseInt(ctx.NEG_INT().getText()));
+			o.setOffset(Util.decodeInt(ctx.NEG_INT().getText()));
 		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);

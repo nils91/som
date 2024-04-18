@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrbs.visitors;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
@@ -34,7 +35,7 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 	@Override
 	public HRBSSymbol visitCnt_specify(Cnt_specifyContext ctx) {
 		if (ctx.INT() != null) {
-			s.setBitCnt(Integer.parseInt(ctx.INT().getText()));
+			s.setBitCnt(Util.decodeInt(ctx.INT().getText()));
 		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);

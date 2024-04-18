@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.dralle.som.Util;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
@@ -172,7 +173,7 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 			String name=ctx.directive_name().getText();
 			String value=null;
 			if(ctx.INT()!=null) {
-				value=ctx.INT().getText();
+				value=Util.decodeInt(ctx.INT().getText())+"";
 			}
 			if(ctx.DIRECTIVE_VALUE_STR()!=null) {
 				value=ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1);

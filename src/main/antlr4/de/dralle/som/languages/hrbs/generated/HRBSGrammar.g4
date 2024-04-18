@@ -291,15 +291,49 @@ NAME
 	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
 
+
+
+BINARY_NUMBER_PREFIX
+:
+	'0b'
+;
+
+OCTAL_NUMBER_PREFIX
+:
+	'0o'
+;
+
+HEX_NUMBER_PREFIX
+:
+	'0h'
+	| '0x'
+;
+
+DECIMAL_NUMBER_PREFIX
+:
+	'0d'
+;
+BASE_NUMBER_PREFIX
+:
+	[0-9]+ 'b'
+;
+
 INT
 :
-	[0-9]+
+	
+		(
+			BINARY_NUMBER_PREFIX
+			| OCTAL_NUMBER_PREFIX
+			| HEX_NUMBER_PREFIX
+			| DECIMAL_NUMBER_PREFIX
+			| BASE_NUMBER_PREFIX
+		)? [0-9a-zA-Z]+
+	
 ;
 
 NEG_INT
 :
-	DASH INT
-;
+	DASH INT;
 
 EQ
 :

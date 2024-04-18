@@ -1,0 +1,105 @@
+import SET0;
+import SET1;
+import CLEAR1;
+import TRIGGER1;
+import COPY2;
+
+MAIN:
+;n=8
+#allocate enough storage for hello world + line feed as string
+	alloc STR[96];
+#H
+	symbol H &@0x48;
+	symbol H_STRlast STR[7];
+	symbol Hm1 H[-1];
+	symbol Hlast Hm1[$N];
+#e
+	symbol e &@0x65;
+	symbol e_STRlast STR[15];
+	symbol em1 e[-1];
+	symbol elast em1[$N];
+#l
+	symbol l &@0x6C;
+	symbol l0_STRlast STR[23];
+	symbol l1_STRlast STR[31];
+	symbol l2_STRlast STR[79];
+	symbol lm1 l[-1];
+	symbol llast lm1[$N];
+#o
+	symbol o &@0x6F;
+	symbol o0_STRlast STR[39];
+	symbol o1_STRlast STR[63];
+	symbol om1 o[-1];
+	symbol olast om1[$N];
+#SPACE
+	symbol space &@0x20;
+	symbol space_STRlast STR[47];
+	symbol spacem1 space[-1];
+	symbol spacelast spacem1[$N];
+#W
+	symbol W &@0x57;
+	symbol W_STRlast STR[55];
+	symbol Wm1 W[-1];
+	symbol Wlast Wm1[$N];
+#r
+	symbol r &@0x72;
+	symbol r_STRlast STR[71];
+	symbol rm1 r[-1];
+	symbol rlast rm1[$N];
+#d
+	symbol d &@0x64; 
+	symbol d_STRlast STR[87];
+	symbol dm1 d[-1];
+	symbol dlast dm1[$N];
+#\n
+	symbol linefeed &@0xA;
+	symbol linefeed_STRlast STR[0d95];
+	symbol linefeedm1 linefeed[-0d1];
+	symbol linefeedlast linefeedm1[$N];
+
+#H
+	[0:-7] COPY2 Hlast[$i], H_STRlast[$i];
+#e
+	[0:-7] COPY2 elast[$i], e_STRlast[$i];
+#l
+	[0:-7] COPY2 llast[$i], l0_STRlast[$i];
+#l
+	[0:-7] COPY2 llast[$i], l1_STRlast[$i];
+#o
+	[0:-7] COPY2 olast[$i], o0_STRlast[$i];
+#SPACE
+	[0b0:-0o7] COPY2 spacelast[$i], space_STRlast[$i];
+#W
+	[0:-7] COPY2 Wlast[$i], W_STRlast[$i];
+#o
+	[0:-7] COPY2 olast[$i], o1_STRlast[$i];
+#r
+	[0:-7] COPY2 rlast[$i], r_STRlast[$i];
+#l
+	[0:-7] COPY2 llast[$i], l2_STRlast[$i];
+#d
+	[0:-7] COPY2 dlast[$i], d_STRlast[$i];
+#\n
+	[0:-7] COPY2 linefeedlast[$i],linefeed_STRlast[$i];
+	SELECTHOOK;
+	WRITESTR STR;
+	SET0;
+	
+WRITESTR STR:
+	[0:95] WRITEBITOFSTR STR[$i];
+	
+SELECTHOOK:
+#write hook selection mode
+	CLEAR1 WH_SEL;
+#write mode
+	SET1 WH_DIR;
+#switch to next
+	SET1 WH_COM;
+#execute SWITCH
+	TRIGGER1 WH_EN;
+#go back to write hook use
+	SET1 WH_SEL;
+	
+WRITEBITOFSTR BOS:
+	COPY2 BOS, WH_COM;
+	TRIGGER1 WH_EN;

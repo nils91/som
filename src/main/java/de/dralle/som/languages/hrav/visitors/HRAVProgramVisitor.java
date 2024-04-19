@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrav.visitors;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarBaseVisitor;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.LineContext;
+import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.OtiContext;
 import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.ProgramContext;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
@@ -25,9 +26,21 @@ public class HRAVProgramVisitor extends HRAVGrammarBaseVisitor<HRAVModel> {
 		} else if (ctx.command() != null) {
 			HRAVCommand c = ctx.command().accept(new HRAVCommandVisitor());
 			model.addCommand(c);
+		} else if(ctx.oti()!=null) {
+			ctx.oti().accept(this);
 		}
 		return model;
 	}	
+
+	@Override
+	public HRAVModel visitOti(OtiContext ctx) {
+		if(ctx.OTI_CLEAR()!=null) {
+			
+		}else {
+			
+		}
+		return model;
+	}
 
 	@Override
 	public HRAVModel visitProgram(ProgramContext ctx) {

@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrav.model;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -46,6 +47,12 @@ public class HRAVModel implements ISetN {
 
 	public void setStartAdress(int startAdress) {
 		this.startAdress = startAdress;
+	}
+	
+	private List<Map.Entry<Integer, Boolean>> initOnceValues=new ArrayList<Map.Entry<Integer,Boolean>>();
+	
+	public void addInitOnceAddress(int address, boolean set) {
+		initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(address, set));
 	}
 
 	@Override
@@ -138,6 +145,10 @@ public class HRAVModel implements ISetN {
 		sb.append(System.lineSeparator());
 		sb.append(getStartDirective());
 		sb.append(System.lineSeparator());
+		for (Entry<Integer, Boolean> entry : initOnceValues) {
+			sb.append(entry.getValue()?"setonce":"clearonce"+" "+entry.getKey());
+			sb.append(System.lineSeparator());
+		}
 		for (String symbolString : getCommandssAsStrings()) {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
@@ -149,6 +160,9 @@ public class HRAVModel implements ISetN {
 		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
 		mem.setN(n);
 		mem.setNextAddress(getStartAdress());
+		for (Entry<Integer, Boolean> entry : initOnceValues) {
+			mem.setBit(entry.getKey(), entry.getValue());
+		}
 		for (Entry<Integer, HRAVCommand> c : commands.entrySet()) {
 			Integer address = c.getKey();
 			HRAVCommand command = c.getValue();
@@ -176,6 +190,9 @@ public class HRAVModel implements ISetN {
 		model.setStartAdress(mem.getNextAddress());
 		model.setStartAddressExplicit(true);
 		model.setNextCommandAddress(mem.getNextAddress());
+		for (int i = ISomMemspace.START_ADDRESS_START+mem.getN(); i < mem.getNextAddress(); i++) {
+			model.addInitOnceAddress(i, mem.getBit(i));
+		}
 		int commandSize = model.getCommandSize();
 		for (int i = mem.getNextAddress(); i < mem.getSize(); i += commandSize) {
 			boolean[] nxtCommand = new boolean[commandSize];

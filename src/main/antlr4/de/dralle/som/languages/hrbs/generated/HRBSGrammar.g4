@@ -12,7 +12,15 @@ program
 
 command_def
 :
-	cmd_head directives? symbol_definitions? commands?
+	cmd_head directives? symbol_definitions? oti? commands?
+;
+
+oti
+:
+	(
+		OTI_SET
+		| OTI_CLEAR
+	) target_argument
 ;
 
 commands
@@ -154,7 +162,8 @@ symbol_ns
 
 target_argument
 :
-	AMP?(
+	AMP?
+	(
 		symbol_target
 		| fixed_address
 	) offset_specify*
@@ -162,7 +171,7 @@ target_argument
 
 symbol_target
 :
-	 symbol_target_name
+	symbol_target_name
 ;
 
 fixed_address
@@ -274,6 +283,16 @@ AS
 	'as'
 ;
 
+OTI_SET
+:
+	'setonce'
+;
+
+OTI_CLEAR
+:
+	'clearonce'
+;
+
 DIRECTIVE_VALUE_STR
 :
 	(
@@ -290,8 +309,6 @@ NAME
 :
 	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
-
-
 
 BINARY_NUMBER_PREFIX
 :
@@ -313,6 +330,7 @@ DECIMAL_NUMBER_PREFIX
 :
 	'0d'
 ;
+
 BASE_NUMBER_PREFIX
 :
 	[0-9]+ 'b'
@@ -320,20 +338,19 @@ BASE_NUMBER_PREFIX
 
 INT
 :
-	
-		(
-			BINARY_NUMBER_PREFIX
-			| OCTAL_NUMBER_PREFIX
-			| HEX_NUMBER_PREFIX
-			| DECIMAL_NUMBER_PREFIX
-			| BASE_NUMBER_PREFIX
-		)? [0-9a-zA-Z]+
-	
+	(
+		BINARY_NUMBER_PREFIX
+		| OCTAL_NUMBER_PREFIX
+		| HEX_NUMBER_PREFIX
+		| DECIMAL_NUMBER_PREFIX
+		| BASE_NUMBER_PREFIX
+	)? [0-9a-zA-Z]+
 ;
 
 NEG_INT
 :
-	DASH INT;
+	DASH INT
+;
 
 EQ
 :

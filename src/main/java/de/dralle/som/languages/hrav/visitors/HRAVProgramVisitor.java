@@ -35,9 +35,9 @@ public class HRAVProgramVisitor extends HRAVGrammarBaseVisitor<HRAVModel> {
 	@Override
 	public HRAVModel visitOti(OtiContext ctx) {
 		if(ctx.OTI_CLEAR()!=null) {
-			
-		}else {
-			
+			model.addInitOnceAddress(ctx.number().accept(new HRAVNumberVisitor()), false);
+		}else { //setonce
+			model.addInitOnceAddress(ctx.number().accept(new HRAVNumberVisitor()), true);
 		}
 		return model;
 	}

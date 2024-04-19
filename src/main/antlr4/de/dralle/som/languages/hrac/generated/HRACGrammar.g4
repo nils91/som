@@ -13,6 +13,7 @@ line
 		directive
 		| commadn_or_for
 		| symbol_dec
+		| oti
 	)
 ;
 
@@ -37,6 +38,14 @@ commadn_or_for
 :
 	command
 	| for_duplication
+;
+
+oti
+:
+	(
+		OTI_SET
+		| OTI_CLEAR
+	) symbol_os
 ;
 
 program_blk
@@ -137,6 +146,16 @@ COMMENT
 	) -> skip
 ;
 
+OTI_SET
+:
+	'setonce'
+;
+
+OTI_CLEAR
+:
+	'clearonce'
+;
+
 NAR
 :
 	'NAR'
@@ -175,8 +194,6 @@ SYMBOL
 	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
 
-
-
 BINARY_NUMBER_PREFIX
 :
 	'0b'
@@ -197,6 +214,7 @@ DECIMAL_NUMBER_PREFIX
 :
 	'0d'
 ;
+
 BASE_NUMBER_PREFIX
 :
 	[0-9]+ 'b'
@@ -204,15 +222,13 @@ BASE_NUMBER_PREFIX
 
 INT
 :
-	
-		(
-			BINARY_NUMBER_PREFIX
-			| OCTAL_NUMBER_PREFIX
-			| HEX_NUMBER_PREFIX
-			| DECIMAL_NUMBER_PREFIX
-			| BASE_NUMBER_PREFIX
-		)? [0-9a-zA-Z]+
-	
+	(
+		BINARY_NUMBER_PREFIX
+		| OCTAL_NUMBER_PREFIX
+		| HEX_NUMBER_PREFIX
+		| DECIMAL_NUMBER_PREFIX
+		| BASE_NUMBER_PREFIX
+	)? [0-9a-zA-Z]+
 ;
 
 NEG_INT

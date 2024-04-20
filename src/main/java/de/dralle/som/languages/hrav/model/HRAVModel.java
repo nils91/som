@@ -51,6 +51,10 @@ public class HRAVModel implements ISetN {
 	
 	private List<Map.Entry<Integer, Boolean>> initOnceValues=new ArrayList<Map.Entry<Integer,Boolean>>();
 	
+	public List<Map.Entry<Integer, Boolean>> getInitOnceValues() {
+		return initOnceValues;
+	}
+
 	public void addInitOnceAddress(int address, boolean set) {
 		initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(address, set));
 	}

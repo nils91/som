@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrac.model;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +128,16 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	private List<HRACForDup> commands;
+	
+	private List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> initOnceAddresses=new ArrayList<Map.Entry<AbstractHRACMemoryAddress,Boolean>>();
+	
+	public void addInitOnceAdress(AbstractHRACMemoryAddress adr,boolean set) {
+		initOnceAddresses.add(new AbstractMap.SimpleEntry<AbstractHRACMemoryAddress, Boolean>(adr, set));
+	}
+
+	public List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> getInitOnceAddresses() {
+		return initOnceAddresses;
+	}
 
 	public void addSymbol(HRACSymbol symbol) {
 		if (symbols == null) {
@@ -278,6 +289,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
 		}
+		for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : initOnceAddresses) {
+			sb.append((  hracForDup.getValue()?"setonce":"clearonce")+" "+hracForDup.getKey());
+		}
 		for (String symbolString : getCommandssAsStrings()) {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
@@ -415,7 +429,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					if (ofs != null) {
 						adr = ofs.intValue();
 					}
-					// if offset is directive, get that
+					// if offset is directive, replace the directive with its value
 					if (tgt.isOffsetSpecial()) {
 						adr = getDirectiveAsInt(tgt.getOffsetSpecialnName());
 					}
@@ -450,6 +464,18 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				tgHras.setAddressOffset(tgt.getOffset());
 				m.addSymbol(s.getName(), tgHras);
 			}
+		}
+		for (var hracForDup : initOnceAddresses) {
+			HRASMemoryAddress newmadr = new HRASMemoryAddress();
+			newmadr.setAddressOffset(hracForDup.getKey().getOffset());
+			if(hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
+				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress)hracForDup.getKey();
+				newmadr.setSymbol(f.getAddress());
+			}else if(hracForDup.getKey() instanceof NamedHRACMemoryAddress) {
+				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress)hracForDup.getKey();
+				newmadr.setSymbol(na.getName());
+			}
+			m.addInitOnceValue(newmadr, hracForDup.getValue());
 		}
 		m.addSymbol(HRAC_HEAP_START_MARKER, new HRASMemoryAddress(toc.getHeapStartAddress(n)));// place HRAC heap start
 																								// marker
@@ -509,17 +535,40 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				newm.addSymbol(news);
 			}
 		}
+		List<Entry<HRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
+		for (Entry<HRASMemoryAddress, Boolean> entry : otiAddresses) {
+			HRASMemoryAddress hrasAdr = entry.getKey();
+			Integer hrasOfs = hrasAdr.getAddressOffset();
+			String hrasName = hrasAdr.getSymbol();
+			boolean added=false;
+			if(hrasOfs==null||hrasOfs.equals(0)) {
+				int adr=-1;
+				try {
+					adr=Util.decodeInt(hrasName);//try if its a reference to a fixed address
+				newm.addInitOnceAdress(new FixedHRACMemoryAddress(adr), entry.getValue());	
+				added=true;
+				}
+				catch(Exception e) {
+					
+				}
+			}
+			if(!added) {
+				NamedHRACMemoryAddress otiadr = new NamedHRACMemoryAddress(hrasName);
+				otiadr.setOffset(hrasOfs);
+				newm.addInitOnceAdress(otiadr, entry.getValue());
+			}
+		}
 		int i = 0;
 		for (Entry<HRASMemoryAddress, HRASCommand> entry : m.getCommands().entrySet()) {
 			HRASMemoryAddress key = entry.getKey();
 			HRASCommand val = entry.getValue();
-			boolean omiot = false;
+			boolean omit = false;
 			if (i++ == 0) {// check first command
 				if (val.getOp() == Opcode.NAW && val.getAddress().equals(new HRASMemoryAddress("ADR_EVAL"))) {
-					omiot = true;
+					omit = true;
 				}
 			}
-			if (!omiot) {
+			if (!omit) {
 				newm.addCommand(new HRACCommand(val));
 			}
 		}
@@ -533,7 +582,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	@Override
 	/**
-	 * Returns the N calculatedx for this Model.
+	 * Returns the N calculated for this Model.
 	 */
 	public int getN() {
 		return findN();

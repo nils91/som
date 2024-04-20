@@ -77,11 +77,15 @@ public class HRASModel implements ISetN {
 	}
 
 	private Map<HRASMemoryAddress, HRASCommand> commands;
-	
-	private List<Map.Entry<HRASMemoryAddress, Boolean>> initOnceList=new ArrayList<Map.Entry<HRASMemoryAddress,Boolean>>();
-	
-	public void addInitOnceValue(HRASMemoryAddress ma,boolean set) {
-		initOnceList.add(new AbstractMap.SimpleEntry<HRASMemoryAddress, Boolean>(ma,set));
+
+	private List<Map.Entry<HRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<HRASMemoryAddress, Boolean>>();
+
+	public List<Map.Entry<HRASMemoryAddress, Boolean>> getInitOnceList() {
+		return initOnceList;
+	}
+
+	public void addInitOnceValue(HRASMemoryAddress ma, boolean set) {
+		initOnceList.add(new AbstractMap.SimpleEntry<HRASMemoryAddress, Boolean>(ma, set));
 	}
 
 	public int getCommandCount() {
@@ -112,7 +116,7 @@ public class HRASModel implements ISetN {
 	}
 
 	private int getCommandTargetAddress(HRASCommand c) {
-		int tgtAdddress =0;
+		int tgtAdddress = 0;
 		try {
 			tgtAdddress = c.getAddress().resolve(this);
 		} catch (Exception e) {
@@ -180,7 +184,7 @@ public class HRASModel implements ISetN {
 			sb.append(System.lineSeparator());
 		}
 		for (Entry<HRASMemoryAddress, Boolean> entry : initOnceList) {
-			sb.append((entry.getValue()?"setonce":"clearonce")+" "+entry.getKey().asHRASCode());
+			sb.append((entry.getValue() ? "setonce" : "clearonce") + " " + entry.getKey().asHRASCode());
 			sb.append(System.lineSeparator());
 		}
 		for (String symbolString : getCommandssAsStrings()) {
@@ -227,8 +231,9 @@ public class HRASModel implements ISetN {
 			int cTgtAddress = getCommandTargetAddress(command);
 			HRAVCommand hravCommand = new HRAVCommand();
 			hravCommand.setOp(command.getOp());
-			if(cTgtAddress<0) {
-				System.out.println("Warning: (HRAS -> HRAV) Negative memory address in command at address "+address+".");
+			if (cTgtAddress < 0) {
+				System.out.println(
+						"Warning: (HRAS -> HRAV) Negative memory address in command at address " + address + ".");
 			}
 			hravCommand.setAddress(cTgtAddress);
 			hrav.addCommand(hravCommand);

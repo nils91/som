@@ -12,7 +12,14 @@ program
 
 command_def
 :
-	cmd_head directives? symbol_definitions? oti? commands?
+	cmd_head directives? symbol_definitions? otis? commands?
+;
+
+otis
+:
+	(
+		oti NEWLINE?
+	)+
 ;
 
 oti
@@ -20,7 +27,7 @@ oti
 	(
 		OTI_SET
 		| OTI_CLEAR
-	) target_argument
+	) target_argument SEMICOLON
 ;
 
 commands

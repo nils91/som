@@ -13,6 +13,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandsContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectivesContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtiContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtisContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_blkContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionsContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
@@ -78,8 +79,16 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		if (ctx.commands() != null) {
 			ctx.commands().accept(this);
 		}
-		if(ctx.oti()!=null) {
-			ctx.oti().accept(this);
+		if(ctx.otis()!=null) {
+			ctx.otis().accept(this);
+		}
+		return model;
+	}
+
+	@Override
+	public HRBSModel visitOtis(OtisContext ctx) {
+		for (OtiContext iterable_element : ctx.oti()) {
+			iterable_element.accept(this);
 		}
 		return model;
 	}

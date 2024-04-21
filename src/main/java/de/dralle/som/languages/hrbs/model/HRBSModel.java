@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,9 +57,30 @@ public class HRBSModel implements ISetN, IHeap {
 	 * Maps available commands by their name to their models.
 	 */
 	private Map<String, HRBSModel> childs;
+	/**
+	 * Tracks how often individual commands are used. Used when commands are used
+	 * more than once for local vars in those commands.
+	 */
 	private static Map<String, Integer> cmdUsageTracker;
 	private Map<AbstractHRBSMemoryAddress, AbstractHRBSMemoryAddress> dereffed;
+	/**
+	 * A list of all addresses to be initialized once (OTI) during compile.
+	 */
+	private List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<AbstractHRBSMemoryAddress, Boolean>>();
 
+	public List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> getInitOnceList() {
+		return initOnceList;
+	}
+
+	public void addInitOnceItem(AbstractHRBSMemoryAddress ma, boolean set) {
+		initOnceList.add(new AbstractMap.SimpleEntry<AbstractHRBSMemoryAddress, Boolean>(ma, set));
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
 	public boolean addChild(HRBSModel c) {
 		return addChild(c.getName(), c);
 	}
@@ -270,7 +292,7 @@ public class HRBSModel implements ISetN, IHeap {
 		if (printed == null) {
 			printed = new HashSet<>();
 		}
-		if (!printed.contains(name)) {
+		if (!printed.contains(name)) { // make sure each HBRSModel in the model tree is only printed once
 			printed.add(name);
 			StringBuilder sb = new StringBuilder();
 			sb.append(name);
@@ -290,6 +312,12 @@ public class HRBSModel implements ISetN, IHeap {
 			sb.append(System.lineSeparator());
 			for (String symbolString : getSymbolsAsStrings()) {
 				sb.append(symbolString);
+				sb.append(System.lineSeparator());
+			}
+			for (Entry<AbstractHRBSMemoryAddress, Boolean> string : initOnceList) {
+				sb.append(string.getValue() ? "setonce " : "clearonce ");
+				sb.append(string.getKey());
+				sb.append(";");
 				sb.append(System.lineSeparator());
 			}
 			for (String symbolString : getCommandssAsStrings()) {
@@ -344,7 +372,7 @@ public class HRBSModel implements ISetN, IHeap {
 				modifiedParamMap.put(key, val);
 			}
 		}
-		// fix for issue 89
+		// fix for issue 89. (https://github.com/nils91/som/issues/89)
 		// detect trigger condition
 		if (label != null) {
 			if (lclCommands.size() > 0) {
@@ -386,7 +414,7 @@ public class HRBSModel implements ISetN, IHeap {
 		List<HRBSCommand> additionalCommands = new ArrayList<>();
 		for (HRBSSymbol s : lclSymbols) {// convert all mirror symbols that are derefs
 			if (s.getTargetSymbol() != null) {
-				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol(),dereffed));
+				s.setTargetSymbol(resolveDeref(additionalSymbols, additionalCommands, s.getTargetSymbol(), dereffed));
 			}
 		}
 		lclSymbols.addAll(additionalSymbols);
@@ -409,7 +437,32 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, instanceId);
+		// iterate over all OTI (initialize once) commands and modify those that are
+		// derefs
+		List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> toRemove = new ArrayList();
+		List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> toAdd = new ArrayList();
+
+		for (Entry<AbstractHRBSMemoryAddress, Boolean> otiListEntry : initOnceList) {
+			AbstractHRBSMemoryAddress tgtAdr = otiListEntry.getKey();
+			if (tgtAdr.isDeref()) {
+				AbstractHRBSMemoryAddress newTgt = resolveDeref(additionalSymbols, additionalCommands, tgtAdr,
+						dereffed);
+				toRemove.add(otiListEntry);
+				toAdd.add(new AbstractMap.SimpleEntry(newTgt, otiListEntry.getValue()));
+			}
+		}
+		initOnceList.removeAll(toRemove);
+		initOnceList.addAll(toAdd);
 		convertSymbols(name, instanceId, lclSymbols, lclSymbolNameMap, m, childs);
+		// compile all OTI (initialize once) commands. Rightfully assume that all derefs
+		// were resolved.
+		for (Entry<AbstractHRBSMemoryAddress, Boolean> otiListEntry : initOnceList) {
+			AbstractHRBSMemoryAddress tgtAdr = otiListEntry.getKey();
+			HRBSMemoryAddressOffset ofs = tgtAdr.getOffset();
+			AbstractHRACMemoryAddress hracadr = calculateHRACMemoryAddressNoDeref(tgtAdr, lclSymbolNameMap);
+			m.addInitOnceAdress(hracadr, otiListEntry.getValue());
+		}
+
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
 			if (c.isInstIdDirective()) { // resolve directive access on called command
@@ -439,6 +492,10 @@ public class HRBSModel implements ISetN, IHeap {
 		newm.setHeapSize(m.getHeapSize());
 		newm.setName(name);
 		newm.setDirectives(m.getDirectives());
+		for (Entry<AbstractHRACMemoryAddress, Boolean> iterable_element : m.getInitOnceAddresses()) {
+			AbstractHRBSMemoryAddress hracma = convertHRACMA2HRBS(iterable_element.getKey());
+			newm.addInitOnceItem(hracma, iterable_element.getValue());
+		}
 		for (HRACSymbol s : m.getSymbols()) {
 			HRBSSymbol news = convertHRACSymbolToHRBS(s);
 			newm.addSymbol(news);
@@ -553,7 +610,13 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private static HRACModel addCommandsAndSymbolsFromOther(HRACModel target, HRACModel other) {
 		List<HRACSymbol> osymbols = other.getSymbols();
+		List<Entry<AbstractHRACMemoryAddress, Boolean>> oOti = other.getInitOnceAddresses();
 		List<HRACForDup> oCommands = other.getCommands();
+		if(oOti!=null) {
+			for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : oOti) {
+				target.addInitOnceAdress(hracForDup.getKey(), hracForDup.getValue());
+			}
+		}
 		if (osymbols != null) {
 			for (HRACSymbol s : osymbols) {
 				target.addSymbol(s);
@@ -837,7 +900,8 @@ public class HRBSModel implements ISetN, IHeap {
 		if (originalMemoryAddress.isDeref()) {
 			List<HRBSSymbol> additionalSymbols = new ArrayList<>();
 			List<HRBSCommand> additionalCommands = new ArrayList<>();
-			originalMemoryAddress = resolveDeref(additionalSymbols, additionalCommands, originalMemoryAddress,dereffed);
+			originalMemoryAddress = resolveDeref(additionalSymbols, additionalCommands, originalMemoryAddress,
+					dereffed);
 			localizeCommandLabels(additionalCommands, localSymbolNames, parentCmdName, cmdExecId); // generaTE LOCALIZED
 																									// COMMAND LABEL
 																									// NAMES

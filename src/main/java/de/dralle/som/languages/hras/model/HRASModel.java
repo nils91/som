@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hras.model;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,6 +78,16 @@ public class HRASModel implements ISetN {
 
 	private Map<HRASMemoryAddress, HRASCommand> commands;
 
+	private List<Map.Entry<HRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<HRASMemoryAddress, Boolean>>();
+
+	public List<Map.Entry<HRASMemoryAddress, Boolean>> getInitOnceList() {
+		return initOnceList;
+	}
+
+	public void addInitOnceValue(HRASMemoryAddress ma, boolean set) {
+		initOnceList.add(new AbstractMap.SimpleEntry<HRASMemoryAddress, Boolean>(ma, set));
+	}
+
 	public int getCommandCount() {
 		return commands.size();
 	}
@@ -105,7 +116,7 @@ public class HRASModel implements ISetN {
 	}
 
 	private int getCommandTargetAddress(HRASCommand c) {
-		int tgtAdddress =0;
+		int tgtAdddress = 0;
 		try {
 			tgtAdddress = c.getAddress().resolve(this);
 		} catch (Exception e) {
@@ -172,6 +183,10 @@ public class HRASModel implements ISetN {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
 		}
+		for (Entry<HRASMemoryAddress, Boolean> entry : initOnceList) {
+			sb.append((entry.getValue() ? "setonce" : "clearonce") + " " + entry.getKey().asHRASCode());
+			sb.append(System.lineSeparator());
+		}
 		for (String symbolString : getCommandssAsStrings()) {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
@@ -206,6 +221,9 @@ public class HRASModel implements ISetN {
 			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
 		}
+		for (Entry<HRASMemoryAddress, Boolean> entry : initOnceList) {
+			hrav.addInitOnceAddress(entry.getKey().resolve(this), entry.getValue());
+		}
 		for (Entry<HRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
 			HRASMemoryAddress address = c.getKey();
 			hrav.setNextCommandAddress(address.resolve(this));
@@ -213,8 +231,9 @@ public class HRASModel implements ISetN {
 			int cTgtAddress = getCommandTargetAddress(command);
 			HRAVCommand hravCommand = new HRAVCommand();
 			hravCommand.setOp(command.getOp());
-			if(cTgtAddress<0) {
-				System.out.println("Warning: (HRAS -> HRAV) Negative memory address in command at address "+address+".");
+			if (cTgtAddress < 0) {
+				System.out.println(
+						"Warning: (HRAS -> HRAV) Negative memory address in command at address " + address + ".");
 			}
 			hravCommand.setAddress(cTgtAddress);
 			hrav.addCommand(hravCommand);
@@ -230,6 +249,12 @@ public class HRASModel implements ISetN {
 		newm.setStartAdress(model.getStartAdress());
 		newm.setStartAddressExplicit(true);
 		newm.setNextCommandAddress(model.getStartAdress());
+		for (Entry<Integer, Boolean> otiE : model.getInitOnceValues()) {
+			Integer oAdr = otiE.getKey();
+			String symbolName = symbols.getOrDefault(oAdr, "MA" + oAdr);
+			symbols.put(oAdr, symbolName);
+			newm.addInitOnceValue(new HRASMemoryAddress(symbolName), otiE.getValue());
+		}
 		for (Entry<Integer, HRAVCommand> ce : model.getCommands().entrySet()) {
 			Integer cadr = ce.getKey();
 			HRAVCommand c = ce.getValue();

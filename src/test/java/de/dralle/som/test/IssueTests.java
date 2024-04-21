@@ -231,7 +231,6 @@ class IssueTests {
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		String hravCode = hrav.asCode();
 		Pattern regex = Pattern.compile("setonce \\d+"); //search for setonce with a number
-		System.out.println(hravCode);
 		assertTrue(regex.matcher(hravCode).find());
 	}
 }

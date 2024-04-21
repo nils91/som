@@ -150,7 +150,7 @@ public class HRAVModel implements ISetN {
 		sb.append(getStartDirective());
 		sb.append(System.lineSeparator());
 		for (Entry<Integer, Boolean> entry : initOnceValues) {
-			sb.append(entry.getValue()?"setonce":"clearonce"+" "+entry.getKey());
+			sb.append((entry.getValue()?"setonce":"clearonce")+" "+entry.getKey());
 			sb.append(System.lineSeparator());
 		}
 		for (String symbolString : getCommandssAsStrings()) {

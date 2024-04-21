@@ -1,0 +1,154 @@
+import SET0;
+import SET1;
+import CLEAR1;
+import TRIGGER1;
+import COPY2;
+
+MAIN:
+#allocate enough storage for hello world + line feed as string
+	alloc STR[96];
+#H
+	SETCHAR_H STR;
+#e
+	SETCHAR_e STR[8];
+#l
+	SETCHAR_l STR[16];
+#l
+	SETCHAR_l STR[24];
+#o
+	SETCHAR_o STR[32];
+#SPACE
+	SETCHAR_space STR[40];
+#W
+	SETCHAR_W STR[48];
+#o
+	SETCHAR_o STR[56];
+#r
+	SETCHAR_r STR[64];
+#l
+	SETCHAR_l STR[72];
+#d
+	SETCHAR_d STR[80];
+#\n
+	SETCHAR_linefeed STR[88];
+	SELECTHOOK;
+	WRITESTR STR;
+	SET0;
+	
+WRITESTR STR:
+	[0:95] WRITEBITOFSTR STR[$i];
+	
+SELECTHOOK:
+#write hook selection mode
+	CLEAR1 WH_SEL;
+#write mode
+	SET1 WH_DIR;
+#switch to next
+	SET1 WH_COM;
+#execute SWITCH
+	TRIGGER1 WH_EN;
+#go back to write hook use
+	SET1 WH_SEL;
+	
+WRITEBITOFSTR BOS:
+	COPY2 BOS, WH_COM;
+	TRIGGER1 WH_EN;
+	
+# H
+SETCHAR_H C:
+    clearonce C[0];
+    setonce C[1];
+    clearonce C[2];
+    clearonce C[3];
+    setonce C[4];
+    clearonce C[5];
+    clearonce C[6];
+    clearonce C[7];
+
+# e
+SETCHAR_e C:
+    clearonce C[0];
+    setonce C[1];
+    setonce C[2];
+    clearonce C[3];
+    clearonce C[4];
+    setonce C[5];
+    clearonce C[6];
+    setonce C[7];
+
+# l
+SETCHAR_l C:
+    clearonce C[0];
+    setonce C[1];
+    setonce C[2];
+    clearonce C[3];
+    setonce C[4];
+    setonce C[5];
+    clearonce C[6];
+    clearonce C[7];
+
+# o
+SETCHAR_o C:
+    clearonce C[0];
+    setonce C[1];
+    setonce C[2];
+    clearonce C[3];
+    setonce C[4];
+    setonce C[5];
+    setonce C[6];
+    setonce C[7];
+
+# space
+SETCHAR_space C:
+    clearonce C[0];
+    clearonce C[1];
+    setonce C[2];
+    clearonce C[3];
+    clearonce C[4];
+    clearonce C[5];
+    clearonce C[6];
+    clearonce C[7];
+
+# W
+SETCHAR_W C:
+    clearonce C[0];
+    setonce C[1];
+    clearonce C[2];
+    setonce C[3];
+    clearonce C[4];
+    setonce C[5];
+    setonce C[6];
+    setonce C[7];
+
+# r
+SETCHAR_r C:
+    clearonce C[0];
+    setonce C[1];
+    setonce C[2];
+    setonce C[3];
+    clearonce C[4];
+    clearonce C[5];
+    setonce C[6];
+    clearonce C[7];
+
+# d
+SETCHAR_d C:
+    clearonce C[0];
+    setonce C[1];
+    setonce C[2];
+    clearonce C[3];
+    clearonce C[4];
+    setonce C[5];
+    clearonce C[6];
+    clearonce C[7];
+    
+# \n
+SETCHAR_linefeed C:
+    clearonce C[0];
+    clearonce C[1];
+    clearonce C[2];
+    clearonce C[3];
+    setonce C[4];
+    clearonce C[5];
+    setonce C[6];
+    clearonce C[7];

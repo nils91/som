@@ -43,46 +43,52 @@ class SampleFilesTests {
 
 	@ParameterizedTest(name = "{index} - Test loading with file ''{0}''")
 	@MethodSource("fileProvider")
-	void testLoadFile(File file) throws IOException {if(file!=null) {
-		// get format
-		SOMFormats format = new FileLoader().getFormatFromFilename(file);
-		if (format != null) {
-			Object model = new FileLoader().loadFromFile(file, format);
-			assertNotNull(model);
-		}}
+	void testLoadFile(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				assertNotNull(model);
+			}
+		}
 	}
 
 	@ParameterizedTest(name = "{index} - Test compilation with file ''{0}''")
 	@MethodSource("fileProvider")
-	void testCompileFile(File file) throws IOException {if(file!=null) {
-		// get format
-		SOMFormats format = new FileLoader().getFormatFromFilename(file);
-		if (format != null) {
-			Object model = new FileLoader().loadFromFile(file, format);
-			Object compiled = new Compiler().compile(model, format, SOMFormats.BIN);
-			assertNotNull(compiled);
+	void testCompileFile(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				Object compiled = new Compiler().compile(model, format, SOMFormats.BIN);
+				assertNotNull(compiled);
+			}
 		}
-	}}
+	}
 
 	@ParameterizedTest(name = "{index} - Test execution with file ''{0}''")
 	@MethodSource("fileProvider")
 	void testExecuteFile(File file) throws IOException {
-		if(file!=null) {
-		// get format
-		SOMFormats format = new FileLoader().getFormatFromFilename(file);
-		if (format != null) {
-			Object model = new FileLoader().loadFromFile(file, format);
-			IMemspace compiled = new Compiler().compile(model, format, SOMFormats.BIN);
-			SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) compiled);
-			runner.execute();
-		}}
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				IMemspace compiled = new Compiler().compile(model, format, SOMFormats.BIN);
+				SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) compiled);
+				runner.execute();
+			}
+		}
 	}
 
 	static List<File> fileProvider() {
 		List<File> fileList = new ArrayList<>();
 		getFiles(new File("sample/"), fileList);
-		if(fileList.isEmpty()) {
-			//Make sure the list has at least on entry, but skip it pin test, to make junit happy
+		if (fileList.isEmpty()) {
+			// Make sure the list has at least on entry, but skip it pin test, to make junit
+			// happy
 			fileList.add(null);
 		}
 		return fileList;
@@ -94,7 +100,7 @@ class SampleFilesTests {
 			for (File file : files) {
 				if (file.isFile()) {
 					SOMFormats format = new FileLoader().getFormatFromFilename(file);
-					if(format!=null) {
+					if (format != null) {
 						fileList.add(file);
 					}
 				} else if (file.isDirectory()) {

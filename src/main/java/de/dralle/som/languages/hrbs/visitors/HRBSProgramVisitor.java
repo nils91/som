@@ -12,6 +12,7 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Command_defConte
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandsContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectivesContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtiContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_blkContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionsContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
@@ -76,6 +77,19 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		}
 		if (ctx.commands() != null) {
 			ctx.commands().accept(this);
+		}
+		if(ctx.oti()!=null) {
+			ctx.oti().accept(this);
+		}
+		return model;
+	}
+
+	@Override
+	public HRBSModel visitOti(OtiContext ctx) {
+		if(ctx.OTI_SET()!=null) {
+			model.addInitOnceItem(ctx.target_argument().accept(new HRBSMemoryAddressVisitor()), true);
+		}else if(ctx.OTI_CLEAR()!=null) {
+			model.addInitOnceItem(ctx.target_argument().accept(new HRBSMemoryAddressVisitor()), false);
 		}
 		return model;
 	}

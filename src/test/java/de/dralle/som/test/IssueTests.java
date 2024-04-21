@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -31,6 +32,7 @@ import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class IssueTests {
@@ -220,5 +222,16 @@ class IssueTests {
 		IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
 		IMemspace nm2 = c.compile(m2, SOMFormats.HRAC, SOMFormats.BIN);
 		assertTrue(nm.equalContent(nm2));
+	}
+	
+	@Test
+	void testIssue103_setonceHRAVEmpty() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/issue/test103.hrbs",
+				SOMFormats.HRBS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		String hravCode = hrav.asCode();
+		Pattern regex = Pattern.compile("setonce \\d+"); //search for setonce with a number
+		System.out.println(hravCode);
+		assertTrue(regex.matcher(hravCode).find());
 	}
 }

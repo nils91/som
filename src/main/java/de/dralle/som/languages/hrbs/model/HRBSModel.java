@@ -492,6 +492,10 @@ public class HRBSModel implements ISetN, IHeap {
 		newm.setHeapSize(m.getHeapSize());
 		newm.setName(name);
 		newm.setDirectives(m.getDirectives());
+		for (Entry<AbstractHRACMemoryAddress, Boolean> iterable_element : m.getInitOnceAddresses()) {
+			AbstractHRBSMemoryAddress hracma = convertHRACMA2HRBS(iterable_element.getKey());
+			newm.addInitOnceItem(hracma, iterable_element.getValue());
+		}
 		for (HRACSymbol s : m.getSymbols()) {
 			HRBSSymbol news = convertHRACSymbolToHRBS(s);
 			newm.addSymbol(news);
@@ -606,7 +610,13 @@ public class HRBSModel implements ISetN, IHeap {
 	 */
 	private static HRACModel addCommandsAndSymbolsFromOther(HRACModel target, HRACModel other) {
 		List<HRACSymbol> osymbols = other.getSymbols();
+		List<Entry<AbstractHRACMemoryAddress, Boolean>> oOti = other.getInitOnceAddresses();
 		List<HRACForDup> oCommands = other.getCommands();
+		if(oOti!=null) {
+			for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : oOti) {
+				target.addInitOnceAdress(hracForDup.getKey(), hracForDup.getValue());
+			}
+		}
 		if (osymbols != null) {
 			for (HRACSymbol s : osymbols) {
 				target.addSymbol(s);

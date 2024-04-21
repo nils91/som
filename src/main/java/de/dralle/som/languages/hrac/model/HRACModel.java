@@ -132,7 +132,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	private List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> initOnceAddresses=new ArrayList<Map.Entry<AbstractHRACMemoryAddress,Boolean>>();
 	
 	public void addInitOnceAdress(AbstractHRACMemoryAddress adr,boolean set) {
-		initOnceAddresses.add(new AbstractMap.SimpleEntry<AbstractHRACMemoryAddress, Boolean>(adr, set));
+		addInitOnceAdress(new AbstractMap.SimpleEntry<AbstractHRACMemoryAddress, Boolean>(adr, set));
+	}
+	
+	public void addInitOnceAdress(Map.Entry<AbstractHRACMemoryAddress, Boolean> ent) {
+		initOnceAddresses.add(ent);
 	}
 
 	public List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> getInitOnceAddresses() {

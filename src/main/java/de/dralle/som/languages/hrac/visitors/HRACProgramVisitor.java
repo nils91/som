@@ -5,6 +5,7 @@ package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.OtiContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Program_blkContext;
 import de.dralle.som.languages.hrac.model.HRACModel;
 
@@ -13,6 +14,16 @@ import de.dralle.som.languages.hrac.model.HRACModel;
  *
  */
 public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
+
+	@Override
+	public HRACModel visitOti(OtiContext ctx) {
+		if(ctx.OTI_SET()!=null) {
+			model.addInitOnceAdress(ctx.symbol_os().accept(new HRACMemoryAddressVisitor()), true);
+		}if(ctx.OTI_CLEAR()!=null) {
+			model.addInitOnceAdress(ctx.symbol_os().accept(new HRACMemoryAddressVisitor()), false);
+		}
+		return model;
+	}
 
 	private HRACModel model;
 
@@ -25,6 +36,8 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 			model.addCommand(ctx.commadn_or_for().accept(new HRACForVisitor()));
 		} else if (ctx.symbol_dec() != null) {
 			model.addSymbol(ctx.symbol_dec().accept(new HRACSymbolVisitor()));
+		} else if(ctx.oti()!=null) {
+			ctx.oti().accept(this);
 		}
 
 		return model;

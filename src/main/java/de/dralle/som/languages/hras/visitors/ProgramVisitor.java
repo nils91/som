@@ -6,6 +6,7 @@ package de.dralle.som.languages.hras.visitors;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.OtiContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hras.model.HRASCommand;
@@ -29,6 +30,8 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 		} else if (ctx.command() != null) {
 			HRASCommand c = ctx.command().accept(new CommandVisitor());
 			model.addCommand(c);
+		}else if(ctx.oti()!=null) {
+			ctx.oti().accept(this);
 		}
 		return model;
 	}
@@ -44,6 +47,16 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 		model = new HRASModel();
 		for (LineContext line : ctx.line()) {
 			line.accept(this);
+		}
+		return model;
+	}
+
+	@Override
+	public HRASModel visitOti(OtiContext ctx) {
+		if(ctx.OTI_SET()!=null) {
+			model.addInitOnceValue(ctx.int_or_symbol().accept(new MemoryAddressVisitor()), true);
+		}if(ctx.OTI_CLEAR()!=null) {
+			model.addInitOnceValue(ctx.int_or_symbol().accept(new MemoryAddressVisitor()), false);
 		}
 		return model;
 	}

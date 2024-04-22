@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out
-      uses: actions/checkout@v4.1.2    
+      uses: actions/checkout@v4.1.3    
     - name: Make test folder
       shell: bash
       run: mkdir -p tmp/test

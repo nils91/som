@@ -91,9 +91,11 @@ offset_specify_number
 	)
 ;
 
+
+//following rule will only be used in for dup loop heads
 offset_specify_range
 :
-	B_OPEN? offset_specify_number COLON offset_specify_number B_CLOSE?
+	B_OPEN offset_specify_number COLON offset_specify_number B_CLOSE
 ;
 
 for_duplication

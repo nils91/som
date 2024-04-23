@@ -150,7 +150,7 @@ public class HRACForDupRange implements Cloneable {
 	}
 
 	public String asCode() {
-		String s = "[";
+		String s = lowerBoundExclusive?"]":"[";;
 		if (rangeStartSpecial != null) {
 			s += "$" + rangeStartSpecial;
 		} else {
@@ -162,7 +162,13 @@ public class HRACForDupRange implements Cloneable {
 		} else {
 			s += rangeEnd + "";
 		}
-		return s + "]";
+		s+=";";
+		if (stepSizeSpecial != null) {
+			s += "$" + stepSizeSpecial;
+		} else {
+			s += stepSize + "";
+		}
+		return s + (upperBoundExclusive?"[":"]");
 	}
 
 	@Override

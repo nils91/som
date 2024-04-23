@@ -3,7 +3,7 @@ package de.dralle.som.languages.hrac.model;
 public class HRACForDupRange implements Cloneable {
 	private int rangeStart;
 	private int rangeEnd;
-	private int stepSize=1;
+	private int stepSize = 1;
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 	private String stepSizeSpecial;
@@ -89,51 +89,50 @@ public class HRACForDupRange implements Cloneable {
 		int[] rng = null;
 		if (rangeStart <= rangeEnd) {
 			if (!lowerBoundExclusive && !upperBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart - 1) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart + i*stepSize + 1;
+				rng = new int[(rangeEnd - rangeStart + 1) / stepSize];
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart + i * stepSize;
 				}
 			} else if (lowerBoundExclusive && upperBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart + 1) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart + i*stepSize;
+				rng = new int[(rangeEnd - rangeStart - 1) / stepSize];
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart + i * stepSize +1;
 				}
 			} else if (lowerBoundExclusive) {
 				rng = new int[(rangeEnd - rangeStart) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart + i*stepSize+1;
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart + i * stepSize + 1;
 				}
 			} else if (upperBoundExclusive) {
 				rng = new int[(rangeEnd - rangeStart) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart + i*stepSize;
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart + i * stepSize;
 				}
 			}
 
 		} else {
 			if (!lowerBoundExclusive && !upperBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd - 1) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart - i*stepSize + 1;
+				rng = new int[(rangeStart - rangeEnd + 1) / stepSize];
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart - i * stepSize ;
 				}
 			} else if (lowerBoundExclusive && upperBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd + 1) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart - i*stepSize;
+				rng = new int[(rangeStart - rangeEnd - 1) / stepSize];
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart - i * stepSize +1;
 				}
 			} else if (lowerBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart - i*stepSize+1;
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart - i * stepSize + 1;
 				}
 			} else if (upperBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd) / stepSize];
-				for (int i = 0; i < rng.length; i ++) {
-					rng[i] = rangeStart - i*stepSize;
+				for (int i = 0; i < rng.length; i++) {
+					rng[i] = rangeStart - i * stepSize;
 				}
 			}
 
-			
 		}
 		return rng;
 	}

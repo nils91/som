@@ -95,7 +95,7 @@ offset_specify_number
 //following rule will only be used in for dup loop heads
 offset_specify_range
 :
-	(B_OPEN|B_CLOSE) offset_specify_number COLON offset_specify_number (B_CLOSE|B_OPEN)
+	(B_OPEN|B_CLOSE) (offset_specify_number? COLON offset_specify_number?) (SEMICOLON offset_specify_number )?(B_CLOSE|B_OPEN)
 ;
 
 for_duplication

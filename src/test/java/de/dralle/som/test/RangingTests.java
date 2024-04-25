@@ -57,7 +57,37 @@ class RangingTests {
 				Arguments.of(1, 2, 3, false, false, new int[] { 1 }),
 				Arguments.of(1, 2, 3, true, false, new int[] { 2 }),
 				Arguments.of(1, 2, 3, false, true, new int[] { 1 }), Arguments.of(1, 2, 3, true, true, new int[] {}),
-
+				
+				Arguments.of(1, 5, 1, false, false, new int[] { 1, 2,3,4,5 }),
+				Arguments.of(1, 5, 1, true, false, new int[] { 2,3,4,5 }),				
+				Arguments.of(1, 5, 1, false, true, new int[] { 1,2,3,4 }), Arguments.of(1, 5, 1, true, true, new int[] {2,3,4}),
+				Arguments.of(1, 5, 2, false, false, new int[] { 1,3,5 }),
+				Arguments.of(1, 5, 2, true, false, new int[] { 2,4 }),
+				Arguments.of(1, 5, 2, false, true, new int[] { 1,3 }), Arguments.of(1, 5, 2, true, true, new int[] {2,4}),
+				Arguments.of(1, 5, 3, false, false, new int[] { 1,4 }),
+				Arguments.of(1, 5, 3, true, false, new int[] { 2,5 }),
+				Arguments.of(1, 5, 3, false, true, new int[] { 1,4 }), Arguments.of(1, 5, 3, true, true, new int[] {2}),
+				
+				Arguments.of(2,1, 1, false, false, new int[] { 2,1 }),
+				Arguments.of(2,1, 1, true, false, new int[] { 1 }),
+				Arguments.of(2,1, 1, false, true, new int[] { 2 }), Arguments.of(2,1, 1, true, true, new int[] {}),
+				Arguments.of(2,1, 2, false, false, new int[] { 2 }),
+				Arguments.of(2,1, 2, true, false, new int[] { 1 }),
+				Arguments.of(2,1, 2, false, true, new int[] { 2 }), Arguments.of(2,1, 2, true, true, new int[] {}),
+				Arguments.of(2,1, 3, false, false, new int[] { 2 }),
+				Arguments.of(2,1, 3, true, false, new int[] { 1 }),
+				Arguments.of(2,1, 3, false, true, new int[] { 2 }), Arguments.of(2,1, 3, true, true, new int[] {}),
+				
+				Arguments.of(5,1, 1, false, false, new int[] { 5,4,3,2,1 }),
+				Arguments.of(5,1, 1, true, false, new int[] { 4,3,2,1 }),				
+				Arguments.of(5,1, 1, false, true, new int[] { 5,4,3,2 }), Arguments.of(5,1, 1, true, true, new int[] {4,3,2}),
+				Arguments.of(5,1, 2, false, false, new int[] { 5,3,1 }),
+				Arguments.of(5,1, 2, true, false, new int[] { 4,2 }),
+				Arguments.of(5,1, 2, false, true, new int[] { 5,3 }), Arguments.of(5,1, 2, true, true, new int[] {4,2}),
+				Arguments.of(5,1, 3, false, false, new int[] { 5,2 }),
+				Arguments.of(5,1, 3, true, false, new int[] { 4,1 }),
+				Arguments.of(5,1, 3, false, true, new int[] { 5,2 }), Arguments.of(5,1, 3, true, true, new int[] {4}),
+				
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }),
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }),
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }));

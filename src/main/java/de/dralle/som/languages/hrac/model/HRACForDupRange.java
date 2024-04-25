@@ -1,5 +1,8 @@
 package de.dralle.som.languages.hrac.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HRACForDupRange implements Cloneable {
 	private int rangeStart;
 	private int rangeEnd;
@@ -87,30 +90,27 @@ public class HRACForDupRange implements Cloneable {
 			stepSize = parent.getDirectiveAsInt(stepSizeSpecial);
 		}
 		int[] rng = null;
-		if (rangeStart <= rangeEnd) {
-			if (!lowerBoundExclusive && !upperBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart + 1) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart + i * stepSize;
-				}
-			} else if (lowerBoundExclusive && upperBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart - 1) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart + i * stepSize +1;
-				}
-			} else if (lowerBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart + i * stepSize + 1;
-				}
-			} else if (upperBoundExclusive) {
-				rng = new int[(rangeEnd - rangeStart) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart + i * stepSize;
-				}
+		if (rangeStart <= rangeEnd) {//range counts up
+			//calculate "real" range limits (taking into account upper and lower exclusivity)
+			int realRangeStart=rangeStart;
+			int realRangeEnd=rangeEnd;
+			if(lowerBoundExclusive) {
+				realRangeStart+=1;
 			}
-
-		} else {
+			if(upperBoundExclusive) {
+				realRangeEnd-=1;
+			}
+			List<Integer> range=new ArrayList<Integer>();
+			int currentValue=realRangeStart;
+			while(currentValue<=realRangeEnd) {
+				range.add(currentValue);
+				currentValue+=stepSize;
+			}
+			rng=new int[range.size()];
+			for (int i = 0; i < rng.length; i++) {
+				rng[i]=range.get(i);
+			}
+		} else {//range counts down
 			if (!lowerBoundExclusive && !upperBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd + 1) / stepSize];
 				for (int i = 0; i < rng.length; i++) {

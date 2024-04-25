@@ -111,28 +111,25 @@ public class HRACForDupRange implements Cloneable {
 				rng[i]=range.get(i);
 			}
 		} else {//range counts down
-			if (!rangeStartBoundExclusive && !rangeEndBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd + 1) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart - i * stepSize ;
-				}
-			} else if (rangeStartBoundExclusive && rangeEndBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd - 1) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart - i * stepSize +1;
-				}
-			} else if (rangeStartBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart - i * stepSize + 1;
-				}
-			} else if (rangeEndBoundExclusive) {
-				rng = new int[(rangeStart - rangeEnd) / stepSize];
-				for (int i = 0; i < rng.length; i++) {
-					rng[i] = rangeStart - i * stepSize;
-				}
+			//calculate "real" range limits (taking into account upper and lower exclusivity)
+			int realRangeStart=rangeStart;
+			int realRangeEnd=rangeEnd;
+			if(rangeStartBoundExclusive) {
+				realRangeStart-=1;
 			}
-
+			if(rangeEndBoundExclusive) {
+				realRangeEnd+=1;
+			}
+			List<Integer> range=new ArrayList<Integer>();
+			int currentValue=realRangeStart;
+			while(currentValue>=realRangeEnd) {
+				range.add(currentValue);
+				currentValue-=stepSize;
+			}
+			rng=new int[range.size()];
+			for (int i = 0; i < rng.length; i++) {
+				rng[i]=range.get(i);
+			}
 		}
 		return rng;
 	}

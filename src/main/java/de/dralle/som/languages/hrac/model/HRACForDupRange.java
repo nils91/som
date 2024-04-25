@@ -10,8 +10,8 @@ public class HRACForDupRange implements Cloneable {
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 	private String stepSizeSpecial;
-	private boolean lowerBoundExclusive = false;
-	private boolean upperBoundExclusive = false
+	private boolean rangeStartBoundExclusive = false;
+	private boolean rangeEndBoundExclusive = false
 
 	;
 
@@ -20,19 +20,19 @@ public class HRACForDupRange implements Cloneable {
 	}
 
 	public boolean isLowerBoundExclusive() {
-		return lowerBoundExclusive;
+		return rangeStartBoundExclusive;
 	}
 
 	public void setLowerBoundExclusive(boolean lowerBoundExclusive) {
-		this.lowerBoundExclusive = lowerBoundExclusive;
+		this.rangeStartBoundExclusive = lowerBoundExclusive;
 	}
 
 	public boolean isUpperBoundExclusive() {
-		return upperBoundExclusive;
+		return rangeEndBoundExclusive;
 	}
 
 	public void setUpperBoundExclusive(boolean upperBoundExclusive) {
-		this.upperBoundExclusive = upperBoundExclusive;
+		this.rangeEndBoundExclusive = upperBoundExclusive;
 	}
 
 	public void setStepSize(int stepSize) {
@@ -94,10 +94,10 @@ public class HRACForDupRange implements Cloneable {
 			//calculate "real" range limits (taking into account upper and lower exclusivity)
 			int realRangeStart=rangeStart;
 			int realRangeEnd=rangeEnd;
-			if(lowerBoundExclusive) {
+			if(rangeStartBoundExclusive) {
 				realRangeStart+=1;
 			}
-			if(upperBoundExclusive) {
+			if(rangeEndBoundExclusive) {
 				realRangeEnd-=1;
 			}
 			List<Integer> range=new ArrayList<Integer>();
@@ -111,22 +111,22 @@ public class HRACForDupRange implements Cloneable {
 				rng[i]=range.get(i);
 			}
 		} else {//range counts down
-			if (!lowerBoundExclusive && !upperBoundExclusive) {
+			if (!rangeStartBoundExclusive && !rangeEndBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd + 1) / stepSize];
 				for (int i = 0; i < rng.length; i++) {
 					rng[i] = rangeStart - i * stepSize ;
 				}
-			} else if (lowerBoundExclusive && upperBoundExclusive) {
+			} else if (rangeStartBoundExclusive && rangeEndBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd - 1) / stepSize];
 				for (int i = 0; i < rng.length; i++) {
 					rng[i] = rangeStart - i * stepSize +1;
 				}
-			} else if (lowerBoundExclusive) {
+			} else if (rangeStartBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd) / stepSize];
 				for (int i = 0; i < rng.length; i++) {
 					rng[i] = rangeStart - i * stepSize + 1;
 				}
-			} else if (upperBoundExclusive) {
+			} else if (rangeEndBoundExclusive) {
 				rng = new int[(rangeStart - rangeEnd) / stepSize];
 				for (int i = 0; i < rng.length; i++) {
 					rng[i] = rangeStart - i * stepSize;
@@ -150,7 +150,7 @@ public class HRACForDupRange implements Cloneable {
 	}
 
 	public String asCode() {
-		String s = lowerBoundExclusive?"]":"[";;
+		String s = rangeStartBoundExclusive?"]":"[";;
 		if (rangeStartSpecial != null) {
 			s += "$" + rangeStartSpecial;
 		} else {
@@ -168,7 +168,7 @@ public class HRACForDupRange implements Cloneable {
 		} else {
 			s += stepSize + "";
 		}
-		return s + (upperBoundExclusive?"[":"]");
+		return s + (rangeEndBoundExclusive?"[":"]");
 	}
 
 	@Override

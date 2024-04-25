@@ -10,6 +10,9 @@ public class HRACForDupRange implements Cloneable {
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 	private String stepSizeSpecial;
+	// next 2 refer to the start and end of a range, regardless of the range countin
+	// down or up. for[1:2] 1 would be start and 2 would be end, [2:1] would be
+	// start 2 and end 1
 	private boolean rangeStartBoundExclusive = false;
 	private boolean rangeEndBoundExclusive = false
 
@@ -23,7 +26,7 @@ public class HRACForDupRange implements Cloneable {
 		return rangeStartBoundExclusive;
 	}
 
-	public void setLowerBoundExclusive(boolean lowerBoundExclusive) {
+	public void setRangeStartBoundExclusive(boolean lowerBoundExclusive) {
 		this.rangeStartBoundExclusive = lowerBoundExclusive;
 	}
 
@@ -31,7 +34,7 @@ public class HRACForDupRange implements Cloneable {
 		return rangeEndBoundExclusive;
 	}
 
-	public void setUpperBoundExclusive(boolean upperBoundExclusive) {
+	public void setRangeEndBoundExclusive(boolean upperBoundExclusive) {
 		this.rangeEndBoundExclusive = upperBoundExclusive;
 	}
 
@@ -90,45 +93,47 @@ public class HRACForDupRange implements Cloneable {
 			stepSize = parent.getDirectiveAsInt(stepSizeSpecial);
 		}
 		int[] rng = null;
-		if (rangeStart <= rangeEnd) {//range counts up
-			//calculate "real" range limits (taking into account upper and lower exclusivity)
-			int realRangeStart=rangeStart;
-			int realRangeEnd=rangeEnd;
-			if(rangeStartBoundExclusive) {
-				realRangeStart+=1;
+		if (rangeStart <= rangeEnd) {// range counts up
+			// calculate "real" range limits (taking into account upper and lower
+			// exclusivity)
+			int realRangeStart = rangeStart;
+			int realRangeEnd = rangeEnd;
+			if (rangeStartBoundExclusive) {
+				realRangeStart += 1;
 			}
-			if(rangeEndBoundExclusive) {
-				realRangeEnd-=1;
+			if (rangeEndBoundExclusive) {
+				realRangeEnd -= 1;
 			}
-			List<Integer> range=new ArrayList<Integer>();
-			int currentValue=realRangeStart;
-			while(currentValue<=realRangeEnd) {
+			List<Integer> range = new ArrayList<Integer>();
+			int currentValue = realRangeStart;
+			while (currentValue <= realRangeEnd) {
 				range.add(currentValue);
-				currentValue+=stepSize;
+				currentValue += stepSize;
 			}
-			rng=new int[range.size()];
+			rng = new int[range.size()];
 			for (int i = 0; i < rng.length; i++) {
-				rng[i]=range.get(i);
+				rng[i] = range.get(i);
 			}
-		} else {//range counts down
-			//calculate "real" range limits (taking into account upper and lower exclusivity)
-			int realRangeStart=rangeStart;
-			int realRangeEnd=rangeEnd;
-			if(rangeStartBoundExclusive) {
-				realRangeStart-=1;
+		} else {// range counts down
+			// calculate "real" range limits (taking into account upper and lower
+			// exclusivity)
+			int realRangeStart = rangeStart;
+			int realRangeEnd = rangeEnd;
+			if (rangeStartBoundExclusive) {
+				realRangeStart -= 1;
 			}
-			if(rangeEndBoundExclusive) {
-				realRangeEnd+=1;
+			if (rangeEndBoundExclusive) {
+				realRangeEnd += 1;
 			}
-			List<Integer> range=new ArrayList<Integer>();
-			int currentValue=realRangeStart;
-			while(currentValue>=realRangeEnd) {
+			List<Integer> range = new ArrayList<Integer>();
+			int currentValue = realRangeStart;
+			while (currentValue >= realRangeEnd) {
 				range.add(currentValue);
-				currentValue-=stepSize;
+				currentValue -= stepSize;
 			}
-			rng=new int[range.size()];
+			rng = new int[range.size()];
 			for (int i = 0; i < rng.length; i++) {
-				rng[i]=range.get(i);
+				rng[i] = range.get(i);
 			}
 		}
 		return rng;
@@ -147,7 +152,8 @@ public class HRACForDupRange implements Cloneable {
 	}
 
 	public String asCode() {
-		String s = rangeStartBoundExclusive?"]":"[";;
+		String s = rangeStartBoundExclusive ? "]" : "[";
+		;
 		if (rangeStartSpecial != null) {
 			s += "$" + rangeStartSpecial;
 		} else {
@@ -159,13 +165,13 @@ public class HRACForDupRange implements Cloneable {
 		} else {
 			s += rangeEnd + "";
 		}
-		s+=";";
+		s += ";";
 		if (stepSizeSpecial != null) {
 			s += "$" + stepSizeSpecial;
 		} else {
 			s += stepSize + "";
 		}
-		return s + (rangeEndBoundExclusive?"[":"]");
+		return s + (rangeEndBoundExclusive ? "[" : "]");
 	}
 
 	@Override

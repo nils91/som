@@ -36,13 +36,13 @@ class RangingTests {
 
 	@ParameterizedTest
 	@MethodSource("provideRangeTestData")
-	void hracRangeGen(int lower, int upper, int step, boolean lowerExclusive, boolean upperExclusive, int[] expected)
+	void hracRangeGen(int lower, int upper, int step, boolean rangeStartExclusive, boolean rangeEndExclusive, int[] expected)
 			throws IOException {
 		hracForDup.setRangeStart(lower);
 		hracForDup.setRangeEnd(upper);
 		hracForDup.setStepSize(step);
-		hracForDup.setLowerBoundExclusive(lowerExclusive);
-		hracForDup.setUpperBoundExclusive(upperExclusive);
+		hracForDup.setRangeStartBoundExclusive(rangeStartExclusive);
+		hracForDup.setRangeEndBoundExclusive(rangeEndExclusive);
 		assertArrayEquals(expected, hracForDup.getRange(null));
 	}
 

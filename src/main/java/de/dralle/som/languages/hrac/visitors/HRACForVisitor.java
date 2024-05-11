@@ -5,6 +5,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Commadn_or_forCo
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplicationContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplication_headContext;
 import de.dralle.som.languages.hrac.model.HRACForDup;
+import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 
 public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 	private HRACForDup f = null;
@@ -36,7 +37,7 @@ public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 
 	@Override
 	public HRACForDup visitFor_duplication_head(For_duplication_headContext ctx) {
-		f.setRange(ctx.offset_specify_range().accept(new HRACForRangeVisitor()));
+		f.setRange((HRACForDupBoundingRangeProvider) ctx.offset_specify_range().accept(new HRACForRangeVisitor()));
 		return f;
 	}
 }

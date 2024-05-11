@@ -20,6 +20,14 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 
 	;
 
+	public boolean isRangeStartBoundExclusive() {
+		return rangeStartBoundExclusive;
+	}
+
+	public boolean isRangeEndBoundExclusive() {
+		return rangeEndBoundExclusive;
+	}
+
 	public int getStepSize() {
 		return stepSize;
 	}

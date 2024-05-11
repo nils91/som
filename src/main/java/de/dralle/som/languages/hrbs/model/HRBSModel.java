@@ -26,7 +26,7 @@ import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
-import de.dralle.som.languages.hrac.model.HRACForDupRange;
+import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -523,7 +523,7 @@ public class HRBSModel implements ISetN, IHeap {
 		return newc;
 	}
 
-	private static HRBSRange convertHRACRange2HRBS(HRACForDupRange range) {
+	private static HRBSRange convertHRACRange2HRBS(HRACForDupBoundingRangeProvider range) {
 		HRBSRange newr = new HRBSRange();
 		newr.setStart(new HRBSMemoryAddressOffset(range.getRangeStart(), range.getRangeStartSpecial()));
 		newr.setEnd(new HRBSMemoryAddressOffset(range.getRangeEnd(), range.getRangeEndSpecial()));
@@ -661,7 +661,7 @@ public class HRBSModel implements ISetN, IHeap {
 		HRACForDup fd = null;
 		if (c.getRange() != null) {// convert range
 			HRBSRange range = c.getRange();
-			HRACForDupRange convRange = new HRACForDupRange();
+			HRACForDupBoundingRangeProvider convRange = new HRACForDupBoundingRangeProvider();
 			convRange.setRangeStart(range.getStart().getOffset());
 			convRange.setRangeEnd(range.getEnd().getOffset());
 			convRange.setRangeStartSpecial(range.getStart().getDirectiveAccessName());

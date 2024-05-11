@@ -2,8 +2,10 @@ package de.dralle.som.languages.hrac.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class HRACForDupRange implements Cloneable {
+/**
+ * Provides a range of values (as an arry) via getRange() if bounds and stepsize are specified.
+ */
+public class HRACForDupBoundingRangeProvider implements Cloneable {
 	private int rangeStart;
 	private int rangeEnd;
 	private int stepSize = 1;
@@ -140,10 +142,10 @@ public class HRACForDupRange implements Cloneable {
 	}
 
 	@Override
-	public HRACForDupRange clone() {
+	public HRACForDupBoundingRangeProvider clone() {
 		// TODO Auto-generated method stub
 		try {
-			return (HRACForDupRange) super.clone();
+			return (HRACForDupBoundingRangeProvider) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

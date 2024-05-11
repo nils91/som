@@ -20,18 +20,18 @@ import de.dralle.som.Opcode;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACForDup;
-import de.dralle.som.languages.hrac.model.HRACForDupRange;
+import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class RangingTests {
 
-	private HRACForDupRange hracForDup;
+	private HRACForDupBoundingRangeProvider hracForDup;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		hracForDup = new HRACForDupRange();
+		hracForDup = new HRACForDupBoundingRangeProvider();
 	}
 
 	@ParameterizedTest

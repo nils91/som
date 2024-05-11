@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Provides a range of values (as an arry) via getRange() if bounds and stepsize are specified.
  */
-public class HRACForDupBoundingRangeProvider implements Cloneable {
+public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Cloneable {
 	private int rangeStart;
 	private int rangeEnd;
 	private int stepSize = 1;

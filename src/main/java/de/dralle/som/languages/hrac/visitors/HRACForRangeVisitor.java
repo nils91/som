@@ -38,13 +38,41 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		boolean stepSpecified=ctx.SEMICOLON()!=null;
 		int cntVal=ctx.offset_specify_number().size();
 		HRACMemoryOffset step = new HRACMemoryOffset(1);
+		HRACMemoryOffset start=new HRACMemoryOffset(0);
+		HRACMemoryOffset end=new HRACMemoryOffset(0);
 		if(cntVal==1) {
 			if(stepSpecified) {
 				step=ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+			}else {
+				//step not specified, find ofs idx
+				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
+				if(rangeStartSpecified) {
+					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+				}else {
+					end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
+				}
 			}
 		}
-		HRACMemoryOffset start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-		HRACMemoryOffset end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
+		if(cntVal==2) {
+			if(!stepSpecified) {
+				//start to end, no step
+				start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+				end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
+			}else {
+				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
+				if(rangeStartSpecified) {
+					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+				}else {
+					step = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
+				}
+			}
+		}
+		if(cntVal==3) {
+			//all specified
+			start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+			end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
+			step = ctx.offset_specify_number(2).accept(new HRACOSVisitor());
+		}
 		r.setRangeEndBoundExclusive(rangeEndExclusive);
 		r.setRangeStartBoundExclusive(rangeStartExclusive);
 		r.setRangeEnd(end.getOffset());

@@ -35,6 +35,14 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 				rangeEndExclusive = false;
 			}
 		}
+		boolean stepSpecified=ctx.SEMICOLON()!=null;
+		int cntVal=ctx.offset_specify_number().size();
+		HRACMemoryOffset step = new HRACMemoryOffset(1);
+		if(cntVal==1) {
+			if(stepSpecified) {
+				step=ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+			}
+		}
 		HRACMemoryOffset start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
 		HRACMemoryOffset end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 		r.setRangeEndBoundExclusive(rangeEndExclusive);
@@ -43,6 +51,8 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		r.setRangeEndSpecial(end.getDirectiveName());
 		r.setRangeStart(start.getOffset());
 		r.setRangeStartSpecial(start.getDirectiveName());
+		r.setStepSize(step.getOffset());
+		r.setStepSizeSpecial(step.getDirectiveName());
 		return r;
 	}
 

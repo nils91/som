@@ -196,7 +196,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				for (int i = 0; i < range.getRange(parent).length; i++) {
 					int si = range.getRange(parent)[i];
 					HRACModel modelClone = model.clone();
-					modelClone.addAddDirective("i", si);
+					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
 					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList,i==0);
 					retList.add(modelClone);
 				}

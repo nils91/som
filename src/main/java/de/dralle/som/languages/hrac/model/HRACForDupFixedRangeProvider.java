@@ -89,4 +89,10 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 	public String toString() {
 		return asCode();
 	}
+
+	@Override
+	public String getRunningDirectiveName() {
+		// TODO Auto-generated method stub
+		return "i";
+	}
 }

@@ -91,11 +91,55 @@ offset_specify_number
 	)
 ;
 
-
 //following rule will only be used in for dup loop heads
+
+offset_specify_values
+:
+	(
+		directive_access EQ
+	)?
+	(
+		B_OPEN
+		| B_CLOSE
+	)
+	(
+		offset_specify_number? COLON offset_specify_number?
+	)
+	(
+		SEMICOLON offset_specify_number
+	)?
+	(
+		B_CLOSE
+		| B_OPEN
+	)
+;
+
 offset_specify_range
 :
-	(B_OPEN|B_CLOSE) (offset_specify_number? COLON offset_specify_number?) (SEMICOLON offset_specify_number )?(B_CLOSE|B_OPEN)
+	(
+		B_OPEN
+		| B_CLOSE
+	)
+	(
+		offset_specify_number? COLON offset_specify_number?
+	)
+	(
+		SEMICOLON offset_specify_number
+	)?
+	(
+		B_CLOSE
+		| B_OPEN
+	)
+;
+
+offset_specify_set
+:
+	C_OPEN
+	(
+		(
+			offset_specify_number COMMA
+		)* offset_specify_number
+	)? C_CLOSE
 ;
 
 for_duplication
@@ -105,7 +149,7 @@ for_duplication
 
 for_duplication_head
 :
-	FOR offset_specify_range DUPLICATE COLON
+	FOR offset_specify_values DUPLICATE COLON
 ;
 
 cnt_specify
@@ -253,6 +297,11 @@ DIRECTIVE_VALUE_STR
 EQ
 :
 	'='
+;
+
+COMMA
+:
+	','
 ;
 
 SEMICOLON

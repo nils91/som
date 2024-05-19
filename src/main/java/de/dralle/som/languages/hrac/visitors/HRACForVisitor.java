@@ -37,7 +37,7 @@ public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 
 	@Override
 	public HRACForDup visitFor_duplication_head(For_duplication_headContext ctx) {
-		f.setRange((HRACForDupBoundingRangeProvider) ctx.offset_specify_values().accept(new HRACForRangeVisitor()));
+		f.setRange(ctx.offset_specify_values().accept(new HRACForRangeVisitor()));
 		return f;
 	}
 }

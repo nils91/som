@@ -9,6 +9,7 @@ import java.util.List;
 public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneable {
 	private List<Integer> values;
 	private List<String> replacingDirectives;
+	private String runningDirectiveName="i";
 	public void setValues(List<Integer> values) {
 		this.values = values;
 	}
@@ -92,7 +93,11 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 
 	@Override
 	public String getRunningDirectiveName() {
-		// TODO Auto-generated method stub
-		return "i";
+		return runningDirectiveName;
+	}
+
+	@Override
+	public void setRunningDirectiveName(String name) {
+		runningDirectiveName=name;
 	}
 }

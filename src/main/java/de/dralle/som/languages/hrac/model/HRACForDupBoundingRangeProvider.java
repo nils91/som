@@ -16,9 +16,16 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	// down or up. for[1:2] 1 would be start and 2 would be end, [2:1] would be
 	// start 2 and end 1
 	private boolean rangeStartBoundExclusive = false;
-	private boolean rangeEndBoundExclusive = false
+	private boolean rangeEndBoundExclusive = false;
+	private String runningDirectiveName="i"; //name of the running compiler directive to be injected into child loops
 
-	;
+	public String getRunningDirectiveName() {
+		return runningDirectiveName;
+	}
+
+	public void setRunningDirectiveName(String runningDirectiveName) {
+		this.runningDirectiveName = runningDirectiveName;
+	}
 
 	public boolean isRangeStartBoundExclusive() {
 		return rangeStartBoundExclusive;
@@ -162,8 +169,11 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	}
 
 	public String asCode() {
-		String s = rangeStartBoundExclusive ? "]" : "[";
-		;
+		String s="";
+		if(runningDirectiveName!=null) {
+			s="$"+runningDirectiveName+" = ";
+		}
+		s = rangeStartBoundExclusive ? "]" : "[";
 		if (rangeStartSpecial != null) {
 			s += "$" + rangeStartSpecial;
 		} else {

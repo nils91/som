@@ -386,7 +386,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 			hracForDup.setParent(this);
 			List<HRACModel> precompiledChildModels = hracForDup.precompileChilds(suffix,
-					localSymbolNameReplacementList);
+					localSymbolNameReplacementList);//precompile/resolve/expand loops
 			for (HRACModel hracModel : precompiledChildModels) {
 				for (HRACSymbol hracModel2 : hracModel.symbols) {
 					symbols.add(hracModel2);

@@ -98,20 +98,7 @@ offset_specify_values
 	(
 		directive_access EQ
 	)?
-	(
-		B_OPEN
-		| B_CLOSE
-	)
-	(
-		offset_specify_number? COLON offset_specify_number?
-	)
-	(
-		SEMICOLON offset_specify_number
-	)?
-	(
-		B_CLOSE
-		| B_OPEN
-	)
+	(offset_specify_range|offset_specify_set)
 ;
 
 offset_specify_range

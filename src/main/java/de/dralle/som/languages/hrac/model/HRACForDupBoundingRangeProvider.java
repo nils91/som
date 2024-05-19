@@ -169,8 +169,11 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	}
 
 	public String asCode() {
-		String s = rangeStartBoundExclusive ? "]" : "[";
-		;
+		String s="";
+		if(runningDirectiveName!=null) {
+			s="$"+runningDirectiveName+" = ";
+		}
+		s = rangeStartBoundExclusive ? "]" : "[";
 		if (rangeStartSpecial != null) {
 			s += "$" + rangeStartSpecial;
 		} else {

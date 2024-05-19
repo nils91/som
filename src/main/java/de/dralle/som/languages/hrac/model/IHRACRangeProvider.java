@@ -4,4 +4,6 @@ public interface IHRACRangeProvider extends Cloneable{
 	public String getRunningDirectiveName();
 	public void setRunningDirectiveName(String name);
 	int[] getRange(HRACModel model);
+	public IHRACRangeProvider clone();
+	public String asCode();
 }

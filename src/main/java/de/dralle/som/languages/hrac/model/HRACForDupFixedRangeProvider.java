@@ -71,7 +71,11 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 	}
 
 	public String asCode() {
-		String s = "{";
+		String s="";
+		if(runningDirectiveName!=null) {
+			s="$"+runningDirectiveName+" = ";
+		}
+		s += "{";
 		for (int i = 0; i < values.size(); i++) {
 			
 			if(replacingDirectives.get(i)!=null) {

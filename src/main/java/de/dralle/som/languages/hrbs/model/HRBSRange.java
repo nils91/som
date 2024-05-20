@@ -3,6 +3,27 @@ package de.dralle.som.languages.hrbs.model;
 public class HRBSRange implements Cloneable{
 	private HRBSMemoryAddressOffset start;
 	private HRBSMemoryAddressOffset end;
+	private HRBSMemoryAddressOffset step;
+	public HRBSMemoryAddressOffset getStep() {
+		return step;
+	}
+	public void setStep(HRBSMemoryAddressOffset step) {
+		this.step = step;
+	}
+	public boolean isStartBoundExclusive() {
+		return startBoundExclusive;
+	}
+	public void setStartBoundExclusive(boolean startBoundExclusive) {
+		this.startBoundExclusive = startBoundExclusive;
+	}
+	public boolean isEndBoundExclusive() {
+		return endBoundExclusive;
+	}
+	public void setEndBoundExclusive(boolean endBoundExclusive) {
+		this.endBoundExclusive = endBoundExclusive;
+	}
+	private boolean startBoundExclusive=false;
+	private boolean endBoundExclusive=false;
 	public HRBSMemoryAddressOffset getStart() {
 		return start;
 	}
@@ -70,4 +91,5 @@ public class HRBSRange implements Cloneable{
 	public void setEnd(HRBSMemoryAddressOffset end) {
 		this.end = end;
 	}
+
 }

@@ -524,8 +524,8 @@ public class HRBSModel implements ISetN, IHeap {
 		return newc;
 	}
 
-	private static HRBSRange convertHRACRange2HRBS(IHRACRangeProvider range) {
-		HRBSRange newr = new HRBSRange();
+	private static HRBSBoundsRange convertHRACRange2HRBS(IHRACRangeProvider range) {
+		HRBSBoundsRange newr = new HRBSBoundsRange();
 		if(range instanceof HRACForDupBoundingRangeProvider) {
 			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
 			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart(), brange.getRangeStartSpecial()));
@@ -664,7 +664,7 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		HRACForDup fd = null;
 		if (c.getRange() != null) {// convert range
-			HRBSRange range = c.getRange();
+			HRBSBoundsRange range = c.getRange();
 			HRACForDupBoundingRangeProvider convRange = new HRACForDupBoundingRangeProvider();
 			convRange.setRangeStart(range.getStart().getOffset());
 			convRange.setRangeEnd(range.getEnd().getOffset());

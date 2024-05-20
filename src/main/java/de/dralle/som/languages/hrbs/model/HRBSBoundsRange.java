@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrbs.model;
 
-public class HRBSRange implements Cloneable{
+public class HRBSBoundsRange implements Cloneable{
 	private HRBSMemoryAddressOffset start;
 	private HRBSMemoryAddressOffset end;
 	private HRBSMemoryAddressOffset step;
@@ -46,24 +46,27 @@ public class HRBSRange implements Cloneable{
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof HRBSRange) {
+		if(obj instanceof HRBSBoundsRange) {
 			boolean eq=true;
-			HRBSRange other=(HRBSRange) obj;
+			HRBSBoundsRange other=(HRBSBoundsRange) obj;
 			if(eq&&start!=null) {
 				eq= start.equals(other.getStart());
 			}
 			if(eq&&end!=null) {
 				eq=end.equals(other.end);
 			}
+			if(eq&&step!=null) {
+				eq=step.equals(other.step);
+			}
 			return eq;
 		}
 		return super.equals(obj);
 	}
 	@Override
-	public HRBSRange clone()  {
-		HRBSRange c = null;
+	public HRBSBoundsRange clone()  {
+		HRBSBoundsRange c = null;
 		try {
-			c = (HRBSRange) super.clone();
+			c = (HRBSBoundsRange) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,6 +76,9 @@ public class HRBSRange implements Cloneable{
 		}
 		if(end!=null) {
 			c.end=end.clone();
+		}
+		if(step!=null) {
+			c.step=step.clone();
 		}
 		return c;
 	}
@@ -85,6 +91,16 @@ public class HRBSRange implements Cloneable{
 		rstr=rstr.substring(0, rstr.length()-1)+":";
 		if(end!=null) {
 			rstr+=end.toString().substring(1);
+		}
+		if(step!=null) {
+			rstr=rstr.substring(0, rstr.length()-1)+";";
+			rstr+=";"+step.toString().substring(1);
+		}
+		if(startBoundExclusive) {
+			rstr="]"+rstr.substring(1);
+		}
+		if(endBoundExclusive) {
+			rstr=rstr.substring(0, rstr.length()-1)+"[";
 		}
 		return rstr;
 	}

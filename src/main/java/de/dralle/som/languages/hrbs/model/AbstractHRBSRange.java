@@ -20,15 +20,15 @@ public class AbstractHRBSRange implements Cloneable {
 	}
 
 	@Override
-	public Object clone() {
+	public AbstractHRBSRange clone() {
 		// TODO Auto-generated method stub
 		try {
-			return super.clone();
+			return (AbstractHRBSRange) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return runningDirectiveName;
+		return null;
 	}
 
 	@Override

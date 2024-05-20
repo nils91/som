@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrbs.model;
 
-public class HRBSBoundsRange implements Cloneable{
+public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	private HRBSMemoryAddressOffset start;
 	private HRBSMemoryAddressOffset end;
 	private HRBSMemoryAddressOffset step;
@@ -35,19 +35,28 @@ public class HRBSBoundsRange implements Cloneable{
 	}
 	@Override
 	public int hashCode() {
-		int n = 0;
+		int n = super.hashCode();
 		if(start!=null) {
 			n+=start.hashCode();
 		}
 		if(end!=null) {
 			n*=end.hashCode();
 		}
+		if(step!=null) {
+			n/=step.hashCode();
+		}
+		if(startBoundExclusive) {
+			n-=31;
+		}
+		if(endBoundExclusive) {
+			n-=97;
+		}
 		return n;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof HRBSBoundsRange) {
-			boolean eq=true;
+			boolean eq=super.equals(obj);
 			HRBSBoundsRange other=(HRBSBoundsRange) obj;
 			if(eq&&start!=null) {
 				eq= start.equals(other.getStart());
@@ -65,12 +74,7 @@ public class HRBSBoundsRange implements Cloneable{
 	@Override
 	public HRBSBoundsRange clone()  {
 		HRBSBoundsRange c = null;
-		try {
-			c = (HRBSBoundsRange) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		c = (HRBSBoundsRange) super.clone();
 		if(start!=null) {
 			c.start=start.clone();
 		}
@@ -84,7 +88,7 @@ public class HRBSBoundsRange implements Cloneable{
 	}
 	@Override
 	public String toString() {
-		String rstr = "";
+		String rstr = super.toString();
 		if(start!=null) {
 			rstr+=start.toString();
 		}

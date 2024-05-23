@@ -9,13 +9,14 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_r
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_setContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_valuesContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
-import de.dralle.som.languages.hrbs.model.HRBSRange;
+import de.dralle.som.languages.hrbs.model.AbstractHRBSRange;
+import de.dralle.som.languages.hrbs.model.HRBSBoundsRange;
 
-public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<HRBSRange> {
+public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<AbstractHRBSRange> {
 
 	@Override
-	public HRBSRange visitOffset_specify_range(Offset_specify_rangeContext ctx) {
-		HRBSRange r = new HRBSRange();
+	public AbstractHRBSRange visitOffset_specify_range(Offset_specify_rangeContext ctx) {
+		HRBSBoundsRange r = new HRBSBoundsRange();
 		boolean rangeStartExclusive = false;
 		if (ctx.children.get(0) == ctx.B_OPEN(0))// lower inclusive
 		{
@@ -87,13 +88,13 @@ public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<HRBSRange> {
 	}
 
 	@Override
-	public HRBSRange visitDirective_access(Directive_accessContext ctx) {
+	public AbstractHRBSRange visitDirective_access(Directive_accessContext ctx) {
 		// TODO Auto-generated method stub
 		return super.visitDirective_access(ctx);
 	}
 
 	@Override
-	public HRBSRange visitOffset_specify_values(Offset_specify_valuesContext ctx) {
+	public AbstractHRBSRange visitOffset_specify_values(Offset_specify_valuesContext ctx) {
 		if (ctx.offset_specify_range() != null) {
 			return ctx.offset_specify_range().accept(this);
 		}
@@ -101,7 +102,7 @@ public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<HRBSRange> {
 	}
 
 	@Override
-	public HRBSRange visitOffset_specify_set(Offset_specify_setContext ctx) {
+	public AbstractHRBSRange visitOffset_specify_set(Offset_specify_setContext ctx) {
 		// TODO Auto-generated method stub
 		return super.visitOffset_specify_set(ctx);
 	}

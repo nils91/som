@@ -111,7 +111,7 @@ directive_name
 
 command
 :
-	commad_label? NEWLINE? offset_specify_range? custom_command_call_no_param
+	commad_label? NEWLINE? offset_specify_values? custom_command_call_no_param
 	(
 		(
 			target_argument COMMA
@@ -138,10 +138,42 @@ offset_specify_number
 	)
 ;
 
+offset_specify_values
+:
+	(
+		directive_access EQ
+	)?
+	(offset_specify_range|offset_specify_set)
+;
+
 offset_specify_range
 :
-	B_OPEN offset_specify_number COLON offset_specify_number B_CLOSE
+	(
+		B_OPEN
+		| B_CLOSE
+	)
+	(
+		offset_specify_number? COLON offset_specify_number?
+	)
+	(
+		SEMICOLON offset_specify_number
+	)?
+	(
+		B_CLOSE
+		| B_OPEN
+	)
 ;
+
+offset_specify_set
+:
+	C_OPEN
+	(
+		(
+			offset_specify_number COMMA
+		)* offset_specify_number
+	)? C_CLOSE
+;
+
 
 custom_command_call_no_param
 :

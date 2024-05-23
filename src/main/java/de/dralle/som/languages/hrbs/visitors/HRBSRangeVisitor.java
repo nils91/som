@@ -5,15 +5,17 @@ import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.visitors.HRACOSVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_numberContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_rangeContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_setContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_valuesContext;
 import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
+import de.dralle.som.languages.hrbs.model.HRBSValueRange;
 import de.dralle.som.languages.hrbs.model.AbstractHRBSRange;
 import de.dralle.som.languages.hrbs.model.HRBSBoundsRange;
 
 public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<AbstractHRBSRange> {
-
+private AbstractHRBSRange range=null;
 	@Override
 	public AbstractHRBSRange visitOffset_specify_range(Offset_specify_rangeContext ctx) {
 		HRBSBoundsRange r = new HRBSBoundsRange();
@@ -84,27 +86,37 @@ public class HRBSRangeVisitor extends HRBSGrammarBaseVisitor<AbstractHRBSRange> 
 		r.setEnd(end);
 		r.setStart(start);
 		r.setStep(step);
+		range=r;
 		return r;
 	}
 
 	@Override
 	public AbstractHRBSRange visitDirective_access(Directive_accessContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitDirective_access(ctx);
-	}
+		range.setRunningDirectiveName(ctx.directive_name().getText());
+		return range;}
 
 	@Override
 	public AbstractHRBSRange visitOffset_specify_values(Offset_specify_valuesContext ctx) {
 		if (ctx.offset_specify_range() != null) {
-			return ctx.offset_specify_range().accept(this);
+			ctx.offset_specify_range().accept(this);
 		}
-		return null;
+		if(ctx.offset_specify_set()!=null) {
+			range=ctx.offset_specify_set().accept(this);
+			
+		}
+		if(ctx.directive_access()!=null) {
+			ctx.directive_access().accept(this);
+		}
+		return range;
 	}
 
 	@Override
 	public AbstractHRBSRange visitOffset_specify_set(Offset_specify_setContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitOffset_specify_set(ctx);
+		HRBSValueRange r = new HRBSValueRange();
+		for (Offset_specify_numberContext iterable_element : ctx.offset_specify_number()) {
+			r.addValue(iterable_element.accept(new HRBSMemoryAddressOffsetSpecifyVisitor()));
+		}
+		return r;
 	}
 
 }

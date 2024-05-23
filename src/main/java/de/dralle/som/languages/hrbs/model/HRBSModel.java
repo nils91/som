@@ -27,6 +27,7 @@ import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
+import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -664,12 +665,32 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		HRACForDup fd = null;
 		if (c.getRange() != null) {// convert range
-			HRBSBoundsRange range = c.getRange();
-			HRACForDupBoundingRangeProvider convRange = new HRACForDupBoundingRangeProvider();
-			convRange.setRangeStart(range.getStart().getOffset());
-			convRange.setRangeEnd(range.getEnd().getOffset());
-			convRange.setRangeStartSpecial(range.getStart().getDirectiveAccessName());
-			convRange.setRangeEndSpecial(range.getEnd().getDirectiveAccessName());
+			AbstractHRBSRange range = c.getRange();
+			IHRACRangeProvider convRange = null;
+			if(range instanceof HRBSValueRange) {
+				convRange=new HRACForDupFixedRangeProvider();
+				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
+				for (HRBSMemoryAddressOffset hrbsCommand : ((HRBSValueRange)range).getValues() ){
+					if(hrbsCommand.getDirectiveAccessName()!=null) {
+						((HRACForDupFixedRangeProvider)convRange).addReplacingDirective(hrbsCommand.getDirectiveAccessName());
+					}else {
+						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.getOffset());
+					}
+				}
+			}else if(range instanceof HRBSBoundsRange) {
+				convRange=new HRACForDupBoundingRangeProvider();
+				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
+				HRBSBoundsRange brange = (HRBSBoundsRange)range;
+				HRACForDupBoundingRangeProvider convBRange = (HRACForDupBoundingRangeProvider)convRange;
+				convBRange.setRangeStart(brange.getStart().getOffset());
+				convBRange.setRangeEnd(brange.getEnd().getOffset());
+				convBRange.setRangeStartSpecial(brange.getStart().getDirectiveAccessName());
+				convBRange.setRangeEndSpecial(brange.getEnd().getDirectiveAccessName());
+				convBRange.setStepSize(brange.getStep().getOffset());
+				convBRange.setStepSizeSpecial(brange.getStep().getDirectiveAccessName());
+				convBRange.setRangeEndBoundExclusive(brange.isEndBoundExclusive());
+				convBRange.setRangeStartBoundExclusive(brange.isStartBoundExclusive());
+			}			
 			fd = new HRACForDup();
 			fd.setRange(convRange);
 		}

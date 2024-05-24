@@ -61,6 +61,62 @@ int_or_symbol
 	) offset_specify?
 ;
 
+signed_integer
+:
+	integer
+	| neg_integer
+;
+
+primary_expr
+:
+	additive_expr
+;
+
+additive_expr
+:
+	multiplicative_expr
+	|
+		additive_expr
+		(
+			PLUS
+			| DASH
+		) multiplicative_expr
+;
+
+multiplicative_expr
+:
+	power_expr
+	| multiplicative_expr
+	(
+		MUL
+		| DIV
+		| MOD
+	) power_expr
+;
+
+power_expr
+:
+	factorial_expr
+	| factorial_expr CARET power_expr
+;
+
+factorial_expr
+:
+	absolute_expr EXCL?
+;
+
+absolute_expr
+:
+	par_expr
+	| PIPE par_expr PIPE
+;
+
+par_expr
+:
+	signed_integer
+	| P_OPEN primary_expr P_CLOSE
+;
+
 offset_specify
 :
 	B_OPEN
@@ -275,7 +331,7 @@ MOD
 	'%'
 ;
 
-DACH
+CARET
 :
 	'^'
 ;

@@ -39,7 +39,7 @@ public class HRBSCommand implements Cloneable {
 		return clone;
 	}
 
-	private HRBSRange range; // if this command is to be executed multiple times
+	private AbstractHRBSRange range; // if this command is to be executed multiple times
 	private String label;
 	private String cllInstId;
 
@@ -138,11 +138,11 @@ public class HRBSCommand implements Cloneable {
 		this.labelType = labelType;
 	}
 
-	public HRBSRange getRange() {
+	public AbstractHRBSRange getRange() {
 		return range;
 	}
 
-	public void setRange(HRBSRange range) {
+	public void setRange(AbstractHRBSRange range) {
 		this.range = range;
 	}
 

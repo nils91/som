@@ -40,7 +40,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		this.cmd = cmd;
 	}
 
-	private HRACForDupBoundingRangeProvider range = null;
+	private IHRACRangeProvider range = null;
 	private HRACModel model = null;
 
 	@Override
@@ -59,7 +59,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			clone.model=model.clone();
 		}
 		if(range!=null) {
-			clone.range=(HRACForDupBoundingRangeProvider) range.clone();
+			clone.range= range.clone();
 		}
 		return clone;
 	}
@@ -139,11 +139,11 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		return "HRACForDup [asCode()=" + asCode() + "]";
 	}
 
-	public HRACForDupBoundingRangeProvider getRange() {
+	public IHRACRangeProvider getRange() {
 		return range;
 	}
 
-	public void setRange(HRACForDupBoundingRangeProvider range) {
+	public void setRange(IHRACRangeProvider range) {
 		this.range = range;
 	}
 
@@ -224,7 +224,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			}if(model!=null) {
 				for (int i = 0; i < rng.length; i++) {
 					int j = rng[i];
-					model.addAddDirective("i", j);
+					model.addAddDirective(range.getRunningDirectiveName(), j);
 					cnt+=model.getCommandCount(n);
 				}
 			}

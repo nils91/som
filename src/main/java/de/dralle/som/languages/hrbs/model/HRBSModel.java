@@ -27,10 +27,12 @@ import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
+import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -439,8 +441,8 @@ public class HRBSModel implements ISetN, IHeap {
 		localizeCommandLabels(lclCommands, lclSymbolNameMap, name, instanceId);
 		// iterate over all OTI (initialize once) commands and modify those that are
 		// derefs
-		List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> toRemove = new ArrayList();
-		List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> toAdd = new ArrayList();
+		List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> toRemove = new ArrayList<Entry<AbstractHRBSMemoryAddress, Boolean>>();
+		List<Entry<AbstractHRBSMemoryAddress, Boolean>> toAdd = new ArrayList<Entry<AbstractHRBSMemoryAddress, Boolean>>();
 
 		for (Entry<AbstractHRBSMemoryAddress, Boolean> otiListEntry : initOnceList) {
 			AbstractHRBSMemoryAddress tgtAdr = otiListEntry.getKey();
@@ -448,7 +450,7 @@ public class HRBSModel implements ISetN, IHeap {
 				AbstractHRBSMemoryAddress newTgt = resolveDeref(additionalSymbols, additionalCommands, tgtAdr,
 						dereffed);
 				toRemove.add(otiListEntry);
-				toAdd.add(new AbstractMap.SimpleEntry(newTgt, otiListEntry.getValue()));
+				toAdd.add(new AbstractMap.SimpleEntry<AbstractHRBSMemoryAddress, Boolean>(newTgt, otiListEntry.getValue()));
 			}
 		}
 		initOnceList.removeAll(toRemove);
@@ -523,10 +525,13 @@ public class HRBSModel implements ISetN, IHeap {
 		return newc;
 	}
 
-	private static HRBSRange convertHRACRange2HRBS(HRACForDupBoundingRangeProvider range) {
-		HRBSRange newr = new HRBSRange();
-		newr.setStart(new HRBSMemoryAddressOffset(range.getRangeStart(), range.getRangeStartSpecial()));
-		newr.setEnd(new HRBSMemoryAddressOffset(range.getRangeEnd(), range.getRangeEndSpecial()));
+	private static HRBSBoundsRange convertHRACRange2HRBS(IHRACRangeProvider range) {
+		HRBSBoundsRange newr = new HRBSBoundsRange();
+		if(range instanceof HRACForDupBoundingRangeProvider) {
+			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
+			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart(), brange.getRangeStartSpecial()));
+			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd(), brange.getRangeEndSpecial()));
+		}		
 		return newr;
 	}
 
@@ -660,12 +665,32 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		HRACForDup fd = null;
 		if (c.getRange() != null) {// convert range
-			HRBSRange range = c.getRange();
-			HRACForDupBoundingRangeProvider convRange = new HRACForDupBoundingRangeProvider();
-			convRange.setRangeStart(range.getStart().getOffset());
-			convRange.setRangeEnd(range.getEnd().getOffset());
-			convRange.setRangeStartSpecial(range.getStart().getDirectiveAccessName());
-			convRange.setRangeEndSpecial(range.getEnd().getDirectiveAccessName());
+			AbstractHRBSRange range = c.getRange();
+			IHRACRangeProvider convRange = null;
+			if(range instanceof HRBSValueRange) {
+				convRange=new HRACForDupFixedRangeProvider();
+				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
+				for (HRBSMemoryAddressOffset hrbsCommand : ((HRBSValueRange)range).getValues() ){
+					if(hrbsCommand.getDirectiveAccessName()!=null) {
+						((HRACForDupFixedRangeProvider)convRange).addReplacingDirective(hrbsCommand.getDirectiveAccessName());
+					}else {
+						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.getOffset());
+					}
+				}
+			}else if(range instanceof HRBSBoundsRange) {
+				convRange=new HRACForDupBoundingRangeProvider();
+				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
+				HRBSBoundsRange brange = (HRBSBoundsRange)range;
+				HRACForDupBoundingRangeProvider convBRange = (HRACForDupBoundingRangeProvider)convRange;
+				convBRange.setRangeStart(brange.getStart().getOffset());
+				convBRange.setRangeEnd(brange.getEnd().getOffset());
+				convBRange.setRangeStartSpecial(brange.getStart().getDirectiveAccessName());
+				convBRange.setRangeEndSpecial(brange.getEnd().getDirectiveAccessName());
+				convBRange.setStepSize(brange.getStep().getOffset());
+				convBRange.setStepSizeSpecial(brange.getStep().getDirectiveAccessName());
+				convBRange.setRangeEndBoundExclusive(brange.isEndBoundExclusive());
+				convBRange.setRangeStartBoundExclusive(brange.isStartBoundExclusive());
+			}			
 			fd = new HRACForDup();
 			fd.setRange(convRange);
 		}
@@ -765,24 +790,6 @@ public class HRBSModel implements ISetN, IHeap {
 		return retMap;
 	}
 
-	/**
-	 * Converts the HRBS command to HRBS. Returns the final command, does not add it
-	 * to the HRAC model.
-	 * 
-	 * @param c
-	 * @param parentCmdName
-	 * @param cmdExecId
-	 * @param params
-	 * @param symbolNameReplacementMap
-	 * @param m
-	 * @param additionalCommands
-	 * @return
-	 */
-	private HRACCommand convertNAWCommand(HRBSCommand c, String parentCmdName, String cmdExecId,
-			Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
-		return convertStandardCommands(c, Opcode.NAW, parentCmdName, cmdExecId, symbolNameReplacementMap, m,
-				additionalCommands);
-	}
 
 	/**
 	 * Converts the HRBS command to HRBS. Returns the final command, does not add it

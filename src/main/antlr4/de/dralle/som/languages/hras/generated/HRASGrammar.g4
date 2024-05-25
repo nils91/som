@@ -27,7 +27,7 @@ directive
 	SEMICOLON
 	(
 		(
-			D_N EQ integer
+			D_N EQ primary_expr
 		)
 		|
 		(
@@ -56,7 +56,7 @@ command
 int_or_symbol
 :
 	(
-		integer
+		primary_expr
 		| SYMBOL
 	) offset_specify?
 ;
@@ -121,8 +121,7 @@ offset_specify
 :
 	B_OPEN
 	(
-		neg_integer
-		| integer
+		primary_expr
 	) B_CLOSE
 ;
 

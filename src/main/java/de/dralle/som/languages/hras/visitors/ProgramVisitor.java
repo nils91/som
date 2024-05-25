@@ -72,8 +72,8 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 			} else if (ctx.CONT() != null) {
 				model.setNextCommandAddress(address);
 			}
-		} else if (ctx.integer() != null) {
-			model.setN(ctx.integer().accept(new HRASNumberVisitor()));
+		} else if (ctx.primary_expr() != null) {
+			model.setN(ctx.primary_expr().accept(new ExpressionVisitor()));
 		}
 		return model;
 	}

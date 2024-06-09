@@ -68,9 +68,9 @@ public class HRASModel implements ISetN {
 		this.startAddressExplicit = startAddressExplicit;
 	}
 
-	private Map<String, SymbolHRASMemoryAddress> symbols;
+	private Map<String, AbstractHRASMemoryAddress> symbols;
 
-	public Map<String, SymbolHRASMemoryAddress> getSymbols() {
+	public Map<String, AbstractHRASMemoryAddress> getSymbols() {
 		return symbols;
 	}
 
@@ -94,11 +94,11 @@ public class HRASModel implements ISetN {
 		return commands.size();
 	}
 
-	public void addSymbol(String name, SymbolHRASMemoryAddress value) {
+	public void addSymbol(String name, AbstractHRASMemoryAddress abstractHRASMemoryAddress) {
 		if (symbols == null) {
 			symbols = new LinkedHashMap<>();
 		}
-		symbols.put(name, value);
+		symbols.put(name, abstractHRASMemoryAddress);
 	}
 
 	public AbstractHRASMemoryAddress addCommand(HRASCommand c) {
@@ -129,7 +129,7 @@ public class HRASModel implements ISetN {
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		SymbolHRASMemoryAddress targetAddress = null;
+		AbstractHRASMemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
 		}
@@ -158,7 +158,7 @@ public class HRASModel implements ISetN {
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, SymbolHRASMemoryAddress> symbol : symbols.entrySet()) {
+		for (Entry<String, AbstractHRASMemoryAddress> symbol : symbols.entrySet()) {
 			tmp.add(String.format("symbol %s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
 		}
 		return tmp;

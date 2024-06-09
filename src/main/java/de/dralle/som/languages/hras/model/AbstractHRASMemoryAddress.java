@@ -14,19 +14,19 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 	}
 
 
-	public Integer getAddressOffset() {
+	public AbstractExpressionNode getAddressOffset() {
 		return addressOffset;
 	}
 
 	public void setAddressOffset(Integer addressOffset) {
-		this.addressOffset = addressOffset;
+		this.addressOffset = new IntegerNode(addressOffset);
 	}
 
-	private Integer addressOffset;
+	private AbstractExpressionNode addressOffset;
 
 	public int resolve(HRASModel model) {
 		if(addressOffset!=null) {
-			return addressOffset.intValue();
+			return addressOffset.calculateNumericalValue();
 		}
 		return 0;
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 			e.printStackTrace();
 		}
 		if(addressOffset!=null) { 
-			copy.addressOffset=addressOffset.intValue();
+			copy.addressOffset=addressOffset.clone();
 		}		
 		return copy;
 	}
@@ -75,6 +75,11 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 		if(addressOffset!=null) {
 			return "["+addressOffset+"]";}
 		return "";
+	}
+
+
+	public void setAddressOffset(AbstractExpressionNode accept) {
+		this.addressOffset=accept;
 	}
 
 	

@@ -40,10 +40,12 @@ public class HRASModel implements ISetN {
 		this.nextCommandAddress = nextCommandAddress;
 	}
 
-	private int n;
+	private AbstractExpressionNode n; // This can either be a integer (wrapped in the IntegerNode class) or an entire
+										// expression tree. Either way it would have a definite value, use
+										// calculateNumericalValue for that.
 
-	public void setN(int n) {
-		this.n = n;
+	public void setN(AbstractExpressionNode abstractExpressionNode) {
+		this.n = abstractExpressionNode;
 	}
 
 	public void setStartAdress(SymbolHRASMemoryAddress startAdress) {
@@ -139,7 +141,7 @@ public class HRASModel implements ISetN {
 	}
 
 	private int getCommandSize() {
-		return 1 + n;
+		return 1 + n.calculateNumericalValue();
 	}
 
 	private String getNDirective() {
@@ -211,12 +213,12 @@ public class HRASModel implements ISetN {
 
 	@Override
 	public int getN() {
-		return n;
+		return n.calculateNumericalValue();
 	}
 
 	public HRAVModel compileToHRAV() {
 		HRAVModel hrav = new HRAVModel();
-		hrav.setN(n);
+		hrav.setN(n.calculateNumericalValue());
 		if (startAdress != null) {
 			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
@@ -279,5 +281,11 @@ public class HRASModel implements ISetN {
 
 	public Integer getSymbolCount() {
 		return symbols.size();
+	}
+
+	@Override
+	public void setN(int n) {
+		this.n = new IntegerNode(n);
+
 	}
 }

@@ -4,7 +4,9 @@
 package de.dralle.som.languages.hrac.model;
 
 import de.dralle.som.Opcode;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
+import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
 /**
  * @author Nils
@@ -77,6 +79,12 @@ public class HRACCommand implements Cloneable{
 
 	public HRACCommand(HRASCommand val) {
 		op=val.getOp();
-		target=new NamedHRACMemoryAddress(val.getAddress().getSymbol());
+		AbstractHRASMemoryAddress hrascaddress = val.getAddress();
+		if(hrascaddress instanceof SymbolHRASMemoryAddress) {
+			target=new NamedHRACMemoryAddress(((SymbolHRASMemoryAddress)val.getAddress()).getSymbol());
+		}else {
+			target=new NamedHRACMemoryAddress((val.getAddress()).toString());
+		}
+		
 	}
 }

@@ -15,6 +15,9 @@ import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
+import de.dralle.som.languages.hras.model.AbstractExpressionNode;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
@@ -128,13 +131,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	private List<HRACForDup> commands;
-	
-	private List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> initOnceAddresses=new ArrayList<Map.Entry<AbstractHRACMemoryAddress,Boolean>>();
-	
-	public void addInitOnceAdress(AbstractHRACMemoryAddress adr,boolean set) {
+
+	private List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> initOnceAddresses = new ArrayList<Map.Entry<AbstractHRACMemoryAddress, Boolean>>();
+
+	public void addInitOnceAdress(AbstractHRACMemoryAddress adr, boolean set) {
 		addInitOnceAdress(new AbstractMap.SimpleEntry<AbstractHRACMemoryAddress, Boolean>(adr, set));
 	}
-	
+
 	public void addInitOnceAdress(Map.Entry<AbstractHRACMemoryAddress, Boolean> ent) {
 		initOnceAddresses.add(ent);
 	}
@@ -294,7 +297,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			sb.append(System.lineSeparator());
 		}
 		for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : initOnceAddresses) {
-			sb.append((  hracForDup.getValue()?"setonce":"clearonce")+" "+hracForDup.getKey());
+			sb.append((hracForDup.getValue() ? "setonce" : "clearonce") + " " + hracForDup.getKey());
 		}
 		for (String symbolString : getCommandssAsStrings()) {
 			sb.append(symbolString);
@@ -386,7 +389,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 			hracForDup.setParent(this);
 			List<HRACModel> precompiledChildModels = hracForDup.precompileChilds(suffix,
-					localSymbolNameReplacementList);//precompile/resolve/expand loops
+					localSymbolNameReplacementList);// precompile/resolve/expand loops
 			for (HRACModel hracModel : precompiledChildModels) {
 				for (HRACSymbol hracModel2 : hracModel.symbols) {
 					symbols.add(hracModel2);
@@ -438,8 +441,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 						adr = getDirectiveAsInt(tgt.getOffsetSpecialnName());
 					}
 					adr += ((FixedHRACMemoryAddress) tgt).getAddress();
-					if(adr>nxtSymbolAddress) {
-						nxtSymbolAddress=adr+1;
+					if (adr > nxtSymbolAddress) {
+						nxtSymbolAddress = adr + 1;
 					}
 				}
 			}
@@ -458,12 +461,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				SymbolHRASMemoryAddress tgHras = new SymbolHRASMemoryAddress();
 				if (tgt instanceof NamedHRACMemoryAddress) {
 					tgHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
-				}else if(tgt instanceof FixedHRACMemoryAddress){
-					int tgtAdr=((FixedHRACMemoryAddress) tgt).getAddress();
-					if(tgtAdr<0) {
-						System.out.println("Warning: (HRAC -> HRAS) Symbol "+s.getName()+" points to negative address.");
+				} else if (tgt instanceof FixedHRACMemoryAddress) {
+					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress();
+					if (tgtAdr < 0) {
+						System.out.println(
+								"Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
 					}
-					tgHras.setSymbol(tgtAdr+"");					
+					tgHras.setSymbol(tgtAdr + "");
 				}
 				tgHras.setAddressOffset(tgt.getOffset());
 				m.addSymbol(s.getName(), tgHras);
@@ -472,22 +476,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (var hracForDup : initOnceAddresses) {
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
 			newmadr.setAddressOffset(hracForDup.getKey().getOffset());
-			if(hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
-				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress)hracForDup.getKey();
+			if (hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
+				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) hracForDup.getKey();
 				newmadr.setSymbol(f.getAddress());
-			}else if(hracForDup.getKey() instanceof NamedHRACMemoryAddress) {
-				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress)hracForDup.getKey();
+			} else if (hracForDup.getKey() instanceof NamedHRACMemoryAddress) {
+				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress) hracForDup.getKey();
 				newmadr.setSymbol(na.getName());
 			}
 			m.addInitOnceValue(newmadr, hracForDup.getValue());
 		}
-		m.addSymbol(HRAC_HEAP_START_MARKER, new SymbolHRASMemoryAddress(toc.getHeapStartAddress(n)));// place HRAC heap start
-																								// marker
+		m.addSymbol(HRAC_HEAP_START_MARKER, new SymbolHRASMemoryAddress(toc.getHeapStartAddress(n)));// place HRAC heap
+																										// start
+		// marker
 
 		HRASCommand clrAdrEval = new HRASCommand();
 		clrAdrEval.setOp(Opcode.NAW);
 		clrAdrEval.setAddress(new SymbolHRASMemoryAddress("ADR_EVAL"));
-		SymbolHRASMemoryAddress assignedAddress = m.addCommand(clrAdrEval);
+		AbstractHRASMemoryAddress assignedAddress = m.addCommand(clrAdrEval);
 		m.addSymbol("HRAS_PROGRAM_START", assignedAddress);
 		int i = 0;
 		for (HRACForDup cf : toc.commands) {
@@ -501,9 +506,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					address = new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) hracCmdTgt).getName());
 				}
 				if (hracCmdTgt instanceof FixedHRACMemoryAddress) {
-					int tgtAdr=((FixedHRACMemoryAddress) hracCmdTgt).getAddress();
-					if(tgtAdr<0) {
-						System.out.println("Warning: (HRAC -> HRAS) Command "+cf+" points to negative address.");
+					int tgtAdr = ((FixedHRACMemoryAddress) hracCmdTgt).getAddress();
+					if (tgtAdr < 0) {
+						System.out.println("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
 					}
 					address = new SymbolHRASMemoryAddress(tgtAdr);
 				}
@@ -532,39 +537,43 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		HRACModel newm = new HRACModel();
 		newm.setMinimumN(m.getN());
 		Map<String, Integer> builtinsToCheck = Util.getBuiltinAdresses();
-		for (Entry<String, SymbolHRASMemoryAddress> s : m.getSymbols().entrySet()) {
+		for (Entry<String, AbstractHRASMemoryAddress> s : m.getSymbols().entrySet()) {
 			if (!builtinsToCheck.containsKey(s.getKey())) {
 				HRACSymbol news = new HRACSymbol(s.getKey());
 				news.setBitCnt(1);
 				newm.addSymbol(news);
 			}
 		}
-		List<Entry<SymbolHRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
-		for (Entry<SymbolHRASMemoryAddress, Boolean> entry : otiAddresses) {
-			SymbolHRASMemoryAddress hrasAdr = entry.getKey();
-			Integer hrasOfs = hrasAdr.getAddressOffset();
-			String hrasName = hrasAdr.getSymbol();
-			boolean added=false;
-			if(hrasOfs==null||hrasOfs.equals(0)) {
-				int adr=-1;
+		List<Entry<AbstractHRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
+		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : otiAddresses) {
+			AbstractHRASMemoryAddress hrasAdr = entry.getKey();
+			AbstractExpressionNode hrasOfs = hrasAdr.getAddressOffset();
+			String hrasName = null;
+			if(hrasAdr instanceof SymbolHRASMemoryAddress) {
+				hrasName = ((SymbolHRASMemoryAddress)hrasAdr).getSymbol();
+			}else if(hrasAdr instanceof ExpressionHRASMemoryAddress) {
+				hrasName = ((ExpressionHRASMemoryAddress)hrasAdr).getexpression().calculateNumericalValue()+"";//TODO: hrac does not have expressions (yet) so this is the solution for now
+			}
+			boolean added = false;
+			if (hrasOfs == null || hrasOfs.equals(0)) {
+				int adr = -1;
 				try {
-					adr=Util.decodeInt(hrasName);//try if its a reference to a fixed address
-				newm.addInitOnceAdress(new FixedHRACMemoryAddress(adr), entry.getValue());	
-				added=true;
-				}
-				catch(Exception e) {
-					
+					adr = Util.decodeInt(hrasName);// try if its a reference to a fixed address
+					newm.addInitOnceAdress(new FixedHRACMemoryAddress(adr), entry.getValue());
+					added = true;
+				} catch (Exception e) {
+
 				}
 			}
-			if(!added) {
+			if (!added) {
 				NamedHRACMemoryAddress otiadr = new NamedHRACMemoryAddress(hrasName);
-				otiadr.setOffset(hrasOfs);
+				otiadr.setOffset(hrasOfs.calculateNumericalValue());
 				newm.addInitOnceAdress(otiadr, entry.getValue());
 			}
 		}
 		int i = 0;
-		for (Entry<SymbolHRASMemoryAddress, HRASCommand> entry : m.getCommands().entrySet()) {
-			SymbolHRASMemoryAddress key = entry.getKey();
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> entry : m.getCommands().entrySet()) {
+			AbstractHRASMemoryAddress key = entry.getKey();
 			HRASCommand val = entry.getValue();
 			boolean omit = false;
 			if (i++ == 0) {// check first command

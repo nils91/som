@@ -9,6 +9,7 @@ import de.dralle.som.languages.hras.generated.HRASGrammarParser.LineContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.OtiContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.ProgramContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Symbol_decContext;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
@@ -64,7 +65,7 @@ public class ProgramVisitor extends HRASGrammarBaseVisitor<HRASModel> {
 	@Override
 	public HRASModel visitDirective(DirectiveContext ctx) {
 		if (ctx.int_or_symbol() != null) {
-			SymbolHRASMemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
+			AbstractHRASMemoryAddress address = ctx.int_or_symbol().accept(new MemoryAddressVisitor());
 			if (ctx.START() != null) {
 				model.setStartAdress(address);
 				model.setStartAddressExplicit(true);

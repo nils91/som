@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hras.model;
 
-public abstract class ModuloExpression extends DualChildExpressionNode implements Cloneable {
+public class ModuloExpression extends DualChildExpressionNode implements Cloneable {
 
 	public ModuloExpression() {
 		super();

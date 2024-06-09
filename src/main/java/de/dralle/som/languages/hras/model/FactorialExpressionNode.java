@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hras.model;
 
-public abstract class FactorialExpressionNode extends SingleChildExpressionNode implements Cloneable {
+public class FactorialExpressionNode extends SingleChildExpressionNode implements Cloneable {
 
 	public FactorialExpressionNode() {
 		super();

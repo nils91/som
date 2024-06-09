@@ -30,14 +30,14 @@ public class HRASModel implements ISetN {
 		symbols = new LinkedHashMap<>();
 	}
 
-	private SymbolHRASMemoryAddress nextCommandAddress;
+	private AbstractHRASMemoryAddress nextCommandAddress;
 
-	public SymbolHRASMemoryAddress getNextCommandAddress() {
+	public AbstractHRASMemoryAddress getNextCommandAddress() {
 		return nextCommandAddress;
 	}
 
-	public void setNextCommandAddress(SymbolHRASMemoryAddress nextCommandAddress) {
-		this.nextCommandAddress = nextCommandAddress;
+	public void setNextCommandAddress(AbstractHRASMemoryAddress address) {
+		this.nextCommandAddress = address;
 	}
 
 	private AbstractExpressionNode n; // This can either be a integer (wrapped in the IntegerNode class) or an entire
@@ -48,13 +48,13 @@ public class HRASModel implements ISetN {
 		this.n = abstractExpressionNode;
 	}
 
-	public void setStartAdress(SymbolHRASMemoryAddress startAdress) {
-		this.startAdress = startAdress;
+	public void setStartAdress(AbstractHRASMemoryAddress address) {
+		this.startAdress = address;
 	}
 
-	private SymbolHRASMemoryAddress startAdress;
+	private AbstractHRASMemoryAddress startAdress;
 
-	public SymbolHRASMemoryAddress getStartAdress() {
+	public AbstractHRASMemoryAddress getStartAdress() {
 		return startAdress;
 	}
 
@@ -74,20 +74,20 @@ public class HRASModel implements ISetN {
 		return symbols;
 	}
 
-	public Map<SymbolHRASMemoryAddress, HRASCommand> getCommands() {
+	public Map<AbstractHRASMemoryAddress, HRASCommand> getCommands() {
 		return commands;
 	}
 
-	private Map<SymbolHRASMemoryAddress, HRASCommand> commands;
+	private Map<AbstractHRASMemoryAddress, HRASCommand> commands;
 
-	private List<Map.Entry<SymbolHRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<SymbolHRASMemoryAddress, Boolean>>();
+	private List<Map.Entry<AbstractHRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<AbstractHRASMemoryAddress, Boolean>>();
 
-	public List<Map.Entry<SymbolHRASMemoryAddress, Boolean>> getInitOnceList() {
+	public List<Entry<AbstractHRASMemoryAddress, Boolean>> getInitOnceList() {
 		return initOnceList;
 	}
 
-	public void addInitOnceValue(SymbolHRASMemoryAddress ma, boolean set) {
-		initOnceList.add(new AbstractMap.SimpleEntry<SymbolHRASMemoryAddress, Boolean>(ma, set));
+	public void addInitOnceValue(AbstractHRASMemoryAddress abstractHRASMemoryAddress, boolean set) {
+		initOnceList.add(new AbstractMap.SimpleEntry<AbstractHRASMemoryAddress, Boolean>(abstractHRASMemoryAddress, set));
 	}
 
 	public int getCommandCount() {
@@ -101,19 +101,19 @@ public class HRASModel implements ISetN {
 		symbols.put(name, value);
 	}
 
-	public SymbolHRASMemoryAddress addCommand(HRASCommand c) {
+	public AbstractHRASMemoryAddress addCommand(HRASCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		SymbolHRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
+		AbstractHRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
 		commands.put(assignedCommandAddress, c);
-		Integer currentOffset = nextCommandAddress.getAddressOffset();
+		AbstractExpressionNode currentOffset = nextCommandAddress.getAddressOffset();
 		if (currentOffset != null) {
-			currentOffset = currentOffset.intValue() + getCommandSize();
+			currentOffset = new PlusExpressionNode(currentOffset, new IntegerNode(getCommandSize()));
 		} else {
-			currentOffset = getCommandSize();
+			currentOffset = new IntegerNode(getCommandSize());
 		}
-		nextCommandAddress.setAddressOffset(currentOffset.intValue());
+		nextCommandAddress.setAddressOffset(currentOffset);
 		return assignedCommandAddress;
 	}
 
@@ -166,8 +166,8 @@ public class HRASModel implements ISetN {
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<SymbolHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
-			SymbolHRASMemoryAddress address = c.getKey();
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			AbstractHRASMemoryAddress address = c.getKey();
 			HRASCommand command = c.getValue();
 			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
 					command.asHRASCode()));
@@ -185,7 +185,7 @@ public class HRASModel implements ISetN {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
 		}
-		for (Entry<SymbolHRASMemoryAddress, Boolean> entry : initOnceList) {
+		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : initOnceList) {
 			sb.append((entry.getValue() ? "setonce" : "clearonce") + " " + entry.getKey().asHRASCode());
 			sb.append(System.lineSeparator());
 		}
@@ -223,11 +223,11 @@ public class HRASModel implements ISetN {
 			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
 		}
-		for (Entry<SymbolHRASMemoryAddress, Boolean> entry : initOnceList) {
+		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : initOnceList) {
 			hrav.addInitOnceAddress(entry.getKey().resolve(this), entry.getValue());
 		}
-		for (Entry<SymbolHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
-			SymbolHRASMemoryAddress address = c.getKey();
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			AbstractHRASMemoryAddress address = c.getKey();
 			hrav.setNextCommandAddress(address.resolve(this));
 			HRASCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);

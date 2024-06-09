@@ -9,6 +9,7 @@ import de.dralle.som.languages.hras.generated.HRASGrammarParser.Hex_intContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.IntegerContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Neg_integerContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Octal_intContext;
+import de.dralle.som.languages.hras.generated.HRASGrammarParser.Signed_integerContext;
 
 public class HRASNumberVisitor extends HRASGrammarBaseVisitor<Integer>{
 
@@ -22,6 +23,11 @@ public class HRASNumberVisitor extends HRASGrammarBaseVisitor<Integer>{
 		return ctx.children.get(0).accept(this);
 	}
 	
+
+	@Override
+	public Integer visitSigned_integer(Signed_integerContext ctx) {
+		return ctx.children.get(0).accept(this);
+	}
 
 	@Override
 	public Integer visitBased_int(Based_intContext ctx) {

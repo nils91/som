@@ -11,13 +11,13 @@ import de.dralle.som.Opcode;
  */
 public class HRASCommand {
 	private Opcode op;
-	private SymbolHRASMemoryAddress address;
+	private AbstractHRASMemoryAddress address;
 	
-	public SymbolHRASMemoryAddress getAddress() {
+	public AbstractHRASMemoryAddress getAddress() {
 		return address;
 	}
-	public void setAddress(SymbolHRASMemoryAddress address) {
-		this.address = address;
+	public void setAddress(AbstractHRASMemoryAddress abstractHRASMemoryAddress) {
+		this.address = abstractHRASMemoryAddress;
 	}
 	public Opcode getOp() {
 		return op;

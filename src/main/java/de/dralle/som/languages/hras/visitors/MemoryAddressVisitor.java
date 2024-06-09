@@ -6,18 +6,20 @@ package de.dralle.som.languages.hras.visitors;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
 /**
  * @author Nils
  *
  */
-public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<SymbolHRASMemoryAddress> {
+public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<AbstractHRASMemoryAddress> {
 
-	private SymbolHRASMemoryAddress address;
+	private AbstractHRASMemoryAddress address;
 
 	@Override
-	public SymbolHRASMemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
+	public AbstractHRASMemoryAddress visitOffset_specify(Offset_specifyContext ctx) {
 		if (ctx.primary_expr() != null) {
 			address.setAddressOffset(ctx.primary_expr().accept(new ExpressionVisitor()));
 		}
@@ -25,19 +27,18 @@ public class MemoryAddressVisitor extends HRASGrammarBaseVisitor<SymbolHRASMemor
 	}
 
 	@Override
-	public SymbolHRASMemoryAddress visitInt_or_symbol(Int_or_symbolContext ctx) {
-		address = new SymbolHRASMemoryAddress();
+	public AbstractHRASMemoryAddress visitInt_or_symbol(Int_or_symbolContext ctx) {
+		if(ctx.primary_expr()!=null) {
+			address=new ExpressionHRASMemoryAddress(ctx.primary_expr().accept(new ExpressionVisitor()));
+		}
+		else  {
+			address=new SymbolHRASMemoryAddress(ctx.SYMBOL().getText());
+		}
 		if (ctx.offset_specify() != null) {
 			ctx.offset_specify().accept(this);
 		}
-		if(ctx.primary_expr()!=null) {
-			address.setSymbol(ctx.primary_expr().accept(new ExpressionVisitor()));
-			return address;
-		}
-		else  {
-			address.setSymbol(ctx.SYMBOL().getText());
-			return address;
-		}
+		return address;
+		
 	}
 
 	

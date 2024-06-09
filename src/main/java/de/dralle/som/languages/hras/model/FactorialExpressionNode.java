@@ -2,6 +2,16 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class FactorialExpressionNode extends SingleChildExpressionNode implements Cloneable {
 
+	public FactorialExpressionNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public FactorialExpressionNode(AbstractExpressionNode child) {
+		super(child);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof FactorialExpressionNode) {

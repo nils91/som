@@ -2,6 +2,17 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class DualChildExpressionNode extends AbstractExpressionNode implements Cloneable{
 	private AbstractExpressionNode[] childs=new AbstractExpressionNode[2];
+	public DualChildExpressionNode() {
+		super();
+	}
+	public DualChildExpressionNode(AbstractExpressionNode child1,AbstractExpressionNode child2) {
+		super();
+		this.childs = new AbstractExpressionNode[] {child1,child2};
+	}
+	public DualChildExpressionNode(AbstractExpressionNode[] childs) {
+		super();
+		this.childs = childs;
+	}
 
 	public AbstractExpressionNode[] getChilds() {
 		return childs;

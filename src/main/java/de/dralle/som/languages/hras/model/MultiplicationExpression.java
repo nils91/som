@@ -2,6 +2,16 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class MultiplicationExpression extends CommutativeDualChildExpressionNode implements Cloneable {
 
+	public MultiplicationExpression() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public MultiplicationExpression(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+		super(child1, child2);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MultiplicationExpression) {

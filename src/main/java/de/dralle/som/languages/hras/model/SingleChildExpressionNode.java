@@ -3,6 +3,14 @@ package de.dralle.som.languages.hras.model;
 public abstract class SingleChildExpressionNode extends AbstractExpressionNode implements Cloneable{
 	private AbstractExpressionNode child;
 
+	public SingleChildExpressionNode(AbstractExpressionNode child) {
+		super();
+		this.child = child;
+	}
+	public SingleChildExpressionNode() {
+		super();
+	}
+
 	public AbstractExpressionNode getChild() {
 		return child;
 	}

@@ -42,5 +42,8 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 	public IntegerNode() {
 		super();
 	}
-
+	public IntegerNode(AbstractExpressionNode value) {
+		super();
+		this.value = value.calculateNumericalValue();
+	}
 }

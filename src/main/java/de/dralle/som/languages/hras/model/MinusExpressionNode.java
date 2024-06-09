@@ -2,6 +2,16 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class MinusExpressionNode extends DualChildExpressionNode implements Cloneable {
 
+	public MinusExpressionNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public MinusExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+		super(child1, child2);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MinusExpressionNode) {

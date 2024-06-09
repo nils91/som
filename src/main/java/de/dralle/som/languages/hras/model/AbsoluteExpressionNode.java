@@ -2,6 +2,11 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class AbsoluteExpressionNode extends SingleChildExpressionNode implements Cloneable {
 
+	public AbsoluteExpressionNode(AbstractExpressionNode child) {
+		super(child);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AbsoluteExpressionNode) {

@@ -2,6 +2,16 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class PowerExpressionNode extends DualChildExpressionNode implements Cloneable {
 
+	public PowerExpressionNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public PowerExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+		super(child1, child2);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PowerExpressionNode) {

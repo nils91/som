@@ -1,7 +1,9 @@
 package de.dralle.som.languages.hras.model;
 
 public abstract class AbstractExpressionNode implements Cloneable{
-
+	public AbstractExpressionNode() {
+		
+	}
 	@Override
 	public AbstractExpressionNode clone()  {
 		// TODO Auto-generated method stub

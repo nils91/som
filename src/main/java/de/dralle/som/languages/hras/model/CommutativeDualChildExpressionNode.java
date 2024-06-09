@@ -2,6 +2,21 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class CommutativeDualChildExpressionNode extends DualChildExpressionNode implements Cloneable{
 	
+	public CommutativeDualChildExpressionNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public CommutativeDualChildExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+		super(child1, child2);
+		// TODO Auto-generated constructor stub
+	}
+
+	public CommutativeDualChildExpressionNode(AbstractExpressionNode[] childs) {
+		super(childs);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof CommutativeDualChildExpressionNode) {

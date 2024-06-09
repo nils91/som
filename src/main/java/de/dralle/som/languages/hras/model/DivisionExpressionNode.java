@@ -2,6 +2,16 @@ package de.dralle.som.languages.hras.model;
 
 public abstract class DivisionExpressionNode extends DualChildExpressionNode implements Cloneable {
 
+	public DivisionExpressionNode() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public DivisionExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+		super(child1, child2);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DivisionExpressionNode) {

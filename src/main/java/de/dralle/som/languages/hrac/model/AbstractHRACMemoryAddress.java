@@ -3,7 +3,7 @@
  */
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hras.model.HRASMemoryAddress;
+import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
 /**
  * @author Nils

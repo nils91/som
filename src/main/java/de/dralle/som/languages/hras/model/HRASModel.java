@@ -30,13 +30,13 @@ public class HRASModel implements ISetN {
 		symbols = new LinkedHashMap<>();
 	}
 
-	private HRASMemoryAddress nextCommandAddress;
+	private SymbolHRASMemoryAddress nextCommandAddress;
 
-	public HRASMemoryAddress getNextCommandAddress() {
+	public SymbolHRASMemoryAddress getNextCommandAddress() {
 		return nextCommandAddress;
 	}
 
-	public void setNextCommandAddress(HRASMemoryAddress nextCommandAddress) {
+	public void setNextCommandAddress(SymbolHRASMemoryAddress nextCommandAddress) {
 		this.nextCommandAddress = nextCommandAddress;
 	}
 
@@ -46,13 +46,13 @@ public class HRASModel implements ISetN {
 		this.n = n;
 	}
 
-	public void setStartAdress(HRASMemoryAddress startAdress) {
+	public void setStartAdress(SymbolHRASMemoryAddress startAdress) {
 		this.startAdress = startAdress;
 	}
 
-	private HRASMemoryAddress startAdress;
+	private SymbolHRASMemoryAddress startAdress;
 
-	public HRASMemoryAddress getStartAdress() {
+	public SymbolHRASMemoryAddress getStartAdress() {
 		return startAdress;
 	}
 
@@ -66,44 +66,44 @@ public class HRASModel implements ISetN {
 		this.startAddressExplicit = startAddressExplicit;
 	}
 
-	private Map<String, HRASMemoryAddress> symbols;
+	private Map<String, SymbolHRASMemoryAddress> symbols;
 
-	public Map<String, HRASMemoryAddress> getSymbols() {
+	public Map<String, SymbolHRASMemoryAddress> getSymbols() {
 		return symbols;
 	}
 
-	public Map<HRASMemoryAddress, HRASCommand> getCommands() {
+	public Map<SymbolHRASMemoryAddress, HRASCommand> getCommands() {
 		return commands;
 	}
 
-	private Map<HRASMemoryAddress, HRASCommand> commands;
+	private Map<SymbolHRASMemoryAddress, HRASCommand> commands;
 
-	private List<Map.Entry<HRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<HRASMemoryAddress, Boolean>>();
+	private List<Map.Entry<SymbolHRASMemoryAddress, Boolean>> initOnceList = new ArrayList<Map.Entry<SymbolHRASMemoryAddress, Boolean>>();
 
-	public List<Map.Entry<HRASMemoryAddress, Boolean>> getInitOnceList() {
+	public List<Map.Entry<SymbolHRASMemoryAddress, Boolean>> getInitOnceList() {
 		return initOnceList;
 	}
 
-	public void addInitOnceValue(HRASMemoryAddress ma, boolean set) {
-		initOnceList.add(new AbstractMap.SimpleEntry<HRASMemoryAddress, Boolean>(ma, set));
+	public void addInitOnceValue(SymbolHRASMemoryAddress ma, boolean set) {
+		initOnceList.add(new AbstractMap.SimpleEntry<SymbolHRASMemoryAddress, Boolean>(ma, set));
 	}
 
 	public int getCommandCount() {
 		return commands.size();
 	}
 
-	public void addSymbol(String name, HRASMemoryAddress value) {
+	public void addSymbol(String name, SymbolHRASMemoryAddress value) {
 		if (symbols == null) {
 			symbols = new LinkedHashMap<>();
 		}
 		symbols.put(name, value);
 	}
 
-	public HRASMemoryAddress addCommand(HRASCommand c) {
+	public SymbolHRASMemoryAddress addCommand(HRASCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
-		HRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
+		SymbolHRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
 		commands.put(assignedCommandAddress, c);
 		Integer currentOffset = nextCommandAddress.getAddressOffset();
 		if (currentOffset != null) {
@@ -127,7 +127,7 @@ public class HRASModel implements ISetN {
 	}
 
 	public int resolveSymbolToAddress(String symbol) {
-		HRASMemoryAddress targetAddress = null;
+		SymbolHRASMemoryAddress targetAddress = null;
 		if (symbols != null) {
 			targetAddress = symbols.get(symbol);
 		}
@@ -156,7 +156,7 @@ public class HRASModel implements ISetN {
 
 	private List<String> getSymbolsAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, HRASMemoryAddress> symbol : symbols.entrySet()) {
+		for (Entry<String, SymbolHRASMemoryAddress> symbol : symbols.entrySet()) {
 			tmp.add(String.format("symbol %s %s", symbol.getKey(), symbol.getValue().asHRASCode()));
 		}
 		return tmp;
@@ -164,8 +164,8 @@ public class HRASModel implements ISetN {
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<HRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
-			HRASMemoryAddress address = c.getKey();
+		for (Entry<SymbolHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			SymbolHRASMemoryAddress address = c.getKey();
 			HRASCommand command = c.getValue();
 			tmp.add(String.format("%s%s%s", getContinueDirective(address.asHRASCode()), System.lineSeparator(),
 					command.asHRASCode()));
@@ -183,7 +183,7 @@ public class HRASModel implements ISetN {
 			sb.append(symbolString);
 			sb.append(System.lineSeparator());
 		}
-		for (Entry<HRASMemoryAddress, Boolean> entry : initOnceList) {
+		for (Entry<SymbolHRASMemoryAddress, Boolean> entry : initOnceList) {
 			sb.append((entry.getValue() ? "setonce" : "clearonce") + " " + entry.getKey().asHRASCode());
 			sb.append(System.lineSeparator());
 		}
@@ -200,12 +200,12 @@ public class HRASModel implements ISetN {
 	}
 
 	public void setStartAdress(int startAdress2) {
-		setStartAdress(new HRASMemoryAddress(startAdress2));
+		setStartAdress(new SymbolHRASMemoryAddress(startAdress2));
 
 	}
 
 	public void setNextCommandAddress(int startAdress2) {
-		setNextCommandAddress(new HRASMemoryAddress(startAdress2));
+		setNextCommandAddress(new SymbolHRASMemoryAddress(startAdress2));
 
 	}
 
@@ -221,11 +221,11 @@ public class HRASModel implements ISetN {
 			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
 		}
-		for (Entry<HRASMemoryAddress, Boolean> entry : initOnceList) {
+		for (Entry<SymbolHRASMemoryAddress, Boolean> entry : initOnceList) {
 			hrav.addInitOnceAddress(entry.getKey().resolve(this), entry.getValue());
 		}
-		for (Entry<HRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
-			HRASMemoryAddress address = c.getKey();
+		for (Entry<SymbolHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+			SymbolHRASMemoryAddress address = c.getKey();
 			hrav.setNextCommandAddress(address.resolve(this));
 			HRASCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
@@ -253,17 +253,17 @@ public class HRASModel implements ISetN {
 			Integer oAdr = otiE.getKey();
 			String symbolName = symbols.getOrDefault(oAdr, "MA" + oAdr);
 			symbols.put(oAdr, symbolName);
-			newm.addInitOnceValue(new HRASMemoryAddress(symbolName), otiE.getValue());
+			newm.addInitOnceValue(new SymbolHRASMemoryAddress(symbolName), otiE.getValue());
 		}
 		for (Entry<Integer, HRAVCommand> ce : model.getCommands().entrySet()) {
 			Integer cadr = ce.getKey();
 			HRAVCommand c = ce.getValue();
 			String symbolName = symbols.getOrDefault(cadr, "MA" + cadr);
 			symbols.put(cadr, symbolName);
-			newm.setNextCommandAddress(new HRASMemoryAddress(symbolName));
+			newm.setNextCommandAddress(new SymbolHRASMemoryAddress(symbolName));
 			symbolName = symbols.getOrDefault(c.getAddress(), "MA" + c.getAddress());
 			symbols.put(c.getAddress(), symbolName);
-			HRASMemoryAddress ctgtadr = new HRASMemoryAddress(symbolName);
+			SymbolHRASMemoryAddress ctgtadr = new SymbolHRASMemoryAddress(symbolName);
 			HRASCommand nc = new HRASCommand();
 			nc.setOp(c.getOp());
 			nc.setAddress(ctgtadr);
@@ -272,7 +272,7 @@ public class HRASModel implements ISetN {
 		for (Entry<Integer, String> entry : symbols.entrySet()) {
 			Integer key = entry.getKey();
 			String val = entry.getValue();
-			newm.addSymbol(val, new HRASMemoryAddress(key));
+			newm.addSymbol(val, new SymbolHRASMemoryAddress(key));
 		}
 		return newm;
 	}

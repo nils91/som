@@ -36,7 +36,7 @@ import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
-import de.dralle.som.languages.hras.model.HRASMemoryAddress;
+import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
 /**
  * @author Nils

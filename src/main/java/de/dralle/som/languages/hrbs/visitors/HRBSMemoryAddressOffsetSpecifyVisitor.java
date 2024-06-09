@@ -14,7 +14,7 @@ import de.dralle.som.Util;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Offset_specifyContext;
-import de.dralle.som.languages.hras.model.HRASMemoryAddress;
+import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
 /**
  * @author Nils

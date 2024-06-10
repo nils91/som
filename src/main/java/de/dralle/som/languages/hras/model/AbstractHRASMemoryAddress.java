@@ -19,6 +19,9 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 	}
 
 	public void setAddressOffset(Integer addressOffset) {
+		if(addressOffset==null) {
+			addressOffset=0;
+		}
 		this.addressOffset = new IntegerNode(addressOffset);
 	}
 

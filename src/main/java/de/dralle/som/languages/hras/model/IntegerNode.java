@@ -17,6 +17,10 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 		IntegerNode oth=(IntegerNode) obj;
 		return value==oth.value;
 		}
+		if(obj instanceof Integer) {
+			Integer oth = (Integer)obj;
+			return value==oth.intValue();
+		}
 		return false;
 	}
 	@Override

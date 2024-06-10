@@ -145,7 +145,7 @@ public class HRASModel implements ISetN {
 	}
 
 	private String getNDirective() {
-		return String.format(";n = %d", n);
+		return String.format(";n = %s", n);
 	}
 
 	private String getStartDirective() {

@@ -29,6 +29,7 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -103,16 +104,16 @@ class IssueTests {
 	void testIssue85_HRACCompileAllocDirectiveReplace() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
-		Map<String, SymbolHRASMemoryAddress> symbols = hras.getSymbols();
+		Map<String, AbstractHRASMemoryAddress> symbols = hras.getSymbols();
 		boolean repl = false;
 		int aAdr = 0;
 		int cAdr = 0;
-		for (Entry<String, SymbolHRASMemoryAddress> iterable_element : symbols.entrySet()) {
+		for (Entry<String, AbstractHRASMemoryAddress> iterable_element : symbols.entrySet()) {
 			if (iterable_element.getKey().equals("A")) {
-				aAdr = Integer.parseInt(iterable_element.getValue().getSymbol());
+				aAdr = Integer.parseInt(((SymbolHRASMemoryAddress) iterable_element.getValue()).getSymbol());
 			}
 			if (iterable_element.getKey().equals("C")) {
-				cAdr = Integer.parseInt(iterable_element.getValue().getSymbol());
+				cAdr = Integer.parseInt(((SymbolHRASMemoryAddress) iterable_element.getValue()).getSymbol());
 			}
 		}
 		repl = cAdr - aAdr == 5;
@@ -123,9 +124,9 @@ class IssueTests {
 	void testIssue85_HRACCompileMSDirectiveReplace() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
-		Map<String, SymbolHRASMemoryAddress> symbols = hras.getSymbols();
+		Map<String, AbstractHRASMemoryAddress> symbols = hras.getSymbols();
 		boolean repl = false;
-		for (Entry<String, SymbolHRASMemoryAddress> iterable_element : symbols.entrySet()) {
+		for (Entry<String, AbstractHRASMemoryAddress> iterable_element : symbols.entrySet()) {
 			if (iterable_element.getKey().equals("B")) {
 				repl = iterable_element.getValue().getAddressOffset().equals(5);
 			}
@@ -137,11 +138,11 @@ class IssueTests {
 	void testIssue85_HRACCompileOffsetAfCommandDirectiveReplace() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
-		Map<SymbolHRASMemoryAddress, HRASCommand> symbols = hras.getCommands();
+		Map<AbstractHRASMemoryAddress, HRASCommand> symbols = hras.getCommands();
 		boolean repl = false;
-		for (Entry<SymbolHRASMemoryAddress, HRASCommand> iterable_element : symbols.entrySet()) {
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> iterable_element : symbols.entrySet()) {
 			if (iterable_element.getValue().getOp().equals(Opcode.NAR)
-					&& iterable_element.getValue().getAddress().getSymbol().equals("B")) {
+					&& ((SymbolHRASMemoryAddress) iterable_element.getValue().getAddress()).getSymbol().equals("B")) {
 				repl = iterable_element.getValue().getAddress().getAddressOffset().equals(5);
 			}
 		}
@@ -195,7 +196,7 @@ class IssueTests {
 	void testIssue90_NoDuplicateSymbolsInHRAS(String filename) throws IOException {
 		HRBSModel model = f.loadFromFile(filename, SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		Map<String, SymbolHRASMemoryAddress> coms = hras.getSymbols();
+		Map<String, AbstractHRASMemoryAddress> coms = hras.getSymbols();
 		int duplicates = 0;
 		for (int i = 0; i < coms.keySet().size(); i++) {
 			String s1 = new ArrayList<String>(coms.keySet()).get(i);

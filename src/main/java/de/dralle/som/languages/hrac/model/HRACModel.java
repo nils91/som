@@ -58,13 +58,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	private Map<String, Integer> builtins;
-	private Map<String, String> directives;// as parsed
+	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode shall be used. But Integer should also be checked, just in case). Making it Object is only a workaround however, the long-term solutiopn would be an additional directive class to handle this.
 
-	public Map<String, String> getDirectives() {
+	public Map<String, Object> getDirectives() {
 		return directives;
 	}
 
-	private Map<String, String> additionalDirectives;// additionals added at runtime
+	private Map<String, Object> additionalDirectives;// additionals added at runtime
 
 	public int getMinimumN() {
 		return getDirectiveAsInt("n");

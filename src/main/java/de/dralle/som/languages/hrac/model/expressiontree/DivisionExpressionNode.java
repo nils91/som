@@ -32,4 +32,10 @@ public class DivisionExpressionNode extends DualChildExpressionNode implements C
 		return "( "+getChilds()[0].toString()+" / "+getChilds()[1].toString()+" )";
 	}
 
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getChilds()[0].calculateNumericalValue()/getChilds()[1].calculateNumericalValue();
+	}
+
 }

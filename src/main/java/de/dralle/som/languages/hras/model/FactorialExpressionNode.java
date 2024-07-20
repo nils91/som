@@ -20,13 +20,13 @@ public class FactorialExpressionNode extends SingleChildExpressionNode implement
 		return false;
 	}
 
-private int getFac(int n) {
-	if(n==1) {
-		return n;
+	private int getFac(int n) {
+		if (n == 1) {
+			return n;
+		}
+		return n * getFac(n - 1);
 	}
-	return n*getFac(n-1);
-}
-	
+
 	@Override
 	public int calculateNumericalValue() {
 		// TODO Auto-generated method stub
@@ -36,7 +36,7 @@ private int getFac(int n) {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return getChild().toString()+"!";
+		return getChild().toString() + "!";
 	}
 
 }

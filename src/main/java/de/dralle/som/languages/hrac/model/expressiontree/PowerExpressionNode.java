@@ -25,7 +25,11 @@ public class PowerExpressionNode extends DualChildExpressionNode implements Clon
 		return super.hashCode()+getChilds()[0].hashCode()*getChilds()[1].hashCode();
 	}
 
-	
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return (int) Math.pow(getChilds()[0].calculateNumericalValue(),getChilds()[1].calculateNumericalValue());
+	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

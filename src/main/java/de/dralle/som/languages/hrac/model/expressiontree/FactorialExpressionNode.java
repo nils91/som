@@ -20,7 +20,18 @@ public class FactorialExpressionNode extends SingleChildExpressionNode implement
 		return false;
 	}
 
+	private int getFac(int n) {
+		if (n == 1) {
+			return n;
+		}
+		return n * getFac(n - 1);
+	}
 
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getFac(getChild().calculateNumericalValue());
+	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

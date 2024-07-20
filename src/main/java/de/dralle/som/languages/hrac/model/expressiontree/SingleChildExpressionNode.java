@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public abstract class SingleChildExpressionNode extends AbstractExpressionNode implements Cloneable {
+public class SingleChildExpressionNode extends AbstractExpressionNode implements Cloneable {
 	private AbstractExpressionNode child;
 
 	public SingleChildExpressionNode(AbstractExpressionNode child) {
@@ -27,7 +27,11 @@ public abstract class SingleChildExpressionNode extends AbstractExpressionNode i
 		cl.child = child.clone();
 		return cl;
 	}
-
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getChild().calculateNumericalValue();
+	}
 	@Override
 	public int hashCode() {
 		// TODO Auto-generated method stub

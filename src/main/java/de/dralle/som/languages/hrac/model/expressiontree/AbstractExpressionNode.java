@@ -15,5 +15,7 @@ public abstract class AbstractExpressionNode implements Cloneable{
 		}
 		return null;
 	}
+	
+	public abstract int calculateNumericalValue();
 
 }

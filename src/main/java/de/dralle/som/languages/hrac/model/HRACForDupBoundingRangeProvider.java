@@ -2,13 +2,16 @@ package de.dralle.som.languages.hrac.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.dralle.som.languages.hrac.model.expressiontree.AbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.IntegerNode;
 /**
- * Provides a range of values (as an arry) via getRange() if bounds and stepsize are specified.
+ * Provides a range of values (as an array) via getRange() if bounds and stepsize are specified.
  */
 public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Cloneable {
-	private int rangeStart;
-	private int rangeEnd;
-	private int stepSize = 1;
+	private AbstractExpressionNode rangeStart;
+	private AbstractExpressionNode rangeEnd;
+	private AbstractExpressionNode stepSize = new IntegerNode(1);
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 	private String stepSizeSpecial;
@@ -35,7 +38,7 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		return rangeEndBoundExclusive;
 	}
 
-	public int getStepSize() {
+	public AbstractExpressionNode getStepSize() {
 		return stepSize;
 	}
 
@@ -55,7 +58,7 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		this.rangeEndBoundExclusive = upperBoundExclusive;
 	}
 
-	public void setStepSize(int stepSize) {
+	public void setStepSize(AbstractExpressionNode stepSize) {
 		this.stepSize = stepSize;
 	}
 
@@ -67,19 +70,19 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		this.stepSizeSpecial = stepSizeSpecial;
 	}
 
-	public int getRangeStart() {
+	public AbstractExpressionNode getRangeStart() {
 		return rangeStart;
 	}
 
-	public void setRangeStart(int rangeStart) {
+	public void setRangeStart(AbstractExpressionNode rangeStart) {
 		this.rangeStart = rangeStart;
 	}
 
-	public int getRangeEnd() {
+	public AbstractExpressionNode getRangeEnd() {
 		return rangeEnd;
 	}
 
-	public void setRangeEnd(int rangeEnd) {
+	public void setRangeEnd(AbstractExpressionNode rangeEnd) {
 		this.rangeEnd = rangeEnd;
 	}
 

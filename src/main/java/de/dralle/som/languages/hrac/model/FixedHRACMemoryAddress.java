@@ -1,16 +1,19 @@
 package de.dralle.som.languages.hrac.model;
 
+import de.dralle.som.languages.hrac.model.expressiontree.AbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.IntegerNode;
+
 public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
-	private int address;	
+	private AbstractExpressionNode address;	
 	
 	public FixedHRACMemoryAddress(int address) {
 		super();
-		this.address = address;
+		this.address = new IntegerNode(address);
 	}
-	public int getAddress() {
+	public AbstractExpressionNode getAddress() {
 		return address;
 	}
-	public void setAddress(int address) {
+	public void setAddress(AbstractExpressionNode address) {
 		this.address = address;
 	}
 	public FixedHRACMemoryAddress() {
@@ -18,14 +21,14 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	}
 	@Override
 	public int hashCode() {
-		return address+ super.hashCode();
+		return address.hashCode()+ super.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof FixedHRACMemoryAddress) {
 			FixedHRACMemoryAddress other = (FixedHRACMemoryAddress)obj;
-			boolean equaL=address==other.address;
+			boolean equaL=address.equals(other.address);
 			return equaL&&super.equals(obj);
 		}
 		return false;
@@ -40,7 +43,7 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	@Override
 	public FixedHRACMemoryAddress clone() {
 		FixedHRACMemoryAddress copy=(FixedHRACMemoryAddress) super.clone();
-		copy.address=address;
+		copy.address=address.clone();
 		return copy;
 	}
 

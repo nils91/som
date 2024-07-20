@@ -29,7 +29,7 @@ directive
 :
 	SEMICOLON directive_name EQ
 	(
-		INT
+		par_expr
 		| DIRECTIVE_VALUE_STR
 	)
 ;
@@ -74,7 +74,7 @@ symbol_os
 
 memadr
 :
-	AT INT
+	AT par_expr
 ;
 
 offset_specify
@@ -84,11 +84,7 @@ offset_specify
 
 offset_specify_number
 :
-	(
-		NEG_INT
-		| INT
-		| directive_access
-	)
+	par_expr
 ;
 
 //following rule will only be used in for dup loop heads
@@ -98,7 +94,10 @@ offset_specify_values
 	(
 		directive_access EQ
 	)?
-	(offset_specify_range|offset_specify_set)
+	(
+		offset_specify_range
+		| offset_specify_set
+	)
 ;
 
 offset_specify_range
@@ -139,12 +138,74 @@ for_duplication_head
 	FOR offset_specify_values DUPLICATE COLON
 ;
 
+// following eules are for the expression tree
+
+primary_expr
+:
+	additive_expr
+;
+
+additive_expr
+:
+	multiplicative_expr
+	| additive_expr
+	(
+		PLUS
+		| DASH
+	) multiplicative_expr
+;
+
+multiplicative_expr
+:
+	power_expr
+	| multiplicative_expr
+	(
+		MUL
+		| DIV
+		| MOD
+	) power_expr
+;
+
+power_expr
+:
+	factorial_expr
+	| factorial_expr CARET power_expr
+;
+
+factorial_expr
+:
+	absolute_expr EXCL?
+;
+
+absolute_expr
+:
+	par_expr
+	| PIPE par_expr PIPE
+;
+
+par_expr
+:
+	signed_integer_or_directive
+	| P_OPEN primary_expr P_CLOSE
+;
+
+signed_integer_or_directive
+:
+	DASH? integer_or_directive
+;
+
+integer_or_directive
+:
+	directive_access
+	| INT
+;
+//expression tree end
+
 cnt_specify
 :
 	B_OPEN
 	(
-		INT
-		| directive_access
+		par_expr
 	) B_CLOSE
 ;
 
@@ -299,6 +360,51 @@ SEMICOLON
 COLON
 :
 	':'
+;
+
+CARET
+:
+	'^'
+;
+
+EXCL
+:
+	'!'
+;
+
+MUL
+:
+	'*'
+;
+
+DIV
+:
+	'/'
+;
+
+MOD
+:
+	'%'
+;
+
+PLUS
+:
+	'+'
+;
+
+PIPE
+:
+	'|'
+;
+
+P_OPEN
+:
+	'('
+;
+
+P_CLOSE
+:
+	')'
 ;
 
 B_OPEN

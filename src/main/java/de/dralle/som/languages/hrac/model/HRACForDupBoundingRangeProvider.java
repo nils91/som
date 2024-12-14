@@ -112,9 +112,9 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		if (stepSizeSpecial != null) {
 			stepSize = parent.getDirectiveAsExpressionTree(stepSizeSpecial);
 		}
-		HRACAbstractExpressionNode rangeStartResolved = rangeStart.getResolvedExperessionTree(parent);
-		HRACAbstractExpressionNode rangeEndResolved = rangeEnd.getResolvedExperessionTree(parent);
-		HRACAbstractExpressionNode stepSizeResolved = stepSize.getResolvedExperessionTree(parent);
+		HRACAbstractExpressionNode rangeStartResolved = rangeStart.getResolvedExpressionTree(parent);
+		HRACAbstractExpressionNode rangeEndResolved = rangeEnd.getResolvedExpressionTree(parent);
+		HRACAbstractExpressionNode stepSizeResolved = stepSize.getResolvedExpressionTree(parent);
 		int rangeStartResolvedInt =rangeStartResolved.calculateNumericalValue();
 		int rangeEndResolvedInt  = rangeEndResolved.calculateNumericalValue();
 		int stepSizeResolvedInt  = stepSizeResolved.calculateNumericalValue();

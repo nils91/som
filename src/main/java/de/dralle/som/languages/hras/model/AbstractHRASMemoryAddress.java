@@ -24,6 +24,12 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 		}
 		this.addressOffset = new HRASIntegerNode(addressOffset);
 	}
+	public void setAddressOffset(HRASAbstractExpressionNode addressOffset) {
+		if(addressOffset==null) {
+			addressOffset=new HRASIntegerNode(0);
+		}
+		this.addressOffset = addressOffset;
+	}
 
 	private HRASAbstractExpressionNode addressOffset;
 
@@ -80,10 +86,6 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 		return "";
 	}
 
-
-	public void setAddressOffset(HRASAbstractExpressionNode accept) {
-		this.addressOffset=accept;
-	}
 
 	
 }

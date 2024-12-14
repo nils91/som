@@ -1,6 +1,9 @@
 package de.dralle.som.languages.hras.model;
 
-public abstract class HRASSingleChildExpressionNode extends HRASAbstractExpressionNode implements Cloneable{
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
+
+public class HRASSingleChildExpressionNode extends HRASAbstractExpressionNode implements Cloneable{
 	private HRASAbstractExpressionNode child;
 
 	public HRASSingleChildExpressionNode(HRASAbstractExpressionNode child) {
@@ -50,5 +53,9 @@ public abstract class HRASSingleChildExpressionNode extends HRASAbstractExpressi
 	@Override
 	public String toString() {
 		return child.toString();
+	}
+	@Override
+	public HRACSingleChildExpressionNode compileToHRAC() {
+		return new HRACSingleChildExpressionNode(getChild().compileToHRAC());
 	}
 }

@@ -35,7 +35,7 @@ public class HRASAbsoluteExpressionNode extends HRASSingleChildExpressionNode im
 	}
 
 	@Override
-	public HRACAbstractExpressionNode compileToHRAC() {
+	public HRACAbsoluteExpressionNode compileToHRAC() {
 		return new HRACAbsoluteExpressionNode(getChild().compileToHRAC());
 	}
 

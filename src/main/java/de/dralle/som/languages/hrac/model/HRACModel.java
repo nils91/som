@@ -19,6 +19,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
@@ -59,7 +60,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	private Map<String, Integer> builtins;
-	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode shall be used. But Integer should also be checked, just in case). Making it Object is only a workaround however, the long-term solutiopn would be an additional directive class to handle this.
+	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
+											// shall be used. But Integer should also be checked, just in case). Making
+											// it Object is only a workaround however, the long-term solutiopn would be
+											// an additional directive class to handle this.
 
 	public Map<String, Object> getDirectives() {
 		return directives;
@@ -73,9 +77,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	public HRACAbstractExpressionNode getDirectiveAsExpressionTree(String name) {
 		try {
-			Object sv =  additionalDirectives.get(name);
+			Object sv = additionalDirectives.get(name);
 			if (sv instanceof de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode)sv;
+				return (HRACAbstractExpressionNode) sv;
 			}
 		} catch (Exception e) {
 
@@ -83,7 +87,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		try {
 			Object sv = directives.get(name);
 			if (sv instanceof HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode)sv;
+				return (HRACAbstractExpressionNode) sv;
 			}
 		} catch (Exception e) {
 			return new HRACIntegerNode(0);
@@ -177,7 +181,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
 					if (s.isBitCntSpecial()) {
-						cnt += getDirectiveAsExpressionTree(s.getSpecialName()).getResolvedExperessionTree(this).calculateNumericalValue();
+						cnt += getDirectiveAsExpressionTree(s.getSpecialName()).getResolvedExpressionTree(this)
+								.calculateNumericalValue();
 					} else {
 						cnt += s.getBitCnt();
 					}
@@ -269,7 +274,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	private List<String> getDirectivesAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, String> symbol : directives.entrySet()) {
+		for (Entry<String, Object> symbol : directives.entrySet()) {
 			tmp.add(String.format(";%s=\"%s\"", symbol.getKey(), symbol.getValue()));
 		}
 		return tmp;
@@ -363,10 +368,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACForDup hracForDup : commands) {// replace command targets
 			hracForDup.replaceTargetOnCommand(localSymbolNameReplacementList);
 		}
-		for (HRACSymbol hracForDup : symbols) {// resolve symbols bitcnt
-			if (hracForDup.isBitCntSpecial()) {
-				hracForDup.setBitCntSpecial(false);
-				hracForDup.setBitCnt(getDirectiveAsExpressionTree(hracForDup.getSpecialName()));
+		for (HRACSymbol symbl : symbols) {// resolve directives (and et´s) to a value if used to specify bitcnt on symbols
+			if (symbl.isBitCntSpecial()) {
+				symbl.setBitCntSpecial(false);
+				symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this).calculateNumericalValue());
 			}
 		}
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets
@@ -438,15 +443,17 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
 				if (tgt instanceof FixedHRACMemoryAddress) {
 					int adr = 0;
-					Integer ofs = tgt.getOffset();
+					Integer ofs = tgt.getOffset().getResolvedExpressionTree(this).calculateNumericalValue();
 					if (ofs != null) {
 						adr = ofs.intValue();
 					}
 					// if offset is directive, replace the directive with its value
 					if (tgt.isOffsetSpecial()) {
-						adr = getDirectiveAsExpressionTree(tgt.getOffsetSpecialnName());
+						adr = getDirectiveAsExpressionTree(tgt.getOffsetSpecialnName()).getResolvedExpressionTree(this)
+								.calculateNumericalValue();
 					}
-					adr += ((FixedHRACMemoryAddress) tgt).getAddress();
+					adr += ((FixedHRACMemoryAddress) tgt).getAddress().getResolvedExpressionTree(this)
+							.calculateNumericalValue();
 					if (adr > nxtSymbolAddress) {
 						nxtSymbolAddress = adr + 1;
 					}
@@ -457,34 +464,36 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
 				if (s.isBitCntSpecial()) {
-					nxtSymbolAddress += getDirectiveAsExpressionTree(s.getSpecialName());
+					nxtSymbolAddress += getDirectiveAsExpressionTree(s.getSpecialName()).getResolvedExpressionTree(this)
+							.calculateNumericalValue();
 				} else {
 					nxtSymbolAddress += s.getBitCnt();
 				}
 				m.addSymbol(s.getName(), new SymbolHRASMemoryAddress(address));
 			} else {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
-				SymbolHRASMemoryAddress tgHras = new SymbolHRASMemoryAddress();
+				SymbolHRASMemoryAddress tgtHras = new SymbolHRASMemoryAddress();
 				if (tgt instanceof NamedHRACMemoryAddress) {
-					tgHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
+					tgtHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
 				} else if (tgt instanceof FixedHRACMemoryAddress) {
-					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress();
+					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
+							.calculateNumericalValue();
 					if (tgtAdr < 0) {
 						System.out.println(
 								"Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
 					}
-					tgHras.setSymbol(tgtAdr + "");
+					tgtHras.setSymbol(tgtAdr + "");
 				}
-				tgHras.setAddressOffset(tgt.getOffset());
-				m.addSymbol(s.getName(), tgHras);
+				tgtHras.setAddressOffset(tgt.getOffset().compileToHRAS(this));
+				m.addSymbol(s.getName(), tgtHras);
 			}
 		}
 		for (var hracForDup : initOnceAddresses) {
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
-			newmadr.setAddressOffset(hracForDup.getKey().getOffset());
+			newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
 			if (hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
 				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) hracForDup.getKey();
-				newmadr.setSymbol(f.getAddress());
+				newmadr.setSymbol(f.getAddress().toString());
 			} else if (hracForDup.getKey() instanceof NamedHRACMemoryAddress) {
 				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress) hracForDup.getKey();
 				newmadr.setSymbol(na.getName());
@@ -512,13 +521,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					address = new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) hracCmdTgt).getName());
 				}
 				if (hracCmdTgt instanceof FixedHRACMemoryAddress) {
-					int tgtAdr = ((FixedHRACMemoryAddress) hracCmdTgt).getAddress().compileToHRAS();
-					if (tgtAdr < 0) {
+					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) hracCmdTgt).getAddress()
+							.compileToHRAS(this);
+					if (tgtAdr.calculateNumericalValue() < 0) {
 						System.out.println("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
 					}
-					address = new SymbolHRASMemoryAddress(tgtAdr);
+					address = new SymbolHRASMemoryAddress(tgtAdr.calculateNumericalValue());
 				}
-				address.setAddressOffset(c.getTarget().getOffset());
+				address.setAddressOffset(c.getTarget().getOffset().compileToHRAS(this));
 				hrasc.setAddress(address);
 				assignedAddress = m.addCommand(hrasc);
 				if (i++ == 0) {
@@ -553,12 +563,25 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		List<Entry<AbstractHRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
 		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : otiAddresses) {
 			AbstractHRASMemoryAddress hrasAdr = entry.getKey();
-			HRACAbstractExpressionNode hrasOfs = hrasAdr.getAddressOffset();
+			HRACAbstractExpressionNode hrasOfs = hrasAdr.getAddressOffset().compileToHRAC();
 			String hrasName = null;
-			if(hrasAdr instanceof SymbolHRASMemoryAddress) {
-				hrasName = ((SymbolHRASMemoryAddress)hrasAdr).getSymbol();
-			}else if(hrasAdr instanceof ExpressionHRASMemoryAddress) {
-				hrasName = ((ExpressionHRASMemoryAddress)hrasAdr).getexpression().calculateNumericalValue()+"";//TODO: hrac does not have expressions (yet) so this is the solution for now
+			if (hrasAdr instanceof SymbolHRASMemoryAddress) {
+				hrasName = ((SymbolHRASMemoryAddress) hrasAdr).getSymbol();
+			} else if (hrasAdr instanceof ExpressionHRASMemoryAddress) {
+				hrasName = ((ExpressionHRASMemoryAddress) hrasAdr).getexpression().calculateNumericalValue() + "";// TODO:
+																													// hrac
+																													// does
+																													// not
+																													// have
+																													// expressions
+																													// (yet)
+																													// so
+																													// this
+																													// is
+																													// the
+																													// solution
+																													// for
+																													// now
 			}
 			boolean added = false;
 			if (hrasOfs == null || hrasOfs.equals(0)) {
@@ -573,7 +596,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 			if (!added) {
 				NamedHRACMemoryAddress otiadr = new NamedHRACMemoryAddress(hrasName);
-				otiadr.setOffset(hrasOfs.calculateNumericalValue());
+				otiadr.setOffset(hrasOfs);
 				newm.addInitOnceAdress(otiadr, entry.getValue());
 			}
 		}
@@ -650,6 +673,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public void addAddDirective(String name, String value) {
 		additionalDirectives.put(name, value);
 	}
+
 	public void addAddDirective(String name, HRACAbstractExpressionNode value) {
 		additionalDirectives.put(name, value);
 	}

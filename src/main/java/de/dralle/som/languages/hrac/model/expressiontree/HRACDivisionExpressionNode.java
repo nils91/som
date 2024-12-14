@@ -1,5 +1,9 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
+
 public class HRACDivisionExpressionNode extends HRACDualChildExpressionNode implements Cloneable {
 
 	public HRACDivisionExpressionNode() {
@@ -36,6 +40,11 @@ public class HRACDivisionExpressionNode extends HRACDualChildExpressionNode impl
 	public int calculateNumericalValue() {
 		// TODO Auto-generated method stub
 		return getChilds()[0].calculateNumericalValue()/getChilds()[1].calculateNumericalValue();
+	}
+
+	@Override
+	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
+		return new HRASDivisionExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
 	}
 
 }

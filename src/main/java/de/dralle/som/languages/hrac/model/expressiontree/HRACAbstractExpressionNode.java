@@ -3,6 +3,7 @@ package de.dralle.som.languages.hrac.model.expressiontree;
 import java.util.Map;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 
 public abstract class HRACAbstractExpressionNode implements Cloneable{
 	public HRACAbstractExpressionNode() {
@@ -26,7 +27,7 @@ public abstract class HRACAbstractExpressionNode implements Cloneable{
 	 * @param allDirectives
 	 * @return
 	 */
-	public HRACAbstractExpressionNode getResolvedExperessionTree(HRACModel parent) {
+	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
 		HRACAbstractExpressionNode clone = this.clone();
 		clone=clone.resolve(parent);
 		return this;
@@ -39,5 +40,6 @@ public abstract class HRACAbstractExpressionNode implements Cloneable{
 	public HRACAbstractExpressionNode resolve(HRACModel parent) {
 		return this;
 	}
+	public abstract HRASAbstractExpressionNode compileToHRAS(HRACModel parent) ;
 
 }

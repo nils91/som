@@ -1,5 +1,10 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
+import de.dralle.som.languages.hras.model.MultiplicationExpression;
+
 public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
 
 	public HRACMultiplicationExpressionNode() {
@@ -35,5 +40,11 @@ public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpres
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" * "+getChilds()[1].toString()+" )";
 	}
+
+	@Override
+	public MultiplicationExpression compileToHRAS(HRACModel parent) {
+
+		return new MultiplicationExpression(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+}
 
 }

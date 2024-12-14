@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 
 public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Cloneable{
 	@Override
@@ -48,7 +49,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	 * return the EXpression tree behind this directive name.
 	 */
 	@Override
-	public HRACAbstractExpressionNode getResolvedExperessionTree(HRACModel parent) {
+	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
 		return parent.getDirectiveAsExpressionTree(directiveName);
 	}
 	@Override
@@ -57,5 +58,13 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	 */
 	public HRACAbstractExpressionNode resolve(HRACModel parent) {
 		return parent.getDirectiveAsExpressionTree(directiveName);
+	}
+	@Override
+	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
+		HRACAbstractExpressionNode resolvedNode = this.getResolvedExpressionTree(parent);
+		if(resolvedNode!=null) {
+			return resolvedNode.compileToHRAS(parent);
+		}
+		return null;
 	}
 }

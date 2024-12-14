@@ -1,29 +1,31 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class SingleChildExpressionNode extends AbstractExpressionNode implements Cloneable {
-	private AbstractExpressionNode child;
+import de.dralle.som.languages.hrac.model.HRACModel;
 
-	public SingleChildExpressionNode(AbstractExpressionNode child) {
+public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable {
+	private HRACAbstractExpressionNode child;
+
+	public HRACSingleChildExpressionNode(HRACAbstractExpressionNode child) {
 		super();
 		this.child = child;
 	}
 
-	public SingleChildExpressionNode() {
+	public HRACSingleChildExpressionNode() {
 		super();
 	}
 
-	public AbstractExpressionNode getChild() {
+	public HRACAbstractExpressionNode getChild() {
 		return child;
 	}
 
-	public void setChild(AbstractExpressionNode child) {
+	public void setChild(HRACAbstractExpressionNode child) {
 		this.child = child;
 	}
 
 	@Override
-	public SingleChildExpressionNode clone() {
+	public HRACSingleChildExpressionNode clone() {
 		// TODO Auto-generated method stub
-		SingleChildExpressionNode cl = (SingleChildExpressionNode) super.clone();
+		HRACSingleChildExpressionNode cl = (HRACSingleChildExpressionNode) super.clone();
 		cl.child = child.clone();
 		return cl;
 	}
@@ -39,9 +41,15 @@ public class SingleChildExpressionNode extends AbstractExpressionNode implements
 	}
 
 	@Override
+	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+		child=child.resolve(parent);
+		return this;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SingleChildExpressionNode) {
-			SingleChildExpressionNode oth = (SingleChildExpressionNode) obj;
+		if (obj instanceof HRACSingleChildExpressionNode) {
+			HRACSingleChildExpressionNode oth = (HRACSingleChildExpressionNode) obj;
 			return child.equals(oth.child);
 		}
 		return false;

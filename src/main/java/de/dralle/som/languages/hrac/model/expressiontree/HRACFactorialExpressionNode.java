@@ -1,20 +1,20 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class FactorialExpressionNode extends SingleChildExpressionNode implements Cloneable {
+public class HRACFactorialExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
-	public FactorialExpressionNode() {
+	public HRACFactorialExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public FactorialExpressionNode(AbstractExpressionNode child) {
+	public HRACFactorialExpressionNode(HRACAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof FactorialExpressionNode) {
+		if (obj instanceof HRACFactorialExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

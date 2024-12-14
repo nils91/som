@@ -1,10 +1,10 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class IntegerNode extends AbstractExpressionNode implements Cloneable{
+public class HRACIntegerNode extends HRACAbstractExpressionNode implements Cloneable{
 	@Override
-	public IntegerNode clone() {
+	public HRACIntegerNode clone() {
 		// TODO Auto-generated method stub
-		return (IntegerNode) super.clone();
+		return (HRACIntegerNode) super.clone();
 	}
 	@Override
 	public int hashCode() {
@@ -13,8 +13,8 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IntegerNode){
-		IntegerNode oth=(IntegerNode) obj;
+		if(obj instanceof HRACIntegerNode){
+		HRACIntegerNode oth=(HRACIntegerNode) obj;
 		return value==oth.value;
 		}
 		if(obj instanceof Integer) {
@@ -35,11 +35,11 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 	public void setValue(int value) {
 		this.value = value;
 	}
-	public IntegerNode(int value) {
+	public HRACIntegerNode(int value) {
 		super();
 		this.value = value;
 	}
-	public IntegerNode() {
+	public HRACIntegerNode() {
 		super();
 	}
 	@Override

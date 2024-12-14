@@ -1,5 +1,8 @@
 package de.dralle.som.languages.hras.model;
 
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACMinusExpressionNode;
+
 public class PlusExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
 
 	public PlusExpressionNode() {
@@ -7,7 +10,7 @@ public class PlusExpressionNode extends CommutativeDualChildExpressionNode imple
 		// TODO Auto-generated constructor stub
 	}
 
-	public PlusExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public PlusExpressionNode(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -35,6 +38,11 @@ public class PlusExpressionNode extends CommutativeDualChildExpressionNode imple
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" + "+getChilds()[1].toString()+" )";
+	}
+
+	@Override
+	public de.dralle.som.languages.hrac.model.expressiontree.HRACPlusExpressionNode compileToHRAC() {
+		return new de.dralle.som.languages.hrac.model.expressiontree.HRACPlusExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

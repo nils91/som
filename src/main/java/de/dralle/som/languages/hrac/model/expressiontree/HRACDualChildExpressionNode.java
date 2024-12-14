@@ -1,35 +1,44 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public abstract class DualChildExpressionNode extends AbstractExpressionNode implements Cloneable{
-	private AbstractExpressionNode[] childs=new AbstractExpressionNode[2];
-	public DualChildExpressionNode() {
+import de.dralle.som.languages.hrac.model.HRACModel;
+
+public abstract class HRACDualChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable{
+	private HRACAbstractExpressionNode[] childs=new HRACAbstractExpressionNode[2];
+	public HRACDualChildExpressionNode() {
 		super();
 	}
-	public DualChildExpressionNode(AbstractExpressionNode child1,AbstractExpressionNode child2) {
+	public HRACDualChildExpressionNode(HRACAbstractExpressionNode child1,HRACAbstractExpressionNode child2) {
 		super();
-		this.childs = new AbstractExpressionNode[] {child1,child2};
+		this.childs = new HRACAbstractExpressionNode[] {child1,child2};
 	}
-	public DualChildExpressionNode(AbstractExpressionNode[] childs) {
+	public HRACDualChildExpressionNode(HRACAbstractExpressionNode[] childs) {
 		super();
 		this.childs = childs;
 	}
 
-	public AbstractExpressionNode[] getChilds() {
+	public HRACAbstractExpressionNode[] getChilds() {
 		return childs;
 	}
 
-	public void setChilds(AbstractExpressionNode[] childs) {
+	public void setChilds(HRACAbstractExpressionNode[] childs) {
 		this.childs = childs;
 	}
-	public void setChild(AbstractExpressionNode child,int i) {
+	@Override
+	public HRACDualChildExpressionNode resolve(HRACModel parent) {
+		for (int i = 0; i < childs.length; i++) {
+			childs[i] = childs[i].resolve(parent);
+		}
+		return this;
+	}
+	public void setChild(HRACAbstractExpressionNode child,int i) {
 		this.childs[i] = child;
 	}
 	@Override
-	public DualChildExpressionNode clone() {
+	public HRACDualChildExpressionNode clone() {
 		// TODO Auto-generated method stub
-		DualChildExpressionNode cl= (DualChildExpressionNode) super.clone();
+		HRACDualChildExpressionNode cl= (HRACDualChildExpressionNode) super.clone();
 		for (int i = 0; i < childs.length; i++) {
-			AbstractExpressionNode abstractExpressionNode = childs[i];
+			HRACAbstractExpressionNode abstractExpressionNode = childs[i];
 			cl.childs[i]=abstractExpressionNode.clone();
 		}
 		return cl;
@@ -43,8 +52,8 @@ public abstract class DualChildExpressionNode extends AbstractExpressionNode imp
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DualChildExpressionNode) {
-			DualChildExpressionNode oth = (DualChildExpressionNode)obj;
+		if(obj instanceof HRACDualChildExpressionNode) {
+			HRACDualChildExpressionNode oth = (HRACDualChildExpressionNode)obj;
 			return childs[0].equals(oth.childs[0])&&childs[1].equals(oth.childs[1]);
 		}
 		return false;

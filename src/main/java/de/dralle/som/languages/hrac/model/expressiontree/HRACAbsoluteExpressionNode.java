@@ -1,15 +1,15 @@
-package de.dralle.som.languages.hras.model;
+package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class AbsoluteExpressionNode extends SingleChildExpressionNode implements Cloneable {
+public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
-	public AbsoluteExpressionNode(AbstractExpressionNode child) {
+	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AbsoluteExpressionNode) {
+		if (obj instanceof HRACAbsoluteExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;
@@ -18,11 +18,6 @@ public class AbsoluteExpressionNode extends SingleChildExpressionNode implements
 	@Override
 	public int hashCode() {
 		return super.hashCode();
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		return Math.abs(getChild().calculateNumericalValue());
 	}
 
 	@Override

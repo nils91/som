@@ -1,19 +1,19 @@
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.AbstractExpressionNode;
-import de.dralle.som.languages.hrac.model.expressiontree.IntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
-	private AbstractExpressionNode address;	
+	private HRACAbstractExpressionNode address;	
 	
 	public FixedHRACMemoryAddress(int address) {
 		super();
-		this.address = new IntegerNode(address);
+		this.address = new HRACIntegerNode(address);
 	}
-	public AbstractExpressionNode getAddress() {
+	public HRACAbstractExpressionNode getAddress() {
 		return address;
 	}
-	public void setAddress(AbstractExpressionNode address) {
+	public void setAddress(HRACAbstractExpressionNode address) {
 		this.address = address;
 	}
 	public FixedHRACMemoryAddress() {

@@ -3,15 +3,15 @@ package de.dralle.som.languages.hrac.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dralle.som.languages.hrac.model.expressiontree.AbstractExpressionNode;
-import de.dralle.som.languages.hrac.model.expressiontree.IntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 /**
  * Provides a range of values (as an array) via getRange() if bounds and stepsize are specified.
  */
 public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Cloneable {
-	private AbstractExpressionNode rangeStart;
-	private AbstractExpressionNode rangeEnd;
-	private AbstractExpressionNode stepSize = new IntegerNode(1);
+	private HRACAbstractExpressionNode rangeStart;
+	private HRACAbstractExpressionNode rangeEnd;
+	private HRACAbstractExpressionNode stepSize = new HRACIntegerNode(1);
 	private String rangeStartSpecial;
 	private String rangeEndSpecial;
 	private String stepSizeSpecial;
@@ -38,7 +38,7 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		return rangeEndBoundExclusive;
 	}
 
-	public AbstractExpressionNode getStepSize() {
+	public HRACAbstractExpressionNode getStepSize() {
 		return stepSize;
 	}
 
@@ -58,7 +58,7 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		this.rangeEndBoundExclusive = upperBoundExclusive;
 	}
 
-	public void setStepSize(AbstractExpressionNode stepSize) {
+	public void setStepSize(HRACAbstractExpressionNode stepSize) {
 		this.stepSize = stepSize;
 	}
 
@@ -70,19 +70,19 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		this.stepSizeSpecial = stepSizeSpecial;
 	}
 
-	public AbstractExpressionNode getRangeStart() {
+	public HRACAbstractExpressionNode getRangeStart() {
 		return rangeStart;
 	}
 
-	public void setRangeStart(AbstractExpressionNode rangeStart) {
+	public void setRangeStart(HRACAbstractExpressionNode rangeStart) {
 		this.rangeStart = rangeStart;
 	}
 
-	public AbstractExpressionNode getRangeEnd() {
+	public HRACAbstractExpressionNode getRangeEnd() {
 		return rangeEnd;
 	}
 
-	public void setRangeEnd(AbstractExpressionNode rangeEnd) {
+	public void setRangeEnd(HRACAbstractExpressionNode rangeEnd) {
 		this.rangeEnd = rangeEnd;
 	}
 
@@ -102,22 +102,28 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		this.rangeEndSpecial = rangeEndSpecial;
 	}
 
-	public int[] getRange(HRACModel parent) {
+	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
 		if (rangeEndSpecial != null) {
-			rangeEnd = parent.getDirectiveAsInt(rangeEndSpecial);
+			rangeEnd = parent.getDirectiveAsExpressionTree(rangeEndSpecial);
 		}
 		if (rangeStartSpecial != null) {
-			rangeStart = parent.getDirectiveAsInt(rangeStartSpecial);
+			rangeStart = parent.getDirectiveAsExpressionTree(rangeStartSpecial);
 		}
 		if (stepSizeSpecial != null) {
-			stepSize = parent.getDirectiveAsInt(stepSizeSpecial);
+			stepSize = parent.getDirectiveAsExpressionTree(stepSizeSpecial);
 		}
+		HRACAbstractExpressionNode rangeStartResolved = rangeStart.getResolvedExperessionTree(parent);
+		HRACAbstractExpressionNode rangeEndResolved = rangeEnd.getResolvedExperessionTree(parent);
+		HRACAbstractExpressionNode stepSizeResolved = stepSize.getResolvedExperessionTree(parent);
+		int rangeStartResolvedInt =rangeStartResolved.calculateNumericalValue();
+		int rangeEndResolvedInt  = rangeEndResolved.calculateNumericalValue();
+		int stepSizeResolvedInt  = stepSizeResolved.calculateNumericalValue();
 		int[] rng = null;
-		if (rangeStart <= rangeEnd) {// range counts up
+		if (rangeStartResolvedInt <= rangeEndResolvedInt) {// range counts up
 			// calculate "real" range limits (taking into account upper and lower
 			// exclusivity)
-			int realRangeStart = rangeStart;
-			int realRangeEnd = rangeEnd;
+			int realRangeStart = rangeStartResolvedInt;
+			int realRangeEnd = rangeEndResolvedInt;
 			if (rangeStartBoundExclusive) {
 				realRangeStart += 1;
 			}
@@ -128,7 +134,7 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 			int currentValue = realRangeStart;
 			while (currentValue <= realRangeEnd) {
 				range.add(currentValue);
-				currentValue += stepSize;
+				currentValue += stepSizeResolvedInt;
 			}
 			rng = new int[range.size()];
 			for (int i = 0; i < rng.length; i++) {
@@ -137,8 +143,8 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 		} else {// range counts down
 			// calculate "real" range limits (taking into account upper and lower
 			// exclusivity)
-			int realRangeStart = rangeStart;
-			int realRangeEnd = rangeEnd;
+			int realRangeStart = rangeStartResolvedInt;
+			int realRangeEnd = rangeEndResolvedInt;
 			if (rangeStartBoundExclusive) {
 				realRangeStart -= 1;
 			}
@@ -149,14 +155,20 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 			int currentValue = realRangeStart;
 			while (currentValue >= realRangeEnd) {
 				range.add(currentValue);
-				currentValue -= stepSize;
+				currentValue -= stepSizeResolvedInt;
 			}
 			rng = new int[range.size()];
 			for (int i = 0; i < rng.length; i++) {
 				rng[i] = range.get(i);
 			}
 		}
-		return rng;
+		HRACAbstractExpressionNode[] rngNodes=new HRACAbstractExpressionNode[rng.length];
+		for (int i = 0; i < rng.length; i++) {
+			int hracAbstractExpressionNode = rng[i];
+			rngNodes[i]=new HRACIntegerNode(hracAbstractExpressionNode);
+			
+		}
+		return rngNodes;
 	}
 
 	@Override

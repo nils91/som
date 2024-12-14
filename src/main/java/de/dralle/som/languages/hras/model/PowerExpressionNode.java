@@ -1,13 +1,17 @@
 package de.dralle.som.languages.hras.model;
 
-public class PowerExpressionNode extends DualChildExpressionNode implements Cloneable {
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACMinusExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode;
+
+public class PowerExpressionNode extends HRASDualChildExpressionNode implements Cloneable {
 
 	public PowerExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public PowerExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public PowerExpressionNode(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -35,6 +39,11 @@ public class PowerExpressionNode extends DualChildExpressionNode implements Clon
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" ^ "+getChilds()[1].toString()+" )";
+	}
+
+	@Override
+	public HRACPowerExpressionNode compileToHRAC() {
+		return new de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

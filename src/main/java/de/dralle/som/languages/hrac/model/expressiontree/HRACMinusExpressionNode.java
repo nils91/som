@@ -1,20 +1,20 @@
-package de.dralle.som.languages.hras.model;
+package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class MinusExpressionNode extends DualChildExpressionNode implements Cloneable {
+public class HRACMinusExpressionNode extends HRACDualChildExpressionNode implements Cloneable {
 
-	public MinusExpressionNode() {
+	public HRACMinusExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MinusExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public HRACMinusExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MinusExpressionNode) {
+		if (obj instanceof HRACMinusExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

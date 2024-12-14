@@ -1,20 +1,23 @@
 package de.dralle.som.languages.hras.model;
 
-public class FactorialExpressionNode extends SingleChildExpressionNode implements Cloneable {
+import de.dralle.som.languages.hrac.model.expressiontree.HRACFactorialExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 
-	public FactorialExpressionNode() {
+public class HRASFactorialExpressionNode extends HRASSingleChildExpressionNode implements Cloneable {
+
+	public HRASFactorialExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public FactorialExpressionNode(AbstractExpressionNode child) {
+	public HRASFactorialExpressionNode(HRASAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof FactorialExpressionNode) {
+		if (obj instanceof HRASFactorialExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;
@@ -37,6 +40,11 @@ public class FactorialExpressionNode extends SingleChildExpressionNode implement
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getChild().toString() + "!";
+	}
+
+	@Override
+	public HRACFactorialExpressionNode compileToHRAC() {
+		return new HRACFactorialExpressionNode(getChild().compileToHRAC());
 	}
 
 }

@@ -1,10 +1,12 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class DirectiveNode extends AbstractExpressionNode implements Cloneable{
+import de.dralle.som.languages.hrac.model.HRACModel;
+
+public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Cloneable{
 	@Override
-	public DirectiveNode clone() {
+	public HRACDirectiveNode clone() {
 		// TODO Auto-generated method stub
-		return (DirectiveNode) super.clone();
+		return (HRACDirectiveNode) super.clone();
 	}
 	@Override
 	public int hashCode() {
@@ -13,8 +15,8 @@ public class DirectiveNode extends AbstractExpressionNode implements Cloneable{
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DirectiveNode){
-		DirectiveNode oth=(DirectiveNode) obj;
+		if(obj instanceof HRACDirectiveNode){
+		HRACDirectiveNode oth=(HRACDirectiveNode) obj;
 		return directiveName.equals(oth.directiveName);
 		}
 		return false;
@@ -31,15 +33,29 @@ public class DirectiveNode extends AbstractExpressionNode implements Cloneable{
 	public void setdirectiveName(String directiveName) {
 		this.directiveName = directiveName;
 	}
-	public DirectiveNode(String directiveName) {
+	public HRACDirectiveNode(String directiveName) {
 		super();
 		this.directiveName = directiveName;
 	}
-	public DirectiveNode() {
+	public HRACDirectiveNode() {
 		super();
 	}
 	@Override
 	public int calculateNumericalValue() {
 		throw new RuntimeException("Unresolved directive node: "+directiveName);
+	}
+	/**
+	 * return the EXpression tree behind this directive name.
+	 */
+	@Override
+	public HRACAbstractExpressionNode getResolvedExperessionTree(HRACModel parent) {
+		return parent.getDirectiveAsExpressionTree(directiveName);
+	}
+	@Override
+	/**
+	 * return the EXpression tree behind this directive name. Since this node can not replace itsself, the return value should always be assigned to itsself;
+	 */
+	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+		return parent.getDirectiveAsExpressionTree(directiveName);
 	}
 }

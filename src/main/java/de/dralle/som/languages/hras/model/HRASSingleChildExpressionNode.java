@@ -1,28 +1,28 @@
 package de.dralle.som.languages.hras.model;
 
-public abstract class SingleChildExpressionNode extends AbstractExpressionNode implements Cloneable{
-	private AbstractExpressionNode child;
+public abstract class HRASSingleChildExpressionNode extends HRASAbstractExpressionNode implements Cloneable{
+	private HRASAbstractExpressionNode child;
 
-	public SingleChildExpressionNode(AbstractExpressionNode child) {
+	public HRASSingleChildExpressionNode(HRASAbstractExpressionNode child) {
 		super();
 		this.child = child;
 	}
-	public SingleChildExpressionNode() {
+	public HRASSingleChildExpressionNode() {
 		super();
 	}
 
-	public AbstractExpressionNode getChild() {
+	public HRASAbstractExpressionNode getChild() {
 		return child;
 	}
 
-	public void setChild(AbstractExpressionNode child) {
+	public void setChild(HRASAbstractExpressionNode child) {
 		this.child = child;
 	}
 
 	@Override
-	public SingleChildExpressionNode clone() {
+	public HRASSingleChildExpressionNode clone() {
 		// TODO Auto-generated method stub
-		SingleChildExpressionNode cl= (SingleChildExpressionNode) super.clone();
+		HRASSingleChildExpressionNode cl= (HRASSingleChildExpressionNode) super.clone();
 		cl.child=child.clone();
 		return cl;
 	}
@@ -40,8 +40,8 @@ public abstract class SingleChildExpressionNode extends AbstractExpressionNode i
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof SingleChildExpressionNode) {
-			SingleChildExpressionNode oth = (SingleChildExpressionNode)obj;
+		if(obj instanceof HRASSingleChildExpressionNode) {
+			HRASSingleChildExpressionNode oth = (HRASSingleChildExpressionNode)obj;
 			return child.equals(oth.child);
 		}
 		return false;

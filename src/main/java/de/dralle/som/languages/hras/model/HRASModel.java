@@ -40,11 +40,11 @@ public class HRASModel implements ISetN {
 		this.nextCommandAddress = address;
 	}
 
-	private AbstractExpressionNode n; // This can either be a integer (wrapped in the IntegerNode class) or an entire
+	private HRASAbstractExpressionNode n; // This can either be a integer (wrapped in the IntegerNode class) or an entire
 										// expression tree. Either way it would have a definite value, use
 										// calculateNumericalValue for that.
 
-	public void setN(AbstractExpressionNode abstractExpressionNode) {
+	public void setN(HRASAbstractExpressionNode abstractExpressionNode) {
 		this.n = abstractExpressionNode;
 	}
 
@@ -107,11 +107,11 @@ public class HRASModel implements ISetN {
 		}
 		AbstractHRASMemoryAddress assignedCommandAddress = nextCommandAddress.clone();
 		commands.put(assignedCommandAddress, c);
-		AbstractExpressionNode currentOffset = nextCommandAddress.getAddressOffset();
+		HRASAbstractExpressionNode currentOffset = nextCommandAddress.getAddressOffset();
 		if (currentOffset != null) {
-			currentOffset = new PlusExpressionNode(currentOffset, new IntegerNode(getCommandSize()));
+			currentOffset = new PlusExpressionNode(currentOffset, new HRASIntegerNode(getCommandSize()));
 		} else {
-			currentOffset = new IntegerNode(getCommandSize());
+			currentOffset = new HRASIntegerNode(getCommandSize());
 		}
 		nextCommandAddress.setAddressOffset(currentOffset);
 		return assignedCommandAddress;
@@ -285,7 +285,7 @@ public class HRASModel implements ISetN {
 
 	@Override
 	public void setN(int n) {
-		this.n = new IntegerNode(n);
+		this.n = new HRASIntegerNode(n);
 
 	}
 }

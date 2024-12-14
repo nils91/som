@@ -1,20 +1,20 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public class MultiplicationExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
+public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
 
-	public MultiplicationExpressionNode() {
+	public HRACMultiplicationExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MultiplicationExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public HRACMultiplicationExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MultiplicationExpressionNode) {
+		if (obj instanceof HRACMultiplicationExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

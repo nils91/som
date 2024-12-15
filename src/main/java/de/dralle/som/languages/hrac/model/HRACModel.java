@@ -180,12 +180,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol s : symbols) {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
-					if (s.isBitCntSpecial()) {
-						cnt += getDirectiveAsExpressionTree(s.getSpecialName()).getResolvedExpressionTree(this)
-								.calculateNumericalValue();
-					} else {
-						cnt += s.getBitCnt();
-					}
+
+					HRACAbstractExpressionNode et = s.getBitCnt();
+					et = et.getResolvedExpressionTree(this);
+					cnt += et.calculateNumericalValue();
+
 				}
 			}
 		}
@@ -368,10 +367,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACForDup hracForDup : commands) {// replace command targets
 			hracForDup.replaceTargetOnCommand(localSymbolNameReplacementList);
 		}
-		for (HRACSymbol symbl : symbols) {// resolve directives (and et´s) to a value if used to specify bitcnt on symbols
+		for (HRACSymbol symbl : symbols) {// resolve directives (and et´s) to a value if used to specify bitcnt on
+											// symbols
 			if (symbl.isBitCntSpecial()) {
 				symbl.setBitCntSpecial(false);
-				symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this).calculateNumericalValue());
+				symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this)
+						.calculateNumericalValue());
 			}
 		}
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets
@@ -463,12 +464,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol s : toc.symbols) {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
-				if (s.isBitCntSpecial()) {
-					nxtSymbolAddress += getDirectiveAsExpressionTree(s.getSpecialName()).getResolvedExpressionTree(this)
-							.calculateNumericalValue();
-				} else {
-					nxtSymbolAddress += s.getBitCnt();
-				}
+
+				HRACAbstractExpressionNode et = s.getBitCnt();
+				et = et.getResolvedExpressionTree(this);
+				nxtSymbolAddress += et.calculateNumericalValue();
+
 				m.addSymbol(s.getName(), new SymbolHRASMemoryAddress(address));
 			} else {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
@@ -667,7 +667,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, int value) {
-		addDirective(name,new HRACIntegerNode(value));
+		addDirective(name, new HRACIntegerNode(value));
 	}
 
 	public void addAddDirective(String name, String value) {
@@ -698,6 +698,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	public void addDirective(String name, Object value) {
 		directives.put(name, value);
-		
+
 	}
 }

@@ -3,6 +3,9 @@
  */
 package de.dralle.som.languages.hrac.model;
 
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+
 /**
  * @author Nils
  *
@@ -29,13 +32,29 @@ public class HRACSymbol implements Cloneable {
 	 * Potential target symbol. Might be null.
 	 */
 	private AbstractHRACMemoryAddress targetSymbol;
-	private int bitCnt;
+	private HRACAbstractExpressionNode bitCnt;
+
+@Deprecated
+/**
+ * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive
+ * @param bitCntISN
+ */
 	private boolean bitCntSpecial;
 	/**
 	 * If bitCnt is special, contains the special (directive) name.
 	 */
+	@Deprecated
+	/**
+	 * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive
+	 * @param bitCntISN
+	 */
 	private String specialName;
 
+@Deprecated
+/**
+ * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive
+ * @param bitCntISN
+ */
 	public void setSpecialName(String specialName) {
 		this.specialName = specialName;
 	}
@@ -63,19 +82,31 @@ public class HRACSymbol implements Cloneable {
 	public void setTargetSymbol(AbstractHRACMemoryAddress mirrorSymbol) {
 		this.targetSymbol = mirrorSymbol;
 	}
-
-	public int getBitCnt() {
+	@Deprecated
+	public int getBitCntAsInt() {
+		return bitCnt.calculateNumericalValue();
+	}
+	public HRACAbstractExpressionNode getBitCnt() {
 		return bitCnt;
 	}
 
 	public void setBitCnt(int bitCnt) {
-		this.bitCnt = bitCnt;
+		this.bitCnt = new HRACIntegerNode(bitCnt);
 	}
 
+@Deprecated
+/**
+ * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive
+ * @param bitCntISN
+ */
 	public boolean isBitCntSpecial() {
 		return bitCntSpecial;
 	}
-
+@Deprecated
+/**
+ * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive
+ * @param bitCntISN
+ */
 	public void setBitCntSpecial(boolean bitCntISN) {
 		this.bitCntSpecial = bitCntISN;
 	}

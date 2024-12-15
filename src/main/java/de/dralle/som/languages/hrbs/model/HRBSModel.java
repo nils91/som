@@ -493,7 +493,15 @@ public class HRBSModel implements ISetN, IHeap {
 		newm.setMinimumN(m.getN());
 		newm.setHeapSize(m.getHeapSize());
 		newm.setName(name);
-		newm.setDirectives(m.getDirectives());
+		//only required for transition. change back to direct set later
+		Map<String, Object> hracDirectives = m.getDirectives();
+		Map<String, String> hrbsDirectives = new HashMap<String, String>();
+		for (Entry<String, Object> entry : hracDirectives.entrySet()) {
+			String key = entry.getKey();
+			Object val = entry.getValue();
+			hrbsDirectives.put(key, val.toString());
+		}
+		newm.setDirectives(hrbsDirectives);
 		for (Entry<AbstractHRACMemoryAddress, Boolean> iterable_element : m.getInitOnceAddresses()) {
 			AbstractHRBSMemoryAddress hracma = convertHRACMA2HRBS(iterable_element.getKey());
 			newm.addInitOnceItem(hracma, iterable_element.getValue());
@@ -529,8 +537,8 @@ public class HRBSModel implements ISetN, IHeap {
 		HRBSBoundsRange newr = new HRBSBoundsRange();
 		if(range instanceof HRACForDupBoundingRangeProvider) {
 			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
-			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart(), brange.getRangeStartSpecial()));
-			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd(), brange.getRangeEndSpecial()));
+			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStartAsInt(), brange.getRangeStartSpecial()));
+			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEndAsInt(), brange.getRangeEndSpecial()));
 		}		
 		return newr;
 	}
@@ -548,7 +556,7 @@ public class HRBSModel implements ISetN, IHeap {
 	private static HRBSSymbol convertHRACSymbolToHRBS(HRACSymbol s) {
 		HRBSSymbol news = new HRBSSymbol();
 		news.setType(HRBSSymbolType.local);
-		news.setBitCnt(s.getBitCnt());
+		news.setBitCnt(s.getBitCntAsInt());
 		news.setBitCntISSpecial(s.getSpecialName());
 		news.setName(s.getName());
 		if (s.getTargetSymbol() != null) {
@@ -564,11 +572,11 @@ public class HRBSModel implements ISetN, IHeap {
 			((NamedHRBSMemoryAddress) newma).setTargetSymbolName(((NamedHRACMemoryAddress) targetSymbol).getName());
 		}
 		if (targetSymbol instanceof FixedHRACMemoryAddress) {
-			newma = new HRBSFixedMemoryAddress(((FixedHRACMemoryAddress) targetSymbol).getAddress());
+			newma = new HRBSFixedMemoryAddress(((FixedHRACMemoryAddress) targetSymbol).getAddress().calculateNumericalValue());//change to compileToHRBSExpressionTree once thats done
 		}
 		newma.setDeref(false);
 		if (targetSymbol.getOffset() != null) {
-			newma.setOffset(targetSymbol.getOffset());
+			newma.setOffset(targetSymbol.getOffset().calculateNumericalValue()); //same here
 		}
 		return newma;
 

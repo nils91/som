@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrac.model;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 /**
  * @author Nils
@@ -28,6 +29,9 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 
 	public void setOffset(HRACAbstractExpressionNode offset) {
 		this.offset = offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = new HRACIntegerNode(offset);
 	}
 	protected AbstractHRACMemoryAddress() {
 		

@@ -27,6 +27,16 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 		values.add(value);
 		replacingDirectives.add(null);
 	}
+	public void addValue(int value) {
+		if(values==null) {
+			values=new ArrayList<HRACAbstractExpressionNode>();
+		}
+		if(replacingDirectives==null) {
+			replacingDirectives=new LinkedList<String>();
+		}
+		values.add(new HRACIntegerNode(value));
+		replacingDirectives.add(null);
+	}
 
 	public void setReplacingDirectives(List<String> replacingDirectives) {
 		this.replacingDirectives = replacingDirectives;

@@ -222,4 +222,13 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	public String toString() {
 		return asCode();
 	}
+@Deprecated
+	public int getRangeStartAsInt() {
+		return rangeStart.calculateNumericalValue();
+	}
+@Deprecated
+public int getRangeEndAsInt() {
+	// TODO Auto-generated method stub
+	return rangeEnd.calculateNumericalValue();
+}
 }

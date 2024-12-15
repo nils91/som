@@ -63,7 +63,7 @@ public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode im
 	}
 
 	@Override
-	public HRASSingleChildExpressionNode compileToHRAS(HRACModel parent) {
+	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
 		return new HRASSingleChildExpressionNode(getChild().compileToHRAS(parent));
 	}
 

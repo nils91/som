@@ -61,6 +61,9 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	public void setStepSize(HRACAbstractExpressionNode stepSize) {
 		this.stepSize = stepSize;
 	}
+	public void setStepSize(int stepSize) {
+		this.stepSize = new HRACIntegerNode(stepSize);
+	}
 
 	public String getStepSizeSpecial() {
 		return stepSizeSpecial;
@@ -77,6 +80,9 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	public void setRangeStart(HRACAbstractExpressionNode rangeStart) {
 		this.rangeStart = rangeStart;
 	}
+	public void setRangeStart(int rangeStart) {
+		this.rangeStart = new HRACIntegerNode(rangeStart)                                                            ;
+	}
 
 	public HRACAbstractExpressionNode getRangeEnd() {
 		return rangeEnd;
@@ -84,6 +90,9 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 
 	public void setRangeEnd(HRACAbstractExpressionNode rangeEnd) {
 		this.rangeEnd = rangeEnd;
+	}
+	public void setRangeEnd(int rangeEnd) {
+		this.rangeEnd = new HRACIntegerNode(rangeEnd);
 	}
 
 	public String getRangeStartSpecial() {

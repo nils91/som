@@ -667,7 +667,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, int value) {
-		addDirective(name, value + "");
+		addDirective(name,new HRACIntegerNode(value));
 	}
 
 	public void addAddDirective(String name, String value) {
@@ -694,5 +694,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 		}
 		return null;
+	}
+
+	public void addDirective(String name, Object value) {
+		directives.put(name, value);
+		
 	}
 }

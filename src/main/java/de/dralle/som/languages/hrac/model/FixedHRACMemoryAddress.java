@@ -19,6 +19,10 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	public FixedHRACMemoryAddress() {
 		super();
 	}
+	public FixedHRACMemoryAddress(HRACAbstractExpressionNode accept) {
+		super();
+		this.address = accept;
+	}
 	@Override
 	public int hashCode() {
 		return address.hashCode()+ super.hashCode();

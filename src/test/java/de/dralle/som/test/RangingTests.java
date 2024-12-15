@@ -43,7 +43,7 @@ class RangingTests {
 		hracForDup.setStepSize(step);
 		hracForDup.setRangeStartBoundExclusive(rangeStartExclusive);
 		hracForDup.setRangeEndBoundExclusive(rangeEndExclusive);
-		assertArrayEquals(expected, hracForDup.getRange(null));
+		assertArrayEquals(expected, hracForDup.getRangeAsIntArray(null));
 	}
 
 	private static Stream<Arguments> provideRangeTestData() {// lower bound, upper bound, step, lower exclusive, upper

@@ -10,6 +10,7 @@ import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvider> {
 	private IHRACRangeProvider r =null;
@@ -121,7 +122,7 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 			if(ofs.getDirectiveName()!=null) {
 				rl.addReplacingDirective(ofs.getDirectiveName());
 			}else {
-				rl.addValue(ofs.getOffset());
+				rl.addValue(new HRACIntegerNode(ofs.getOffset()));
 			}
 		}
 		return rl;

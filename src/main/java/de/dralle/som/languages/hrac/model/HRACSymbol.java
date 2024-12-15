@@ -93,7 +93,9 @@ public class HRACSymbol implements Cloneable {
 	public void setBitCnt(int bitCnt) {
 		this.bitCnt = new HRACIntegerNode(bitCnt);
 	}
-
+	public void setBitCnt(HRACAbstractExpressionNode bitCnt) {
+		this.bitCnt = bitCnt;
+	}
 @Deprecated
 /**
  * bitCnt is now a type which can be a directive (directiveNode in expression tree) so this class is no longer required to differentiate between int and directive

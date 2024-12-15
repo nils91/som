@@ -22,18 +22,13 @@ public class HRACOSVisitor extends HRACGrammarBaseVisitor<HRACMemoryOffset> {
 
 	@Override
 	public HRACMemoryOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
-		o.set
+		o.setOffset(ctx.par_expr().accept(new HRACExpressionVisitor()));
+		return o;
 	}
 
 	@Override
 	public HRACMemoryOffset visitCnt_specify(Cnt_specifyContext ctx) {
-
-		if (ctx.INT() != null) {
-			o.setOffset(Util.decodeInt(ctx.INT().getText()));
-		}
-		if (ctx.directive_access() != null) {
-			ctx.directive_access().accept(this);
-		}
+		o.setOffset(ctx.par_expr().accept(new HRACExpressionVisitor()));
 		return o;
 	}
 }

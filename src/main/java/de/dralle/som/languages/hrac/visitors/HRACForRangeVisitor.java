@@ -122,7 +122,7 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 			if(ofs.getDirectiveName()!=null) {
 				rl.addReplacingDirective(ofs.getDirectiveName());
 			}else {
-				rl.addValue(new HRACIntegerNode(ofs.getOffset()));
+				rl.addValue( (ofs.getOffset()));
 			}
 		}
 		return rl;

@@ -112,6 +112,17 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 	}
 
 	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
+		
+		int[] rng = getRangeAsIntArray(parent);
+		HRACAbstractExpressionNode[] rngNodes=new HRACAbstractExpressionNode[rng.length];
+		for (int i = 0; i < rng.length; i++) {
+			int hracAbstractExpressionNode = rng[i];
+			rngNodes[i]=new HRACIntegerNode(hracAbstractExpressionNode);
+			
+		}
+		return rngNodes;
+	}
+	public int[] getRangeAsIntArray(HRACModel parent) {
 		if (rangeEndSpecial != null) {
 			rangeEnd = parent.getDirectiveAsExpressionTree(rangeEndSpecial);
 		}
@@ -171,15 +182,8 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider,Clone
 				rng[i] = range.get(i);
 			}
 		}
-		HRACAbstractExpressionNode[] rngNodes=new HRACAbstractExpressionNode[rng.length];
-		for (int i = 0; i < rng.length; i++) {
-			int hracAbstractExpressionNode = rng[i];
-			rngNodes[i]=new HRACIntegerNode(hracAbstractExpressionNode);
-			
-		}
-		return rngNodes;
+		return rng;
 	}
-
 	@Override
 	public HRACForDupBoundingRangeProvider clone() {
 		// TODO Auto-generated method stub

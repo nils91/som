@@ -4,21 +4,21 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
 import de.dralle.som.languages.hrac.model.expressiontree.HRACModuloExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 
-public class MultiplicationExpression extends CommutativeDualChildExpressionNode implements Cloneable {
+public class HRASMultiplicationExpression extends CommutativeDualChildExpressionNode implements Cloneable {
 
-	public MultiplicationExpression() {
+	public HRASMultiplicationExpression() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MultiplicationExpression(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
+	public HRASMultiplicationExpression(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MultiplicationExpression) {
+		if (obj instanceof HRASMultiplicationExpression) {
 			return super.equals(obj);
 		}
 		return false;

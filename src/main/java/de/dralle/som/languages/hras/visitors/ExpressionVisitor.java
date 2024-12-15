@@ -16,7 +16,7 @@ import de.dralle.som.languages.hras.model.HRASFactorialExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASMinusExpressionNode;
 import de.dralle.som.languages.hras.model.HRASModuloExpression;
-import de.dralle.som.languages.hras.model.MultiplicationExpression;
+import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 import de.dralle.som.languages.hras.model.PlusExpressionNode;
 import de.dralle.som.languages.hras.model.PowerExpressionNode;
 
@@ -54,7 +54,7 @@ public class ExpressionVisitor extends HRASGrammarBaseVisitor<HRASAbstractExpres
 		if(ctx.multiplicative_expr()!=null) {
 			child0=ctx.multiplicative_expr().accept(this);
 			if(ctx.MUL()!=null) {
-				return new MultiplicationExpression(child0,child1);
+				return new HRASMultiplicationExpression(child0,child1);
 			}else if(ctx.DIV()!=null) {
 				return new HRASDivisionExpressionNode(child0,child1);
 			}else if(ctx.MOD()!=null) {

@@ -241,4 +241,10 @@ class IssueTests {
 		assertNotNull(stringRep);
 
 	}
+	@Test
+	void testIssue134_HRACtoString2() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
+		String stringRep = model.toString();
+		assertNotNull(stringRep);
+	}
 }

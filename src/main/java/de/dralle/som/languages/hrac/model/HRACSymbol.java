@@ -124,12 +124,37 @@ public class HRACSymbol implements Cloneable {
 		if (bitCntSpecial) {
 			sb.append(String.format("[$%s]", specialName));
 		} else {
-			sb.append(String.format("[%s]", bitCnt.toString()));
+			if(bitCnt==null) {
+				
+			}else {
+				sb.append(String.format("[%s]", bitCnt.toString()));
+			}
 		}
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol));
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof HRACSymbol) {
+			HRACSymbol oth = (HRACSymbol)obj;
+			boolean equals = name==oth.name||name.equals(oth.name);
+			if(equals) {
+				equals=bitCnt==oth.bitCnt||bitCnt.equals(oth.bitCnt);
+			}
+			if(equals) {
+				equals=targetSymbol==oth.targetSymbol||targetSymbol.equals(oth.targetSymbol)
+;			}
+			return equals;
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public String toString() {
+	return asCode();
 	}
 
 	public String getSpecialName() {

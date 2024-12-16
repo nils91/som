@@ -71,7 +71,7 @@ class HRACCompileTest {
 		for (int i = 0; i < 4; i++) {
 			HRACForDup curCommand = model.getCommands().get(i);
 			HRACForDup nxtCommand = model.getCommands().get(i + 1);
-			assertEquals(curCommand.getCmd().getTarget().getOffset().calculateNumericalValue() + 1, nxtCommand.getCmd().getTarget().getOffset().calculateNumericalValue());
+			assertEquals(curCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model).calculateNumericalValue() + 1, nxtCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model).calculateNumericalValue());
 		}
 
 	}

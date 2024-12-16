@@ -124,7 +124,7 @@ public class HRACSymbol implements Cloneable {
 		if (bitCntSpecial) {
 			sb.append(String.format("[$%s]", specialName));
 		} else {
-			sb.append(String.format("[%d]", bitCnt));
+			sb.append(String.format("[%s]", bitCnt.toString()));
 		}
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol));

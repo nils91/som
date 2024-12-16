@@ -388,6 +388,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (hracForDup.getCmd() != null) {
 				HRACCommand cmd = hracForDup.getCmd();
 				AbstractHRACMemoryAddress ma = cmd.getTarget();
+				if(ma.getOffset()!=null) {
+					ma.setOffset(ma.getOffset().getResolvedExpressionTree(this));
+				}
 				if (ma.isOffsetSpecial()) {
 					ma.setOffset(getDirectiveAsExpressionTree(ma.getOffsetSpecialnName()));
 					ma.setOffsetSpecial(false);

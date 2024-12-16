@@ -234,4 +234,11 @@ class IssueTests {
 		Pattern regex = Pattern.compile("setonce \\d+"); //search for setonce with a number
 		assertTrue(regex.matcher(hravCode).find());
 	}
+	@Test
+	void testIssue134_HRACtoString() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_var_repl.hrac", SOMFormats.HRAC);
+		String stringRep = model.toString();
+		assertNotNull(stringRep);
+
+	}
 }

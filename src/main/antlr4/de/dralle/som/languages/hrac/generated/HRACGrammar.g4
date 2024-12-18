@@ -324,12 +324,6 @@ INT
 		| BASE_NUMBER_PREFIX
 	)? [0-9a-zA-Z]+
 ;
-
-NEG_INT
-:
-	DASH INT
-;
-
 DIRECTIVE_VALUE_STR
 :
 	(

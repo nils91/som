@@ -29,6 +29,7 @@ import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
@@ -246,5 +247,11 @@ class IssueTests {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
 		String stringRep = model.toString();
 		assertNotNull(stringRep);
+	}
+	@Test
+	void testIssue136_NegativeOffsetMirrorSymbol() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
+		HRACSymbol amir = model.getSymbolByName("A_MIR");
+		assertEquals("A", ((NamedHRACMemoryAddress)amir.getTargetSymbol()).getName());
 	}
 }

@@ -21,6 +21,7 @@ import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASCommand;
+import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
@@ -498,8 +499,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 		}
 		for (var hracForDup : initOnceAddresses) {
+			HRACAbstractExpressionNode hracOfs = hracForDup.getKey().getOffset();
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
-			newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
+			if(hracOfs!=null) {
+				newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
+			}else {
+				newmadr.setAddressOffset(new HRASIntegerNode(0));
+			}
+			
 			if (hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
 				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) hracForDup.getKey();
 				newmadr.setSymbol(f.getAddress().toString());

@@ -77,22 +77,27 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public HRACAbstractExpressionNode getDirectiveAsExpressionTree(String name) {
-		try {
-			Object sv = additionalDirectives.get(name);
-			if (sv instanceof de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode) sv;
-			}
-		} catch (Exception e) {
-
+		Object sv = additionalDirectives.get(name);
+		if(sv==null) {
+			sv = directives.get(name);
 		}
-		try {
-			Object sv = directives.get(name);
-			if (sv instanceof HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode) sv;
-			}
-		} catch (Exception e) {
+		if(sv==null) {
 			return new HRACIntegerNode(0);
 		}
+		if (sv instanceof HRACAbstractExpressionNode) {
+			return (HRACAbstractExpressionNode) sv;
+		}
+		if (sv instanceof Integer) {
+			return new HRACIntegerNode( (Integer) sv);
+		}
+		String svStr = sv.toString();
+		try {
+			int svI = Util.decodeInt(svStr);
+			return new HRACIntegerNode(svI);
+		}catch(Exception e) {
+			System.out.println("(HRAC) Directive "+name+" not a number: "+sv);
+		}
+		
 		return new HRACIntegerNode(0);
 	}
 

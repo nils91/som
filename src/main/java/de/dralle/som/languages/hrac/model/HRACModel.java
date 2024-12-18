@@ -182,8 +182,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				if (s.getTargetSymbol() == null) {
 
 					HRACAbstractExpressionNode et = s.getBitCnt();
-					et = et.getResolvedExpressionTree(this);
-					cnt += et.calculateNumericalValue();
+					if(et!=null) {
+						et = et.getResolvedExpressionTree(this);cnt += et.calculateNumericalValue();
+					}else {
+						cnt++;
+					}
+					
 
 				}
 			}
@@ -469,9 +473,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				int address = nxtSymbolAddress;
 
 				HRACAbstractExpressionNode et = s.getBitCnt();
+				if(et!=null) {
 				et = et.getResolvedExpressionTree(this);
-				nxtSymbolAddress += et.calculateNumericalValue();
-
+				nxtSymbolAddress += et.calculateNumericalValue();}else {nxtSymbolAddress++;}
 				m.addSymbol(s.getName(), new SymbolHRASMemoryAddress(address));
 			} else {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();

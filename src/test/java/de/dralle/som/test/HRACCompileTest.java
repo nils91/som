@@ -167,7 +167,7 @@ class HRACCompileTest {
 	void testNReplAlloc() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_n_repl_alloc.hrac", SOMFormats.HRAC);
 		model.precompile("", null, true);
-		assertEquals(model.getN(), model.getSymbolByName("A").getBitCnt());
+		assertEquals(model.getN(), model.getSymbolByName("A").getBitCntAsInt(model));
 	}
 
 	@Test

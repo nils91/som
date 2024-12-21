@@ -21,6 +21,7 @@ import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASCommand;
+import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 
@@ -76,22 +77,27 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public HRACAbstractExpressionNode getDirectiveAsExpressionTree(String name) {
-		try {
-			Object sv = additionalDirectives.get(name);
-			if (sv instanceof de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode) sv;
-			}
-		} catch (Exception e) {
-
+		Object sv = additionalDirectives.get(name);
+		if(sv==null) {
+			sv = directives.get(name);
 		}
-		try {
-			Object sv = directives.get(name);
-			if (sv instanceof HRACAbstractExpressionNode) {
-				return (HRACAbstractExpressionNode) sv;
-			}
-		} catch (Exception e) {
+		if(sv==null) {
 			return new HRACIntegerNode(0);
 		}
+		if (sv instanceof HRACAbstractExpressionNode) {
+			return (HRACAbstractExpressionNode) sv;
+		}
+		if (sv instanceof Integer) {
+			return new HRACIntegerNode( (Integer) sv);
+		}
+		String svStr = sv.toString();
+		try {
+			int svI = Util.decodeInt(svStr);
+			return new HRACIntegerNode(svI);
+		}catch(Exception e) {
+			System.out.println("(HRAC) Directive "+name+" not a number: "+sv);
+		}
+		
 		return new HRACIntegerNode(0);
 	}
 
@@ -498,8 +504,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 		}
 		for (var hracForDup : initOnceAddresses) {
+			HRACAbstractExpressionNode hracOfs = hracForDup.getKey().getOffset();
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
-			newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
+			if(hracOfs!=null) {
+				newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
+			}else {
+				newmadr.setAddressOffset(new HRASIntegerNode(0));
+			}
+			
 			if (hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
 				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) hracForDup.getKey();
 				newmadr.setSymbol(f.getAddress().toString());

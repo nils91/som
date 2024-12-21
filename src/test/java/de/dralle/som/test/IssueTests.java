@@ -216,13 +216,19 @@ class IssueTests {
 		// Replicates test
 		// FormatHRACFileWriteTest.testCompileFromModelOutputContentEqual for file
 		// test/fixtures/hrac/test_directive_use_in_offsets.hrac
-		HRACModel m = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
+		HRACModel hc0 = f.loadFromFile("test/fixtures/hrac/test_directive_use_in_offsets.hrac", SOMFormats.HRAC);
 
-		String hracCode = m.asCode();
+		String hracCode = hc0.asCode();
 		HRACParser p = new HRACParser();
-		HRACModel m2 = p.parse(hracCode);
-		IMemspace nm = c.compile(m, SOMFormats.HRAC, SOMFormats.BIN);
-		IMemspace nm2 = c.compile(m2, SOMFormats.HRAC, SOMFormats.BIN);
+		HRACModel hc1 = p.parse(hracCode);
+		HRACModel hp0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRACModel hp1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hs0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRASModel hs1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hv0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAV);
+		HRAVModel hv1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAV);
+		IMemspace nm = c.compile(hc0, SOMFormats.HRAC, SOMFormats.BIN);
+		IMemspace nm2 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.BIN);	
 		assertTrue(nm.equalContent(nm2));
 	}
 	

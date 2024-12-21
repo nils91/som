@@ -8,25 +8,25 @@ package de.dralle.som.languages.hras.model;
  *
  */
 public class ExpressionHRASMemoryAddress extends AbstractHRASMemoryAddress implements Cloneable{
-	private AbstractExpressionNode expression;
+	private HRASAbstractExpressionNode expression;
 
 	public ExpressionHRASMemoryAddress(int accAddress) {
-		this.expression = new IntegerNode(accAddress);
+		this.expression = new HRASIntegerNode(accAddress);
 	}
 
 	public ExpressionHRASMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ExpressionHRASMemoryAddress(AbstractExpressionNode expression) {
+	public ExpressionHRASMemoryAddress(HRASAbstractExpressionNode expression) {
 		this.expression=expression;
 	}
 
-	public AbstractExpressionNode getexpression() {
+	public HRASAbstractExpressionNode getexpression() {
 		return expression;
 	}
 
-	public void setexpression(AbstractExpressionNode expression) {
+	public void setexpression(HRASAbstractExpressionNode expression) {
 		this.expression = expression;
 	}
 	public int resolve(HRASModel model) {
@@ -67,6 +67,6 @@ public class ExpressionHRASMemoryAddress extends AbstractHRASMemoryAddress imple
 	}
 
 	public void setexpression(int address) {
-		this.expression=new IntegerNode(address);
+		this.expression=new HRASIntegerNode(address);
 	}
 }

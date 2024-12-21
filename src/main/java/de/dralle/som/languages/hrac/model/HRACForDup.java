@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 
 /**
  * Holds a single command or an entire HRACChildModel
@@ -169,7 +170,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			return model.getN();
 		}
 		if (parent != null) {
-			parent.getDirectiveAsInt("N");
+			parent.getDirectiveAsExpressionTree("N");
 		}
 		return 0;// assuming special is n
 	}
@@ -194,7 +195,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			model.setMinimumN(parent.getN());
 			if(range!=null) {
 				for (int i = 0; i < range.getRange(parent).length; i++) {
-					int si = range.getRange(parent)[i];
+					HRACAbstractExpressionNode si = range.getRange(parent)[i];
 					HRACModel modelClone = model.clone();
 					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
 					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList,i==0);
@@ -218,12 +219,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt+=model.getCommandCount(n);
 			}
 		}else {
-			int[] rng = range.getRange(parent);			
+			HRACAbstractExpressionNode[] rng = range.getRange(parent);			
 			if(cmd!=null) {
 				cnt+=rng.length;
 			}if(model!=null) {
 				for (int i = 0; i < rng.length; i++) {
-					int j = rng[i];
+					HRACAbstractExpressionNode j = rng[i];
 					model.addAddDirective(range.getRunningDirectiveName(), j);
 					cnt+=model.getCommandCount(n);
 				}
@@ -239,10 +240,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt+=model.getSymbolBitCnt(n);
 			}
 		}else {
-			int[] rng = range.getRange(parent);
+			HRACAbstractExpressionNode[] rng = range.getRange(parent);
 		if(model!=null) {
 			for (int i = 0; i < rng.length; i++) {
-				int j = rng[i];
+				HRACAbstractExpressionNode j = rng[i];
 				model.addAddDirective("i", j);
 				cnt+=model.getSymbolBitCnt(n);
 			}

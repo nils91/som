@@ -1,20 +1,23 @@
 package de.dralle.som.languages.hras.model;
 
-public class DivisionExpressionNode extends DualChildExpressionNode implements Cloneable {
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACDivisionExpressionNode;
 
-	public DivisionExpressionNode() {
+public class HRASDivisionExpressionNode extends HRASDualChildExpressionNode implements Cloneable {
+
+	public HRASDivisionExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public DivisionExpressionNode(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public HRASDivisionExpressionNode(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof DivisionExpressionNode) {
+		if (obj instanceof HRASDivisionExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;
@@ -35,6 +38,11 @@ public class DivisionExpressionNode extends DualChildExpressionNode implements C
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" / "+getChilds()[1].toString()+" )";
+	}
+
+	@Override
+	public HRACDivisionExpressionNode compileToHRAC() {
+		return new de.dralle.som.languages.hrac.model.expressiontree.HRACDivisionExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

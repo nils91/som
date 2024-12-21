@@ -22,6 +22,10 @@ public class SymbolHRASMemoryAddress extends AbstractHRASMemoryAddress implement
 		this.symbol=mirrorSymbol;
 	}
 
+	public SymbolHRASMemoryAddress(HRASAbstractExpressionNode tgtAdr) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getSymbol() {
 		return symbol;
 	}

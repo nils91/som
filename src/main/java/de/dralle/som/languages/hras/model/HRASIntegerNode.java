@@ -1,10 +1,13 @@
 package de.dralle.som.languages.hras.model;
 
-public class IntegerNode extends AbstractExpressionNode implements Cloneable{
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+
+public class HRASIntegerNode extends HRASAbstractExpressionNode implements Cloneable{
 	@Override
-	public IntegerNode clone() {
+	public HRASIntegerNode clone() {
 		// TODO Auto-generated method stub
-		return (IntegerNode) super.clone();
+		return (HRASIntegerNode) super.clone();
 	}
 	@Override
 	public int hashCode() {
@@ -13,8 +16,8 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IntegerNode){
-		IntegerNode oth=(IntegerNode) obj;
+		if(obj instanceof HRASIntegerNode){
+		HRASIntegerNode oth=(HRASIntegerNode) obj;
 		return value==oth.value;
 		}
 		if(obj instanceof Integer) {
@@ -39,15 +42,19 @@ public class IntegerNode extends AbstractExpressionNode implements Cloneable{
 	public void setValue(int value) {
 		this.value = value;
 	}
-	public IntegerNode(int value) {
+	public HRASIntegerNode(int value) {
 		super();
 		this.value = value;
 	}
-	public IntegerNode() {
+	public HRASIntegerNode() {
 		super();
 	}
-	public IntegerNode(AbstractExpressionNode value) {
+	public HRASIntegerNode(HRASAbstractExpressionNode value) {
 		super();
 		this.value = value.calculateNumericalValue();
+	}
+	@Override
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACIntegerNode(value);
 	}
 }

@@ -1,20 +1,24 @@
 package de.dralle.som.languages.hras.model;
 
-public class MultiplicationExpression extends CommutativeDualChildExpressionNode implements Cloneable {
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACModuloExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 
-	public MultiplicationExpression() {
+public class HRASMultiplicationExpression extends CommutativeDualChildExpressionNode implements Cloneable {
+
+	public HRASMultiplicationExpression() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MultiplicationExpression(AbstractExpressionNode child1, AbstractExpressionNode child2) {
+	public HRASMultiplicationExpression(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MultiplicationExpression) {
+		if (obj instanceof HRASMultiplicationExpression) {
 			return super.equals(obj);
 		}
 		return false;
@@ -35,6 +39,11 @@ public class MultiplicationExpression extends CommutativeDualChildExpressionNode
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" * "+getChilds()[1].toString()+" )";
+	}
+
+	@Override
+	public HRACMultiplicationExpressionNode compileToHRAC() {
+		 return new HRACMultiplicationExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

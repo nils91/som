@@ -21,7 +21,7 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRA
 
 	@Override
 	public AbstractHRACMemoryAddress visitMemadr(MemadrContext ctx) {
-		return new FixedHRACMemoryAddress(Util.decodeInt(ctx.INT().getText()));
+		return new FixedHRACMemoryAddress(ctx.par_expr().accept(new HRACExpressionVisitor()));
 	}
 
 	private AbstractHRACMemoryAddress address;

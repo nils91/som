@@ -60,9 +60,9 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 	@Override
 	public HRACModel visitDirective(de.dralle.som.languages.hrac.generated.HRACGrammarParser.DirectiveContext ctx) {
 		String name = ctx.directive_name().getText();
-		String value = "";
-		if (ctx.INT() != null) {
-			value = Util.decodeInt(ctx.INT().getText())+"";
+		Object value = "";
+		if (ctx.par_expr() != null) {
+			value = ctx.par_expr().accept(new HRACExpressionVisitor());
 		}
 		if (ctx.DIRECTIVE_VALUE_STR() != null) {
 			value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);

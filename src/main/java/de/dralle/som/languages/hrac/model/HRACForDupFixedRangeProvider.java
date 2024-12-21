@@ -3,25 +3,38 @@ package de.dralle.som.languages.hrac.model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 /**
  * Provides a range of values (as an arry) via getRange().
  */
 public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneable {
-	private List<Integer> values;
+	private List<HRACAbstractExpressionNode> values;
 	private List<String> replacingDirectives;
 	private String runningDirectiveName="i";
-	public void setValues(List<Integer> values) {
+	public void setValues(List<HRACAbstractExpressionNode> values) {
 		this.values = values;
 	}
 	
-	public void addValue(int value) {
+	public void addValue(HRACAbstractExpressionNode value) {
 		if(values==null) {
-			values=new ArrayList<Integer>();
+			values=new ArrayList<HRACAbstractExpressionNode>();
 		}
 		if(replacingDirectives==null) {
 			replacingDirectives=new LinkedList<String>();
 		}
 		values.add(value);
+		replacingDirectives.add(null);
+	}
+	public void addValue(int value) {
+		if(values==null) {
+			values=new ArrayList<HRACAbstractExpressionNode>();
+		}
+		if(replacingDirectives==null) {
+			replacingDirectives=new LinkedList<String>();
+		}
+		values.add(new HRACIntegerNode(value));
 		replacingDirectives.add(null);
 	}
 
@@ -31,7 +44,7 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 
 	public void addReplacingDirective(String d) {
 		if(values==null) {
-			values=new ArrayList<Integer>();
+			values=new ArrayList<HRACAbstractExpressionNode>();
 		}
 		if(replacingDirectives==null) {
 			replacingDirectives=new LinkedList<String>();
@@ -41,15 +54,15 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 	}
 
 
-	public int[] getRange(HRACModel parent) {
-		int[] rng=new int[values.size()];
+	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
+		HRACAbstractExpressionNode[] rng=new HRACAbstractExpressionNode[values.size()];
 		for (int i = 0; i < values.size(); i++) {
-			int value=0;
+			HRACAbstractExpressionNode value=new HRACIntegerNode(0);
 			if(values.get(i)!=null) {
 				value=values.get(i);
 			}
 			if(replacingDirectives.get(i)!=null) {
-				value=parent.getDirectiveAsInt(replacingDirectives.get(i));
+				value=parent.getDirectiveAsExpressionTree(replacingDirectives.get(i));
 			}
 			rng[i]=value;
 		}
@@ -65,7 +78,10 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider,Cloneabl
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.values=new ArrayList<Integer>(values);
+		clone.values=new ArrayList<HRACAbstractExpressionNode>();
+		for (HRACAbstractExpressionNode v : values) {
+			clone.values.add(v.clone());
+		}
 		clone.replacingDirectives=new ArrayList<String>(replacingDirectives);
 		return null;
 	}

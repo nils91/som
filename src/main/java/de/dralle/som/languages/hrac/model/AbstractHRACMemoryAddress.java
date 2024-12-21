@@ -3,14 +3,15 @@
  */
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 /**
  * @author Nils
  *
  */
 public class AbstractHRACMemoryAddress implements Cloneable {
-	private Integer offset;
+	private HRACAbstractExpressionNode offset;
 	private boolean offsetSpecial;
 	private String offsetSpecialnName;
 
@@ -22,12 +23,15 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		this.offsetSpecial = offsetSpecial;
 	}
 
-	public Integer getOffset() {
+	public HRACAbstractExpressionNode getOffset() {
 		return offset;
 	}
 
-	public void setOffset(Integer offset) {
+	public void setOffset(HRACAbstractExpressionNode offset) {
 		this.offset = offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = new HRACIntegerNode(offset);
 	}
 	protected AbstractHRACMemoryAddress() {
 		
@@ -72,7 +76,7 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		}
 		copy.offsetSpecial = offsetSpecial;
 		if (offset != null) {
-			copy.offset = offset.intValue();
+			copy.offset = offset.clone();
 		}
 		copy.offsetSpecialnName = offsetSpecialnName;
 		return copy;
@@ -83,7 +87,7 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 			return String.format("[$%s]",  offsetSpecialnName);
 		}
 		if (offset != null) {
-			return String.format("[%d]", offset);
+			return String.format("[%s]", offset);
 		} else {
 			return "";
 		}

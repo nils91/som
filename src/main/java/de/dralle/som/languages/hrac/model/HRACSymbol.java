@@ -82,9 +82,13 @@ public class HRACSymbol implements Cloneable {
 	public void setTargetSymbol(AbstractHRACMemoryAddress mirrorSymbol) {
 		this.targetSymbol = mirrorSymbol;
 	}
-	@Deprecated
-	public int getBitCntAsInt() {
-		return bitCnt.calculateNumericalValue();
+	/**
+	 * Shortcut to get the bitcnt as int.
+	 * @param model
+	 * @return
+	 */
+	public int getBitCntAsInt(HRACModel model) {
+		return bitCnt.getResolvedExpressionTree(model).calculateNumericalValue();
 	}
 	public HRACAbstractExpressionNode getBitCnt() {
 		return bitCnt;

@@ -221,8 +221,6 @@ class IssueTests {
 		String hracCode = hc0.asCode();
 		HRACParser p = new HRACParser();
 		HRACModel hc1 = p.parse(hracCode);
-		System.out.println(hc0.equals(hc1));
-		System.out.println(hc1.equals(hc0));
 		HRACModel hp0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAP);
 		HRACModel hp1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAP);
 		HRASModel hs0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAS);
@@ -230,11 +228,7 @@ class IssueTests {
 		HRAVModel hv0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAV);
 		HRAVModel hv1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAV);
 		IMemspace nm = c.compile(hc0, SOMFormats.HRAC, SOMFormats.BIN);
-		IMemspace nm2 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.BIN);
-		System.out.println(nm.getSize()+" "+nm2.getSize());
-		for (int i = 0; i < nm.getSize(); i++) {
-			System.out.println(i+" "+nm.getBit(i)+" "+nm2.getBit(i));
-		}
+		IMemspace nm2 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.BIN);	
 		assertTrue(nm.equalContent(nm2));
 	}
 	

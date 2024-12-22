@@ -1,0 +1,4 @@
+symbol A @0;
+symbol B @(0/5);
+NAR A;
+NAR B;

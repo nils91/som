@@ -45,6 +45,17 @@ public class Util {
 		}
 		return n;
 	}
+	/**
+	 * Factorial of n
+	 * @param n
+	 * @return
+	 */
+	public static int getFac(int n) {
+		if (n == 1) {
+			return n;
+		}
+		return n * getFac(n - 1);
+	}
 
 	public static Map<String, Integer> getBuiltinAdresses() {
 		Map<String, Integer> map = new HashMap<>();

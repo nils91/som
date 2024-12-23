@@ -1,9 +1,11 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACModuloExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.HRASModuloExpression;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 public class HRBSModuloExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
 
@@ -31,21 +33,15 @@ public class HRBSModuloExpressionNode extends HRBSDualChildExpressionNode implem
 	}
 
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue()%getChilds()[1].calculateNumericalValue();
-	}
-
-	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" % "+getChilds()[1].toString()+" )";
 	}
 
 	@Override
-	public HRASModuloExpression compileToHRAS(HRACModel parent) {
+	public HRACModuloExpressionNode compileToHRAC(HRBSModel parent) {
 
-		return new HRASModuloExpression(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new HRACModuloExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
 }
 
 }

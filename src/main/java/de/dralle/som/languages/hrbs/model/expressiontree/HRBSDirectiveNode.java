@@ -1,7 +1,9 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Cloneable{
 	@Override
@@ -41,29 +43,12 @@ public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Clo
 	public HRBSDirectiveNode() {
 		super();
 	}
+	
 	@Override
-	public int calculateNumericalValue() {
-		throw new RuntimeException("Unresolved directive node: "+directiveName);
-	}
-	/**
-	 * return the EXpression tree behind this directive name.
-	 */
-	@Override
-	public HRBSAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
-		return parent.getDirectiveAsExpressionTree(directiveName);
-	}
-	@Override
-	/**
-	 * return the EXpression tree behind this directive name. Since this node can not replace itsself, the return value should always be assigned to itsself;
-	 */
-	public HRBSAbstractExpressionNode resolve(HRACModel parent) {
-		return parent.getDirectiveAsExpressionTree(directiveName);
-	}
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
+	public HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) {
 		HRBSAbstractExpressionNode resolvedNode = this.getResolvedExpressionTree(parent);
 		if(resolvedNode!=null) {
-			return resolvedNode.compileToHRAS(parent);
+			return resolvedNode.compileToHRAC(parent);
 		}
 		return null;
 	}

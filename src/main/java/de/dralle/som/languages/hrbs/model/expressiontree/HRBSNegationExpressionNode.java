@@ -39,8 +39,8 @@ public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode im
 	}
 
 	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
-		return new HRASMultiplicationExpression(getChild().compileToHRAS(parent), new HRASIntegerNode(-1));
+	public HRASAbstractExpressionNode compileToHRAC(HRACModel parent) {
+		return new HRASMultiplicationExpression(getChild().compileToHRAC(parent), new HRASIntegerNode(-1));
 	}
 
 }

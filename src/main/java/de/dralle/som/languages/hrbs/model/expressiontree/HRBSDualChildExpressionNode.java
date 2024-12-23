@@ -23,13 +23,6 @@ public abstract class HRBSDualChildExpressionNode extends HRBSAbstractExpression
 	public void setChilds(HRBSAbstractExpressionNode[] childs) {
 		this.childs = childs;
 	}
-	@Override
-	public HRBSDualChildExpressionNode resolve(HRACModel parent) {
-		for (int i = 0; i < childs.length; i++) {
-			childs[i] = childs[i].resolve(parent);
-		}
-		return this;
-	}
 	public void setChild(HRBSAbstractExpressionNode child,int i) {
 		this.childs[i] = child;
 	}

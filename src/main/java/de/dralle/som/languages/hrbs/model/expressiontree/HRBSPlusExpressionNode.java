@@ -42,9 +42,9 @@ public class HRBSPlusExpressionNode extends HRBSCommutativeDualChildExpressionNo
 	}
 
 	@Override
-	public PlusExpressionNode compileToHRAS(HRACModel parent) {
+	public PlusExpressionNode compileToHRAC(HRACModel parent) {
 
-		return new PlusExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new PlusExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
 	}
 
 }

@@ -42,9 +42,9 @@ public class HRBSMultiplicationExpressionNode extends HRBSCommutativeDualChildEx
 	}
 
 	@Override
-	public HRASMultiplicationExpression compileToHRAS(HRACModel parent) {
+	public HRASMultiplicationExpression compileToHRAC(HRACModel parent) {
 
-		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
 }
 
 }

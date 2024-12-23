@@ -26,8 +26,8 @@ public class HRBSFactorialExpressionNode extends HRBSSingleChildExpressionNode i
 	}
 
 	@Override
-	public HRASFactorialExpressionNode compileToHRAS(HRACModel parent) {
-		return new HRASFactorialExpressionNode(getChild().compileToHRAS(parent));
+	public HRASFactorialExpressionNode compileToHRAC(HRACModel parent) {
+		return new HRASFactorialExpressionNode(getChild().compileToHRAC(parent));
 	}
 
 	

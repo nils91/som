@@ -42,9 +42,9 @@ public class HRBSPowerExpressionNode extends HRBSDualChildExpressionNode impleme
 	}
 
 	@Override
-	public PowerExpressionNode compileToHRAS(HRACModel parent) {
+	public PowerExpressionNode compileToHRAC(HRACModel parent) {
 
-		return new PowerExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new PowerExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
 	}
 
 }

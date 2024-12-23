@@ -1,8 +1,11 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Cloneable{
 	@Override
@@ -47,12 +50,7 @@ public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Clone
 		super();
 	}
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return value;
-	}
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
-		return new HRASIntegerNode(value);
+	public HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) {
+		return new HRACIntegerNode(value);
 	}
 }

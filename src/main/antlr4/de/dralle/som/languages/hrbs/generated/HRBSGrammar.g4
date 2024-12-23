@@ -98,7 +98,7 @@ directive
 :
 	SEMICOLON directive_name EQ
 	(
-		INT
+		primary_expr
 		| DIRECTIVE_VALUE_STR
 	)
 ;
@@ -132,8 +132,7 @@ DOLLAR
 offset_specify_number
 :
 	(
-		NEG_INT
-		| INT
+		primary_expr
 		| directive_access
 	)
 ;
@@ -215,7 +214,7 @@ symbol_target
 
 fixed_address
 :
-	AT INT
+	AT par_expr
 ;
 
 AT
@@ -245,7 +244,7 @@ cnt_specify
 :
 	B_OPEN
 	(
-		INT
+		primary_expr
 		| directive_access
 	) B_CLOSE
 ;
@@ -264,6 +263,83 @@ import_stmt
 		USING NAME
 	)? SEMICOLON
 ;
+
+// following rules are for the expression tree
+
+primary_expr
+:
+	additive_expr
+;
+
+additive_expr
+:
+	multiplicative_expr
+	| additive_expr
+	(
+		PLUS
+		| DASH
+	) multiplicative_expr
+;
+PLUS: '+';
+
+
+multiplicative_expr
+:
+	power_expr
+	| multiplicative_expr
+	(
+		MUL
+		| DIV
+		| MOD
+	) power_expr
+;
+MOD: '%';
+
+DIV: '/';
+
+MUL: '*';
+
+
+power_expr
+:
+	factorial_expr
+	| factorial_expr CARET power_expr
+;
+CARET: '^';
+
+
+factorial_expr
+:
+	absolute_expr EXCL?
+;
+EXCL: '!';
+
+
+absolute_expr
+:
+	par_expr
+	| PIPE par_expr PIPE
+;
+PIPE: '|';
+
+
+par_expr
+:
+	signed_integer_or_directive
+	| P_OPEN primary_expr P_CLOSE
+;
+
+signed_integer_or_directive
+:
+	DASH? integer_or_directive
+;
+
+integer_or_directive
+:
+	directive_access
+	| INT
+;
+//expression tree end
 
 NEWLINE
 :
@@ -384,11 +460,6 @@ INT
 		| DECIMAL_NUMBER_PREFIX
 		| BASE_NUMBER_PREFIX
 	)? [0-9a-zA-Z]+
-;
-
-NEG_INT
-:
-	DASH INT
 ;
 
 EQ

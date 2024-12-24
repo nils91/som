@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
@@ -39,8 +40,8 @@ public class HRBSDivisionExpressionNode extends HRBSDualChildExpressionNode impl
 	}
 
 	@Override
-	public HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) {
-		return new HRASDivisionExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACDivisionExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

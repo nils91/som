@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
@@ -45,11 +46,7 @@ public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Clo
 	}
 	
 	@Override
-	public HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) {
-		HRBSAbstractExpressionNode resolvedNode = this.getResolvedExpressionTree(parent);
-		if(resolvedNode!=null) {
-			return resolvedNode.compileToHRAC(parent);
-		}
-		return null;
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACDirectiveNode(directiveName);
 	}
 }

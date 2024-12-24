@@ -1,6 +1,8 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
 
@@ -32,22 +34,10 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 		return cl;
 	}
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChild().calculateNumericalValue();
-	}
-	@Override
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		return child.hashCode();
 	}
-
-	@Override
-	public HRBSAbstractExpressionNode resolve(HRACModel parent) {
-		child=child.resolve(parent);
-		return this;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof HRBSSingleChildExpressionNode) {
@@ -63,8 +53,8 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 	}
 
 	@Override
-	public HRASAbstractExpressionNode compileToHRAC(HRACModel parent) {
-		return new HRASSingleChildExpressionNode(getChild().compileToHRAC(parent));
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACSingleChildExpressionNode(getChild().compileToHRAC());
 	}
 
 

@@ -39,9 +39,9 @@ public class HRBSModuloExpressionNode extends HRBSDualChildExpressionNode implem
 	}
 
 	@Override
-	public HRACModuloExpressionNode compileToHRAC(HRBSModel parent) {
+	public HRACModuloExpressionNode compileToHRAC( ) {
 
-		return new HRACModuloExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
+		return new HRACModuloExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 }
 
 }

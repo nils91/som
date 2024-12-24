@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACPlusExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.PlusExpressionNode;
@@ -31,20 +32,15 @@ public class HRBSPlusExpressionNode extends HRBSCommutativeDualChildExpressionNo
 	}
 
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue()+getChilds()[1].calculateNumericalValue();
-	}
-	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" + "+getChilds()[1].toString()+" )";
 	}
 
 	@Override
-	public PlusExpressionNode compileToHRAC(HRACModel parent) {
+	public HRACPlusExpressionNode compileToHRAC( ) {
 
-		return new PlusExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
+		return new HRACPlusExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

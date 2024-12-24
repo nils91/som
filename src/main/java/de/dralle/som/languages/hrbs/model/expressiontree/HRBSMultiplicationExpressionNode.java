@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
@@ -30,21 +31,15 @@ public class HRBSMultiplicationExpressionNode extends HRBSCommutativeDualChildEx
 		return super.hashCode()+getChilds()[0].hashCode()*getChilds()[1].hashCode();
 	}
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue()*getChilds()[1].calculateNumericalValue();
-	}
-	
-	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "( "+getChilds()[0].toString()+" * "+getChilds()[1].toString()+" )";
 	}
 
 	@Override
-	public HRASMultiplicationExpression compileToHRAC(HRACModel parent) {
+	public HRACMultiplicationExpressionNode compileToHRAC() {
 
-		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
+		return new HRACMultiplicationExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 }
 
 }

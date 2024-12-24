@@ -50,7 +50,7 @@ public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Clone
 		super();
 	}
 	@Override
-	public HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) {
+	public HRACAbstractExpressionNode compileToHRAC() {
 		return new HRACIntegerNode(value);
 	}
 }

@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.PowerExpressionNode;
@@ -29,12 +30,6 @@ public class HRBSPowerExpressionNode extends HRBSDualChildExpressionNode impleme
 	public int hashCode() {
 		return super.hashCode()+getChilds()[0].hashCode()*getChilds()[1].hashCode();
 	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return (int) Math.pow(getChilds()[0].calculateNumericalValue(),getChilds()[1].calculateNumericalValue());
-	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
@@ -42,9 +37,9 @@ public class HRBSPowerExpressionNode extends HRBSDualChildExpressionNode impleme
 	}
 
 	@Override
-	public PowerExpressionNode compileToHRAC(HRACModel parent) {
+	public HRACPowerExpressionNode compileToHRAC( ) {
 
-		return new PowerExpressionNode(getChilds()[0].compileToHRAC(parent), getChilds()[1].compileToHRAC(parent));
+		return new HRACPowerExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 	}
 
 }

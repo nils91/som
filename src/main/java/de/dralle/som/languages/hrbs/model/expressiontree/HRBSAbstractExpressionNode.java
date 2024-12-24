@@ -22,6 +22,6 @@ public abstract class HRBSAbstractExpressionNode implements Cloneable{
 		}
 		return null;
 	}
-	public abstract HRACAbstractExpressionNode compileToHRAC(HRBSModel parent) ;
+	public abstract HRACAbstractExpressionNode compileToHRAC( ) ;
 
 }

@@ -39,9 +39,9 @@ public class HRBSMinusExpressionNode extends HRBSDualChildExpressionNode impleme
 	}
 
 	@Override
-	public HRACMinusExpressionNode compileToHRAC(HRBSModel parent) {
+	public HRACMinusExpressionNode compileToHRAC( ) {
 
-		return new HRACMinusExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new HRACMinusExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
 }
 
 }

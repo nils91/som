@@ -1,6 +1,8 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACNegationExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
@@ -33,14 +35,8 @@ public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode im
 	}
 
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return super.calculateNumericalValue()*-1;
-	}
-
-	@Override
-	public HRASAbstractExpressionNode compileToHRAC(HRACModel parent) {
-		return new HRASMultiplicationExpression(getChild().compileToHRAC(parent), new HRASIntegerNode(-1));
+	public HRACAbstractExpressionNode compileToHRAC( ) {
+		return new HRACNegationExpressionNode(getChild().compileToHRAC());
 	}
 
 }

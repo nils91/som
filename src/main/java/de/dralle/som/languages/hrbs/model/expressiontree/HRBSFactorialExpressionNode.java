@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrbs.model.expressiontree;
 
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACFactorialExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASFactorialExpressionNode;
 
@@ -26,17 +27,12 @@ public class HRBSFactorialExpressionNode extends HRBSSingleChildExpressionNode i
 	}
 
 	@Override
-	public HRASFactorialExpressionNode compileToHRAC(HRACModel parent) {
-		return new HRASFactorialExpressionNode(getChild().compileToHRAC(parent));
+	public HRACFactorialExpressionNode compileToHRAC() {
+		return new HRACFactorialExpressionNode(getChild().compileToHRAC());
 	}
 
 	
 
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return Util.getFac(getChild().calculateNumericalValue());
-	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

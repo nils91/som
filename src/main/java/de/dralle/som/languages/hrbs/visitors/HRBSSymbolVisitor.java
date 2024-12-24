@@ -34,8 +34,8 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 
 	@Override
 	public HRBSSymbol visitCnt_specify(Cnt_specifyContext ctx) {
-		if (ctx.INT() != null) {
-			s.setBitCnt(Util.decodeInt(ctx.INT().getText()));
+		if (ctx.primary_expr() != null) {
+			s.setBitCnt((ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()));
 		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);

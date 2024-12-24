@@ -38,11 +38,8 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 	}
 	@Override
 	public HRBSMemoryAddressOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
-		if(ctx.INT()!=null) {
-			o.setOffset(Util.decodeInt(ctx.INT().getText()));
-		}
-		if(ctx.NEG_INT()!=null) {
-			o.setOffset(Util.decodeInt(ctx.NEG_INT().getText()));
+		if(ctx.primary_expr()!=null) {
+			o.setOffset((ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()));
 		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);

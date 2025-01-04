@@ -3,6 +3,9 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
+
 /**
  * @author Nils
  *
@@ -17,12 +20,9 @@ public class HRBSSymbol implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		int hashc = bitCnt;
+		int hashc = bitCnt !=null? bitCnt.hashCode():0;
 		if (name != null) {
 			hashc += name.hashCode();
-		}
-		if (bitCntSpecialName != null) {
-			hashc += bitCntSpecialName.hashCode() * 255;
 		}
 		hashc += type.toString().hashCode();
 		if (targetSymbol != null) {
@@ -40,12 +40,11 @@ public class HRBSSymbol implements Cloneable {
 				equals = name == other.name;
 			} else {
 				equals = name.equals(other.name);
-			}
-			if (bitCntSpecialName != null) {
-				equals = equals && bitCntSpecialName.equals(other.bitCntSpecialName);
-			} else {
-				equals = equals && bitCntSpecialName == other.bitCntSpecialName;
-				equals = equals && bitCnt == other.bitCnt;
+			}			
+			if(bitCnt==null) {
+				equals &= bitCnt == other.bitCnt;
+			}else {
+				equals &= bitCnt.equals(other.bitCnt);
 			}
 			equals = equals && type.equals(other.type);
 			if (targetSymbol != null) {
@@ -67,8 +66,7 @@ public class HRBSSymbol implements Cloneable {
 	public HRBSSymbol clone() {
 		HRBSSymbol clone = new HRBSSymbol();
 		clone.setName(name);
-		clone.setBitCnt(bitCnt);
-		clone.setBitCntISSpecial(bitCntSpecialName);
+		clone.setBitCnt(bitCnt!=null? bitCnt.clone():null);
 		clone.setType(type);
 		if (targetSymbol != null) {
 			clone.setTargetSymbol(targetSymbol.clone());
@@ -82,8 +80,7 @@ public class HRBSSymbol implements Cloneable {
 	 */
 	private AbstractHRBSMemoryAddress targetSymbol;
 	private HRBSSymbolType type;
-	private int bitCnt;
-	private String bitCntSpecialName;
+	private HRBSAbstractExpressionNode bitCnt;
 
 	public String getName() {
 		return name;
@@ -101,33 +98,28 @@ public class HRBSSymbol implements Cloneable {
 		this.targetSymbol = mirrorSymbol;
 	}
 
-	public int getBitCnt() {
+	public HRBSAbstractExpressionNode getBitCnt() {
 		return bitCnt;
 	}
 
 	public void setBitCnt(int bitCnt) {
-		this.bitCnt = bitCnt;
+		this.bitCnt = new HRBSIntegerNode(bitCnt);
+	}
+	
+	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {bitCnt=hrbsAbstractExpressionNode;
 	}
 
-	public String isBitCntISSpecial() {
-		return bitCntSpecialName;
-	}
-
-	public void setBitCntISSpecial(String bitCntISN) {
-		this.bitCntSpecialName = bitCntISN;
-	}
-
+	
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
 		if (type != null) {
 			sb.append(type + " ");
 		}
 		sb.append(name);
-		if (bitCntSpecialName != null) {
-			sb.append(String.format("[$%s]", bitCntSpecialName));
-		} else {
-			sb.append(String.format("[%d]", bitCnt));
+		if(bitCnt!=null) {
+			sb.append(String.format("[%s]", bitCnt));
 		}
+		
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
 		}
@@ -141,4 +133,6 @@ public class HRBSSymbol implements Cloneable {
 	public void setType(HRBSSymbolType type) {
 		this.type = type;
 	}
+
+	
 }

@@ -35,7 +35,7 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 	@Override
 	public HRBSSymbol visitCnt_specify(Cnt_specifyContext ctx) {
 		if (ctx.primary_expr() != null) {
-			s.setBitCnt((ctx.primary_expr().accept(new HRBSExpressionVisitor());
+			s.setBitCnt((ctx.primary_expr().accept(new HRBSExpressionVisitor())));
 		}
 		if(ctx.directive_access()!=null) {
 			ctx.directive_access().accept(this);
@@ -45,7 +45,7 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 
 	@Override
 	public HRBSSymbol visitDirective_access(Directive_accessContext ctx) {
-		s.setBitCntISSpecial(ctx.directive_name().getText());
+		s.setBitCntDirective(ctx.directive_name().getText());
 		return s;
 	}
 

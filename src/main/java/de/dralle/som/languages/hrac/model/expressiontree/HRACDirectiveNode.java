@@ -2,6 +2,8 @@ package de.dralle.som.languages.hrac.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
 public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Cloneable{
 	@Override
@@ -66,5 +68,9 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 			return resolvedNode.compileToHRAS(parent);
 		}
 		return null;
+	}
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSDirectiveNode(directiveName);
 	}
 }

@@ -4,6 +4,8 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSMultiplicationExpressionNode;
 
 public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
 
@@ -46,5 +48,11 @@ public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpres
 
 		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
 }
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+
+		return new HRBSMultiplicationExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
+	}
 
 }

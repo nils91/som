@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
 public abstract class HRACAbstractExpressionNode implements Cloneable{
 	public HRACAbstractExpressionNode() {
@@ -41,5 +42,6 @@ public abstract class HRACAbstractExpressionNode implements Cloneable{
 		return this;
 	}
 	public abstract HRASAbstractExpressionNode compileToHRAS(HRACModel parent) ;
+	public abstract HRBSAbstractExpressionNode compileToHRBS();
 
 }

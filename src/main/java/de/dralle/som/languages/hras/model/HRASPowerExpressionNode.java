@@ -4,21 +4,21 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMinusExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode;
 
-public class PowerExpressionNode extends HRASDualChildExpressionNode implements Cloneable {
+public class HRASPowerExpressionNode extends HRASDualChildExpressionNode implements Cloneable {
 
-	public PowerExpressionNode() {
+	public HRASPowerExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public PowerExpressionNode(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
+	public HRASPowerExpressionNode(HRASAbstractExpressionNode child1, HRASAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PowerExpressionNode) {
+		if (obj instanceof HRASPowerExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

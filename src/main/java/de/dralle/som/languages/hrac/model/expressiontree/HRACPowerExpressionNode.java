@@ -3,7 +3,9 @@ package de.dralle.som.languages.hrac.model.expressiontree;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
-import de.dralle.som.languages.hras.model.PowerExpressionNode;
+import de.dralle.som.languages.hras.model.HRASPowerExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSPowerExpressionNode;
 
 public class HRACPowerExpressionNode extends HRACDualChildExpressionNode implements Cloneable {
 
@@ -42,9 +44,15 @@ public class HRACPowerExpressionNode extends HRACDualChildExpressionNode impleme
 	}
 
 	@Override
-	public PowerExpressionNode compileToHRAS(HRACModel parent) {
+	public HRASPowerExpressionNode compileToHRAS(HRACModel parent) {
 
-		return new PowerExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+		return new HRASPowerExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSPowerExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
+
 	}
 
 }

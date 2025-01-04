@@ -3,8 +3,15 @@ package de.dralle.som.languages.hrac.model.expressiontree;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASFactorialExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSFactorialExpressionNode;
 
 public class HRACFactorialExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSFactorialExpressionNode(getChild().compileToHRBS());
+	}
 
 	public HRACFactorialExpressionNode() {
 		super();

@@ -3,6 +3,8 @@ package de.dralle.som.languages.hrac.model.expressiontree;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
 public class HRACIntegerNode extends HRACAbstractExpressionNode implements Cloneable{
 	@Override
@@ -54,5 +56,9 @@ public class HRACIntegerNode extends HRACAbstractExpressionNode implements Clone
 	@Override
 	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
 		return new HRASIntegerNode(value);
+	}
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSIntegerNode(value);
 	}
 }

@@ -4,7 +4,7 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
-import de.dralle.som.languages.hras.model.PowerExpressionNode;
+import de.dralle.som.languages.hras.model.HRASPowerExpressionNode;
 
 public class HRBSPowerExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
 

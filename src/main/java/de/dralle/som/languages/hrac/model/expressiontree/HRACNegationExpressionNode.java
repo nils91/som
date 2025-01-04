@@ -4,9 +4,16 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSNegationExpressionNode;
 import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 
 public class HRACNegationExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSNegationExpressionNode(getChild().compileToHRBS());
+	}
 
 	public HRACNegationExpressionNode(HRACAbstractExpressionNode child) {
 		super(child);

@@ -18,7 +18,7 @@ import de.dralle.som.languages.hras.model.HRASMinusExpressionNode;
 import de.dralle.som.languages.hras.model.HRASModuloExpression;
 import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 import de.dralle.som.languages.hras.model.PlusExpressionNode;
-import de.dralle.som.languages.hras.model.PowerExpressionNode;
+import de.dralle.som.languages.hras.model.HRASPowerExpressionNode;
 
 public class ExpressionVisitor extends HRASGrammarBaseVisitor<HRASAbstractExpressionNode>{
 
@@ -70,7 +70,7 @@ public class ExpressionVisitor extends HRASGrammarBaseVisitor<HRASAbstractExpres
 		HRASAbstractExpressionNode child1 = null;
 		if(ctx.power_expr()!=null) {
 			child1=ctx.power_expr().accept(this);
-				return new PowerExpressionNode(child0,child1);
+				return new HRASPowerExpressionNode(child0,child1);
 			
 		}
 		return child0;

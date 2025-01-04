@@ -1,6 +1,14 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbsoluteExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+
 public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
+	}
 
 	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
 		super(child);

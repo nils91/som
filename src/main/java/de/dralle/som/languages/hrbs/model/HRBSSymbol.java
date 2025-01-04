@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrbs.model;
 
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
 /**
@@ -20,7 +21,7 @@ public class HRBSSymbol implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		int hashc = bitCnt !=null? bitCnt.hashCode():0;
+		int hashc = bitCnt != null ? bitCnt.hashCode() : 0;
 		if (name != null) {
 			hashc += name.hashCode();
 		}
@@ -40,10 +41,10 @@ public class HRBSSymbol implements Cloneable {
 				equals = name == other.name;
 			} else {
 				equals = name.equals(other.name);
-			}			
-			if(bitCnt==null) {
+			}
+			if (bitCnt == null) {
 				equals &= bitCnt == other.bitCnt;
-			}else {
+			} else {
 				equals &= bitCnt.equals(other.bitCnt);
 			}
 			equals = equals && type.equals(other.type);
@@ -66,7 +67,7 @@ public class HRBSSymbol implements Cloneable {
 	public HRBSSymbol clone() {
 		HRBSSymbol clone = new HRBSSymbol();
 		clone.setName(name);
-		clone.setBitCnt(bitCnt!=null? bitCnt.clone():null);
+		clone.setBitCnt(bitCnt != null ? bitCnt.clone() : null);
 		clone.setType(type);
 		if (targetSymbol != null) {
 			clone.setTargetSymbol(targetSymbol.clone());
@@ -105,21 +106,21 @@ public class HRBSSymbol implements Cloneable {
 	public void setBitCnt(int bitCnt) {
 		this.bitCnt = new HRBSIntegerNode(bitCnt);
 	}
-	
-	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {bitCnt=hrbsAbstractExpressionNode;
+
+	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {
+		bitCnt = hrbsAbstractExpressionNode;
 	}
 
-	
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
 		if (type != null) {
 			sb.append(type + " ");
 		}
 		sb.append(name);
-		if(bitCnt!=null) {
+		if (bitCnt != null) {
 			sb.append(String.format("[%s]", bitCnt));
 		}
-		
+
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
 		}
@@ -134,5 +135,9 @@ public class HRBSSymbol implements Cloneable {
 		this.type = type;
 	}
 
-	
+	public void setBitCntDirective(String text) {
+		bitCnt = new HRBSDirectiveNode(text);
+
+	}
+
 }

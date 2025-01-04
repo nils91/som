@@ -3,6 +3,9 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
+
 /**
  * @author Nils
  *
@@ -17,7 +20,7 @@ public class HRBSSymbol implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		int hashc = bitCnt;
+		int hashc = bitCnt !=null? bitCnt.hashCode():0;
 		if (name != null) {
 			hashc += name.hashCode();
 		}
@@ -82,7 +85,7 @@ public class HRBSSymbol implements Cloneable {
 	 */
 	private AbstractHRBSMemoryAddress targetSymbol;
 	private HRBSSymbolType type;
-	private int bitCnt;
+	private HRBSAbstractExpressionNode bitCnt;
 	private String bitCntSpecialName;
 
 	public String getName() {
@@ -101,12 +104,15 @@ public class HRBSSymbol implements Cloneable {
 		this.targetSymbol = mirrorSymbol;
 	}
 
-	public int getBitCnt() {
+	public HRBSAbstractExpressionNode getBitCnt() {
 		return bitCnt;
 	}
 
 	public void setBitCnt(int bitCnt) {
-		this.bitCnt = bitCnt;
+		this.bitCnt = new HRBSIntegerNode(bitCnt);
+	}
+	
+	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {bitCnt=hrbsAbstractExpressionNode;
 	}
 
 	public String isBitCntISSpecial() {
@@ -141,4 +147,6 @@ public class HRBSSymbol implements Cloneable {
 	public void setType(HRBSSymbolType type) {
 		this.type = type;
 	}
+
+	
 }

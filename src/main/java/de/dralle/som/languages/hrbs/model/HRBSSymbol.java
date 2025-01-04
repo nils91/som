@@ -24,9 +24,6 @@ public class HRBSSymbol implements Cloneable {
 		if (name != null) {
 			hashc += name.hashCode();
 		}
-		if (bitCntSpecialName != null) {
-			hashc += bitCntSpecialName.hashCode() * 255;
-		}
 		hashc += type.toString().hashCode();
 		if (targetSymbol != null) {
 			hashc += targetSymbol.hashCode() * 97;
@@ -43,12 +40,11 @@ public class HRBSSymbol implements Cloneable {
 				equals = name == other.name;
 			} else {
 				equals = name.equals(other.name);
-			}
-			if (bitCntSpecialName != null) {
-				equals = equals && bitCntSpecialName.equals(other.bitCntSpecialName);
-			} else {
-				equals = equals && bitCntSpecialName == other.bitCntSpecialName;
-				equals = equals && bitCnt == other.bitCnt;
+			}			
+			if(bitCnt==null) {
+				equals &= bitCnt == other.bitCnt;
+			}else {
+				equals &= bitCnt.equals(other.bitCnt);
 			}
 			equals = equals && type.equals(other.type);
 			if (targetSymbol != null) {
@@ -70,8 +66,7 @@ public class HRBSSymbol implements Cloneable {
 	public HRBSSymbol clone() {
 		HRBSSymbol clone = new HRBSSymbol();
 		clone.setName(name);
-		clone.setBitCnt(bitCnt);
-		clone.setBitCntISSpecial(bitCntSpecialName);
+		clone.setBitCnt(bitCnt!=null? bitCnt.clone():null);
 		clone.setType(type);
 		if (targetSymbol != null) {
 			clone.setTargetSymbol(targetSymbol.clone());
@@ -86,7 +81,6 @@ public class HRBSSymbol implements Cloneable {
 	private AbstractHRBSMemoryAddress targetSymbol;
 	private HRBSSymbolType type;
 	private HRBSAbstractExpressionNode bitCnt;
-	private String bitCntSpecialName;
 
 	public String getName() {
 		return name;
@@ -115,25 +109,17 @@ public class HRBSSymbol implements Cloneable {
 	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {bitCnt=hrbsAbstractExpressionNode;
 	}
 
-	public String isBitCntISSpecial() {
-		return bitCntSpecialName;
-	}
-
-	public void setBitCntISSpecial(String bitCntISN) {
-		this.bitCntSpecialName = bitCntISN;
-	}
-
+	
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
 		if (type != null) {
 			sb.append(type + " ");
 		}
 		sb.append(name);
-		if (bitCntSpecialName != null) {
-			sb.append(String.format("[$%s]", bitCntSpecialName));
-		} else {
-			sb.append(String.format("[%d]", bitCnt));
+		if(bitCnt!=null) {
+			sb.append(String.format("[%s]", bitCnt));
 		}
+		
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
 		}

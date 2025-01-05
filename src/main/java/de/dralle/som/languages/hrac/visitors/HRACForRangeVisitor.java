@@ -8,8 +8,8 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_s
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_valuesContext;
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvider> {
@@ -44,9 +44,9 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		}
 		boolean stepSpecified=ctx.SEMICOLON()!=null;
 		int cntVal=ctx.offset_specify_number().size();
-		HRACMemoryOffset step = new HRACMemoryOffset(1);
-		HRACMemoryOffset start=new HRACMemoryOffset(0);
-		HRACMemoryOffset end=new HRACMemoryOffset(0);
+		HRACAbstractExpressionNode step = new HRACIntegerNode(1);
+		HRACAbstractExpressionNode start=new HRACIntegerNode(0);
+		HRACAbstractExpressionNode end=new HRACIntegerNode(0);
 		if(cntVal==1) {
 			if(stepSpecified) {
 				step=ctx.offset_specify_number(0).accept(new HRACOSVisitor());
@@ -82,12 +82,9 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		}
 		r.setRangeEndBoundExclusive(rangeEndExclusive);
 		r.setRangeStartBoundExclusive(rangeStartExclusive);
-		r.setRangeEnd(end.getOffset());
-		r.setRangeEndSpecial(end.getDirectiveName());
-		r.setRangeStart(start.getOffset());
-		r.setRangeStartSpecial(start.getDirectiveName());
-		r.setStepSize(step.getOffset());
-		r.setStepSizeSpecial(step.getDirectiveName());
+		r.setRangeEnd(end);
+		r.setRangeStart(start);
+		r.setStepSize(step);
 		return r;
 	}
 
@@ -118,11 +115,9 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		HRACForDupFixedRangeProvider rl = new HRACForDupFixedRangeProvider();
 		
 		for (Offset_specify_numberContext iterable_element : ctx.offset_specify_number()) {
-			HRACMemoryOffset ofs = iterable_element.accept(new HRACOSVisitor());
-			if(ofs.getDirectiveName()!=null) {
-				rl.addReplacingDirective(ofs.getDirectiveName());
-			}else {
-				rl.addValue( (ofs.getOffset()));
+			HRACAbstractExpressionNode ofs = iterable_element.accept(new HRACOSVisitor());
+			{
+				rl.addValue( (ofs));
 			}
 		}
 		return rl;

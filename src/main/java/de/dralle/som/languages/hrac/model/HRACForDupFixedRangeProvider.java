@@ -32,13 +32,6 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider, Cloneab
 		values.add(new HRACIntegerNode(value));
 	}
 
-	public void addReplacingDirective(String d) {
-		if (values == null) {
-			values = new ArrayList<HRACAbstractExpressionNode>();
-		}
-		values.add(null);
-	}
-
 	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
 		HRACAbstractExpressionNode[] rng = new HRACAbstractExpressionNode[values.size()];
 		for (int i = 0; i < values.size(); i++) {

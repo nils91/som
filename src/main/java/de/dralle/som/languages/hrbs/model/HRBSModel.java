@@ -557,7 +557,6 @@ public class HRBSModel implements ISetN, IHeap {
 		HRBSSymbol news = new HRBSSymbol();
 		news.setType(HRBSSymbolType.local);
 		news.setBitCnt(s.getBitCnt().compileToHRBS());
-		news.setBitCntDirective(s.getSpecialName());
 		news.setName(s.getName());
 		if (s.getTargetSymbol() != null) {
 			news.setTargetSymbol(convertHRACMA2HRBS(s.getTargetSymbol()));
@@ -1029,8 +1028,6 @@ public class HRBSModel implements ISetN, IHeap {
 		if(symbol.getBitCnt()!=null) {
 			s.setBitCnt(symbol.getBitCnt().compileToHRAC());
 		}
-		s.setBitCntSpecial(symbol.isBitCntISSpecial() != null);
-		s.setSpecialName(symbol.isBitCntISSpecial());
 		return s;
 	}
 

@@ -3,19 +3,21 @@ package de.dralle.som.languages.hrbs.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+
 public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 
-	private List<HRBSMemoryAddressOffset> values = new ArrayList<HRBSMemoryAddressOffset>();
+	private List<HRBSAbstractExpressionNode> values = new ArrayList<HRBSAbstractExpressionNode>();
 
-	public List<HRBSMemoryAddressOffset> getValues() {
+	public List<HRBSAbstractExpressionNode> getValues() {
 		return values;
 	}
 
-	public void setValues(List<HRBSMemoryAddressOffset> values) {
+	public void setValues(List<HRBSAbstractExpressionNode> values) {
 		this.values = values;
 	}
 
-	public void addValue(HRBSMemoryAddressOffset value) {
+	public void addValue(HRBSAbstractExpressionNode value) {
 		values.add(value);
 	}
 
@@ -23,7 +25,7 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 	public int hashCode() {
 		int hc = super.hashCode();
 		for (int i = 0; i < values.size(); i++) {
-			HRBSMemoryAddressOffset array_element = values.get(i);
+			HRBSAbstractExpressionNode array_element = values.get(i);
 			hc += array_element.hashCode() * (i + 1);
 
 		}
@@ -38,7 +40,7 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 			eq = eq && values.size() == oth.values.size();
 			if (eq) {
 				for (int i = 0; i < values.size(); i++) {
-					HRBSMemoryAddressOffset array_element = values.get(i);
+					HRBSAbstractExpressionNode array_element = values.get(i);
 					eq = eq && array_element.equals(oth.values.get(i));
 
 				}
@@ -53,7 +55,7 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 	public HRBSValueRange clone() {
 		HRBSValueRange cl=(HRBSValueRange) super.clone();
 		cl.values=new ArrayList<>();
-		for (HRBSMemoryAddressOffset hrbsMemoryAddressOffset : values) {
+		for (HRBSAbstractExpressionNode hrbsMemoryAddressOffset : values) {
 			cl.values.add(hrbsMemoryAddressOffset.clone());
 		}
 		return cl;
@@ -63,7 +65,7 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 	public String toString() {
 		String str = super.toString();
 		str+="{";
-		for (HRBSMemoryAddressOffset hrbsMemoryAddressOffset : values) {
+		for (HRBSAbstractExpressionNode hrbsMemoryAddressOffset : values) {
 			str+=hrbsMemoryAddressOffset.toString()+", ";
 		}
 		str=str.substring(0, str.length()-2)+"}";

@@ -1,13 +1,15 @@
 package de.dralle.som.languages.hrbs.model;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+
 public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
-	private HRBSMemoryAddressOffset start;
-	private HRBSMemoryAddressOffset end;
-	private HRBSMemoryAddressOffset step;
-	public HRBSMemoryAddressOffset getStep() {
+	private HRBSAbstractExpressionNode start;
+	private HRBSAbstractExpressionNode end;
+	private HRBSAbstractExpressionNode step;
+	public HRBSAbstractExpressionNode getStep() {
 		return step;
 	}
-	public void setStep(HRBSMemoryAddressOffset step) {
+	public void setStep(HRBSAbstractExpressionNode step) {
 		this.step = step;
 	}
 	public boolean isStartBoundExclusive() {
@@ -24,13 +26,13 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	}
 	private boolean startBoundExclusive=false;
 	private boolean endBoundExclusive=false;
-	public HRBSMemoryAddressOffset getStart() {
+	public HRBSAbstractExpressionNode getStart() {
 		return start;
 	}
-	public void setStart(HRBSMemoryAddressOffset start) {
+	public void setStart(HRBSAbstractExpressionNode start) {
 		this.start = start;
 	}
-	public HRBSMemoryAddressOffset getEnd() {
+	public HRBSAbstractExpressionNode getEnd() {
 		return end;
 	}
 	@Override
@@ -108,7 +110,7 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 		}
 		return rstr;
 	}
-	public void setEnd(HRBSMemoryAddressOffset end) {
+	public void setEnd(HRBSAbstractExpressionNode end) {
 		this.end = end;
 	}
 

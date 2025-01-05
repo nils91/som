@@ -3,6 +3,9 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
+
 /**
  * @author Nils
  *
@@ -29,19 +32,19 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		this.tgtCmd = tgtCmd;
 	}
 
-	private HRBSMemoryAddressOffset offset;
-	private HRBSMemoryAddressOffset derefOffset;
+	private HRBSAbstractExpressionNode offset;
+	private HRBSAbstractExpressionNode derefOffset;
 
-	public HRBSMemoryAddressOffset getOffset() {
+	public HRBSAbstractExpressionNode getOffset() {
 		return offset;
 	}
 
-	public void setOffset(HRBSMemoryAddressOffset offset) {
+	public void setOffset(HRBSAbstractExpressionNode offset) {
 		this.offset = offset;
 	}
 
 	public void setOffset(int offset) {
-		this.offset = new HRBSMemoryAddressOffset(offset);
+		this.offset = new HRBSIntegerNode(offset);
 	}
 
 	public AbstractHRBSMemoryAddress() {
@@ -150,16 +153,16 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		this.isDeref = isDeref;
 	}
 
-	public HRBSMemoryAddressOffset getDerefOffset() {
+	public HRBSAbstractExpressionNode getDerefOffset() {
 		return derefOffset;
 	}
 
-	public void setDerefOffset(HRBSMemoryAddressOffset derefOffset) {
+	public void setDerefOffset(HRBSAbstractExpressionNode derefOffset) {
 		this.derefOffset = derefOffset;
 	}
 
 	public void setDerefOffset(int derefOffset) {
-		this.derefOffset = new HRBSMemoryAddressOffset(derefOffset);
+		this.derefOffset = new HRBSIntegerNode(derefOffset);
 	}
 
 	public boolean isTgtCmdInstIsDirective() {

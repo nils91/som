@@ -1,43 +1,37 @@
 package de.dralle.som.languages.hrbs.model;
 
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
+
 public class HRBSMemoryAddressOffset implements Cloneable {
-	private int offset;
+	private HRBSAbstractExpressionNode offset;
 	public HRBSMemoryAddressOffset() {
 		this(0);
 	}
 	public HRBSMemoryAddressOffset(int offset) {
-		this(offset,null);
+		this(new HRBSIntegerNode(offset));
 	}
-	public HRBSMemoryAddressOffset(int offset, String directiveAccessName) {
-		super();
+	public HRBSMemoryAddressOffset(HRBSAbstractExpressionNode offset) {
 		this.offset = offset;
-		this.directiveAccessName = directiveAccessName;
-	}public HRBSMemoryAddressOffset(String directiveAccessName) {
-		this(0,directiveAccessName);
+	}
+public HRBSMemoryAddressOffset(String directiveAccessName) {
+		this(new HRBSDirectiveNode(directiveAccessName) );
 	}
 
-	private String directiveAccessName;
-	public int getOffset() {
+	public HRBSAbstractExpressionNode getOffset() {
 		return offset;
 	}
 
-	public void setOffset(int offset) {
+	public void setOffset(HRBSAbstractExpressionNode offset) {
 		this.offset = offset;
 	}
 
-	public String getDirectiveAccessName() {
-		return directiveAccessName;
-	}
-
-	public void setDirectiveAccessName(String directiveAccessName) {
-		this.directiveAccessName = directiveAccessName;
-	}
 
 	public String asCode() {
 		String s = "[";
-		if(directiveAccessName!=null) {
-			s+=String.format("$%s", directiveAccessName);
-		}else {
+		 {
 			s+=offset+"";
 		}
 		return s+"]";
@@ -45,20 +39,15 @@ public class HRBSMemoryAddressOffset implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		if(directiveAccessName!=null) {
-			return directiveAccessName.hashCode();
-		}
-		return offset;
+		
+		return offset.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof HRBSMemoryAddressOffset) {
 			HRBSMemoryAddressOffset other=(HRBSMemoryAddressOffset) obj;
-			if(directiveAccessName!=null) {
-				return directiveAccessName.equals(other.directiveAccessName);
-			}
-			return offset==other.offset;
+			return offset.equals(other.offset);
 		}
 		return super.equals(obj);
 	}
@@ -73,6 +62,7 @@ public class HRBSMemoryAddressOffset implements Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		copy.offset=offset.clone();
 		return copy;
 	}
 

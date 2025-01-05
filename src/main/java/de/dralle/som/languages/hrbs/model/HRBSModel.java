@@ -537,8 +537,8 @@ public class HRBSModel implements ISetN, IHeap {
 		HRBSBoundsRange newr = new HRBSBoundsRange();
 		if(range instanceof HRACForDupBoundingRangeProvider) {
 			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
-			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStartAsInt(), brange.getRangeStartSpecial()));
-			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEndAsInt(), brange.getRangeEndSpecial()));
+			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart()));
+			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd()));
 		}		
 		return newr;
 	}

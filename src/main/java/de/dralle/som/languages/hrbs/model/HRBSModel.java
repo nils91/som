@@ -37,6 +37,7 @@ import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
 /**
  * @author Nils
@@ -460,7 +461,7 @@ public class HRBSModel implements ISetN, IHeap {
 		// were resolved.
 		for (Entry<AbstractHRBSMemoryAddress, Boolean> otiListEntry : initOnceList) {
 			AbstractHRBSMemoryAddress tgtAdr = otiListEntry.getKey();
-			HRBSMemoryAddressOffset ofs = tgtAdr.getOffset();
+			HRBSAbstractExpressionNode ofs = tgtAdr.getOffset();
 			AbstractHRACMemoryAddress hracadr = calculateHRACMemoryAddressNoDeref(tgtAdr, lclSymbolNameMap);
 			m.addInitOnceAdress(hracadr, otiListEntry.getValue());
 		}
@@ -537,8 +538,8 @@ public class HRBSModel implements ISetN, IHeap {
 		HRBSBoundsRange newr = new HRBSBoundsRange();
 		if(range instanceof HRACForDupBoundingRangeProvider) {
 			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
-			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart().compileToHRBS()));
-			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd().compileToHRBS()));
+			newr.setStart( (brange.getRangeStart().compileToHRBS()));
+			newr.setEnd( (brange.getRangeEnd().compileToHRBS()));
 		}		
 		return newr;
 	}
@@ -677,11 +678,9 @@ public class HRBSModel implements ISetN, IHeap {
 			if(range instanceof HRBSValueRange) {
 				convRange=new HRACForDupFixedRangeProvider();
 				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
-				for (HRBSMemoryAddressOffset hrbsCommand : ((HRBSValueRange)range).getValues() ){
-					if(hrbsCommand.getDirectiveAccessName()!=null) {
-						((HRACForDupFixedRangeProvider)convRange).addReplacingDirective(hrbsCommand.getDirectiveAccessName());
-					}else {
-						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.getOffset().compileToHRAC());
+				for (HRBSAbstractExpressionNode hrbsCommand : ((HRBSValueRange)range).getValues() ){
+					{
+						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.compileToHRAC());
 					}
 				}
 			}else if(range instanceof HRBSBoundsRange) {
@@ -689,12 +688,9 @@ public class HRBSModel implements ISetN, IHeap {
 				convRange.setRunningDirectiveName(range.getRunningDirectiveName());
 				HRBSBoundsRange brange = (HRBSBoundsRange)range;
 				HRACForDupBoundingRangeProvider convBRange = (HRACForDupBoundingRangeProvider)convRange;
-				convBRange.setRangeStart(brange.getStart().getOffset());
-				convBRange.setRangeEnd(brange.getEnd().getOffset());
-				convBRange.setRangeStartSpecial(brange.getStart().getDirectiveAccessName());
-				convBRange.setRangeEndSpecial(brange.getEnd().getDirectiveAccessName());
-				convBRange.setStepSize(brange.getStep().getOffset());
-				convBRange.setStepSizeSpecial(brange.getStep().getDirectiveAccessName());
+				convBRange.setRangeStart(brange.getStart().compileToHRAC());
+				convBRange.setRangeEnd(brange.getEnd().compileToHRAC());
+				convBRange.setStepSize(brange.getStep().compileToHRAC());
 				convBRange.setRangeEndBoundExclusive(brange.isEndBoundExclusive());
 				convBRange.setRangeStartBoundExclusive(brange.isStartBoundExclusive());
 			}			
@@ -980,7 +976,7 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 			newTargetSymbol = new HRACSymbol(getTargetSymbolName(name, localSymbolNames));
 		}
-		HRBSMemoryAddressOffset newOffset = null;
+		HRBSAbstractExpressionNode newOffset = null;
 
 		if (originalMemoryAddress.getOffset() != null) {
 			newOffset = originalMemoryAddress.getOffset();
@@ -1004,7 +1000,7 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 		}
 		if (newOffset != null) {
-			newTgtAddress.setOffset(newOffset.getOffset());
+			newTgtAddress.setOffset(newOffset.compileToHRAC());
 			newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName() != null);
 			newTgtAddress.setOffsetSpecialName(newOffset.getDirectiveAccessName());
 		}

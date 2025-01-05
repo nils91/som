@@ -537,8 +537,8 @@ public class HRBSModel implements ISetN, IHeap {
 		HRBSBoundsRange newr = new HRBSBoundsRange();
 		if(range instanceof HRACForDupBoundingRangeProvider) {
 			HRACForDupBoundingRangeProvider brange=(HRACForDupBoundingRangeProvider) range;
-			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart()));
-			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd()));
+			newr.setStart(new HRBSMemoryAddressOffset(brange.getRangeStart().compileToHRBS()));
+			newr.setEnd(new HRBSMemoryAddressOffset(brange.getRangeEnd().compileToHRBS()));
 		}		
 		return newr;
 	}
@@ -681,7 +681,7 @@ public class HRBSModel implements ISetN, IHeap {
 					if(hrbsCommand.getDirectiveAccessName()!=null) {
 						((HRACForDupFixedRangeProvider)convRange).addReplacingDirective(hrbsCommand.getDirectiveAccessName());
 					}else {
-						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.getOffset());
+						((HRACForDupFixedRangeProvider)convRange).addValue(hrbsCommand.getOffset().compileToHRAC());
 					}
 				}
 			}else if(range instanceof HRBSBoundsRange) {

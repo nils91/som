@@ -138,7 +138,7 @@ for_duplication_head
 	FOR offset_specify_values DUPLICATE COLON
 ;
 
-// following eules are for the expression tree
+// following rules are for the expression tree
 
 primary_expr
 :

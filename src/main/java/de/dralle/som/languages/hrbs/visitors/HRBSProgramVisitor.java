@@ -195,8 +195,8 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		if (ctx.directive_name() != null) {
 			String name=ctx.directive_name().getText();
 			String value=null;
-			if(ctx.INT()!=null) {
-				value=Util.decodeInt(ctx.INT().getText())+"";
+			if(ctx.primary_expr()!=null) {
+				value=ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()+"";
 			}
 			if(ctx.DIRECTIVE_VALUE_STR()!=null) {
 				value=ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1);

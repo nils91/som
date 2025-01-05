@@ -1001,8 +1001,6 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (newOffset != null) {
 			newTgtAddress.setOffset(newOffset.compileToHRAC());
-			newTgtAddress.setOffsetSpecial(newOffset.getDirectiveAccessName() != null);
-			newTgtAddress.setOffsetSpecialName(newOffset.getDirectiveAccessName());
 		}
 		return newTgtAddress;
 	}

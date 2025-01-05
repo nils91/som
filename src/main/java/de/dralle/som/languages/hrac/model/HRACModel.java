@@ -385,10 +385,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets
 			if (symbol.getTargetSymbol() != null) {
 				AbstractHRACMemoryAddress ma = symbol.getTargetSymbol();
-				if (ma.isOffsetSpecial()) {
-					ma.setOffset(getDirectiveAsExpressionTree(ma.getOffsetSpecialnName()));
-					ma.setOffsetSpecial(false);
-				}
+//				if (ma.isOffsetSpecial()) {
+//					ma.setOffset(getDirectiveAsExpressionTree(ma.getOffsetSpecialnName()));
+//					ma.setOffsetSpecial(false);
+//				} //TBD: still needed?
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
@@ -397,10 +397,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				AbstractHRACMemoryAddress ma = cmd.getTarget();
 				if(ma.getOffset()!=null) {
 					ma.setOffset(ma.getOffset().getResolvedExpressionTree(this));
-				}
-				if (ma.isOffsetSpecial()) {
-					ma.setOffset(getDirectiveAsExpressionTree(ma.getOffsetSpecialnName()));
-					ma.setOffsetSpecial(false);
 				}
 			}
 		}
@@ -455,14 +451,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				if (tgt instanceof FixedHRACMemoryAddress) {
 					int adr = 0;
 					HRACAbstractExpressionNode ofsET = tgt.getOffset();
-					if (ofsET != null) {
+					if (ofsET != null) {// shóuld offset be directive, replace the directive with its value
 						adr = ofsET.getResolvedExpressionTree(this).calculateNumericalValue();
 					}
-					// if offset is directive, replace the directive with its value
-					if (tgt.isOffsetSpecial()) {
-						adr = getDirectiveAsExpressionTree(tgt.getOffsetSpecialnName()).getResolvedExpressionTree(this)
-								.calculateNumericalValue();
-					}
+					
+				
 					adr += ((FixedHRACMemoryAddress) tgt).getAddress().getResolvedExpressionTree(this)
 							.calculateNumericalValue();
 					if (adr > nxtSymbolAddress) {

@@ -45,7 +45,6 @@ public class HRACPowerExpressionNode extends HRACDualChildExpressionNode impleme
 
 	@Override
 	public HRASPowerExpressionNode compileToHRAS(HRACModel parent) {
-
 		return new HRASPowerExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
 	}
 

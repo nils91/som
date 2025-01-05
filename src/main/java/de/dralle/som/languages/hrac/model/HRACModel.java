@@ -378,12 +378,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			hracForDup.replaceTargetOnCommand(localSymbolNameReplacementList);
 		}
 		for (HRACSymbol symbl : symbols) {// resolve directives (and et´s) to a value if used to specify bitcnt on
-											// symbols
-			if (symbl.isBitCntSpecial()) {
-				symbl.setBitCntSpecial(false);
-				symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this)
-						.calculateNumericalValue());
-			}
+											// symbols //should be obsoleted
+//			symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this)
+//					.calculateNumericalValue());
 		}
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets
 			if (symbol.getTargetSymbol() != null) {

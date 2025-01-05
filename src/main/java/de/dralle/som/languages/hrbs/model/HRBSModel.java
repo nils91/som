@@ -1026,7 +1026,9 @@ public class HRBSModel implements ISetN, IHeap {
 	private static HRACSymbol getAsHRACSymbolNoTgt(HRBSSymbol symbol, Map<String, String> localSymbolNames) {
 		HRACSymbol s = new HRACSymbol();
 		s.setName(getTargetSymbolName(symbol.getName(), localSymbolNames));
-		s.setBitCnt(symbol.getBitCnt());
+		if(symbol.getBitCnt()!=null) {
+			s.setBitCnt(symbol.getBitCnt().compileToHRAC());
+		}
 		s.setBitCntSpecial(symbol.isBitCntISSpecial() != null);
 		s.setSpecialName(symbol.isBitCntISSpecial());
 		return s;

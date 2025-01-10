@@ -31,7 +31,7 @@ public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Clo
 	}
 	private String directiveName;
 
-	public String getdirectiveName() {
+	public String getDirectiveName() {
 		return directiveName;
 	}
 	public void setdirectiveName(String directiveName) {

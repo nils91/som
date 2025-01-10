@@ -30,7 +30,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	}
 	private String directiveName;
 
-	public String getdirectiveName() {
+	public String getDirectiveName() {
 		return directiveName;
 	}
 	public void setdirectiveName(String directiveName) {

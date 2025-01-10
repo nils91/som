@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.text.AsyncBoxView.ChildState;
 
@@ -45,6 +46,7 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionN
  */
 public class HRBSModel implements ISetN, IHeap {
 
+	private static final  Logger logger =Logger.getLogger(HRBSModel.class.getName());
 	private static final String FIXED_MEMORY_ADDRESS_HRAC_PREFIX = "FMA";
 	private String name;
 	/**
@@ -988,12 +990,20 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (originalMemoryAddress instanceof HRBSFixedMemoryAddress) {
 			if (originalMemoryAddress.getTgtCmd() == null) {
-				int tgtAdr = ((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
-				if (tgtAdr < 0) {
-					System.out.println(
+				HRBSAbstractExpressionNode tgtAdr = ((HRBSFixedMemoryAddress) originalMemoryAddress).getAddress();
+				logger.fine("Converting fixed address "+tgtAdr +" from HBRS to HRAC");
+				int tgtAdrNumericalValue = 0;
+				try {
+					tgtAdrNumericalValue=tgtAdr.compileToHRAC().calculateNumericalValue();
+				}catch(Exception e) {
+					
+					logger.warning("Fixed address "+tgtAdr+" could not be resolved to a numerical value. Usually this isnt a problem, it just means thie compiler couldnt chec k wether its negative");
+				}
+				if (tgtAdrNumericalValue < 0) {
+					logger.warning(
 							"Warning: (HRBS -> HRAC) Negative memory address. (" + originalMemoryAddress + ")");
 				}
-				newTgtAddress = new FixedHRACMemoryAddress(tgtAdr);
+				newTgtAddress = new FixedHRACMemoryAddress(tgtAdr.compileToHRAC());
 			} else {
 				newTgtAddress = new NamedHRACMemoryAddress();
 				((NamedHRACMemoryAddress) newTgtAddress).setName(newTargetSymbol.getName());
@@ -1002,6 +1012,7 @@ public class HRBSModel implements ISetN, IHeap {
 		if (newOffset != null) {
 			newTgtAddress.setOffset(newOffset.compileToHRAC());
 		}
+		logger.fine("Converted address "+originalMemoryAddress +" from HBRS to HRAC: "+newTgtAddress);
 		return newTgtAddress;
 	}
 

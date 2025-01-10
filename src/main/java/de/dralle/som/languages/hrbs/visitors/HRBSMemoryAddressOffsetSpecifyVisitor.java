@@ -25,13 +25,13 @@ public class HRBSMemoryAddressOffsetSpecifyVisitor extends HRBSGrammarBaseVisito
 
 	private HRBSAbstractExpressionNode o;
 
-	public HRBSMemoryAddressOffsetSpecifyVisitor(HRBSAbstractExpressionNode o) {
-		this.o=o;
+	public HRBSMemoryAddressOffsetSpecifyVisitor() {
+
 	}
 
 	@Override
 	public HRBSAbstractExpressionNode visitOffset_specify(HRBSGrammarParser.Offset_specifyContext ctx) {
-		ctx.offset_specify_number().accept(this);
+		o=ctx.offset_specify_number().accept(this);
 		return o;
 	}
 	@Override

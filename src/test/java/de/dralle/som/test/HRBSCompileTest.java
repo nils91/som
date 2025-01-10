@@ -129,6 +129,7 @@ class HRBSCompileTest {
 	}
 
 	@Test
+	@Timeout(30)
 	void testAdrSetToLabelAfterExec() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -138,6 +139,16 @@ class HRBSCompileTest {
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		assertNotEquals(((ISomMemspace) bin).getNextAddress(), labelArd);// no change before exec
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.addDebugPoint(new AbstractUnconditionalDebugPoint("BP1") {
+			
+			@Override
+			public boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+				System.out.println(cmdAddress);
+				System.out.println(memspace.getNextAddress());
+				System.out.println(labelArd);
+				return true;
+			}
+		});
 		runner.execute();
 		bin = runner.getMemspace();
 		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec

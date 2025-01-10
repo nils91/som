@@ -22,6 +22,7 @@ import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASModel;
 
 class HRACCompileTest {
@@ -135,7 +136,9 @@ class HRACCompileTest {
 					AbstractHRACMemoryAddress s1CmdTgt = s1.getCmd().getTarget();
 					AbstractHRACMemoryAddress s2CmdTgt = s2.getCmd().getTarget();
 					if(s1CmdTgt instanceof NamedHRACMemoryAddress&&s2CmdTgt instanceof NamedHRACMemoryAddress) {
-						assertNotEquals(((NamedHRACMemoryAddress)s1CmdTgt).getOffsetSpecialnName(),((NamedHRACMemoryAddress)s2CmdTgt).getName());
+						HRACAbstractExpressionNode s1CmdTgTOfs = null;
+						s1CmdTgTOfs=s1CmdTgt.getOffset();
+						assertNotEquals(s1CmdTgTOfs,((NamedHRACMemoryAddress)s2CmdTgt).getName());
 					eval++;
 					}else {
 						//fail

@@ -23,10 +23,14 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDivisionExpressionNode;
 
 class HRBSCompileTest {
 
@@ -284,7 +288,7 @@ class HRBSCompileTest {
 				hrbsSA = hracSymbol;
 			}
 		}
-		assertEquals(hrbsSA.isBitCntISSpecial() != null, hracSA.isBitCntSpecial());
+		assertEquals(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode, hracSA.getBitCnt() instanceof HRACDirectiveNode);
 	}
 
 	@Test
@@ -301,7 +305,8 @@ class HRBSCompileTest {
 				hrbsSA = hracSymbol;
 			}
 		}
-		assertEquals("N", hrbsSA.isBitCntISSpecial());
+		HRBSAbstractExpressionNode bitcnt = hrbsSA.getBitCnt();
+		assertEquals("N", ((HRBSDirectiveNode)bitcnt).getDirectiveName());
 	}
 
 	@Test
@@ -314,7 +319,7 @@ class HRBSCompileTest {
 				hrbsSA = hracSymbol;
 			}
 		}
-		assertTrue(hrbsSA.isBitCntISSpecial() != null);
+		assertTrue(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode);
 	}
 
 	@Test
@@ -338,7 +343,7 @@ class HRBSCompileTest {
 				hrbsSA = hracSymbol;
 			}
 		}
-		assertEquals(hrbsSA.isBitCntISSpecial(), hracSA.getSpecialName());
+		assertEquals(((HRBSDirectiveNode)hrbsSA.getBitCnt()).getDirectiveName(),((HRACDirectiveNode)hracSA.getBitCnt()).getDirectiveName());
 	}
 
 	@Test

@@ -9,9 +9,9 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.MemadrContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 
 /**
  * @author Nils
@@ -44,10 +44,8 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRA
 	public AbstractHRACMemoryAddress visitOffset_specify(
 			de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specifyContext ctx) {
 		if (ctx.offset_specify_number() != null) {
-			HRACMemoryOffset offset = ctx.offset_specify_number().accept(new HRACOSVisitor());
-			address.setOffsetSpecial(offset.getDirectiveName() != null);
-			address.setOffset(offset.getOffset());
-			address.setOffsetSpecialName(offset.getDirectiveName());
+			HRACAbstractExpressionNode offset = ctx.offset_specify_number().accept(new HRACOSVisitor());
+			address.setOffset(offset);
 		}
 		return address;
 	}

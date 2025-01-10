@@ -5,8 +5,8 @@ package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_decContext;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 
 /**
  * @author Nils
@@ -23,10 +23,8 @@ public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 			s.setName(ctx.SYMBOL().getText());
 		}
 		if (ctx.cnt_specify() != null) {
-			HRACMemoryOffset cnt = ctx.cnt_specify().accept(new HRACOSVisitor());
-			s.setBitCntSpecial(cnt.getDirectiveName() != null);
-			s.setSpecialName(cnt.getDirectiveName());
-			s.setBitCnt(cnt.getOffset());
+			HRACAbstractExpressionNode cnt = ctx.cnt_specify().accept(new HRACOSVisitor());
+			s.setBitCnt(cnt);
 		}
 		if (ctx.symbol_os() != null) {
 			s.setTargetSymbol(ctx.symbol_os().accept(new HRACMemoryAddressVisitor()));

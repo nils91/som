@@ -5,30 +5,28 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Directive_accessContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_numberContext;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 
-public class HRACOSVisitor extends HRACGrammarBaseVisitor<HRACMemoryOffset> {
-	private HRACMemoryOffset o;
+public class HRACOSVisitor extends HRACGrammarBaseVisitor<HRACAbstractExpressionNode> {
+	private HRACAbstractExpressionNode o;
 
-	public HRACOSVisitor() {
-		o = new HRACMemoryOffset();
-	}
 
 	@Override
-	public HRACMemoryOffset visitDirective_access(Directive_accessContext ctx) {
-		o.setDirectiveName(ctx.directive_name().getText());
+	public HRACAbstractExpressionNode visitDirective_access(Directive_accessContext ctx) {
+		o=(new HRACDirectiveNode(ctx.directive_name().getText()));
 		return o;
 	}
 
 	@Override
-	public HRACMemoryOffset visitOffset_specify_number(Offset_specify_numberContext ctx) {
-		o.setOffset(ctx.par_expr().accept(new HRACExpressionVisitor()));
+	public HRACAbstractExpressionNode visitOffset_specify_number(Offset_specify_numberContext ctx) {
+		o=(ctx.par_expr().accept(new HRACExpressionVisitor()));
 		return o;
 	}
 
 	@Override
-	public HRACMemoryOffset visitCnt_specify(Cnt_specifyContext ctx) {
-		o.setOffset(ctx.par_expr().accept(new HRACExpressionVisitor()));
+	public HRACAbstractExpressionNode visitCnt_specify(Cnt_specifyContext ctx) {
+		o=(ctx.par_expr().accept(new HRACExpressionVisitor()));
 		return o;
 	}
 }

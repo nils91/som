@@ -1,7 +1,6 @@
 package de.dralle.som.languages.hrbs.visitors;
 
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.visitors.HRACOSVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
@@ -9,8 +8,9 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_n
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_rangeContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_setContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Offset_specify_valuesContext;
-import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSValueRange;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 import de.dralle.som.languages.hrbs.model.AbstractHRBSRange;
 import de.dralle.som.languages.hrbs.model.HRBSBoundsRange;
 
@@ -45,9 +45,9 @@ private AbstractHRBSRange range=null;
 		}
 		boolean stepSpecified = ctx.SEMICOLON() != null;
 		int cntVal = ctx.offset_specify_number().size();
-		HRBSMemoryAddressOffset step = new HRBSMemoryAddressOffset(1);
-		HRBSMemoryAddressOffset start = new HRBSMemoryAddressOffset(0);
-		HRBSMemoryAddressOffset end = new HRBSMemoryAddressOffset(0);
+		HRBSAbstractExpressionNode step = new HRBSIntegerNode(1);
+		HRBSAbstractExpressionNode start = new HRBSIntegerNode(0);
+		HRBSAbstractExpressionNode end = new HRBSIntegerNode(0);
 		if (cntVal == 1) {
 			if (stepSpecified) {
 				step = ctx.offset_specify_number(0).accept(new HRBSMemoryAddressOffsetSpecifyVisitor());

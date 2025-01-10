@@ -14,9 +14,9 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_target_na
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Target_argumentContext;
 import de.dralle.som.languages.hrbs.model.AbstractHRBSMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSFixedMemoryAddress;
-import de.dralle.som.languages.hrbs.model.HRBSMemoryAddressOffset;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.NamedHRBSMemoryAddress;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.Util;
 import de.dralle.som.languages.hras.generated.HRASGrammarBaseVisitor;
 import de.dralle.som.languages.hras.generated.HRASGrammarParser.Int_or_symbolContext;
@@ -39,8 +39,8 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 
 	@Override
 	public AbstractHRBSMemoryAddress visitFixed_address(Fixed_addressContext ctx) {
-		return address=new HRBSFixedMemoryAddress((ctx.par_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()));
-	}
+		return address=new HRBSFixedMemoryAddress(ctx.par_expr().accept(new HRBSExpressionVisitor()));}
+	
 
 	@Override
 	public AbstractHRBSMemoryAddress visitTarget_argument(Target_argumentContext ctx) {		
@@ -55,7 +55,7 @@ public class HRBSMemoryAddressVisitor extends HRBSGrammarBaseVisitor<AbstractHRB
 		if (ctx.offset_specify() != null) {
 			for (int i = 0; i < ctx.offset_specify().size(); i++) {
 				HRBSGrammarParser.Offset_specifyContext os = ctx.offset_specify(i);
-				HRBSMemoryAddressOffset ofs = os.accept(new HRBSMemoryAddressOffsetSpecifyVisitor());
+				HRBSAbstractExpressionNode ofs = os.accept(new HRBSMemoryAddressOffsetSpecifyVisitor());
 				if (i == 0) {
 					address.setOffset(ofs);
 				} else {

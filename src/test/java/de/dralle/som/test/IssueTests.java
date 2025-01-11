@@ -26,7 +26,9 @@ import de.dralle.som.IMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.HRACParser;
+import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACForDup;
+import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
@@ -266,6 +268,34 @@ class IssueTests {
 		HRBSBoundsRange tr = new HRBSBoundsRange();
 		tr.setStart(2);tr.setEnd(3);tr.setStep(1);
 		String str = tr.toString();
+		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
+		
+	}
+	@Test
+	void testIssue141_HRACForDupToString() throws IOException {
+		HRACCommand cmd = new HRACCommand();
+		cmd.setOp(Opcode.NAR);
+		cmd.setLabel(new HRACSymbol("LBL"));
+		cmd.setTarget(new NamedHRACMemoryAddress("A"));
+		HRACForDupBoundingRangeProvider rng = new HRACForDupBoundingRangeProvider();
+		rng.setRangeStart(2);
+		rng.setRangeEnd(3);
+		rng.setStepSize(1);
+		HRACForDup fdr = new HRACForDup(cmd);
+		fdr.setRange(rng);
+		
+		String str = fdr.toString();
+		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
+		
+	}
+	@Test
+	void testIssue141_HRACForDupBoundingRangeProviderToString() throws IOException {
+		HRACForDupBoundingRangeProvider rng = new HRACForDupBoundingRangeProvider();
+		rng.setRangeStart(2);
+		rng.setRangeEnd(3);
+		rng.setStepSize(1);
+		
+		String str = rng.toString();
 		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
 		
 	}

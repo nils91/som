@@ -431,7 +431,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		int n = toc.findN();
 		toc.additionalDirectives.put("N", n + "");
 		toc.precompile("", new HashMap<>(), true);
-		HRASModel m = new HRASModel();
+ 		HRASModel m = new HRASModel();
 		// add calculate n as directive to be used later on
 		m.setN(n);
 		m.setStartAddressExplicit(true);

@@ -32,7 +32,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	public void setModel(HRACModel model) {
 		this.model = model;
 	}
-
+/**
+ * Only returns the contained command. use getPrecompile to get all resolved
+ * @return
+ */
 	public HRACCommand getCmd() {
 		return cmd;
 	}

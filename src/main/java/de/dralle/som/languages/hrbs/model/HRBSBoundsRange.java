@@ -104,19 +104,22 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 		if(start!=null) {
 			rstr+=start.toString();
 		}
-		rstr=rstr.substring(0, rstr.length()-1)+":";
+		rstr=rstr+":";
 		if(end!=null) {
-			rstr+=end.toString().substring(1);
+			rstr+=end.toString();
 		}
 		if(step!=null) {
-			rstr=rstr.substring(0, rstr.length()-1)+";";
-			rstr+=";"+step.toString().substring(1);
+			rstr+=";"+step.toString();
 		}
 		if(startBoundExclusive) {
-			rstr="]"+rstr.substring(1);
+			rstr="]"+rstr;
+		}else {
+			rstr="["+rstr;
 		}
 		if(endBoundExclusive) {
-			rstr=rstr.substring(0, rstr.length()-1)+"[";
+			rstr=rstr+"[";
+		}else {
+			rstr+="]";
 		}
 		return rstr;
 	}

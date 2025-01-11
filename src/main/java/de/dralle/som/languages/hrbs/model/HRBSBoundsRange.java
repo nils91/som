@@ -1,6 +1,7 @@
 package de.dralle.som.languages.hrbs.model;
 
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
 public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	private HRBSAbstractExpressionNode start;
@@ -11,6 +12,9 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	}
 	public void setStep(HRBSAbstractExpressionNode step) {
 		this.step = step;
+	}
+	public void setStep(int step) {
+		this.step = new HRBSIntegerNode(step);
 	}
 	public boolean isStartBoundExclusive() {
 		return startBoundExclusive;
@@ -31,6 +35,12 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	}
 	public void setStart(HRBSAbstractExpressionNode start) {
 		this.start = start;
+	}
+	public void setStart(int start) {
+		this.start = new HRBSIntegerNode(start);
+	}
+	public void setEnd(int end) {
+		this.end = new HRBSIntegerNode(end);
 	}
 	public HRBSAbstractExpressionNode getEnd() {
 		return end;

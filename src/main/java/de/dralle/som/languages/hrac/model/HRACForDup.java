@@ -127,6 +127,9 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	public String asCode() {
 		if (cmd != null) {
+			if(range!=null) {
+				return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), cmd.asCode());
+			}
 			return cmd.asCode();
 		}
 		if (model != null) {
@@ -137,7 +140,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	@Override
 	public String toString() {
-		return "HRACForDup [asCode()=" + asCode() + "]";
+		return "" + asCode() + "";
 	}
 
 	public IHRACRangeProvider getRange() {

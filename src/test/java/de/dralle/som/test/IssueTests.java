@@ -35,6 +35,7 @@ import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
+import de.dralle.som.languages.hrbs.model.HRBSBoundsRange;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class IssueTests {
@@ -259,5 +260,13 @@ class IssueTests {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
 		HRACSymbol amir = model.getSymbolByName("A_MIR");
 		assertEquals("A", ((NamedHRACMemoryAddress)amir.getTargetSymbol()).getName());
+	}
+	@Test
+	void testIssue140_HRBSBoundsRangeToString() throws IOException {
+		HRBSBoundsRange tr = new HRBSBoundsRange();
+		tr.setStart(2);tr.setEnd(3);tr.setStep(1);
+		String str = tr.toString();
+		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
+		
 	}
 }

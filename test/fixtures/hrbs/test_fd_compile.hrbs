@@ -1,0 +1,3 @@
+MAIN:
+	alloc A[2];
+	[0:1] NAR A[$i];

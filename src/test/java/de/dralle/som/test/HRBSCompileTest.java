@@ -56,6 +56,19 @@ class HRBSCompileTest {
 	}
 
 	@Test
+	void testForDupCompileHBRS() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+	
+	@Test
 	void test4bitAddCompileForDup() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);

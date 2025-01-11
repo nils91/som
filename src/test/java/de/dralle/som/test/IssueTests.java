@@ -299,4 +299,10 @@ class IssueTests {
 		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
 		
 	}
+	@Test
+	void testIssue142_HRACForDupCompile() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_rng_compile.hrac", SOMFormats.HRAC);
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		assertEquals(3, hrasModel.getCommandCount());
+	}
 }

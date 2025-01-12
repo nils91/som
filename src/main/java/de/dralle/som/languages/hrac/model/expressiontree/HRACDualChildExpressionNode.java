@@ -1,8 +1,19 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import de.dralle.som.languages.hrac.model.HRACModel;
 
 public abstract class HRACDualChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable{
+	@Override
+	public Collection<String> getUsedDirectives() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(childs [ 0].getUsedDirectives());
+		list.addAll(childs [ 1].getUsedDirectives());
+		return list;
+	}
+
 	private HRACAbstractExpressionNode[] childs=new HRACAbstractExpressionNode[2];
 	public HRACDualChildExpressionNode() {
 		super();

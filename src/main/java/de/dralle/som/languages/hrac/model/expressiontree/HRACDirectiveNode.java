@@ -1,11 +1,46 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
 public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Cloneable{
+	/**
+	 * If strings is null, the directive is resolved regardless of name. Otherwise the directive is only reolved if its part of the strings array.
+	 */
+	@Override
+	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
+		if(strings!=null) {
+			for (int i = 0; i < strings.length; i++) {
+				if(strings[i ].equals(directiveName)) {
+					return getResolvedExpressionTree(parentClone);
+				}
+			}
+		}
+		return this.clone();
+	}
+	@Override
+	public HRACAbstractExpressionNode resolve(HRACModel parentClone, String[] strings) {
+		if(strings!=null) {
+			for (int i = 0; i < strings.length; i++) {
+				if(strings[i ].equals(directiveName)) {
+					return getResolvedExpressionTree(parentClone);
+				}
+			}
+		}
+		return this.clone();
+	}
+	@Override
+	public Collection<String> getUsedDirectives() {
+		List<String> list=new ArrayList<String>();
+		list.add(directiveName);
+		return list;
+	}
 	@Override
 	public HRACDirectiveNode clone() {
 		// TODO Auto-generated method stub

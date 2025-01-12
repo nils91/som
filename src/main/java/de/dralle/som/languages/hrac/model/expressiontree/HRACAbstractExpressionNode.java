@@ -1,5 +1,7 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
@@ -29,9 +31,7 @@ public abstract class HRACAbstractExpressionNode implements Cloneable{
 	 * @return
 	 */
 	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
-		HRACAbstractExpressionNode clone = this.clone();
-		clone=clone.resolve(parent);
-		return this;
+		return getResolvedExpressionTree(parent, null);
 	}
 	/**
 	 * Resolves all directive nodes in this expression tree.
@@ -39,9 +39,20 @@ public abstract class HRACAbstractExpressionNode implements Cloneable{
 	 * @return
 	 */
 	public HRACAbstractExpressionNode resolve(HRACModel parent) {
-		return this;
+		return resolve(parent, null);
 	}
 	public abstract HRASAbstractExpressionNode compileToHRAS(HRACModel parent) ;
 	public abstract HRBSAbstractExpressionNode compileToHRBS();
+	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
+		HRACAbstractExpressionNode clone = this.clone();
+		clone=clone.resolve(parentClone,strings);
+		return this;
+	}
+	public HRACAbstractExpressionNode resolve(HRACModel parentClone, String[] strings) {
+		return this;
+	}
+	public Collection<String> getUsedDirectives() {
+		return new ArrayList<String>();
+	}
 
 }

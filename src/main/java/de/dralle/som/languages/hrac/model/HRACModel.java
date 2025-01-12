@@ -378,17 +378,22 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			hracForDup.replaceTargetOnCommand(localSymbolNameReplacementList);
 		}
 		for (HRACSymbol symbl : symbols) {// resolve directives (and et´s) to a value if used to specify bitcnt on
-											// symbols //should be obsoleted
-//			symbl.setBitCnt(getDirectiveAsExpressionTree(symbl.getSpecialName()).getResolvedExpressionTree(this)
-//					.calculateNumericalValue());
+											// symbols 
+			if(symbl.getBitCnt()==null) {
+				symbl.setBitCnt(1);
+			}else {
+				symbl.setBitCnt(symbl.getBitCnt().resolve(this));
+			}
+					
 		}
-		for (HRACSymbol symbol : symbols) {// resolve symbols targets
+		for (HRACSymbol symbol : symbols) {// resolve symbols targets offsets
 			if (symbol.getTargetSymbol() != null) {
 				AbstractHRACMemoryAddress ma = symbol.getTargetSymbol();
-//				if (ma.isOffsetSpecial()) {
-//					ma.setOffset(getDirectiveAsExpressionTree(ma.getOffsetSpecialnName()));
-//					ma.setOffsetSpecial(false);
-//				} //TBD: still needed?
+				if(ma.getOffset()==null) {
+					ma.setOffset(0);				}else {
+							ma.setOffset(ma.getOffset().resolve(this));
+					}
+			
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands

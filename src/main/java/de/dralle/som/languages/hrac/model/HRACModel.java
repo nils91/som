@@ -403,7 +403,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		List<HRACCommand> newCommandList = new ArrayList<>();
 		for (HRACForDup hracForDup : commands) {// precompile childs
 			if (hracForDup.getCmd() != null) {
-				newCommandList.add(hracForDup.getCmd());
+				newCommandList.addAll(hracForDup.getPrecompiledCmds());
 			}
 			hracForDup.setParent(this);
 			List<HRACModel> precompiledChildModels = hracForDup.precompileChilds(suffix,

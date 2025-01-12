@@ -39,6 +39,33 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	public HRACCommand getCmd() {
 		return cmd;
 	}
+	public List<HRACCommand> getPrecompiledCmds() {
+		List<HRACCommand> cmds=new ArrayList<HRACCommand>();
+		if(range==null||parent==null) {
+			cmds.add(cmd);
+		}else {
+			AbstractHRACMemoryAddress cmdTgt = cmd.getTarget();
+			if(cmdTgt!=null) {
+				HRACAbstractExpressionNode cmdTOfs = cmdTgt.getOffset();
+				if(cmdTOfs!=null) {
+					for (int i = 0; i < range.getRange(parent).length; i++) {
+						HRACAbstractExpressionNode si = range.getRange(parent)[i  ];
+						String rangeVar = range.getRunningDirectiveName();
+						if(rangeVar==null)  { 
+							rangeVar="i";
+						}
+						HRACModel parentClone = parent.clone();
+						parentClone.addAddDirective(rangeVar, si);
+						HRACAbstractExpressionNode cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone,new String[] {rangeVar});
+						HRACCommand cmdClone = cmd.clone();
+						cmdClone.getTarget().setOffset(cmdOfsRes);
+						cmds.add(cmdClone);
+					}
+				}
+			}
+		}
+		return cmds;
+	}
 
 	public void setCmd(HRACCommand cmd) {
 		this.cmd = cmd;

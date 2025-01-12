@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +25,7 @@ import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
@@ -94,6 +96,24 @@ class HRBSCompileTest {
 		assertNotNull(hras);
 		assertNotNull(hrav);
 		assertNotNull(bin);
+	}
+	@Test
+	void testDerefIsDeref() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_deref_global.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int aAdr=0;
+		int bAdr = 0;
+		for (Entry<String, AbstractHRASMemoryAddress> entry : hras.getSymbols().entrySet()) {
+			String key = entry.getKey();
+			AbstractHRASMemoryAddress val = entry.getValue();
+			if("A".equals(key)) {
+				aAdr=val.resolve(hras);
+			}if("B".equals(key)) {
+				bAdr=val.resolve(hras);
+			}
+			
+		}
+		assertNotEquals(aAdr, bAdr);
 	}
 
 	@Test

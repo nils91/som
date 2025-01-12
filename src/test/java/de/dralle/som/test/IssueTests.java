@@ -305,4 +305,18 @@ class IssueTests {
 		HRASModel hrasModel = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
 		assertEquals(3, hrasModel.getCommandCount());
 	}
+	@Test
+	void testIssue142_HRBSForDupCompile() throws IOException { //duplicate of HRBSCompileTests#testForDupCompileHBRS
+//		Ok, so this only happens if:
+//
+//		    The compile path starts at HRBS
+//		    The command is a standard command (NAR or NAW)
+//		    Theres a range on that command
+//
+//		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
+//		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
+	HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		assertEquals(3, hras.getCommandCount()); //2 from loop, 1 added by hrac compiler
+	}
 }

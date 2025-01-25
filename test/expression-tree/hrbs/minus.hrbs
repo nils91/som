@@ -1,0 +1,5 @@
+MAIN:
+	symbol A @0;
+symbol B @(1-1);
+NAR A;
+NAR B;

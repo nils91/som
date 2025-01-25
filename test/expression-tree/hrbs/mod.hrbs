@@ -1,0 +1,5 @@
+MAIN:
+	symbol A @0;
+symbol B @(6%2);
+NAR A;
+NAR B;

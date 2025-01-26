@@ -222,6 +222,20 @@ class HRBSCompileTest {
 		}
 		assertTrue(exists);
 	}
+	@Test
+	void testLblExistSimple() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		boolean exists = false;
+		try {
+			hras.resolveSymbolToAddress("LBL");
+			exists = true;
+		} catch (Exception e) {
+
+		}
+		assertTrue(exists);
+	}
 
 	@Test
 	void testLblOnRngGenOnce() throws IOException {

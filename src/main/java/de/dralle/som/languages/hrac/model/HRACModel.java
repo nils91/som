@@ -205,9 +205,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					} else {
 						cnt++;
 					}
-				}else {
-					log.warning("Symbol name "+s.getName()+" is not allowed here");
 				}
+			} else {
+				log.warning("Symbol name " + s.getName() + " is not allowed here");
 			}
 		}
 		for (HRACForDup hracForDup : commands) {

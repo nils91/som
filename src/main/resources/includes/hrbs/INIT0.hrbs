@@ -1,0 +1,6 @@
+import DISABLE_START_JUMP0;
+import INIT_BUILTINS0;
+
+INIT0:
+	//DISABLE_START_JUMP0; //activate later (#131)
+	INIT_BUILTINS0;

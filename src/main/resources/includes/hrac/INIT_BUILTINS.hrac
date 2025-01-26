@@ -1,0 +1,8 @@
+symbol ACC @0;
+symbol ADR_EVAL @1;
+symbol WH_EN @2;
+symbol N[5] @3;
+symbol WH_COM @8;
+symbol WH_DIR @9;
+symbol WH_SEL @10;
+symbol ADR[$N] @11;

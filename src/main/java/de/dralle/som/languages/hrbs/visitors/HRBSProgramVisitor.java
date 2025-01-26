@@ -9,13 +9,11 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_headContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_head_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Command_defContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandsContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectivesContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtiContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtisContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_blkContext;
-import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionsContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_nsContext;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
@@ -23,6 +21,7 @@ import de.dralle.som.languages.hrbs.model.HRBSSymbolType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +40,17 @@ import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
  *
  */
 public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
+
+	@Override
+	public HRBSModel visitSymbol_definition(Symbol_definitionContext ctx) {
+		if (ctx.symbol_blk() != null) {
+				ctx.symbol_blk().accept(this);
+		}
+		if (ctx.symbol_ns() != null) {
+				model.addSymbol(ctx.symbol_ns().accept(new HRBSSymbolVisitor()));
+		}
+		return model;
+	}
 
 	private HRBSModel model;
 
@@ -70,28 +80,28 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	@Override
 	public HRBSModel visitCommand_def(Command_defContext ctx) {
 		ctx.cmd_head().accept(this);
-		if (ctx.directives() != null) {
-			ctx.directives().accept(this);
+		if (ctx.directive() != null) {
+			for (de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectiveContext iterable_element : ctx.directive()) {
+				iterable_element.accept(this);
+			}			
 		}
-		if (ctx.symbol_definitions() != null) {
-			ctx.symbol_definitions().accept(this);
+		if (ctx.symbol_definition() != null) {for (Symbol_definitionContext iterable_element : ctx.symbol_definition()) {
+			iterable_element.accept(this);			
 		}
-		if (ctx.commands() != null) {
-			ctx.commands().accept(this);
 		}
-		if(ctx.otis()!=null) {
-			ctx.otis().accept(this);
+		if (ctx.command() != null) {
+		for (CommandContext iterable_element : ctx.command()) {
+			iterable_element.accept(this);			
+		}
+		}
+		if(ctx.oti()!=null) {
+			for (OtiContext iterable_element : 	ctx.oti()) {
+				iterable_element.accept(this);	
+			}
 		}
 		return model;
 	}
 
-	@Override
-	public HRBSModel visitOtis(OtisContext ctx) {
-		for (OtiContext iterable_element : ctx.oti()) {
-			iterable_element.accept(this);
-		}
-		return model;
-	}
 
 	@Override
 	public HRBSModel visitOti(OtiContext ctx) {
@@ -99,29 +109,6 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 			model.addInitOnceItem(ctx.target_argument().accept(new HRBSMemoryAddressVisitor()), true);
 		}else if(ctx.OTI_CLEAR()!=null) {
 			model.addInitOnceItem(ctx.target_argument().accept(new HRBSMemoryAddressVisitor()), false);
-		}
-		return model;
-	}
-
-	@Override
-	public HRBSModel visitCommands(CommandsContext ctx) {
-		for (CommandContext cc : ctx.command()) {
-			model.addCommand(cc.accept(new HRBSCommandVisitor()));
-		}
-		return model;
-	}
-
-	@Override
-	public HRBSModel visitSymbol_definitions(Symbol_definitionsContext ctx) {
-		if (ctx.symbol_blk() != null) {
-			for (Symbol_blkContext bloc : ctx.symbol_blk()) {
-				bloc.accept(this);
-			}
-		}
-		if (ctx.symbol_ns() != null) {
-			for (Symbol_nsContext s : ctx.symbol_ns()) {
-				model.addSymbol(s.accept(new HRBSSymbolVisitor()));
-			}
 		}
 		return model;
 	}

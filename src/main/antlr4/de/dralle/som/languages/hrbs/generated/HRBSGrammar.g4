@@ -12,14 +12,15 @@ program
 
 command_def
 :
-	cmd_head directives? symbol_definitions? otis? commands?
-;
-
-otis
-:
+	cmd_head
 	(
-		oti NEWLINE?
-	)+
+		(
+			directive
+			| symbol_definition
+			| oti
+			| command
+		) SEMICOLON? NEWLINE?
+	)*
 ;
 
 oti
@@ -30,13 +31,6 @@ oti
 	) target_argument SEMICOLON
 ;
 
-commands
-:
-	(
-		command NEWLINE?
-	)+
-;
-
 symbol_blk
 :
 	def_scope C_OPEN NEWLINE
@@ -45,14 +39,10 @@ symbol_blk
 	)+ C_CLOSE NEWLINE
 ;
 
-symbol_definitions
+symbol_definition
 :
-	(
-		(
-			symbol_blk
-			| symbol_ns
-		) NEWLINE
-	)+
+	symbol_blk
+	| symbol_ns
 ;
 
 cmd_head
@@ -142,7 +132,10 @@ offset_specify_values
 	(
 		directive_access EQ
 	)?
-	(offset_specify_range|offset_specify_set)
+	(
+		offset_specify_range
+		| offset_specify_set
+	)
 ;
 
 offset_specify_range
@@ -172,7 +165,6 @@ offset_specify_set
 		)* offset_specify_number
 	)? C_CLOSE
 ;
-
 
 custom_command_call_no_param
 :
@@ -280,8 +272,11 @@ additive_expr
 		| DASH
 	) multiplicative_expr
 ;
-PLUS: '+';
 
+PLUS
+:
+	'+'
+;
 
 multiplicative_expr
 :
@@ -293,35 +288,53 @@ multiplicative_expr
 		| MOD
 	) power_expr
 ;
-MOD: '%';
 
-DIV: '/';
+MOD
+:
+	'%'
+;
 
-MUL: '*';
+DIV
+:
+	'/'
+;
 
+MUL
+:
+	'*'
+;
 
 power_expr
 :
 	factorial_expr
 	| factorial_expr CARET power_expr
 ;
-CARET: '^';
 
+CARET
+:
+	'^'
+;
 
 factorial_expr
 :
 	absolute_expr EXCL?
 ;
-EXCL: '!';
 
+EXCL
+:
+	'!'
+;
 
 absolute_expr
 :
 	par_expr
 	| PIPE par_expr PIPE
 ;
-PIPE: '|';
 
+PIPE
+:
+	'|'
+;
 
 par_expr
 :

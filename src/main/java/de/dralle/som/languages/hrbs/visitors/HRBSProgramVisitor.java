@@ -91,7 +91,7 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 		}
 		if (ctx.command() != null) {
 		for (CommandContext iterable_element : ctx.command()) {
-			iterable_element.accept(this);			
+			model.addCommand(iterable_element.accept(new HRBSCommandVisitor()));			
 		}
 		}
 		if(ctx.oti()!=null) {

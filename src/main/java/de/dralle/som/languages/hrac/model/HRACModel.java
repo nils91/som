@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import de.dralle.som.AbstractSomMemspace;
 import de.dralle.som.IHeap;
@@ -31,6 +32,7 @@ import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
  */
 public class HRACModel implements ISetN, IHeap, Cloneable {
 
+	private static final Logger log=Logger.getLogger(HRACModel.class.getName());
 	private static final String HRAC_HEAP_START_MARKER = "HRAC_HEAP_START";
 
 	@Override
@@ -60,6 +62,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return clone;
 	}
 
+	/**
+	 * Going forward automatic built-in generation (buit-in symbols) will be removed and the user needs to take care of it themselves.
+	 */
+	@Deprecated
 	private Map<String, Integer> builtins;
 	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
 											// shall be used. But Integer should also be checked, just in case). Making
@@ -95,7 +101,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			int svI = Util.decodeInt(svStr);
 			return new HRACIntegerNode(svI);
 		}catch(Exception e) {
-			System.out.println("(HRAC) Directive "+name+" not a number: "+sv);
+			log.warning("Directive "+name+" not a number: "+sv);
 		}
 		
 		return new HRACIntegerNode(0);
@@ -128,6 +134,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		additionalDirectives = new HashMap<>();
 	}
 
+	/**
+	 * Going forward automatic built-in generation (buit-in symbols) will be removed and the user needs to take care of it themselves.
+	 */
+	@Deprecated
 	private void setupBuiltins() {
 		builtins = new HashMap<>(Util.getBuiltinAdresses());
 	}

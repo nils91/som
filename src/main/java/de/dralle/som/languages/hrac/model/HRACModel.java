@@ -215,6 +215,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return cnt;
 	}
 
+	/**
+	 * Checks wether the name for a symbol is allowed or not. Sine the generation of built-in symbols will not be a thing anymore, the currently only disallowed name is "HEAP"
+	 * @param name
+	 * @return
+	 */
 	private boolean isSymbolNameAllowed(String name) {
 		return !builtins.containsKey(name) && !"HEAP".equals(name);
 	}
@@ -497,8 +502,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
 							.calculateNumericalValue();
 					if (tgtAdr < 0) {
-						System.out.println(
-								"Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
+						log.warning("Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
+						
 					}
 					tgtHras.setSymbol(tgtAdr + "");
 				}
@@ -596,20 +601,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (hrasAdr instanceof SymbolHRASMemoryAddress) {
 				hrasName = ((SymbolHRASMemoryAddress) hrasAdr).getSymbol();
 			} else if (hrasAdr instanceof ExpressionHRASMemoryAddress) {
-				hrasName = ((ExpressionHRASMemoryAddress) hrasAdr).getexpression().calculateNumericalValue() + "";// TODO:
-																													// hrac
-																													// does
-																													// not
-																													// have
-																													// expressions
-																													// (yet)
-																													// so
-																													// this
-																													// is
-																													// the
-																													// solution
-																													// for
-																													// now
+				hrasName = ((ExpressionHRASMemoryAddress) hrasAdr).getexpression().calculateNumericalValue() + "";// TODO:																									// now
 			}
 			boolean added = false;
 			if (hrasOfs == null || hrasOfs.equals(0)) {

@@ -752,9 +752,12 @@ if(i==labelPassOnValue&& !commandIsStandard(c)&&c.recursiveCountAtomicCommands(t
 	 */
 	public int recursiveCountAtomicCommands( ) {int cnt = 0;
 		for (HRBSCommand hrbsCommand : commands) {
-			cnt+=hrbsCommand.recursiveCountAtomicCommands(this);
+			int childCommandCount = hrbsCommand.recursiveCountAtomicCommands(this);
 			AbstractHRBSRange rng = hrbsCommand.getRange();
-			
+			if(rng!=null) {
+				childCommandCount*=rng.tryGetRangeSize();
+			}
+			cnt+=childCommandCount;
 		}
 		return cnt;
 		

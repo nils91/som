@@ -1,9 +1,12 @@
 package de.dralle.som.languages.hrbs.model;
 
+import java.util.logging.Logger;
+
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
 public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
+	private static final  Logger logger =Logger.getLogger(HRBSBoundsRange.class.getName());
 	private HRBSAbstractExpressionNode start;
 	private HRBSAbstractExpressionNode end;
 	private HRBSAbstractExpressionNode step;
@@ -125,6 +128,34 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable{
 	}
 	public void setEnd(HRBSAbstractExpressionNode end) {
 		this.end = end;
+	}
+	@Override
+	public int tryGetRangeSize() {
+		int startValue=0;
+		int endValue=0;
+		int stepValue=1;
+		try {
+			startValue=start.compileToHRAC().calculateNumericalValue();
+		}catch(Exception e) {
+			logger.warning("Could not calculate range size."+e);
+		}
+		try {
+			endValue=end.compileToHRAC().calculateNumericalValue();
+		}catch(Exception e) {
+			logger.warning("Could not calculate range size."+e);
+		}
+		try {
+			stepValue=step.compileToHRAC().calculateNumericalValue();
+		}catch(Exception e) {
+			logger.warning("Could not calculate range size."+e);
+		}
+		if(startBoundExclusive) {
+			startValue+=1;
+		}
+		if(endBoundExclusive) {
+			endValue-=1;
+		}
+		return (endValue-startValue)/stepValue;
 	}
 
 }

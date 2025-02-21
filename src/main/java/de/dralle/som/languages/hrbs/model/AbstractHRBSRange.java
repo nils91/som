@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrbs.model;
 
-public class AbstractHRBSRange implements Cloneable {
+public abstract class AbstractHRBSRange implements Cloneable {
 	private String runningDirectiveName;
 
 	@Override
@@ -34,8 +34,8 @@ public class AbstractHRBSRange implements Cloneable {
 	@Override
 	public String toString() {
 		String str = "";
-		if(runningDirectiveName!=null) {
-			str+="$"+runningDirectiveName+" = ";
+		if (runningDirectiveName != null) {
+			str += "$" + runningDirectiveName + " = ";
 		}
 		return str;
 	}
@@ -50,5 +50,13 @@ public class AbstractHRBSRange implements Cloneable {
 	public void setRunningDirectiveName(String runningDirectiveName) {
 		this.runningDirectiveName = runningDirectiveName;
 	}
+
+	/**
+	 * Tries to calculate the size of this range. If directives were used to define
+	 * this range the result might not be accurate.
+	 * 
+	 * @return
+	 */
+	public abstract int tryGetRangeSize();
 
 }

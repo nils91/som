@@ -71,5 +71,15 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 		str=str.substring(0, str.length()-2)+"}";
 		return str;
 	}
-
+	@Override
+	/**
+	 * Calculates the size of this range.
+	 */
+	public int tryGetRangeSize() {
+		int rangeSize=0;
+		for (HRBSAbstractExpressionNode hrbsAbstractExpressionNode : values) {
+			rangeSize+=1;
+		}
+		return rangeSize;
+	}
 }

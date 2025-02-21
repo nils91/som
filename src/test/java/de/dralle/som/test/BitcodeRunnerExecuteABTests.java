@@ -76,7 +76,7 @@ class BitcodeRunnerExecuteABTests {
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
-	
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
@@ -87,6 +87,7 @@ class BitcodeRunnerExecuteABTests {
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
@@ -97,6 +98,7 @@ class BitcodeRunnerExecuteABTests {
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {

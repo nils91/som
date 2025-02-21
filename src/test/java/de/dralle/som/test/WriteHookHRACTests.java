@@ -74,7 +74,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_not_triggered.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -85,7 +85,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_write.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -96,7 +96,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_read.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -108,7 +108,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_triggered_write.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -119,7 +119,7 @@ class WriteHookHRACTests {
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_write_101.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -130,7 +130,7 @@ class WriteHookHRACTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_nonew.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -140,7 +140,7 @@ class WriteHookHRACTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_nonew.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -153,7 +153,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -163,7 +163,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
@@ -173,7 +173,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_newdata.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
@@ -186,7 +186,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_101.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
@@ -196,7 +196,7 @@ class WriteHookHRACTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
 		HRACModel model = f.readHRACFile("test/fixtures/hrac/test_write_hook_read_101.hrac");
-		IMemspace m = c.compile(model,SOMFormats.HRAC,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });

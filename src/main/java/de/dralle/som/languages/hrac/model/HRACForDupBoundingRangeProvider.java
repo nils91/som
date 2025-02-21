@@ -21,72 +21,36 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider, Clon
 	private boolean rangeEndBoundExclusive = false;
 	private String runningDirectiveName = "i"; // name of the running compiler directive to be injected into child loops
 
-	public String getRunningDirectiveName() {
-		return runningDirectiveName;
+	public String asCode() {
+		String s = "";
+		if (runningDirectiveName != null) {
+			s = "$" + runningDirectiveName + " = ";
+		}
+		s = rangeStartBoundExclusive ? "]" : "[";
+		{
+			s += rangeStart + "";
+		}
+		s += ":";
+		{
+			s += rangeEnd + "";
+		}
+		s += ";";
+		{
+			s += stepSize + "";
+		}
+		return s + (rangeEndBoundExclusive ? "[" : "]");
 	}
 
-	public void setRunningDirectiveName(String runningDirectiveName) {
-		this.runningDirectiveName = runningDirectiveName;
-	}
-
-	public boolean isRangeStartBoundExclusive() {
-		return rangeStartBoundExclusive;
-	}
-
-	public boolean isRangeEndBoundExclusive() {
-		return rangeEndBoundExclusive;
-	}
-
-	public HRACAbstractExpressionNode getStepSize() {
-		return stepSize;
-	}
-
-	public boolean isLowerBoundExclusive() {
-		return rangeStartBoundExclusive;
-	}
-
-	public void setRangeStartBoundExclusive(boolean lowerBoundExclusive) {
-		this.rangeStartBoundExclusive = lowerBoundExclusive;
-	}
-
-	public boolean isUpperBoundExclusive() {
-		return rangeEndBoundExclusive;
-	}
-
-	public void setRangeEndBoundExclusive(boolean upperBoundExclusive) {
-		this.rangeEndBoundExclusive = upperBoundExclusive;
-	}
-
-	public void setStepSize(HRACAbstractExpressionNode stepSize) {
-		this.stepSize = stepSize;
-	}
-
-	public void setStepSize(int stepSize) {
-		this.stepSize = new HRACIntegerNode(stepSize);
-	}
-
-	public HRACAbstractExpressionNode getRangeStart() {
-		return rangeStart;
-	}
-
-	public void setRangeStart(HRACAbstractExpressionNode rangeStart) {
-		this.rangeStart = rangeStart;
-	}
-
-	public void setRangeStart(int rangeStart) {
-		this.rangeStart = new HRACIntegerNode(rangeStart);
-	}
-
-	public HRACAbstractExpressionNode getRangeEnd() {
-		return rangeEnd;
-	}
-
-	public void setRangeEnd(HRACAbstractExpressionNode rangeEnd) {
-		this.rangeEnd = rangeEnd;
-	}
-
-	public void setRangeEnd(int rangeEnd) {
-		this.rangeEnd = new HRACIntegerNode(rangeEnd);
+	@Override
+	public HRACForDupBoundingRangeProvider clone() {
+		// TODO Auto-generated method stub
+		try {
+			return (HRACForDupBoundingRangeProvider) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
@@ -155,41 +119,18 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider, Clon
 		return rng;
 	}
 
-	@Override
-	public HRACForDupBoundingRangeProvider clone() {
+	public HRACAbstractExpressionNode getRangeEnd() {
+		return rangeEnd;
+	}
+
+	@Deprecated
+	public int getRangeEndAsInt() {
 		// TODO Auto-generated method stub
-		try {
-			return (HRACForDupBoundingRangeProvider) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		return rangeEnd.calculateNumericalValue();
 	}
 
-	public String asCode() {
-		String s = "";
-		if (runningDirectiveName != null) {
-			s = "$" + runningDirectiveName + " = ";
-		}
-		s = rangeStartBoundExclusive ? "]" : "[";
-		{
-			s += rangeStart + "";
-		}
-		s += ":";
-		{
-			s += rangeEnd + "";
-		}
-		s += ";";
-		{
-			s += stepSize + "";
-		}
-		return s + (rangeEndBoundExclusive ? "[" : "]");
-	}
-
-	@Override
-	public String toString() {
-		return asCode();
+	public HRACAbstractExpressionNode getRangeStart() {
+		return rangeStart;
 	}
 
 	@Deprecated
@@ -197,9 +138,68 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider, Clon
 		return rangeStart.calculateNumericalValue();
 	}
 
-	@Deprecated
-	public int getRangeEndAsInt() {
-		// TODO Auto-generated method stub
-		return rangeEnd.calculateNumericalValue();
+	public String getRunningDirectiveName() {
+		return runningDirectiveName;
+	}
+
+	public HRACAbstractExpressionNode getStepSize() {
+		return stepSize;
+	}
+
+	public boolean isLowerBoundExclusive() {
+		return rangeStartBoundExclusive;
+	}
+
+	public boolean isRangeEndBoundExclusive() {
+		return rangeEndBoundExclusive;
+	}
+
+	public boolean isRangeStartBoundExclusive() {
+		return rangeStartBoundExclusive;
+	}
+
+	public boolean isUpperBoundExclusive() {
+		return rangeEndBoundExclusive;
+	}
+
+	public void setRangeEnd(HRACAbstractExpressionNode rangeEnd) {
+		this.rangeEnd = rangeEnd;
+	}
+
+	public void setRangeEnd(int rangeEnd) {
+		this.rangeEnd = new HRACIntegerNode(rangeEnd);
+	}
+
+	public void setRangeEndBoundExclusive(boolean upperBoundExclusive) {
+		this.rangeEndBoundExclusive = upperBoundExclusive;
+	}
+
+	public void setRangeStart(HRACAbstractExpressionNode rangeStart) {
+		this.rangeStart = rangeStart;
+	}
+
+	public void setRangeStart(int rangeStart) {
+		this.rangeStart = new HRACIntegerNode(rangeStart);
+	}
+
+	public void setRangeStartBoundExclusive(boolean lowerBoundExclusive) {
+		this.rangeStartBoundExclusive = lowerBoundExclusive;
+	}
+
+	public void setRunningDirectiveName(String runningDirectiveName) {
+		this.runningDirectiveName = runningDirectiveName;
+	}
+
+	public void setStepSize(HRACAbstractExpressionNode stepSize) {
+		this.stepSize = stepSize;
+	}
+
+	public void setStepSize(int stepSize) {
+		this.stepSize = new HRACIntegerNode(stepSize);
+	}
+
+	@Override
+	public String toString() {
+		return asCode();
 	}
 }

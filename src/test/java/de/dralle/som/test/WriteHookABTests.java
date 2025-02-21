@@ -31,6 +31,7 @@ import de.dralle.som.test.util.TestWriteHook;
 class WriteHookABTests {
 	private FileLoader f;
 	private WriteHookManager testWriteHookManager;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -51,9 +52,10 @@ class WriteHookABTests {
 	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {f=new FileLoader();
-		testWriteHook=new TestWriteHook();
-		testWriteHookManager=new WriteHookManager();
+	void setUp() throws Exception {
+		f = new FileLoader();
+		testWriteHook = new TestWriteHook();
+		testWriteHookManager = new WriteHookManager();
 		testWriteHookManager.registerWriteHook(0, testWriteHook);
 	}
 
@@ -165,20 +167,22 @@ class WriteHookABTests {
 
 		}
 	}
+
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
-		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,true });
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
 		assertTrue(runner.execute());
 	}
+
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
 		IMemspace m = f.loadAsciiBinaryFile("test/fixtures/ab/test_write_hook_read_101.ab");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
-		testWriteHook.setBitsProvidedForRead(new boolean[] { true,false,false });
+		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });
 		assertFalse(runner.execute());
 	}
 }

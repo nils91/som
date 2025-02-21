@@ -58,12 +58,12 @@ class HRBSCompileTest {
 	}
 
 	@Test
-	void testForDupCompileHBRS() throws IOException { //see also issue 142 on github and issueTests
+	void testForDupCompileHBRS() throws IOException { // see also issue 142 on github and issueTests
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		assertEquals(3, hras.getCommandCount()); //2 from loop, 1 added by hrac compiler
+		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
-	
+
 	@Test
 	void test4bitAddCompileForDup() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_4bit_add.hrbs", SOMFormats.HRBS);
@@ -97,21 +97,23 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testDerefIsDeref() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_deref_global.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int aAdr=0;
+		int aAdr = 0;
 		int bAdr = 0;
 		for (Entry<String, AbstractHRASMemoryAddress> entry : hras.getSymbols().entrySet()) {
 			String key = entry.getKey();
 			AbstractHRASMemoryAddress val = entry.getValue();
-			if("A".equals(key)) {
-				aAdr=val.resolve(hras);
-			}if("B".equals(key)) {
-				bAdr=val.resolve(hras);
+			if ("A".equals(key)) {
+				aAdr = val.resolve(hras);
 			}
-			
+			if ("B".equals(key)) {
+				bAdr = val.resolve(hras);
+			}
+
 		}
 		assertNotEquals(aAdr, bAdr);
 	}
@@ -154,9 +156,9 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
-	
+
 	@Timeout(30)
-	@Test	
+	@Test
 	void testAdrSetToLabelAfterExec() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -222,6 +224,7 @@ class HRBSCompileTest {
 		}
 		assertTrue(exists);
 	}
+
 	@Test
 	void testLblExistSimple() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl.hrbs", SOMFormats.HRBS);
@@ -348,7 +351,7 @@ class HRBSCompileTest {
 			}
 		}
 		HRBSAbstractExpressionNode bitcnt = hrbsSA.getBitCnt();
-		assertEquals("N", ((HRBSDirectiveNode)bitcnt).getDirectiveName());
+		assertEquals("N", ((HRBSDirectiveNode) bitcnt).getDirectiveName());
 	}
 
 	@Test
@@ -385,7 +388,8 @@ class HRBSCompileTest {
 				hrbsSA = hracSymbol;
 			}
 		}
-		assertEquals(((HRBSDirectiveNode)hrbsSA.getBitCnt()).getDirectiveName(),((HRACDirectiveNode)hracSA.getBitCnt()).getDirectiveName());
+		assertEquals(((HRBSDirectiveNode) hrbsSA.getBitCnt()).getDirectiveName(),
+				((HRACDirectiveNode) hracSA.getBitCnt()).getDirectiveName());
 	}
 
 	@Test
@@ -480,6 +484,7 @@ class HRBSCompileTest {
 		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		assertNotNull(m);
 	}
+
 	@Test
 	void testDerefFixValueInsertionCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_value_insertion.hrbs", SOMFormats.HRBS);
@@ -492,6 +497,7 @@ class HRBSCompileTest {
 		assertNotNull(hrav);
 		assertNotNull(bin);
 	}
+
 	@Test
 	void testDerefFixValueInsertionOutCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);

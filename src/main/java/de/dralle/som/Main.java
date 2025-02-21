@@ -7,17 +7,12 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.cli.CommandLine;
@@ -45,6 +39,38 @@ import org.apache.commons.cli.ParseException;
  *
  */
 public class Main {
+
+	private static void addGeneratedLines(List<String> gitignLines, String[] excludeFolders) {
+		gitignLines.add("#GENERATED START");
+		for (int i = 0; i < SOMFormats.values().length; i++) {
+			SOMFormats string = SOMFormats.values()[i];
+			gitignLines.add("#Format " + string.name() + " (" + i + ")");
+			for (int j = 0; j < string.getFileExtensionString().length; j++) {
+				String string1 = string.getFileExtensionString()[j];
+				gitignLines.add("#File extension " + string1 + " (" + j + ")");
+				if (!string1.startsWith(".")) {
+					string1 = "." + string1;
+				}
+				gitignLines.add("*" + string1);
+				for (int k = 0; k < excludeFolders.length; k++) {
+					String string2 = excludeFolders[k];
+					gitignLines.add("#Exclude folder " + string2 + " (" + k + ")");
+					gitignLines.add("!" + string2 + "**/*" + string1);
+				}
+			}
+			gitignLines.add("");
+		}
+		gitignLines.add("#GENERATED END");
+	}
+
+	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
+		gitignLines.add(0, "");
+		gitignLines.add(0,
+				"#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
+		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
+		gitignLines.add("");
+		addGeneratedLines(gitignLines, excludeFolders);
+	}
 
 	/**
 	 * @param args
@@ -160,18 +186,17 @@ public class Main {
 					execSuccess = runner.execute();
 				}
 				if (visualize) { // export as gif
-					int timePerFrame = (int) ((double)((double)(visualizationTime*1000))/(double)frames.size());
+					int timePerFrame = (int) ((double) ((double) (visualizationTime * 1000)) / (double) frames.size());
 					FileOutputStream os = new FileOutputStream(outfile);
 					ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-					GifSequenceWriter gsw = new GifSequenceWriter(ios, frames.get(0).getType(), timePerFrame,
-							true);
+					GifSequenceWriter gsw = new GifSequenceWriter(ios, frames.get(0).getType(), timePerFrame, true);
 					for (BufferedImage bufferedImage : frames) {
 						gsw.writeToSequence(bufferedImage);
 					}
 					gsw.close();
 					ios.close();
 					os.close();
-					outfile=null;
+					outfile = null;
 				}
 				if (verbose) {
 					System.out.println("Program successfull: " + execSuccess);
@@ -198,6 +223,38 @@ public class Main {
 			}
 			Object targetModel = new Compiler().compile(sourceModel, inputFormat, outputFormat);
 			new FileLoader().writeToFile(targetModel, outputFormat, outfile);
+		}
+	}
+
+	private static void printVersion(boolean verbose) {
+		VersionHelper vh = new VersionHelper();
+		System.out.println(vh.getVersion());
+		if (verbose) {
+			System.out.println(String.format("Repository: %s", vh.getRepositoryName()));
+			System.out.println(String.format("Commit/Revision: %s", vh.getCommitHash()));
+			System.out.println(String.format("Build system: %s", vh.getBuildSystemName()));
+			System.out.println(String.format("Build type: %s", vh.getBuildType()));
+			System.out.println(String.format("Time of build: %s", vh.getBuildTime()));
+		}
+	}
+
+	private static void readGitignorePrototype(BufferedReader reader, List<String> gitignLines) {
+		if (reader != null) {
+			String line;
+			try {
+				while ((line = reader.readLine()) != null) {
+					gitignLines.add(line);
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -234,70 +291,6 @@ public class Main {
 			writer.newLine();
 		}
 		writer.close();
-	}
-
-	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
-		gitignLines.add(0, "");
-		gitignLines.add(0,
-				"#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
-		String[] excludeFolders = new String[] { "test/", "sample/", "src/", "notes/" };
-		gitignLines.add("");
-		addGeneratedLines(gitignLines, excludeFolders);
-	}
-
-	private static void readGitignorePrototype(BufferedReader reader, List<String> gitignLines) {
-		if (reader != null) {
-			String line;
-			try {
-				while ((line = reader.readLine()) != null) {
-					gitignLines.add(line);
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void addGeneratedLines(List<String> gitignLines, String[] excludeFolders) {
-		gitignLines.add("#GENERATED START");
-		for (int i = 0; i < SOMFormats.values().length; i++) {
-			SOMFormats string = SOMFormats.values()[i];
-			gitignLines.add("#Format " + string.name() + " (" + i + ")");
-			for (int j = 0; j < string.getFileExtensionString().length; j++) {
-				String string1 = string.getFileExtensionString()[j];
-				gitignLines.add("#File extension " + string1 + " (" + j + ")");
-				if (!string1.startsWith(".")) {
-					string1 = "." + string1;
-				}
-				gitignLines.add("*" + string1);
-				for (int k = 0; k < excludeFolders.length; k++) {
-					String string2 = excludeFolders[k];
-					gitignLines.add("#Exclude folder " + string2 + " (" + k + ")");
-					gitignLines.add("!" + string2 + "**/*" + string1);
-				}
-			}
-			gitignLines.add("");
-		}
-		gitignLines.add("#GENERATED END");
-	}
-
-	private static void printVersion(boolean verbose) {
-		VersionHelper vh = new VersionHelper();
-		System.out.println(vh.getVersion());
-		if (verbose) {
-			System.out.println(String.format("Repository: %s", vh.getRepositoryName()));
-			System.out.println(String.format("Commit/Revision: %s", vh.getCommitHash()));
-			System.out.println(String.format("Build system: %s", vh.getBuildSystemName()));
-			System.out.println(String.format("Build type: %s", vh.getBuildType()));
-			System.out.println(String.format("Time of build: %s", vh.getBuildTime()));
-		}
 	}
 
 	private static Options setupCliOptions() {

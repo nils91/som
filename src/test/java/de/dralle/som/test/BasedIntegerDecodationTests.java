@@ -35,8 +35,6 @@ class BasedIntegerDecodationTests {
 				Arguments.of(-32, "-0h20"), Arguments.of(-30, "-30"));
 	}
 
-	
-
 	@ParameterizedTest
 	@MethodSource("generateDecodeExamples")
 	void testIntDecode(int expectedValue, String str) {

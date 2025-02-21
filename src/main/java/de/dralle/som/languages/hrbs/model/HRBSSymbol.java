@@ -12,24 +12,50 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
  *
  */
 public class HRBSSymbol implements Cloneable {
-	public HRBSSymbol(String name) {
-		this.name = name;
-	}
+	private String name;
+
+	/**
+	 * Potential target symbol. Might be null.
+	 */
+	private AbstractHRBSMemoryAddress targetSymbol;
+
+	private HRBSSymbolType type;
+
+	private HRBSAbstractExpressionNode bitCnt;
 
 	public HRBSSymbol() {
 	}
 
-	@Override
-	public int hashCode() {
-		int hashc = bitCnt != null ? bitCnt.hashCode() : 0;
-		if (name != null) {
-			hashc += name.hashCode();
+	public HRBSSymbol(String name) {
+		this.name = name;
+	}
+
+	public String asCode() {
+		StringBuilder sb = new StringBuilder();
+		if (type != null) {
+			sb.append(type + " ");
 		}
-		hashc += type.toString().hashCode();
+		sb.append(name);
+		if (bitCnt != null) {
+			sb.append(String.format("[%s]", bitCnt));
+		}
+
 		if (targetSymbol != null) {
-			hashc += targetSymbol.hashCode() * 97;
+			sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
 		}
-		return hashc;
+		return sb.toString();
+	}
+
+	@Override
+	public HRBSSymbol clone() {
+		HRBSSymbol clone = new HRBSSymbol();
+		clone.setName(name);
+		clone.setBitCnt(bitCnt != null ? bitCnt.clone() : null);
+		clone.setType(type);
+		if (targetSymbol != null) {
+			clone.setTargetSymbol(targetSymbol.clone());
+		}
+		return clone;
 	}
 
 	@Override
@@ -58,86 +84,63 @@ public class HRBSSymbol implements Cloneable {
 		return super.equals(obj);
 	}
 
-	@Override
-	public String toString() {
-		return asCode();
+	public HRBSAbstractExpressionNode getBitCnt() {
+		return bitCnt;
 	}
-
-	@Override
-	public HRBSSymbol clone() {
-		HRBSSymbol clone = new HRBSSymbol();
-		clone.setName(name);
-		clone.setBitCnt(bitCnt != null ? bitCnt.clone() : null);
-		clone.setType(type);
-		if (targetSymbol != null) {
-			clone.setTargetSymbol(targetSymbol.clone());
-		}
-		return clone;
-	}
-
-	private String name;
-	/**
-	 * Potential target symbol. Might be null.
-	 */
-	private AbstractHRBSMemoryAddress targetSymbol;
-	private HRBSSymbolType type;
-	private HRBSAbstractExpressionNode bitCnt;
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public AbstractHRBSMemoryAddress getTargetSymbol() {
 		return targetSymbol;
 	}
 
-	public void setTargetSymbol(AbstractHRBSMemoryAddress mirrorSymbol) {
-		this.targetSymbol = mirrorSymbol;
+	public HRBSSymbolType getType() {
+		return type;
 	}
 
-	public HRBSAbstractExpressionNode getBitCnt() {
-		return bitCnt;
-	}
-
-	public void setBitCnt(int bitCnt) {
-		this.bitCnt = new HRBSIntegerNode(bitCnt);
+	@Override
+	public int hashCode() {
+		int hashc = bitCnt != null ? bitCnt.hashCode() : 0;
+		if (name != null) {
+			hashc += name.hashCode();
+		}
+		hashc += type.toString().hashCode();
+		if (targetSymbol != null) {
+			hashc += targetSymbol.hashCode() * 97;
+		}
+		return hashc;
 	}
 
 	public void setBitCnt(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {
 		bitCnt = hrbsAbstractExpressionNode;
 	}
 
-	public String asCode() {
-		StringBuilder sb = new StringBuilder();
-		if (type != null) {
-			sb.append(type + " ");
-		}
-		sb.append(name);
-		if (bitCnt != null) {
-			sb.append(String.format("[%s]", bitCnt));
-		}
-
-		if (targetSymbol != null) {
-			sb.append(String.format(" %s", targetSymbol.asHRBSCode()));
-		}
-		return sb.toString();
+	public void setBitCnt(int bitCnt) {
+		this.bitCnt = new HRBSIntegerNode(bitCnt);
 	}
 
-	public HRBSSymbolType getType() {
-		return type;
+	public void setBitCntDirective(String text) {
+		bitCnt = new HRBSDirectiveNode(text);
+
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setTargetSymbol(AbstractHRBSMemoryAddress mirrorSymbol) {
+		this.targetSymbol = mirrorSymbol;
 	}
 
 	public void setType(HRBSSymbolType type) {
 		this.type = type;
 	}
 
-	public void setBitCntDirective(String text) {
-		bitCnt = new HRBSDirectiveNode(text);
-
+	@Override
+	public String toString() {
+		return asCode();
 	}
 
 }

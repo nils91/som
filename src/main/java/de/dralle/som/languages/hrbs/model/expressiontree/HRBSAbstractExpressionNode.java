@@ -1,18 +1,14 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-import java.util.Map;
-
-import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
-import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
-import de.dralle.som.languages.hrbs.model.HRBSModel;
 
-public abstract class HRBSAbstractExpressionNode implements Cloneable{
+public abstract class HRBSAbstractExpressionNode implements Cloneable {
 	public HRBSAbstractExpressionNode() {
-		
+
 	}
+
 	@Override
-	public HRBSAbstractExpressionNode clone()  {
+	public HRBSAbstractExpressionNode clone() {
 		// TODO Auto-generated method stub
 		try {
 			return (HRBSAbstractExpressionNode) super.clone();
@@ -22,6 +18,7 @@ public abstract class HRBSAbstractExpressionNode implements Cloneable{
 		}
 		return null;
 	}
-	public abstract HRACAbstractExpressionNode compileToHRAC( ) ;
+
+	public abstract HRACAbstractExpressionNode compileToHRAC();
 
 }

@@ -111,6 +111,7 @@ class HRBSCommandsIncludedTests {
 	private static Stream<Arguments> provideTruthTableNOOP0() {
 		return Stream.of(Arguments.of(false, false), Arguments.of(true, true));
 	}
+
 	@ParameterizedTest
 	@MethodSource("provideTruthTableSET0")
 	@Timeout(10)
@@ -1195,6 +1196,7 @@ class HRBSCommandsIncludedTests {
 		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
 		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
 	}
+
 	@ParameterizedTest
 	@MethodSource("provideTruthTableIFVALUE3")
 	@Timeout(10)
@@ -1244,7 +1246,6 @@ class HRBSCommandsIncludedTests {
 				Arguments.of(true, true, true, false, true, true, true),
 				Arguments.of(true, true, true, true, true, true, true));
 	}
-
 
 	private static Stream<Arguments> provideTruthTableOR3() {
 		return Stream.of(Arguments.of(false, false, false, false, false, false, false),

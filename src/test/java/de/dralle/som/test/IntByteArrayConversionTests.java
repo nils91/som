@@ -39,10 +39,9 @@ class IntByteArrayConversionTests {
 	void tearDown() throws Exception {
 	}
 
-
 	@RepeatedTest(10)
 	void byteArrToImgConvTest() {
-		int len = (int) (10+r.nextDouble()*1000000);
+		int len = (int) (10 + r.nextDouble() * 1000000);
 		byte[] arr = new byte[len];
 		r.nextBytes(arr);
 		RenderedImage img = Util.byteArray2Image(arr);
@@ -58,7 +57,6 @@ class IntByteArrayConversionTests {
 		byte[] narr = Util.image2ByteArray(img);
 		assertArrayEquals(arr, narr);
 	}
-
 
 	@RepeatedTest(1000)
 	void testImageAndBackLocal() {
@@ -78,10 +76,10 @@ class IntByteArrayConversionTests {
 		int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		int index = 0;
 		for (int i = 0; i < pixels.length; i++) {
-		    int r = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
-		    int g = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
-		    int b = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
-		    pixels[i] = (r << 16) | (g << 8) | b;
+			int r = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
+			int g = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
+			int b = (index < dataWithLength.length) ? (dataWithLength[index++] & 0xff) : 0;
+			pixels[i] = (r << 16) | (g << 8) | b;
 		}
 
 		// Get the pixels from the image
@@ -91,10 +89,10 @@ class IntByteArrayConversionTests {
 		byte[] ndataWithLength = new byte[npixels.length * 3];
 		int nindex = 0;
 		for (int i = 0; i < npixels.length; i++) {
-		    int pixel = npixels[i];
-		    ndataWithLength[nindex++] = (byte) ((pixel >> 16) & 0xff);
-		    ndataWithLength[nindex++] = (byte) ((pixel >> 8) & 0xff);
-		    ndataWithLength[nindex++] = (byte) (pixel & 0xff);
+			int pixel = npixels[i];
+			ndataWithLength[nindex++] = (byte) ((pixel >> 16) & 0xff);
+			ndataWithLength[nindex++] = (byte) ((pixel >> 8) & 0xff);
+			ndataWithLength[nindex++] = (byte) (pixel & 0xff);
 		}
 
 		// Extract the length of the original data

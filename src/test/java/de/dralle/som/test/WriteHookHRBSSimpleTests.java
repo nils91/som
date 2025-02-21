@@ -74,7 +74,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookTriggerNoTrig() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_not_triggered.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -85,7 +85,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookTriggerWrite() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_triggered_write.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -96,7 +96,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookTriggerRead() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_triggered_read.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -108,7 +108,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReceiveBit() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_triggered_write.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -119,7 +119,7 @@ class WriteHookHRBSSimpleTests {
 	@Timeout(10)
 	void testWriteHookReceiveBitSeveralBits() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_write_101.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		runner.execute();
@@ -130,7 +130,7 @@ class WriteHookHRBSSimpleTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewData() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_nonew.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		assertTrue(runner.execute());
@@ -140,7 +140,7 @@ class WriteHookHRBSSimpleTests {
 	@Timeout(10)
 	void testWriteHookReadNoNewDataFail() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_nonew.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -153,7 +153,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReadNewDataAvailable0() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_newdata.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { false });
@@ -163,7 +163,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReadNewDataAvailable1() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_newdata.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true });
@@ -173,7 +173,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReadNewDataAvailableFail() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_newdata.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		try {
@@ -186,7 +186,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_101.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, true });
@@ -196,7 +196,7 @@ class WriteHookHRBSSimpleTests {
 	@Test
 	void testWriteHookReadNewDataAvailable101WrongData100() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_hook_read_101.hrbs");
-		IMemspace m = c.compile(model,SOMFormats.HRBS,SOMFormats.BIN);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) m);
 		runner.setWriteHookManager(testWriteHookManager);
 		testWriteHook.setBitsProvidedForRead(new boolean[] { true, false, false });

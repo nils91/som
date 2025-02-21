@@ -13,11 +13,17 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvider> {
-	private IHRACRangeProvider r =null;
+	private IHRACRangeProvider r = null;
+
+	@Override
+	public IHRACRangeProvider visitDirective_access(Directive_accessContext ctx) {
+		r.setRunningDirectiveName(ctx.getText());
+		return r;
+	}
 
 	@Override
 	public HRACForDupBoundingRangeProvider visitOffset_specify_range(Offset_specify_rangeContext ctx) {
-		HRACForDupBoundingRangeProvider r=new HRACForDupBoundingRangeProvider();
+		HRACForDupBoundingRangeProvider r = new HRACForDupBoundingRangeProvider();
 		boolean rangeStartExclusive = false;
 		if (ctx.children.get(0) == ctx.B_OPEN(0))// lower inclusive
 		{
@@ -42,40 +48,40 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 				rangeEndExclusive = false;
 			}
 		}
-		boolean stepSpecified=ctx.SEMICOLON()!=null;
-		int cntVal=ctx.offset_specify_number().size();
+		boolean stepSpecified = ctx.SEMICOLON() != null;
+		int cntVal = ctx.offset_specify_number().size();
 		HRACAbstractExpressionNode step = new HRACIntegerNode(1);
-		HRACAbstractExpressionNode start=new HRACIntegerNode(0);
-		HRACAbstractExpressionNode end=new HRACIntegerNode(0);
-		if(cntVal==1) {
-			if(stepSpecified) {
-				step=ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-			}else {
-				//step not specified, find ofs idx
-				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
-				if(rangeStartSpecified) {
+		HRACAbstractExpressionNode start = new HRACIntegerNode(0);
+		HRACAbstractExpressionNode end = new HRACIntegerNode(0);
+		if (cntVal == 1) {
+			if (stepSpecified) {
+				step = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+			} else {
+				// step not specified, find ofs idx
+				boolean rangeStartSpecified = ctx.getChild(1) == ctx.offset_specify_number(0);
+				if (rangeStartSpecified) {
 					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-				}else {
+				} else {
 					end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 				}
 			}
 		}
-		if(cntVal==2) {
-			if(!stepSpecified) {
-				//start to end, no step
+		if (cntVal == 2) {
+			if (!stepSpecified) {
+				// start to end, no step
 				start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
 				end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
-			}else {
-				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
-				if(rangeStartSpecified) {
+			} else {
+				boolean rangeStartSpecified = ctx.getChild(1) == ctx.offset_specify_number(0);
+				if (rangeStartSpecified) {
 					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-				}else {
+				} else {
 					step = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 				}
 			}
 		}
-		if(cntVal==3) {
-			//all specified
+		if (cntVal == 3) {
+			// all specified
 			start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
 			end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 			step = ctx.offset_specify_number(2).accept(new HRACOSVisitor());
@@ -89,38 +95,30 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 	}
 
 	@Override
-	public IHRACRangeProvider visitOffset_specify_values(Offset_specify_valuesContext ctx) {
-		if(ctx.offset_specify_range()!=null) {
-			r=ctx.offset_specify_range().accept(this);
-		}
-		if(ctx.offset_specify_set()!=null) {
-			r=ctx.offset_specify_set().accept(this);
-		}
-		if(ctx.directive_access()!=null) {
-			ctx.directive_access().accept(this);
-		}
-		return r;
-	}
-
-	@Override
-	public IHRACRangeProvider visitDirective_access(Directive_accessContext ctx) {
-		r.setRunningDirectiveName(ctx.getText());
-		return r;
-	}
-
-	
-
-	@Override
 	public IHRACRangeProvider visitOffset_specify_set(Offset_specify_setContext ctx) {
 		HRACForDupFixedRangeProvider rl = new HRACForDupFixedRangeProvider();
-		
+
 		for (Offset_specify_numberContext iterable_element : ctx.offset_specify_number()) {
 			HRACAbstractExpressionNode ofs = iterable_element.accept(new HRACOSVisitor());
 			{
-				rl.addValue( (ofs));
+				rl.addValue((ofs));
 			}
 		}
 		return rl;
+	}
+
+	@Override
+	public IHRACRangeProvider visitOffset_specify_values(Offset_specify_valuesContext ctx) {
+		if (ctx.offset_specify_range() != null) {
+			r = ctx.offset_specify_range().accept(this);
+		}
+		if (ctx.offset_specify_set() != null) {
+			r = ctx.offset_specify_set().accept(this);
+		}
+		if (ctx.directive_access() != null) {
+			ctx.directive_access().accept(this);
+		}
+		return r;
 	}
 
 }

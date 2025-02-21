@@ -37,7 +37,7 @@ class HRAVMemAddressVariantsTests {
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
-		f=new FileLoader();
+		f = new FileLoader();
 	}
 
 	@AfterEach
@@ -46,107 +46,114 @@ class HRAVMemAddressVariantsTests {
 
 	@Test
 	void testMemAddressDecimalReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalhReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_hexh.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_hexh.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalhReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_hexh.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_hexh.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressHexadecimalxReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_hexx.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_hexx.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalxReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_hexx.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_hexx.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressBinaryReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_bin.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_bin.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressBinaryReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_bin.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_bin.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressOctalReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_oct.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_oct.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressOctalReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_oct.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_oct.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal_explicit_base.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal_explicit_base.hrav",
+				SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal_explicit_base.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal_explicit_base.hrav",
+				SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressDecimalExplicitReturnCode0() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal_explicit.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return0_decimal_explicit.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalExplicitReturnCode1() throws IOException {
-		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal_explicit.hrav",SOMFormats.HRAV);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAV,SOMFormats.BIN);
+		HRAVModel model = f.loadFromFile("test/fixtures/hrav/minimal_return1_decimal_explicit.hrav", SOMFormats.HRAV);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAV, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}

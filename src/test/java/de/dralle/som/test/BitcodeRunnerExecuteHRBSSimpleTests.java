@@ -40,7 +40,7 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
-		f=new FileLoader();
+		f = new FileLoader();
 	}
 
 	@AfterEach
@@ -50,7 +50,7 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 	@Test
 	void testReturnCode0() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/minimal_return0.hrbs");
-		IMemspace memspace = c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
@@ -58,7 +58,7 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 	@Test
 	void testReturnCode1() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/minimal_return1.hrbs");
-		IMemspace memspace = c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
@@ -66,8 +66,8 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAR() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_nar.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_nar.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.execute();
 		// should have written accumulator to 1
@@ -77,44 +77,47 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 	@Test
 	@Timeout(10)
 	void testOpcodeNAW() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_naw.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_naw.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
-	
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleInvert() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_invert_with_nand.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_invert_with_nand.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleRead() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_read_with_nand.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_read_with_nand.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testNANDExampleWrite() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_with_nand.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/straight_from_hrac/test_write_with_nand.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	void testDerefFixValueInsertionOutCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);
@@ -123,5 +126,6 @@ class BitcodeRunnerExecuteHRBSSimpleTests {
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		assertTrue(runner.execute());}
+		assertTrue(runner.execute());
+	}
 }

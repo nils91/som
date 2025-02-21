@@ -7,9 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.RenderedImage;
-import java.awt.image.renderable.RenderableImage;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,103 +18,6 @@ import java.util.Map.Entry;
  *
  */
 public class Util {
-	public static boolean getBit(int value, int position) {
-		return ((value >> position) & 1) > 0;
-	}
-
-	public static int getAsUnsignedInt(List<Boolean> bits) {
-		return getAsUnsignedInt(bits.toArray(new Boolean[bits.size()]));
-	}
-
-	public static int getAsUnsignedInt(Boolean[] bits) {
-		boolean[] valBits = new boolean[bits.length];
-		for (int i = 0; i < valBits.length; i++) {
-			valBits[i] = bits[i];
-		}
-		return getAsUnsignedInt(valBits);
-	}
-
-	public static int getAsUnsignedInt(boolean[] bits) {
-		int n = 0;
-		for (int i = 0; i < bits.length; i++) {
-			if (bits[i]) {
-				n += Math.pow(2, bits.length - i - 1);
-			}
-		}
-		return n;
-	}
-	/**
-	 * Factorial of n
-	 * @param n
-	 * @return
-	 */
-	public static int getFac(int n) {
-		if (n == 1) {
-			return n;
-		}
-		return n * getFac(n - 1);
-	}
-
-	public static Map<String, Integer> getBuiltinAdresses() {
-		Map<String, Integer> map = new HashMap<>();
-		map.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
-		map.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
-		map.put("WH_EN", AbstractSomMemspace.WH_EN);
-		map.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
-		map.put("WH_COM", AbstractSomMemspace.WH_COM);
-		map.put("WH_DIR", AbstractSomMemspace.WH_DIR);
-		map.put("WH_SEL", AbstractSomMemspace.WH_SEL);
-		map.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
-		return map;
-	}
-
-	public static Map<Integer, String> getBuiltinAdressesAddressKey() {
-		Map<Integer, String> map = new HashMap<>();
-		for (Entry<String, Integer> entry : getBuiltinAdresses().entrySet()) {
-			String key = entry.getKey();
-			Integer val = entry.getValue();
-			map.put(val, key);
-		}
-		return map;
-	}
-
-	public static byte[] image2ByteArray(RenderedImage source) {
-		BufferedImage bufferedImage = null;
-		if (source instanceof BufferedImage) {
-			bufferedImage = (BufferedImage) source;
-		} else {
-			// create a new BufferedImage from the RenderedImage
-			bufferedImage = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_RGB);
-			bufferedImage.createGraphics().drawRenderedImage(source, new AffineTransform());
-		}
-		// Get the pixels from the image
-		int[] npixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
-
-		// Create a byte array to hold the decoded data
-		byte[] ndataWithLength = new byte[npixels.length * 3];
-		int nindex = 0;
-		for (int i = 0; i < npixels.length; i++) {
-			int pixel = npixels[i];
-			ndataWithLength[nindex++] = (byte) ((pixel >> 16) & 0xff);
-			ndataWithLength[nindex++] = (byte) ((pixel >> 8) & 0xff);
-			ndataWithLength[nindex++] = (byte) (pixel & 0xff);
-		}
-
-		// Extract the length of the original data
-		int length = ByteBuffer.wrap(ndataWithLength, 0, 4).getInt();
-
-		// Extract the data from the byte array (excluding the length)
-		byte[] data = new byte[length];
-		for (int i = 0; i < data.length; i++) {
-			data[i] = ndataWithLength[i + 4];
-		}
-		return data;
-	}
-
-	public static int byteArrayToInt(byte[] bytes) {
-		return ByteBuffer.wrap(bytes).getInt();
-	}
-
 	public static RenderedImage byteArray2Image(byte[] data) {
 		// Prepend the length of the data to the byte array
 		byte[] dataWithLength = new byte[data.length + 4];
@@ -173,15 +74,8 @@ public class Util {
 		return img;
 	}
 
-	/**
-	 * Takes prefixes of the form '2b', '3b' etc. and returns the number. Lower
-	 * (inclusice) bound is 2.
-	 * 
-	 * @param prefix
-	 * @return
-	 */
-	public static int getBaseFromPrefix(String prefix) {
-		return Integer.parseInt(prefix.substring(0, prefix.length() - 1));
+	public static int byteArrayToInt(byte[] bytes) {
+		return ByteBuffer.wrap(bytes).getInt();
 	}
 
 	/**
@@ -227,5 +121,111 @@ public class Util {
 		} else {
 			return i;
 		}
+	}
+
+	public static int getAsUnsignedInt(boolean[] bits) {
+		int n = 0;
+		for (int i = 0; i < bits.length; i++) {
+			if (bits[i]) {
+				n += Math.pow(2, bits.length - i - 1);
+			}
+		}
+		return n;
+	}
+
+	public static int getAsUnsignedInt(Boolean[] bits) {
+		boolean[] valBits = new boolean[bits.length];
+		for (int i = 0; i < valBits.length; i++) {
+			valBits[i] = bits[i];
+		}
+		return getAsUnsignedInt(valBits);
+	}
+
+	public static int getAsUnsignedInt(List<Boolean> bits) {
+		return getAsUnsignedInt(bits.toArray(new Boolean[bits.size()]));
+	}
+
+	/**
+	 * Takes prefixes of the form '2b', '3b' etc. and returns the number. Lower
+	 * (inclusice) bound is 2.
+	 * 
+	 * @param prefix
+	 * @return
+	 */
+	public static int getBaseFromPrefix(String prefix) {
+		return Integer.parseInt(prefix.substring(0, prefix.length() - 1));
+	}
+
+	public static boolean getBit(int value, int position) {
+		return ((value >> position) & 1) > 0;
+	}
+
+	public static Map<String, Integer> getBuiltinAdresses() {
+		Map<String, Integer> map = new HashMap<>();
+		map.put("ACC", AbstractSomMemspace.ACC_ADDRESS);
+		map.put("ADR_EVAL", AbstractSomMemspace.ADR_EVAL_ADDRESS);
+		map.put("WH_EN", AbstractSomMemspace.WH_EN);
+		map.put("N", AbstractSomMemspace.ADDRESS_SIZE_START);
+		map.put("WH_COM", AbstractSomMemspace.WH_COM);
+		map.put("WH_DIR", AbstractSomMemspace.WH_DIR);
+		map.put("WH_SEL", AbstractSomMemspace.WH_SEL);
+		map.put("ADR", AbstractSomMemspace.START_ADDRESS_START);
+		return map;
+	}
+
+	public static Map<Integer, String> getBuiltinAdressesAddressKey() {
+		Map<Integer, String> map = new HashMap<>();
+		for (Entry<String, Integer> entry : getBuiltinAdresses().entrySet()) {
+			String key = entry.getKey();
+			Integer val = entry.getValue();
+			map.put(val, key);
+		}
+		return map;
+	}
+
+	/**
+	 * Factorial of n
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public static int getFac(int n) {
+		if (n == 1) {
+			return n;
+		}
+		return n * getFac(n - 1);
+	}
+
+	public static byte[] image2ByteArray(RenderedImage source) {
+		BufferedImage bufferedImage = null;
+		if (source instanceof BufferedImage) {
+			bufferedImage = (BufferedImage) source;
+		} else {
+			// create a new BufferedImage from the RenderedImage
+			bufferedImage = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_RGB);
+			bufferedImage.createGraphics().drawRenderedImage(source, new AffineTransform());
+		}
+		// Get the pixels from the image
+		int[] npixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
+
+		// Create a byte array to hold the decoded data
+		byte[] ndataWithLength = new byte[npixels.length * 3];
+		int nindex = 0;
+		for (int i = 0; i < npixels.length; i++) {
+			int pixel = npixels[i];
+			ndataWithLength[nindex++] = (byte) ((pixel >> 16) & 0xff);
+			ndataWithLength[nindex++] = (byte) ((pixel >> 8) & 0xff);
+			ndataWithLength[nindex++] = (byte) (pixel & 0xff);
+		}
+
+		// Extract the length of the original data
+		int length = ByteBuffer.wrap(ndataWithLength, 0, 4).getInt();
+
+		// Extract the data from the byte array (excluding the length)
+		byte[] data = new byte[length];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = ndataWithLength[i + 4];
+		}
+		return data;
 	}
 }

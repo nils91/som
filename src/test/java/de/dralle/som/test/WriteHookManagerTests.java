@@ -59,23 +59,26 @@ class WriteHookManagerTests {
 		manager.setSelectedWriteHook(-1);
 		assertFalse(manager.isLastSwitchSuccess());
 	}
+
 	@Test
 	void testSwitchToNextButInvalidWriteHook() {
 		manager.switchToNextWriteHook();
 		assertFalse(manager.isLastSwitchSuccess());
 	}
+
 	@Test
 	void testSwitchToPrevButInvalidWriteHook() {
 		manager.switchToPreviousWriteHook();
 		assertFalse(manager.isLastSwitchSuccess());
 	}
+
 	@Test
 	void testRegisterWriteHookNumIncrease() {
 		int whNumBefore = manager.getMaxWhNumber();
 		manager.registerWriteHook(new TestWriteHook());
-		assertEquals(whNumBefore+1, manager.getMaxWhNumber());
+		assertEquals(whNumBefore + 1, manager.getMaxWhNumber());
 	}
-	
+
 	@Test
 	void testSwitchToNextButValidWriteHook() {
 		TestWriteHook newTestHook = new TestWriteHook();
@@ -83,6 +86,7 @@ class WriteHookManagerTests {
 		manager.switchToNextWriteHook();
 		assertTrue(manager.isLastSwitchSuccess());
 	}
+
 	@Test
 	void testSwitchToPrevButValidWriteHook() {
 		TestWriteHook newTestHook = new TestWriteHook();
@@ -91,25 +95,28 @@ class WriteHookManagerTests {
 		manager.switchToPreviousWriteHook();
 		assertTrue(manager.isLastSwitchSuccess());
 	}
+
 	@Test
 	void testRegisterWriteHookGetJustSelectedWriteHookCorrectRef() {
 		TestWriteHook newTestHook = new TestWriteHook();
 		manager.registerWriteHook(newTestHook);
 		manager.switchToNextWriteHook();
-		assertTrue(newTestHook==manager.getSelectedWriteHook());
+		assertTrue(newTestHook == manager.getSelectedWriteHook());
 	}
+
 	@Test
 	void testRegisterWriteHookGetSelectedWriteHookNoSwitchWrongRef() {
 		TestWriteHook newTestHook = new TestWriteHook();
 		manager.registerWriteHook(newTestHook);
-		assertTrue(newTestHook!=manager.getSelectedWriteHook());
+		assertTrue(newTestHook != manager.getSelectedWriteHook());
 	}
+
 	@Test
 	void testRegisterWriteHookGetSelectedWriteHookSwitchBackNForthWrongRef() {
 		TestWriteHook newTestHook = new TestWriteHook();
 		manager.registerWriteHook(newTestHook);
 		manager.switchToNextWriteHook();
 		manager.switchToPreviousWriteHook();
-		assertTrue(newTestHook!=manager.getSelectedWriteHook());
+		assertTrue(newTestHook != manager.getSelectedWriteHook());
 	}
 }

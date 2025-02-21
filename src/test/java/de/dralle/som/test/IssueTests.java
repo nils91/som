@@ -231,19 +231,19 @@ class IssueTests {
 		HRAVModel hv0 = c.compile(hc0, SOMFormats.HRAC, SOMFormats.HRAV);
 		HRAVModel hv1 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.HRAV);
 		IMemspace nm = c.compile(hc0, SOMFormats.HRAC, SOMFormats.BIN);
-		IMemspace nm2 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.BIN);	
+		IMemspace nm2 = c.compile(hc1, SOMFormats.HRAC, SOMFormats.BIN);
 		assertTrue(nm.equalContent(nm2));
 	}
-	
+
 	@Test
 	void testIssue103_setonceHRAVEmpty() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/issue/test103.hrbs",
-				SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/issue/test103.hrbs", SOMFormats.HRBS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		String hravCode = hrav.asCode();
-		Pattern regex = Pattern.compile("setonce \\d+"); //search for setonce with a number
+		Pattern regex = Pattern.compile("setonce \\d+"); // search for setonce with a number
 		assertTrue(regex.matcher(hravCode).find());
 	}
+
 	@Test
 	void testIssue134_HRACtoString() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_var_repl.hrac", SOMFormats.HRAC);
@@ -251,26 +251,34 @@ class IssueTests {
 		assertNotNull(stringRep);
 
 	}
+
 	@Test
 	void testIssue134_HRACtoString2() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
 		String stringRep = model.toString();
 		assertNotNull(stringRep);
 	}
+
 	@Test
 	void testIssue136_NegativeOffsetMirrorSymbol() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_running_nested.hrac", SOMFormats.HRAC);
 		HRACSymbol amir = model.getSymbolByName("A_MIR");
-		assertEquals("A", ((NamedHRACMemoryAddress)amir.getTargetSymbol()).getName());
+		assertEquals("A", ((NamedHRACMemoryAddress) amir.getTargetSymbol()).getName());
 	}
+
 	@Test
 	void testIssue140_HRBSBoundsRangeToString() throws IOException {
 		HRBSBoundsRange tr = new HRBSBoundsRange();
-		tr.setStart(2);tr.setEnd(3);tr.setStep(1);
+		tr.setStart(2);
+		tr.setEnd(3);
+		tr.setStep(1);
 		String str = tr.toString();
-		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
-		
+		assertTrue(str.contains("2"));
+		assertTrue(str.contains("3"));
+		assertTrue(str.contains("1"));
+
 	}
+
 	@Test
 	void testIssue141_HRACForDupToString() throws IOException {
 		HRACCommand cmd = new HRACCommand();
@@ -283,30 +291,37 @@ class IssueTests {
 		rng.setStepSize(1);
 		HRACForDup fdr = new HRACForDup(cmd);
 		fdr.setRange(rng);
-		
+
 		String str = fdr.toString();
-		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
-		
+		assertTrue(str.contains("2"));
+		assertTrue(str.contains("3"));
+		assertTrue(str.contains("1"));
+
 	}
+
 	@Test
 	void testIssue141_HRACForDupBoundingRangeProviderToString() throws IOException {
 		HRACForDupBoundingRangeProvider rng = new HRACForDupBoundingRangeProvider();
 		rng.setRangeStart(2);
 		rng.setRangeEnd(3);
 		rng.setStepSize(1);
-		
+
 		String str = rng.toString();
-		assertTrue(str.contains("2"));assertTrue(str.contains("3"));assertTrue(str.contains("1"));
-		
+		assertTrue(str.contains("2"));
+		assertTrue(str.contains("3"));
+		assertTrue(str.contains("1"));
+
 	}
+
 	@Test
 	void testIssue142_HRACForDupCompile() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_rng_compile.hrac", SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
 		assertEquals(3, hrasModel.getCommandCount());
 	}
+
 	@Test
-	void testIssue142_HRBSForDupCompile() throws IOException { //duplicate of HRBSCompileTests#testForDupCompileHBRS
+	void testIssue142_HRBSForDupCompile() throws IOException { // duplicate of HRBSCompileTests#testForDupCompileHBRS
 //		Ok, so this only happens if:
 //
 //		    The compile path starts at HRBS
@@ -315,8 +330,8 @@ class IssueTests {
 //
 //		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
 //		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
-	HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		assertEquals(3, hras.getCommandCount()); //2 from loop, 1 added by hrac compiler
+		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
 }

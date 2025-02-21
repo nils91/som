@@ -45,19 +45,12 @@ class MemspaceToHRAVCompileTest {
 
 	@Test
 	void testSimple() throws IOException {
-	String code=";n = 6\r\n"
-			+ ";start = 43\r\n"
-			+ ";continue = 43\r\n"
-			+ "NAW 1\r\n"
-			+ ";continue = 50\r\n"
-			+ "NAR 0\r\n"
-			+ ";continue = 57\r\n"
-			+ "NAR 0\r\n";
-	HRAVModel model=(HRAVModel) new FileLoader().loadFromString(code, SOMFormats.HRAV);
-	IMemspace mem = model.compileToMemspace();
-	HRAVModel model2 = HRAVModel.compileFromMemspace((ISomMemspace) mem);
-	assertEquals(model, model2);
+		String code = ";n = 6\r\n" + ";start = 43\r\n" + ";continue = 43\r\n" + "NAW 1\r\n" + ";continue = 50\r\n"
+				+ "NAR 0\r\n" + ";continue = 57\r\n" + "NAR 0\r\n";
+		HRAVModel model = (HRAVModel) new FileLoader().loadFromString(code, SOMFormats.HRAV);
+		IMemspace mem = model.compileToMemspace();
+		HRAVModel model2 = HRAVModel.compileFromMemspace((ISomMemspace) mem);
+		assertEquals(model, model2);
 	}
 
 }
-

@@ -34,7 +34,7 @@ class MemspaceTests {
 
 	// argument source
 	static int[] sweepN() {
-		int[] allNForTesting = new int[11 - ISomMemspace.MINIMUM_ADDRESS_SIZE]; //cutoff for tests to not take forever
+		int[] allNForTesting = new int[11 - ISomMemspace.MINIMUM_ADDRESS_SIZE]; // cutoff for tests to not take forever
 		for (int i = 0; i < allNForTesting.length; i++) {
 			allNForTesting[i] = i + ISomMemspace.MINIMUM_ADDRESS_SIZE;
 		}
@@ -55,7 +55,7 @@ class MemspaceTests {
 	 * @return
 	 */
 	static ISomMemspace[] getMemspacesForTesting() {
-		ISomMemspace[] memspacesForTesting = new ISomMemspace[] { new BooleanArrayMemspace(),new ByteArrayMemspace() };
+		ISomMemspace[] memspacesForTesting = new ISomMemspace[] { new BooleanArrayMemspace(), new ByteArrayMemspace() };
 		return memspacesForTesting;
 	}
 
@@ -227,7 +227,7 @@ class MemspaceTests {
 	@MethodSource("matrixMemSpaceAndN")
 	void testSetN(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		String nBin = Integer.toBinaryString(n-ISomMemspace.ADDRESS_SIZE_OFFSET);
+		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
 		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
 			nBin = '0' + nBin;
 		}
@@ -249,7 +249,7 @@ class MemspaceTests {
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testGetN(ISomMemspace memSpace, int n) {
-		String nBin = Integer.toBinaryString(n-ISomMemspace.ADDRESS_SIZE_OFFSET);
+		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
 		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
 			nBin = '0' + nBin;
 		}
@@ -303,7 +303,7 @@ class MemspaceTests {
 		for (int i = 0; i < nAdressBin.toCharArray().length; i++) {
 			switch (nAdressBin.toCharArray()[i]) {
 			case '0':
-				memSpace.setBit(ISomMemspace.START_ADDRESS_START+i, false);
+				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, false);
 				break;
 			case '1':
 				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, true);
@@ -363,13 +363,15 @@ class MemspaceTests {
 		ISomMemspace clone = memSpace.clone();
 		assertNotNull(clone);
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceCloneNotSameRef(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
 		ISomMemspace clone = memSpace.clone();
-		assertFalse(memSpace==clone);
+		assertFalse(memSpace == clone);
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceCloneNotSameRefBitSet(ISomMemspace memSpace, int n) {
@@ -379,6 +381,7 @@ class MemspaceTests {
 		clone.setBit(0, true);
 		assertNotEquals(memSpace.getBit(0), clone.getBit(0));
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceCloneSameSize(ISomMemspace memSpace, int n) {
@@ -394,7 +397,7 @@ class MemspaceTests {
 		if (n > 4) {
 			int newSize = (int) Math.pow(2, n - 1);
 			memSpace.resize(newSize, false);
-			assertTrue(newSize<= memSpace.getSize());
+			assertTrue(newSize <= memSpace.getSize());
 		}
 	}
 
@@ -404,7 +407,7 @@ class MemspaceTests {
 		memSpace.setN(n);
 		int newSize = (int) Math.pow(2, n + 1);
 		memSpace.resize(newSize, false);
-		assertTrue(newSize<= memSpace.getSize());
+		assertTrue(newSize <= memSpace.getSize());
 	}
 
 	@ParameterizedTest
@@ -463,12 +466,12 @@ class MemspaceTests {
 		int newSize = (int) Math.pow(2, n + 1);
 		memSpace.resize(newSize, true);
 		for (int i = 0; i < newSize; i++) {
-			if(i<oldMemspace.getSize()) {
+			if (i < oldMemspace.getSize()) {
 				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
 			}
 		}
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceCopy(ISomMemspace memSpace, int n) {
@@ -482,12 +485,14 @@ class MemspaceTests {
 		clone.copy(memSpace);
 		assertTrue(memSpace.equalContent(clone));
 	}
+
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
 	void testMemspaceNoCopy(ISomMemspace memSpace, int n) {
 		ISomMemspace clone = memSpace.clone();
 		memSpace.setN(n);
-		// set each bit to the inverse of clone. If clone() works as expected, they are different objects and content equals should return false afterwards
+		// set each bit to the inverse of clone. If clone() works as expected, they are
+		// different objects and content equals should return false afterwards
 		for (int i = 8; i < Math.pow(2, n); i++) {
 			memSpace.setBit(i, !clone.getBit(i));
 		}

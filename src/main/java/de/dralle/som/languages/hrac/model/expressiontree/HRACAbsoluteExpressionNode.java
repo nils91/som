@@ -8,6 +8,11 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionN
 
 public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
+	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
+		super(child);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public int calculateNumericalValue() {
 		return Math.abs(super.calculateNumericalValue());
@@ -21,11 +26,6 @@ public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode im
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {
 		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
-	}
-
-	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
-		super(child);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode im
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "| "+getChild().toString()+" |";
+		return "| " + getChild().toString() + " |";
 	}
 
 }

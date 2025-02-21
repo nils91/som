@@ -4,8 +4,15 @@ public abstract class AbstractHRBSRange implements Cloneable {
 	private String runningDirectiveName;
 
 	@Override
-	public int hashCode() {
-		return runningDirectiveName.hashCode();
+	public AbstractHRBSRange clone() {
+		// TODO Auto-generated method stub
+		try {
+			return (AbstractHRBSRange) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -19,16 +26,20 @@ public abstract class AbstractHRBSRange implements Cloneable {
 		return super.equals(obj);
 	}
 
-	@Override
-	public AbstractHRBSRange clone() {
-		// TODO Auto-generated method stub
-		try {
-			return (AbstractHRBSRange) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public String getRunningDirectiveName() {
+		if (runningDirectiveName == null) {
+			return "i";// return default if not set otherwise
 		}
-		return null;
+		return runningDirectiveName;
+	}
+
+	@Override
+	public int hashCode() {
+		return runningDirectiveName.hashCode();
+	}
+
+	public void setRunningDirectiveName(String runningDirectiveName) {
+		this.runningDirectiveName = runningDirectiveName;
 	}
 
 	@Override
@@ -38,17 +49,6 @@ public abstract class AbstractHRBSRange implements Cloneable {
 			str += "$" + runningDirectiveName + " = ";
 		}
 		return str;
-	}
-
-	public String getRunningDirectiveName() {
-		if (runningDirectiveName == null) {
-			return "i";// return default if not set otherwise
-		}
-		return runningDirectiveName;
-	}
-
-	public void setRunningDirectiveName(String runningDirectiveName) {
-		this.runningDirectiveName = runningDirectiveName;
 	}
 
 	/**

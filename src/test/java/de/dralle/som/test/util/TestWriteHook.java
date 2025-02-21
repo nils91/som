@@ -29,8 +29,6 @@ public class TestWriteHook extends AbstractWriteHook {
 		return writtenBits;
 	}
 
-	
-
 	public int getWriteTrgCnt() {
 		return writeTrgCnt;
 	}
@@ -50,14 +48,14 @@ public class TestWriteHook extends AbstractWriteHook {
 				bitsProvidedForReadNew[i] = bitsProvidedForRead[i + 1];
 			}
 			bitToReturn = bitsProvidedForRead[0];
-		} 
+		}
 		bitsProvidedForRead = bitsProvidedForReadNew;
 		return bitToReturn;
 	}
 
 	@Override
 	public boolean hasDataAvailable() {
-		return bitsProvidedForRead.length>0;
+		return bitsProvidedForRead.length > 0;
 	}
 
 	@Override

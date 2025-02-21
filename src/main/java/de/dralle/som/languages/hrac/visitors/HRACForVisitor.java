@@ -5,17 +5,16 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Commadn_or_forCo
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplicationContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplication_headContext;
 import de.dralle.som.languages.hrac.model.HRACForDup;
-import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 
 public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 	private HRACForDup f = null;
 
-	public HRACForVisitor(HRACForDup f) {
-		this.f = f;
-	}
-
 	public HRACForVisitor() {
 		this(new HRACForDup());
+	}
+
+	public HRACForVisitor(HRACForDup f) {
+		this.f = f;
 	}
 
 	@Override

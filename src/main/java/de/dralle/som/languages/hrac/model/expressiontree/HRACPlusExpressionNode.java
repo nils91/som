@@ -1,8 +1,6 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
-import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
-import de.dralle.som.languages.hras.model.HRASDivisionExpressionNode;
 import de.dralle.som.languages.hras.model.PlusExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSPlusExpressionNode;
@@ -20,27 +18,9 @@ public class HRACPlusExpressionNode extends CommutativeDualChildExpressionNode i
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof HRACPlusExpressionNode) {
-			return super.equals(obj);
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode()+getChilds()[0].hashCode()+getChilds()[1].hashCode();
-	}
-
-	@Override
 	public int calculateNumericalValue() {
 		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue()+getChilds()[1].calculateNumericalValue();
-	}
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "( "+getChilds()[0].toString()+" + "+getChilds()[1].toString()+" )";
+		return getChilds()[0].calculateNumericalValue() + getChilds()[1].calculateNumericalValue();
 	}
 
 	@Override
@@ -53,6 +33,25 @@ public class HRACPlusExpressionNode extends CommutativeDualChildExpressionNode i
 	public HRBSAbstractExpressionNode compileToHRBS() {
 
 		return new HRBSPlusExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof HRACPlusExpressionNode) {
+			return super.equals(obj);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() + getChilds()[0].hashCode() + getChilds()[1].hashCode();
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "( " + getChilds()[0].toString() + " + " + getChilds()[1].toString() + " )";
 	}
 
 }

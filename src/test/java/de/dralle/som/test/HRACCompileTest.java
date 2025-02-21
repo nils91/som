@@ -72,7 +72,11 @@ class HRACCompileTest {
 		for (int i = 0; i < 4; i++) {
 			HRACForDup curCommand = model.getCommands().get(i);
 			HRACForDup nxtCommand = model.getCommands().get(i + 1);
-			assertEquals(curCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model).calculateNumericalValue() + 1, nxtCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model).calculateNumericalValue());
+			assertEquals(
+					curCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model)
+							.calculateNumericalValue() + 1,
+					nxtCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model)
+							.calculateNumericalValue());
 		}
 
 	}
@@ -109,6 +113,7 @@ class HRACCompileTest {
 		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		assertNotNull(m);
 	}
+
 	@Test
 	void testCompileFixedAdressOnCommand() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fixed_adr_on_command.hrac", SOMFormats.HRAC);
@@ -116,6 +121,7 @@ class HRACCompileTest {
 		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
 		assertNotNull(m);
 	}
+
 	@Test
 	void testCompileFixedAdressOnMirrorSymbol() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fixed_adr_on_mirror_symbol.hrac", SOMFormats.HRAC);
@@ -135,16 +141,16 @@ class HRACCompileTest {
 				if (s1 != s2) {
 					AbstractHRACMemoryAddress s1CmdTgt = s1.getCmd().getTarget();
 					AbstractHRACMemoryAddress s2CmdTgt = s2.getCmd().getTarget();
-					if(s1CmdTgt instanceof NamedHRACMemoryAddress&&s2CmdTgt instanceof NamedHRACMemoryAddress) {
+					if (s1CmdTgt instanceof NamedHRACMemoryAddress && s2CmdTgt instanceof NamedHRACMemoryAddress) {
 						HRACAbstractExpressionNode s1CmdTgTOfs = null;
-						s1CmdTgTOfs=s1CmdTgt.getOffset();
-						assertNotEquals(s1CmdTgTOfs,((NamedHRACMemoryAddress)s2CmdTgt).getName());
-					eval++;
-					}else {
-						//fail
+						s1CmdTgTOfs = s1CmdTgt.getOffset();
+						assertNotEquals(s1CmdTgTOfs, ((NamedHRACMemoryAddress) s2CmdTgt).getName());
+						eval++;
+					} else {
+						// fail
 						assertTrue(false);
 					}
-					
+
 				}
 			}
 		}

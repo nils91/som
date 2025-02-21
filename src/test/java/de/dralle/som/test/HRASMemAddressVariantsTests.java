@@ -37,7 +37,7 @@ class HRASMemAddressVariantsTests {
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
-		f=new FileLoader();
+		f = new FileLoader();
 	}
 
 	@AfterEach
@@ -46,107 +46,114 @@ class HRASMemAddressVariantsTests {
 
 	@Test
 	void testMemAddressDecimalReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalhReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_hexh.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_hexh.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalhReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_hexh.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_hexh.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressHexadecimalxReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_hexx.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_hexx.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressHexadecimalxReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_hexx.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_hexx.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressBinaryReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_bin.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_bin.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressBinaryReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_bin.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_bin.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressOctalReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_oct.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_oct.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressOctalReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_oct.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_oct.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_base_explicit.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_base_explicit.hras",
+				SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalExplicitBaseReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_base_explicit.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_base_explicit.hras",
+				SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}
+
 	@Test
 	void testMemAddressDecimalExplicitReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_explicit.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0_decimal_explicit.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 	}
 
 	@Test
 	void testMemAddressDecimalExplicitReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_explicit.hras",SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model,SOMFormats.HRAS,SOMFormats.BIN);
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1_decimal_explicit.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertFalse(runner.execute());
 	}

@@ -153,4 +153,34 @@ public class HRBSCommand implements Cloneable {
 	public void setInstIdDirective(boolean instIdDirective) {
 		this.instIdDirective = instIdDirective;
 	}
+/**
+ * Recursively count NAR/NAW child command.
+ * @param parent Parent model to this command
+ * @return
+ */
+	public int recursiveCountAtomicCommands(HRBSModel parent) {
+		if(isStandardCommand()) {
+			return 1;
+		}else {
+			HRBSModel model = parent.getChilds().get(command);
+			if(model==null) {
+				return 0;
+			}else {
+				return model.recursiveCountAtomicCommands();
+			}
+		}
+	}
+	/**
+	 * Returns true if cmd is one of the standard commands
+	 * @param cmd
+	 * @return
+	 */
+	public boolean isStandardCommand() {
+		for (Opcode op : Opcode.values()) {
+			if (op.name().equals(getCmd())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

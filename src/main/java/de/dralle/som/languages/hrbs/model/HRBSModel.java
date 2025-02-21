@@ -467,7 +467,7 @@ public class HRBSModel implements ISetN, IHeap {
 			AbstractHRACMemoryAddress hracadr = calculateHRACMemoryAddressNoDeref(tgtAdr, lclSymbolNameMap);
 			m.addInitOnceAdress(hracadr, otiListEntry.getValue());
 		}
-
+		int labelPassOnValue=0; //Which child command will get the label?
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
 			if (c.isInstIdDirective()) { // resolve directive access on called command
@@ -482,13 +482,23 @@ public class HRBSModel implements ISetN, IHeap {
 					}
 				}
 			}
-			convertAnyCommand(c, name, instanceId, (i == 0 ? label : null), lclSymbolNameMap, childs, m);
+			/**
+			 * Ensure a child command with no commands doesnt get the label.
+			 */
+if(i==labelPassOnValue&& !commandIsStandard(c)&&c.recursiveCountAtomicCommands(this)==0) {
+	labelPassOnValue++;
+}
+			convertAnyCommand(c, name, instanceId, (i == labelPassOnValue ? label : null), lclSymbolNameMap, childs, m);
 		}
 		m = addCommandsAndSymbolsFromOther(m, tempModel);// merge tempModel (which has been created for the sole
 															// purpoose of holding commands for dereffing params) into
 															// this one
 		addDirectives.remove("instanceid");
 		return m;
+	}
+
+	private boolean commandIsStandard(HRBSCommand c) {
+		return commandIsStandard(c.getCmd());
 	}
 
 	public static HRBSModel compileFromHRAC(HRACModel m, String name) {
@@ -664,7 +674,7 @@ public class HRBSModel implements ISetN, IHeap {
 		String cmdName = c.getCmd();
 		boolean standardCommand = false;
 		if (label != null) {
-			if (c.getLabel() == null) {
+ 			if (c.getLabel() == null) {
 				c.setLabel(label);
 			} else {
 				HRACSymbol newSymbol = new HRACSymbol(label);
@@ -722,7 +732,7 @@ public class HRBSModel implements ISetN, IHeap {
 			}
 			HRBSModel cmdModel = availChildsCommands.get(cmdName);
 			if (cmdModel == null) {
-				System.out.println("Warning: Command not found: " + cmdName);
+				logger.warning("Command not found "+cmdName);
 			}
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			HRACModel compiledCmdModel = cmdModel.compileToHRAC(instId,
@@ -736,7 +746,32 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		incCommandUsage(c);
 	}
-
+	/**
+	 * Recursively count the number of NAR/NAW commands in this model and its child models
+	 * @return
+	 */
+	public int recursiveCountAtomicCommands( ) {int cnt = 0;
+		for (HRBSCommand hrbsCommand : commands) {
+			cnt+=hrbsCommand.recursiveCountAtomicCommands(this);
+			AbstractHRBSRange rng = hrbsCommand.getRange();
+			
+		}
+		return cnt;
+		
+	}
+	/**
+	 * Returns true if cmd is one of the standard commands
+	 * @param cmd
+	 * @return
+	 */
+public static boolean commandIsStandard(String cmd) {
+	for (Opcode op : Opcode.values()) {
+		if (op.name().equals(cmd)) {
+			return true;
+		}
+	}
+	return false;
+}
 	/**
 	 * Localize command labels based on their type. Only add the localized names to
 	 * the symbol name map, wont change the symbols

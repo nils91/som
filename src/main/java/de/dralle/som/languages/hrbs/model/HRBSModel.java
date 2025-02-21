@@ -672,7 +672,6 @@ if(i==labelPassOnValue&& !commandIsStandard(c)&&c.recursiveCountAtomicCommands(t
 	private void convertAnyCommand(HRBSCommand c, String parentCmdName, String cmdExecId, String label,
 			Map<String, String> symbolNameReplacementMap, Map<String, HRBSModel> availChildsCommands, HRACModel m) {
 		String cmdName = c.getCmd();
-		boolean standardCommand = false;
 		if (label != null) {
  			if (c.getLabel() == null) {
 				c.setLabel(label);
@@ -709,13 +708,11 @@ if(i==labelPassOnValue&& !commandIsStandard(c)&&c.recursiveCountAtomicCommands(t
 			fd = new HRACForDup();
 			fd.setRange(convRange);
 		}
-		for (Opcode op : Opcode.values()) {
-			if (op.name().equals(cmdName)) {
+		if(c.isStandardCommand()) {
 				HRACModel tempModel = new HRACModel(); // temporary model to hold commands created during command
 														// conversion until after main command is converted
-				HRACCommand converted = convertStandardCommands(c, op, parentCmdName, cmdExecId,
+				HRACCommand converted = convertStandardCommands(c,parentCmdName, cmdExecId,
 						symbolNameReplacementMap, tempModel, availChildsCommands);
-				standardCommand = true;
 				if (fd != null) {
 					fd.setCmd(converted);
 					m.addCommand(fd);
@@ -723,9 +720,9 @@ if(i==labelPassOnValue&& !commandIsStandard(c)&&c.recursiveCountAtomicCommands(t
 					m.addCommand(converted);
 				}
 				m = addCommandsAndSymbolsFromOther(m, tempModel);
-			}
+			
 		}
-		if (!standardCommand) {
+		else {
 			String instId = c.getCllInstId();
 			if (instId == null) {
 				instId = getCurrentCommandUsage(c) + "";
@@ -847,14 +844,14 @@ public static boolean commandIsStandard(String cmd) {
 	 * @param additionalCommands
 	 * @return
 	 */
-	private HRACCommand convertStandardCommands(HRBSCommand c, Opcode opcode, String parentCmdName, String cmdExecId,
+	private HRACCommand convertStandardCommands(HRBSCommand c,  String parentCmdName, String cmdExecId,
 			Map<String, String> symbolNameReplacementMap, HRACModel m, Map<String, HRBSModel> additionalCommands) {
 		HRACCommand tgtC = new HRACCommand();
 		if (c.getLabel() != null) {
 			String lclSmblName = getTargetSymbolName(c.getLabel(), symbolNameReplacementMap);
 			tgtC.setLabel(new HRACSymbol(lclSmblName));
 		}
-		tgtC.setOp(opcode);
+		tgtC.setOp(Opcode.valueOf(c.getCmd()));
 		AbstractHRACMemoryAddress tgtAdr = calculateHRACMemoryAddress(c.getTarget().get(0), parentCmdName, cmdExecId,
 				symbolNameReplacementMap, m, additionalCommands);
 		tgtC.setTarget(tgtAdr);

@@ -417,7 +417,12 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @return
 	 */
 	public boolean addChild(HRBSModel c) {
-		return addChild(c.getName(), c);
+		if(c!=null) {
+			logger.fine("Added model "+c.getName()+" to *"+name);
+				return addChild(c.getName(), c);
+		}
+		logger.warning("Tried adding null model to *"+name);
+		return false;
 	}
 
 	public boolean addChild(String name, HRBSModel c) {

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dralle.som.AbstractUnconditionalDebugPoint;
@@ -515,34 +517,33 @@ class HRBSCompileTest {
 		assertNotNull(bin);
 	}
 
+	static Stream<String> testfileFor145Provider() {
+		return Stream.of(
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child_2nd.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs");
+	}
+
 	@Timeout(30)
 	@ParameterizedTest
-	@ValueSource(strings = {
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child_2nd.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs" })
+	@MethodSource("testfileFor145Provider")
 	void testIssue145NoAtomicChildsLabelGen(String testFile) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<String> labels = hrac.getAllLabelsRecursive();
 		assertTrue(labels.contains("LABEL"));
-		}
+	}
+
 	@Timeout(30)
 	@ParameterizedTest
-	@ValueSource(strings = {
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child_2nd.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
-			"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs" })
+	@MethodSource("testfileFor145Provider")
 	void testIssue145NoAtomicChildsLabelGenToHRASSymbol(String testFile) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		Map<String, AbstractHRASMemoryAddress> labels = hras.getSymbols();
 		assertTrue(labels.containsKey("LABEL"));
-		}
+	}
 }

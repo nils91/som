@@ -3,6 +3,7 @@
  */
 package de.dralle.som.languages.hrbs.model;
 
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import de.dralle.som.FileLoader;
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
 import de.dralle.som.Opcode;
@@ -755,6 +757,32 @@ public class HRBSModel implements ISetN, IHeap {
 		lclCommands.addAll(additionalCommands);
 		additionalCommands.clear();
 		additionalSymbols.clear();
+		// if there is a label but no command to take it, add a NOOP0. Also add a NOOP0
+		// if the availabel command have no atomic child commands (issue 145)
+		if (label != null && lclCommands.isEmpty()) {
+			HRBSCommand ncmd = loadAndAddNOOP0();
+			if (ncmd == null) {
+				logger.warning("Error inserting additional command. Label " + label + " might get discarded.");
+			} else {
+				lclCommands.add(ncmd);
+				logger.fine("Additional command inserted to get label " + label);
+			}
+		}
+		if (label != null) {
+			int atomChilds = 0;
+			for (HRBSCommand hrbsCommand : lclCommands) {
+				atomChilds += hrbsCommand.recursiveCountAtomicCommands(this);
+			}
+			if (atomChilds == 0) {
+				HRBSCommand ncmd = loadAndAddNOOP0();
+				if (ncmd == null) {
+					logger.warning("Error inserting additional command. Label " + label + " might get discarded.");
+				} else {
+					lclCommands.add(ncmd);
+					logger.fine("Additional command inserted to get label " + label);
+				}
+			}
+		}
 		HRACModel tempModel = new HRACModel();
 		if (modifiedParamMap != null) { // create mirror symbol (downstream, hrac) for each param, but defer the
 										// creation of commands in the hracmodel until after commands are compiled.
@@ -797,7 +825,7 @@ public class HRBSModel implements ISetN, IHeap {
 			AbstractHRACMemoryAddress hracadr = calculateHRACMemoryAddressNoDeref(tgtAdr, lclSymbolNameMap);
 			m.addInitOnceAdress(hracadr, otiListEntry.getValue());
 		}
-		int labelPassOnValue = 0; // Which child command will get the label?
+		int labelPassOnValue = 0; // Which child command will get the label? (issue 145)
 		for (int i = 0; i < lclCommands.size(); i++) {
 			HRBSCommand c = lclCommands.get(i);
 			if (c.isInstIdDirective()) { // resolve directive access on called command
@@ -815,10 +843,12 @@ public class HRBSModel implements ISetN, IHeap {
 			/**
 			 * Ensure a child command with no commands doesnt get the label.
 			 */
-			if (i == labelPassOnValue && !commandIsStandard(c) && c.recursiveCountAtomicCommands(this) == 0) {
+			if (label != null && i == labelPassOnValue && !commandIsStandard(c)
+					&& c.recursiveCountAtomicCommands(this) == 0) {
 				labelPassOnValue++;
 			}
 			convertAnyCommand(c, name, instanceId, (i == labelPassOnValue ? label : null), lclSymbolNameMap, childs, m);
+
 		}
 		m = addCommandsAndSymbolsFromOther(m, tempModel);// merge tempModel (which has been created for the sole
 															// purpoose of holding commands for dereffing params) into
@@ -1174,5 +1204,21 @@ public class HRBSModel implements ISetN, IHeap {
 	@Override
 	public String toString() {
 		return asCode();
+	}
+
+	public HRBSCommand loadAndAddNOOP0() {
+		HRBSCommand ncmd = new HRBSCommand();
+		ncmd.setCmd("NOOP0");
+		// if NOOP0 is not loaded, load it
+		if (childs == null || !childs.containsKey("NOOP0")) {
+			try {
+				addChild(new FileLoader().loadHRBSByName("NOOP0"));
+				return ncmd;
+			} catch (IOException e) {
+				logger.warning("Additional NOOP0 command could not be loaded. " + e.getMessage());
+				return null;
+			}
+		}
+		return ncmd;
 	}
 }

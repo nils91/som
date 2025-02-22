@@ -10,17 +10,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import de.dralle.som.ISetN;
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
+import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
  * @author Nils
  *
  */
 public class HRASModel implements ISetN {
+	
+	private static final Logger logger = Logger.getLogger(HRASModel.class.getName());
+	
 	public static HRASModel compileFromHRAV(HRAVModel model) {
 		Map<Integer, String> symbols = new HashMap<Integer, String>();
 		symbols.putAll(Util.getBuiltinAdressesAddressKey());
@@ -145,8 +150,7 @@ public class HRASModel implements ISetN {
 			HRAVCommand hravCommand = new HRAVCommand();
 			hravCommand.setOp(command.getOp());
 			if (cTgtAddress < 0) {
-				System.out.println(
-						"Warning: (HRAS -> HRAV) Negative memory address in command at address " + address + ".");
+				logger.warning("(HRAS -> HRAV) Negative memory address in command at address " + address + ".");
 			}
 			hravCommand.setAddress(cTgtAddress);
 			hrav.addCommand(hravCommand);

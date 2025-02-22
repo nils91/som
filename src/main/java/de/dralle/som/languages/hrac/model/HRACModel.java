@@ -47,7 +47,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		newm.setMinimumN(m.getN());
 		int lastHeaderBit = ISomMemspace.START_ADDRESS_START + m.getN() - 1;// everything up to this is assumed to be
 																			// fixed
-		Map<String, Integer> builtinsToCheck = Util.getBuiltinAdresses();
 		for (Entry<String, AbstractHRASMemoryAddress> s : m.getSymbols().entrySet()) {
 			HRACSymbol news = new HRACSymbol(s.getKey());
 			AbstractHRASMemoryAddress adr = s.getValue();
@@ -110,12 +109,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
-	/**
-	 * Going forward automatic built-in generation (buit-in symbols) will be removed
-	 * and the user needs to take care of it themselves.
-	 */
-	@Deprecated
-	private Map<String, Integer> builtins;
 	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
 											// shall be used. But Integer should also be checked, just in case). Making
 											// it Object is only a workaround however, the long-term solutiopn would be
@@ -130,7 +123,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	private List<Map.Entry<AbstractHRACMemoryAddress, Boolean>> initOnceAddresses = new ArrayList<Map.Entry<AbstractHRACMemoryAddress, Boolean>>();
 
 	public HRACModel() {
-		setupBuiltins();
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
 		directives = new HashMap<>();
@@ -261,7 +253,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.builtins = new HashMap<>(builtins);
 		clone.directives = new HashMap<>(directives);
 		clone.additionalDirectives = new HashMap<>(additionalDirectives);
 		if (symbols != null) {
@@ -291,11 +282,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		int startAddress = toc.getStartAdress(n);
 		m.setStartAdress(startAddress);
 		m.setNextCommandAddress(startAddress);
-		for (Entry<String, Integer> entry : toc.builtins.entrySet()) {
-			String key = entry.getKey();
-			Integer val = entry.getValue();
-			m.addSymbol(key, new SymbolHRASMemoryAddress(val));
-		}
 		int nxtSymbolAddress = getFixedBitCount(n);
 		// iterate over all symbols and block all directly used addresses
 		for (HRACSymbol s : toc.symbols) {
@@ -371,8 +357,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		// marker
 
 		HRASCommand clrAdrEval = new HRASCommand();
+		//Add NAW ADR_EVAL
 		clrAdrEval.setOp(Opcode.NAW);
 		clrAdrEval.setAddress(new SymbolHRASMemoryAddress("ADR_EVAL"));
+		m.addSymbol("ADR_EVAL", new ExpressionHRASMemoryAddress(ISomMemspace.ADR_EVAL_ADDRESS));
 		AbstractHRASMemoryAddress assignedAddress = m.addCommand(clrAdrEval);
 		m.addSymbol("HRAS_PROGRAM_START", assignedAddress);
 		int i = 0;
@@ -700,17 +688,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	}
 
-	public int resolveBuiltinToAddress(String symbol, int n) {
-		Integer targetAddress = builtins.get(symbol);
-		if (targetAddress != null) {
-			return targetAddress;
-		}
-		if (symbol.equals(HRAC_HEAP_START_MARKER)) {
-			return getHeapStartAddress(n);
-		}
-		return -1;
-	}
-
 	public void setHeapSize(int heapSize) {
 		directives.put("heap", heapSize + "");
 	}
@@ -726,15 +703,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public void setN(int n) {
 		setMinimumN(n);
 
-	}
-
-	/**
-	 * Going forward automatic built-in generation (buit-in symbols) will be removed
-	 * and the user needs to take care of it themselves.
-	 */
-	@Deprecated
-	private void setupBuiltins() {
-		builtins = new HashMap<>(Util.getBuiltinAdresses());
 	}
 
 	@Override

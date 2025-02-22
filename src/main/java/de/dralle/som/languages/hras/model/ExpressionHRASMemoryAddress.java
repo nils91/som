@@ -43,7 +43,7 @@ public class ExpressionHRASMemoryAddress extends AbstractHRASMemoryAddress imple
 		return false;
 	}
 
-	public HRASAbstractExpressionNode getexpression() {
+	public HRASAbstractExpressionNode getExpression() {
 		return expression;
 	}
 

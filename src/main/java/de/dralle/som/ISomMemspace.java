@@ -21,7 +21,7 @@ public interface ISomMemspace extends IMemspace, ISetN {
 	public static final int ADR_EVAL_ADDRESS = 1;
 	public static final int MINIMUM_ADDRESS_SIZE = ADDRESS_SIZE_OFFSET;
 	public static final int MAXIMUM_ADDRESS_SIZE = (int) (Math.pow(2, ADDRESS_SIZE_BIT_COUNT) + ADDRESS_SIZE_OFFSET);
-
+	
 	void clearAdrEval();
 
 	@Override

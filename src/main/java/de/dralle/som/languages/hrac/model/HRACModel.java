@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
+import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
@@ -44,13 +45,24 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public static HRACModel compileFromHRAS(HRASModel m) {
 		HRACModel newm = new HRACModel();
 		newm.setMinimumN(m.getN());
+		int lastHeaderBit = ISomMemspace.START_ADDRESS_START + m.getN() - 1;// everything up to this is assumed to be
+																			// fixed
 		Map<String, Integer> builtinsToCheck = Util.getBuiltinAdresses();
 		for (Entry<String, AbstractHRASMemoryAddress> s : m.getSymbols().entrySet()) {
-			if (!builtinsToCheck.containsKey(s.getKey())) {
-				HRACSymbol news = new HRACSymbol(s.getKey());
-				news.setBitCnt(1);
-				newm.addSymbol(news);
+			HRACSymbol news = new HRACSymbol(s.getKey());
+			AbstractHRASMemoryAddress adr = s.getValue();
+			if (adr instanceof ExpressionHRASMemoryAddress) {
+				HRASAbstractExpressionNode adrv = ((ExpressionHRASMemoryAddress) adr).getExpression();
+				int adrvi = adrv.calculateNumericalValue();
+				if (adrvi <= lastHeaderBit) {
+
+					news.setTargetSymbol(new FixedHRACMemoryAddress(adrv.compileToHRAC()));
+
+				}
 			}
+			news.setBitCnt(1);
+			newm.addSymbol(news);
+
 		}
 		List<Entry<AbstractHRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
 		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : otiAddresses) {
@@ -60,7 +72,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (hrasAdr instanceof SymbolHRASMemoryAddress) {
 				hrasName = ((SymbolHRASMemoryAddress) hrasAdr).getSymbol();
 			} else if (hrasAdr instanceof ExpressionHRASMemoryAddress) {
-				hrasName = ((ExpressionHRASMemoryAddress) hrasAdr).getexpression().calculateNumericalValue() + "";// TODO:
+				hrasName = ((ExpressionHRASMemoryAddress) hrasAdr).getExpression().calculateNumericalValue() + "";// TODO:
 																													// //
 																													// now
 			}
@@ -734,18 +746,18 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		List<String> labels = new ArrayList<String>();
 		for (HRACForDup string : commands) {
 			HRACCommand cmd = string.getCmd();
-			if(cmd!=null) {
+			if (cmd != null) {
 				HRACSymbol lbl = cmd.getLabel();
-				if(lbl!=null) {
+				if (lbl != null) {
 					labels.add(lbl.getName());
 				}
 			}
 			HRACModel model = string.getModel();
-			if(model!=null) {
+			if (model != null) {
 				labels.addAll(model.getAllLabelsRecursive());
 			}
 		}
 		return labels;
-		
+
 	}
 }

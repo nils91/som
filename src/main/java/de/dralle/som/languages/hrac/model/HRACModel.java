@@ -729,4 +729,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public String toString() {
 		return asCode();
 	}
+
+	public List<String> getAllLabelsRecursive() {
+		List<String> labels = new ArrayList<String>();
+		for (HRACForDup string : commands) {
+			HRACCommand cmd = string.getCmd();
+			if(cmd!=null) {
+				HRACSymbol lbl = cmd.getLabel();
+				if(lbl!=null) {
+					labels.add(lbl.getName());
+				}
+			}
+			HRACModel model = string.getModel();
+			if(model!=null) {
+				labels.addAll(model.getAllLabelsRecursive());
+			}
+		}
+		return labels;
+		
+	}
 }

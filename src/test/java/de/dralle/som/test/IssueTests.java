@@ -334,4 +334,6 @@ class IssueTests {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
+	
+	//Tests for issue 145 are in HRBSCompileTest#testIssue145NoAtomicChildsLabelGen
 }

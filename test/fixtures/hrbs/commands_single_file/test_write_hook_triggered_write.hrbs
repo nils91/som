@@ -1,4 +1,9 @@
 MAIN:
+symbol WH_EN @2;
+	symbol WH_COM @8;
+	symbol WH_DIR @9;
+	symbol WH_SEL @10;
+	global symbol ACC @0;
 #110 0 0001 (acc is set, ard eval set, wh en not set, address 5)
 #0111 11010 //other wh bits set, address is 26
 #0000 //filler

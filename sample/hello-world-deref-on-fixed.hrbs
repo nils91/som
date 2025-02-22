@@ -4,10 +4,13 @@ import CLEAR1;
 import TRIGGER1;
 import COPY2;
 
+import INIT_BUILTINS0;
+
 MAIN:
 ;n=8
 #allocate enough storage for hello world + line feed as string
 	alloc STR[96];
+	INIT_BUILTINS0;
 #H
 	symbol H &@72;
 	symbol H_STRlast STR[7];

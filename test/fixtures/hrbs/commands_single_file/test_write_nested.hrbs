@@ -15,4 +15,5 @@ WRITE1 A:
 	INV0;
 	
 INV0:
+symbol ACC @0;
 	NAR ACC;

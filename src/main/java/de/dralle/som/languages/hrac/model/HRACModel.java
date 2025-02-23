@@ -357,7 +357,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		// marker
 
 		HRASCommand clrAdrEval = new HRASCommand();
-		//Add NAW ADR_EVAL
+		// Add NAW ADR_EVAL
 		clrAdrEval.setOp(Opcode.NAW);
 		clrAdrEval.setAddress(new SymbolHRASMemoryAddress("ADR_EVAL"));
 		m.addSymbol("ADR_EVAL", new ExpressionHRASMemoryAddress(ISomMemspace.ADR_EVAL_ADDRESS));
@@ -411,6 +411,25 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		retMap.putAll(additionalDirectives);
 		retMap.putAll(directives);
 		return retMap;
+	}
+
+	public List<String> getAllLabelsRecursive() {
+		List<String> labels = new ArrayList<String>();
+		for (HRACForDup string : commands) {
+			HRACCommand cmd = string.getCmd();
+			if (cmd != null) {
+				HRACSymbol lbl = cmd.getLabel();
+				if (lbl != null) {
+					labels.add(lbl.getName());
+				}
+			}
+			HRACModel model = string.getModel();
+			if (model != null) {
+				labels.addAll(model.getAllLabelsRecursive());
+			}
+		}
+		return labels;
+
 	}
 
 	/**
@@ -708,24 +727,5 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	@Override
 	public String toString() {
 		return asCode();
-	}
-
-	public List<String> getAllLabelsRecursive() {
-		List<String> labels = new ArrayList<String>();
-		for (HRACForDup string : commands) {
-			HRACCommand cmd = string.getCmd();
-			if (cmd != null) {
-				HRACSymbol lbl = cmd.getLabel();
-				if (lbl != null) {
-					labels.add(lbl.getName());
-				}
-			}
-			HRACModel model = string.getModel();
-			if (model != null) {
-				labels.addAll(model.getAllLabelsRecursive());
-			}
-		}
-		return labels;
-
 	}
 }

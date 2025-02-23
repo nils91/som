@@ -1178,6 +1178,22 @@ public class HRBSModel implements ISetN, IHeap {
 		return tmp;
 	}
 
+	public HRBSCommand loadAndAddNOOP0() {
+		HRBSCommand ncmd = new HRBSCommand();
+		ncmd.setCmd("NOOP0");
+		// if NOOP0 is not loaded, load it
+		if (childs == null || !childs.containsKey("NOOP0")) {
+			try {
+				addChild(new FileLoader().loadHRBSByName("NOOP0"));
+				return ncmd;
+			} catch (IOException e) {
+				logger.warning("Additional NOOP0 command could not be loaded. " + e.getMessage());
+				return null;
+			}
+		}
+		return ncmd;
+	}
+
 	/**
 	 * Recursively count the number of NAR/NAW commands in this model and its child
 	 * models
@@ -1234,21 +1250,5 @@ public class HRBSModel implements ISetN, IHeap {
 	@Override
 	public String toString() {
 		return asCode();
-	}
-
-	public HRBSCommand loadAndAddNOOP0() {
-		HRBSCommand ncmd = new HRBSCommand();
-		ncmd.setCmd("NOOP0");
-		// if NOOP0 is not loaded, load it
-		if (childs == null || !childs.containsKey("NOOP0")) {
-			try {
-				addChild(new FileLoader().loadHRBSByName("NOOP0"));
-				return ncmd;
-			} catch (IOException e) {
-				logger.warning("Additional NOOP0 command could not be loaded. " + e.getMessage());
-				return null;
-			}
-		}
-		return ncmd;
 	}
 }

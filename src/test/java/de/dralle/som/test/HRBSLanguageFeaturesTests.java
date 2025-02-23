@@ -3,7 +3,9 @@
  */
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -15,9 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dralle.som.Compiler;
 import de.dralle.som.FileLoader;
-import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
-import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hras.model.HRASModel;
@@ -64,17 +64,6 @@ class HRBSLanguageFeaturesTests {
 	}
 
 	@Test
-	void testMinNCalculation() throws IOException {// see file
-		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
-
-		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-
-		ISomMemspace space = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertTrue(hrasModel.getN() >= 11);
-		assertTrue(space.getN() >= 11);
-	}
-
-	@Test
 	void testHeapCalculation() throws IOException {
 		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
 
@@ -101,5 +90,16 @@ class HRBSLanguageFeaturesTests {
 		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hravModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
 		assertNotNull(hravModel);
+	}
+
+	@Test
+	void testMinNCalculation() throws IOException {// see file
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_minn_and_heap_calc.hrbs");
+
+		HRASModel hrasModel = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+
+		ISomMemspace space = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertTrue(hrasModel.getN() >= 11);
+		assertTrue(space.getN() >= 11);
 	}
 }

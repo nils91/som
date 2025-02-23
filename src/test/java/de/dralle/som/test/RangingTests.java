@@ -1,50 +1,18 @@
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import de.dralle.som.AbstractCommandAddressListenerDP;
-import de.dralle.som.Compiler;
-import de.dralle.som.IMemspace;
-import de.dralle.som.ISomMemspace;
-import de.dralle.som.Opcode;
-import de.dralle.som.SOMBitcodeRunner;
-import de.dralle.som.SOMFormats;
-import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
-import de.dralle.som.languages.hrac.model.HRACModel;
-import de.dralle.som.languages.hras.model.HRASModel;
-import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class RangingTests {
-
-	private HRACForDupBoundingRangeProvider hracForDup;
-
-	@BeforeEach
-	void setUp() throws Exception {
-		hracForDup = new HRACForDupBoundingRangeProvider();
-	}
-
-	@ParameterizedTest
-	@MethodSource("provideRangeTestData")
-	void hracRangeGen(int lower, int upper, int step, boolean rangeStartExclusive, boolean rangeEndExclusive,
-			int[] expected) throws IOException {
-		hracForDup.setRangeStart(lower);
-		hracForDup.setRangeEnd(upper);
-		hracForDup.setStepSize(step);
-		hracForDup.setRangeStartBoundExclusive(rangeStartExclusive);
-		hracForDup.setRangeEndBoundExclusive(rangeEndExclusive);
-		assertArrayEquals(expected, hracForDup.getRangeAsIntArray(null));
-	}
 
 	private static Stream<Arguments> provideRangeTestData() {// lower bound, upper bound, step, lower exclusive, upper
 																// exclusive, expected
@@ -97,6 +65,25 @@ class RangingTests {
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }),
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }),
 				Arguments.of(1, 2, 2, false, false, new int[] { 1 }));
+	}
+
+	private HRACForDupBoundingRangeProvider hracForDup;
+
+	@ParameterizedTest
+	@MethodSource("provideRangeTestData")
+	void hracRangeGen(int lower, int upper, int step, boolean rangeStartExclusive, boolean rangeEndExclusive,
+			int[] expected) throws IOException {
+		hracForDup.setRangeStart(lower);
+		hracForDup.setRangeEnd(upper);
+		hracForDup.setStepSize(step);
+		hracForDup.setRangeStartBoundExclusive(rangeStartExclusive);
+		hracForDup.setRangeEndBoundExclusive(rangeEndExclusive);
+		assertArrayEquals(expected, hracForDup.getRangeAsIntArray(null));
+	}
+
+	@BeforeEach
+	void setUp() throws Exception {
+		hracForDup = new HRACForDupBoundingRangeProvider();
 	}
 
 }

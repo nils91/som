@@ -1,6 +1,9 @@
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,13 +15,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dralle.som.AbstractUnconditionalDebugPoint;
 import de.dralle.som.Compiler;
@@ -28,7 +29,6 @@ import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
-import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
@@ -39,12 +39,8 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
-import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDivisionExpressionNode;
 
 class HRBSCompileTest {
-
-	private Compiler c;
-	private FileLoader f;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -54,6 +50,36 @@ class HRBSCompileTest {
 	static void tearDownAfterClass() throws Exception {
 	}
 
+	static Stream<String> testfileFor145Provider() {
+		return Stream.of(
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child_2nd.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs",
+				// The next 4 files are not issue 145
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs",
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs",
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
+				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
+	}
+
+	static Stream<Arguments> testfileForLabelCommandAdditionProvider() {
+		return Stream.of(Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs", 1),
+				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs", 2),
+				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs", 1));
+	}
+
+	static Stream<String> testfileForNotOverwritingLabelProvider() {
+		return Stream.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
+				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
+	}
+
+	private Compiler c;
+
+	private FileLoader f;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
@@ -62,13 +88,6 @@ class HRBSCompileTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-	}
-
-	@Test
-	void testForDupCompileHBRS() throws IOException { // see also issue 142 on github and issueTests
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
 
 	@Test
@@ -92,9 +111,153 @@ class HRBSCompileTest {
 		assertTrue(runner.execute());
 	}
 
+	@Timeout(30)
+	@Test
+	void testAdrSetToLabelAfterExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int labelArd = hras.resolveSymbolToAddress("LABEL");
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotEquals(((ISomMemspace) bin).getNextAddress(), labelArd);// no change before exec
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+		bin = runner.getMemspace();
+		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
+	}
+
+	@Test
+	void testCompileFixedAdressOnCommand() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fixed_adr_on_command.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(m);
+	}
+
+	@Test
+	void testCompileFixedAdressOnMirrorSymbol() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fixed_adr_on_mirror_symbol.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(m);
+	}
+
+	@Test
+	void testConditionalJumpExecutePositive() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump_simple.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		assertTrue(runner.execute());
+	}
+
+	@Test
+	void testConditionalJumpOut() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int labelArd = hras.resolveSymbolToAddress("LABEL");
+		int aAdr = hras.resolveSymbolToAddress("ACTUALTARGET");
+		int cAdr = hras.resolveSymbolToAddress("CONTLABEL");
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+		bin = runner.getMemspace();
+		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
+	}
+
+	@Test
+	void testCopyAdrCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	@Timeout(10)
+	void testCopyAdrExecutePossible() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+	}
+
+	@Test
+	@Timeout(10)
+	void testCopyAdrLabelCopyCmpAfterExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int lblAR = hras.resolveSymbolToAddress("LABEL");
+		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
+		int n = hrav.getN();
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
+		runner.execute();
+		bin = runner.getMemspace();
+		int copyVal = ((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
+		assertEquals(lblAR, copyVal);
+	}
+
+	@Test
+	void testCopyAdrLabelCopyCmpBeforeExec() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int lblAR = hras.resolveSymbolToAddress("LABEL");
+		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
+		int n = hrav.getN();
+		int copyVal = ((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
+		assertNotEquals(lblAR, copyVal);
+	}
+
 	@Test
 	void testDerefCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_deref.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	void testDerefFixValueInsertionCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_value_insertion.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	void testDerefFixValueInsertionOutCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
@@ -126,32 +289,6 @@ class HRBSCompileTest {
 	}
 
 	@Test
-	void testJumpCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(hrac);
-		assertNotNull(hras);
-		assertNotNull(hrav);
-		assertNotNull(bin);
-	}
-
-	@Test
-	void testMSOfsCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ms_ofs.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(hrac);
-		assertNotNull(hras);
-		assertNotNull(hrav);
-		assertNotNull(bin);
-	}
-
-	@Test
 	void testDerefParamCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_df_param.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
@@ -164,107 +301,16 @@ class HRBSCompileTest {
 		assertNotNull(bin);
 	}
 
-	@Timeout(30)
 	@Test
-	void testAdrSetToLabelAfterExec() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+	void testForDupCompileHBRS() throws IOException { // see also issue 142 on github and issueTests
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int labelArd = hras.resolveSymbolToAddress("LABEL");
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotEquals(((ISomMemspace) bin).getNextAddress(), labelArd);// no change before exec
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		runner.execute();
-		bin = runner.getMemspace();
-		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
+		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
 
 	@Test
-	void testConditionalJumpOut() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int labelArd = hras.resolveSymbolToAddress("LABEL");
-		int aAdr = hras.resolveSymbolToAddress("ACTUALTARGET");
-		int cAdr = hras.resolveSymbolToAddress("CONTLABEL");
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		runner.execute();
-		bin = runner.getMemspace();
-		assertEquals(labelArd, ((ISomMemspace) bin).getNextAddress());// written to label expectesd after exec
-	}
-
-	@Test
-	void testConditionalJumpExecutePositive() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_conditionaljump_simple.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		assertTrue(runner.execute());
-	}
-
-	@Test
-	void testLblOnRngCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(bin);
-	}
-
-	@Test
-	void testLblExist() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		boolean exists = false;
-		try {
-			hras.resolveSymbolToAddress("LBL");
-			exists = true;
-		} catch (Exception e) {
-
-		}
-		assertTrue(exists);
-	}
-
-	@Test
-	void testLblExistSimple() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		boolean exists = false;
-		try {
-			hras.resolveSymbolToAddress("LBL");
-			exists = true;
-		} catch (Exception e) {
-
-		}
-		assertTrue(exists);
-	}
-
-	@Test
-	void testLblOnRngGenOnce() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		int cnt = 0;
-		for (String entry : hras.getSymbols().keySet()) {
-			if (entry.equals("LBL")) {
-				cnt++;
-			}
-
-		}
-		assertEquals(1, cnt);
-	}
-
-	@Test
-	void testCopyAdrCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
+	void testIfDirectiveAccessCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_if_da.hrbs", SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
@@ -273,142 +319,6 @@ class HRBSCompileTest {
 		assertNotNull(hras);
 		assertNotNull(hrav);
 		assertNotNull(bin);
-	}
-
-	@Test
-	@Timeout(10)
-	void testCopyAdrExecutePossible() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		runner.execute();
-	}
-
-	@Test
-	void testCopyAdrLabelCopyCmpBeforeExec() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		int lblAR = hras.resolveSymbolToAddress("LABEL");
-		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
-		int n = hrav.getN();
-		int copyVal = ((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
-		assertNotEquals(lblAR, copyVal);
-	}
-
-	@Test
-	@Timeout(10)
-	void testCopyAdrLabelCopyCmpAfterExec() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_copy_address.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		int lblAR = hras.resolveSymbolToAddress("LABEL");
-		int copyADr = hras.resolveSymbolToAddress("COPYINHERE");
-		int n = hrav.getN();
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) bin);
-		runner.execute();
-		bin = runner.getMemspace();
-		int copyVal = ((ISomMemspace) bin).getBitsUnsigned(copyADr, n);
-		assertEquals(lblAR, copyVal);
-	}
-
-	@Test
-	void testNAllocPassdownMArk() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		List<HRBSSymbol> hrbsS = model.getSymbols();
-		List<HRACSymbol> hracS = hrac.getSymbols();
-		HRBSSymbol hrbsSA = null;
-		HRACSymbol hracSA = null;
-		for (HRACSymbol hracSymbol : hracS) {
-			if (hracSymbol.getName().equals("A")) {
-				hracSA = hracSymbol;
-			}
-		}
-		for (HRBSSymbol hracSymbol : hrbsS) {
-			if (hracSymbol.getName().equals("A")) {
-				hrbsSA = hracSymbol;
-			}
-		}
-		assertEquals(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode, hracSA.getBitCnt() instanceof HRACDirectiveNode);
-	}
-
-	@Test
-	void testNAllocPassdownParse() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		List<HRBSSymbol> hrbsS = model.getSymbols();
-		HRBSSymbol hrbsSA = null;
-		for (HRBSSymbol hracSymbol : hrbsS) {
-			if (hracSymbol.getName().equals("A")) {
-				hrbsSA = hracSymbol;
-			}
-		}
-		HRBSAbstractExpressionNode bitcnt = hrbsSA.getBitCnt();
-		assertEquals("N", ((HRBSDirectiveNode) bitcnt).getDirectiveName());
-	}
-
-	@Test
-	void testNAllocPassdownParseIsRecognized() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
-		List<HRBSSymbol> hrbsS = model.getSymbols();
-		HRBSSymbol hrbsSA = null;
-		for (HRBSSymbol hracSymbol : hrbsS) {
-			if (hracSymbol.getName().equals("A")) {
-				hrbsSA = hracSymbol;
-			}
-		}
-		assertTrue(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode);
-	}
-
-	@Test
-	void testNAllocPassdownName() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		List<HRBSSymbol> hrbsS = model.getSymbols();
-		List<HRACSymbol> hracS = hrac.getSymbols();
-		HRBSSymbol hrbsSA = null;
-		HRACSymbol hracSA = null;
-		for (HRACSymbol hracSymbol : hracS) {
-			if (hracSymbol.getName().equals("A")) {
-				hracSA = hracSymbol;
-			}
-		}
-		for (HRBSSymbol hracSymbol : hrbsS) {
-			if (hracSymbol.getName().equals("A")) {
-				hrbsSA = hracSymbol;
-			}
-		}
-		assertEquals(((HRBSDirectiveNode) hrbsSA.getBitCnt()).getDirectiveName(),
-				((HRACDirectiveNode) hracSA.getBitCnt()).getDirectiveName());
-	}
-
-	@Test
-	void testNAllocEnoughAllocated() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		int aDR = hras.resolveSymbolToAddress("A");
-		int bAdr = hras.resolveSymbolToAddress("B");
-		assertEquals(hrav.getN(), bAdr - aDR);
 	}
 
 	@Test
@@ -461,121 +371,6 @@ class HRBSCompileTest {
 		runner.execute();
 	}
 
-	@Test
-	void testIfDirectiveAccessCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_if_da.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(hrac);
-		assertNotNull(hras);
-		assertNotNull(hrav);
-		assertNotNull(bin);
-	}
-
-	@Test
-	void testCompileFixedAdressOnCommand() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fixed_adr_on_command.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(m);
-	}
-
-	@Test
-	void testCompileFixedAdressOnMirrorSymbol() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fixed_adr_on_mirror_symbol.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace m = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(m);
-	}
-
-	@Test
-	void testDerefFixValueInsertionCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_value_insertion.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(hrac);
-		assertNotNull(hras);
-		assertNotNull(hrav);
-		assertNotNull(bin);
-	}
-
-	@Test
-	void testDerefFixValueInsertionOutCompile() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/deref_fix_vi_out.hrbs", SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
-		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
-		assertNotNull(hrac);
-		assertNotNull(hras);
-		assertNotNull(hrav);
-		assertNotNull(bin);
-	}
-
-	static Stream<String> testfileFor145Provider() {
-		return Stream.of(
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child_2nd.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_child.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs",
-				// The next 4 files are not issue 145
-				"test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs",
-				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs",
-				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
-				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
-	}
-
-	static Stream<Arguments> testfileForLabelCommandAdditionProvider() {
-		return Stream.of(Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs", 1),
-				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs", 2),
-				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs", 1));
-	}
-
-	static Stream<String> testfileForNotOverwritingLabelProvider() {
-		return Stream.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
-				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
-	}
-
-	
-	@Timeout(30)
-	@ParameterizedTest
-	@MethodSource("testfileForNotOverwritingLabelProvider")
-	void testLabelNotOverwriteLabelExist(String testFile) throws IOException {
-		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		List<String> labels = hrac.getAllLabelsRecursive();
-		//Label could exist as mirrorsymbol, that would be ok to
-		HRACSymbol symbol = hrac.getSymbolByName("LABEL");
-		assertTrue(labels.contains("LABEL")||symbol!=null);
-	}
-	@Timeout(30)
-	@ParameterizedTest
-	@MethodSource("testfileForNotOverwritingLabelProvider")
-	void testLabelNotOverwriteLabelExist2(String testFile) throws IOException {
-		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		List<String> labels = hrac.getAllLabelsRecursive();
-		//Label could exist as mirrorsymbol, that would be ok to
-		HRACSymbol symbol = hrac.getSymbolByName("OVERWRITING_LABEL");
-		assertTrue(labels.contains("OVERWRITING_LABEL")||symbol!=null);
-	}
-	@Timeout(30)
-	@ParameterizedTest
-	@MethodSource("testfileForLabelCommandAdditionProvider")
-	void testLabelCommandAddition(String testFile, int expectedAtomicCommandGen) throws IOException {
-		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
-		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		assertEquals(expectedAtomicCommandGen, hrac.getCommands().size());
-	}
-
 	@Timeout(30)
 	@ParameterizedTest
 	@MethodSource("testfileFor145Provider")
@@ -594,5 +389,211 @@ class HRBSCompileTest {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		Map<String, AbstractHRASMemoryAddress> labels = hras.getSymbols();
 		assertTrue(labels.containsKey("LABEL"));
+	}
+
+	@Test
+	void testJumpCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_jump.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForLabelCommandAdditionProvider")
+	void testLabelCommandAddition(String testFile, int expectedAtomicCommandGen) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		assertEquals(expectedAtomicCommandGen, hrac.getCommands().size());
+	}
+
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForNotOverwritingLabelProvider")
+	void testLabelNotOverwriteLabelExist(String testFile) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<String> labels = hrac.getAllLabelsRecursive();
+		// Label could exist as mirrorsymbol, that would be ok to
+		HRACSymbol symbol = hrac.getSymbolByName("LABEL");
+		assertTrue(labels.contains("LABEL") || symbol != null);
+	}
+
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForNotOverwritingLabelProvider")
+	void testLabelNotOverwriteLabelExist2(String testFile) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<String> labels = hrac.getAllLabelsRecursive();
+		// Label could exist as mirrorsymbol, that would be ok to
+		HRACSymbol symbol = hrac.getSymbolByName("OVERWRITING_LABEL");
+		assertTrue(labels.contains("OVERWRITING_LABEL") || symbol != null);
+	}
+
+	@Test
+	void testLblExist() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		boolean exists = false;
+		try {
+			hras.resolveSymbolToAddress("LBL");
+			exists = true;
+		} catch (Exception e) {
+
+		}
+		assertTrue(exists);
+	}
+
+	@Test
+	void testLblExistSimple() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		boolean exists = false;
+		try {
+			hras.resolveSymbolToAddress("LBL");
+			exists = true;
+		} catch (Exception e) {
+
+		}
+		assertTrue(exists);
+	}
+
+	@Test
+	void testLblOnRngCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(bin);
+	}
+
+	@Test
+	void testLblOnRngGenOnce() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_lbl_on_rng.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int cnt = 0;
+		for (String entry : hras.getSymbols().keySet()) {
+			if (entry.equals("LBL")) {
+				cnt++;
+			}
+
+		}
+		assertEquals(1, cnt);
+	}
+
+	@Test
+	void testMSOfsCompile() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_ms_ofs.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		assertNotNull(hrac);
+		assertNotNull(hras);
+		assertNotNull(hrav);
+		assertNotNull(bin);
+	}
+
+	@Test
+	void testNAllocEnoughAllocated() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		int aDR = hras.resolveSymbolToAddress("A");
+		int bAdr = hras.resolveSymbolToAddress("B");
+		assertEquals(hrav.getN(), bAdr - aDR);
+	}
+
+	@Test
+	void testNAllocPassdownMArk() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		HRBSSymbol hrbsSA = null;
+		HRACSymbol hracSA = null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if (hracSymbol.getName().equals("A")) {
+				hracSA = hracSymbol;
+			}
+		}
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if (hracSymbol.getName().equals("A")) {
+				hrbsSA = hracSymbol;
+			}
+		}
+		assertEquals(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode, hracSA.getBitCnt() instanceof HRACDirectiveNode);
+	}
+
+	@Test
+	void testNAllocPassdownName() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		HRBSSymbol hrbsSA = null;
+		HRACSymbol hracSA = null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if (hracSymbol.getName().equals("A")) {
+				hracSA = hracSymbol;
+			}
+		}
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if (hracSymbol.getName().equals("A")) {
+				hrbsSA = hracSymbol;
+			}
+		}
+		assertEquals(((HRBSDirectiveNode) hrbsSA.getBitCnt()).getDirectiveName(),
+				((HRACDirectiveNode) hracSA.getBitCnt()).getDirectiveName());
+	}
+
+	@Test
+	void testNAllocPassdownParse() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		HRAVModel hrav = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAV);
+		IMemspace bin = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		HRBSSymbol hrbsSA = null;
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if (hracSymbol.getName().equals("A")) {
+				hrbsSA = hracSymbol;
+			}
+		}
+		HRBSAbstractExpressionNode bitcnt = hrbsSA.getBitCnt();
+		assertEquals("N", ((HRBSDirectiveNode) bitcnt).getDirectiveName());
+	}
+
+	@Test
+	void testNAllocPassdownParseIsRecognized() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);
+		List<HRBSSymbol> hrbsS = model.getSymbols();
+		HRBSSymbol hrbsSA = null;
+		for (HRBSSymbol hracSymbol : hrbsS) {
+			if (hracSymbol.getName().equals("A")) {
+				hrbsSA = hracSymbol;
+			}
+		}
+		assertTrue(hrbsSA.getBitCnt() instanceof HRBSDirectiveNode);
 	}
 }

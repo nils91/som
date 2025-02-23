@@ -1,8 +1,6 @@
 package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -11,20 +9,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
 import de.dralle.som.Compiler;
 import de.dralle.som.FileLoader;
 import de.dralle.som.IMemspace;
 import de.dralle.som.ISomMemspace;
-import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 import de.dralle.som.languages.hrav.model.HRAVModel;
-import de.dralle.som.test.util.TestUtil;
 
 class MemspaceToHRAVCompileTest {
-
-	private Compiler c;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -33,6 +26,8 @@ class MemspaceToHRAVCompileTest {
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 	}
+
+	private Compiler c;
 
 	@BeforeEach
 	void setUp() throws Exception {

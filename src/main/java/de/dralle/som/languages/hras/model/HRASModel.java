@@ -16,16 +16,15 @@ import de.dralle.som.ISetN;
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
-import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 /**
  * @author Nils
  *
  */
 public class HRASModel implements ISetN {
-	
+
 	private static final Logger logger = Logger.getLogger(HRASModel.class.getName());
-	
+
 	public static HRASModel compileFromHRAV(HRAVModel model) {
 		Map<Integer, String> symbols = new HashMap<Integer, String>();
 		symbols.putAll(Util.getBuiltinAdressesAddressKey());

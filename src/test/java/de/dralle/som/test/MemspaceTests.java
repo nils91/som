@@ -32,23 +32,6 @@ import de.dralle.som.ISomMemspace;
  */
 class MemspaceTests {
 
-	// argument source
-	static int[] sweepN() {
-		int[] allNForTesting = new int[11 - ISomMemspace.MINIMUM_ADDRESS_SIZE]; // cutoff for tests to not take forever
-		for (int i = 0; i < allNForTesting.length; i++) {
-			allNForTesting[i] = i + ISomMemspace.MINIMUM_ADDRESS_SIZE;
-		}
-		return allNForTesting;
-	}
-
-	static int[] sweepAddresses(int n) {
-		int[] addressesForTesting = new int[(int) Math.pow(2, n)];
-		for (int i = 0; i < addressesForTesting.length; i++) {
-			addressesForTesting[i] = i;
-		}
-		return addressesForTesting;
-	}
-
 	/**
 	 * Get Instances for all memspace types to be used with this test.
 	 * 
@@ -112,6 +95,23 @@ class MemspaceTests {
 	static void setUpBeforeClass() throws Exception {
 	}
 
+	static int[] sweepAddresses(int n) {
+		int[] addressesForTesting = new int[(int) Math.pow(2, n)];
+		for (int i = 0; i < addressesForTesting.length; i++) {
+			addressesForTesting[i] = i;
+		}
+		return addressesForTesting;
+	}
+
+	// argument source
+	static int[] sweepN() {
+		int[] allNForTesting = new int[11 - ISomMemspace.MINIMUM_ADDRESS_SIZE]; // cutoff for tests to not take forever
+		for (int i = 0; i < allNForTesting.length; i++) {
+			allNForTesting[i] = i + ISomMemspace.MINIMUM_ADDRESS_SIZE;
+		}
+		return allNForTesting;
+	}
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -131,6 +131,294 @@ class MemspaceTests {
 	 */
 	@AfterEach
 	void tearDown() throws Exception {
+	}
+
+	@ParameterizedTest
+	@MethodSource("getMemspacesForTesting")
+	void testAdrEvalAddress(ISomMemspace memSpace) {
+		assertEquals(ISomMemspace.ADR_EVAL_ADDRESS, memSpace.getAdrEvalAddress());
+	}
+
+	@ParameterizedTest
+	@MethodSource("getMemspacesForTesting")
+	void testGetAccAddress(ISomMemspace memSpace) {
+		assertEquals(ISomMemspace.ACC_ADDRESS, memSpace.getAccumulatorAddress());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testGetN(ISomMemspace memSpace, int n) {
+		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
+		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
+			nBin = '0' + nBin;
+		}
+		for (int i = 0; i < nBin.toCharArray().length; i++) {
+			switch (nBin.toCharArray()[i]) {
+			case '0':
+				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, false);
+				break;
+			case '1':
+				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, true);
+				break;
+			default:
+				break;
+			}
+		}
+		assertEquals(n, memSpace.getN());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndNAndAddress")
+	void testGetNAddress(ISomMemspace memSpace, int n, int address) {
+		memSpace.setN(n);
+		String nAdressBin = Integer.toBinaryString(address);
+		while (nAdressBin.length() < n) {
+			nAdressBin = '0' + nAdressBin;
+		}
+		for (int i = 0; i < nAdressBin.toCharArray().length; i++) {
+			switch (nAdressBin.toCharArray()[i]) {
+			case '0':
+				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, false);
+				break;
+			case '1':
+				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, true);
+				break;
+			default:
+				break;
+			}
+		}
+		assertEquals(address, memSpace.getNextAddress());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceClone(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertNotNull(clone);
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneNotSameRef(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertFalse(memSpace == clone);
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneNotSameRefBitSet(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		memSpace.setBit(0, false);
+		clone.setBit(0, true);
+		assertNotEquals(memSpace.getBit(0), clone.getBit(0));
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill entire memspace with random bits
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		for (int i = 0; i < memSpace.getSize(); i++) {
+			assertEquals(memSpace.getBit(i), clone.getBit(i));
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill entire memspace with random bits
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		assertTrue(memSpace.equalContent(clone));
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill entire memspace with random bits
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace clone = memSpace.clone();
+		assertEquals(memSpace, clone);
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCloneSameSize(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		ISomMemspace clone = memSpace.clone();
+		assertEquals(memSpace.getSize(), clone.getSize());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceCopy(ISomMemspace memSpace, int n) {
+		ISomMemspace clone = memSpace.clone();
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		clone.copy(memSpace);
+		assertTrue(memSpace.equalContent(clone));
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceNoCopy(ISomMemspace memSpace, int n) {
+		ISomMemspace clone = memSpace.clone();
+		memSpace.setN(n);
+		// set each bit to the inverse of clone. If clone() works as expected, they are
+		// different objects and content equals should return false afterwards
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, !clone.getBit(i));
+		}
+		assertFalse(memSpace.equalContent(clone));
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBigger(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, false);
+		assertTrue(newSize <= memSpace.getSize());
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBiggerRetainContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace oldMemspace = memSpace.clone();
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, true);
+		for (int i = 0; i < newSize; i++) {
+			if (i < oldMemspace.getSize()) {
+				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeBiggerSetBits(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		int newSize = (int) Math.pow(2, n + 1);
+		memSpace.resize(newSize, false);
+		for (int i = 8; i < newSize; i++) {
+			memSpace.setBit(i, true);
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmaller(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, false);
+			assertTrue(newSize <= memSpace.getSize());
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmallerRetainContent(ISomMemspace memSpace, int n) {
+		Random r = new Random();
+		memSpace.setN(n);
+		// fill with random crap
+		for (int i = 8; i < Math.pow(2, n); i++) {
+			memSpace.setBit(i, r.nextBoolean());
+		}
+		ISomMemspace oldMemspace = memSpace.clone();
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, true);
+			for (int i = 0; i < newSize; i++) {
+				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testMemspaceResizeMakeSmallerSetBits(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		if (n > 4) {
+			int newSize = (int) Math.pow(2, n - 1);
+			memSpace.resize(newSize, false);
+			for (int i = 8; i < newSize; i++) {
+				memSpace.setBit(i, true);
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndN")
+	void testSetN(ISomMemspace memSpace, int n) {
+		memSpace.setN(n);
+		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
+		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
+			nBin = '0' + nBin;
+		}
+		for (int i = 0; i < nBin.toCharArray().length; i++) {
+			switch (nBin.toCharArray()[i]) {
+			case '0':
+				assertFalse(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
+				break;
+			case '1':
+				assertTrue(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
+				break;
+			default:
+				fail();
+				break;
+			}
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("matrixMemSpaceAndNAndAddress")
+	void testSetNAddress(ISomMemspace memSpace, int n, int address) {
+		memSpace.setN(n);
+		memSpace.setNextAddress(address);
+		String addressBin = Integer.toBinaryString(address);
+		while (addressBin.length() < n) {
+			addressBin = '0' + addressBin;
+		}
+		for (int i = 0; i < addressBin.toCharArray().length; i++) {
+			switch (addressBin.toCharArray()[i]) {
+			case '0':
+				assertFalse(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
+				break;
+			case '1':
+				assertTrue(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
+				break;
+			default:
+				fail();
+				break;
+			}
+		}
 	}
 
 	@ParameterizedTest
@@ -183,22 +471,10 @@ class MemspaceTests {
 	}
 
 	@ParameterizedTest
-	@MethodSource("getMemspacesForTesting")
-	void testGetAccAddress(ISomMemspace memSpace) {
-		assertEquals(ISomMemspace.ACC_ADDRESS, memSpace.getAccumulatorAddress());
-	}
-
-	@ParameterizedTest
-	@MethodSource("getMemspacesForTesting")
-	void testAdrEvalAddress(ISomMemspace memSpace) {
-		assertEquals(ISomMemspace.ADR_EVAL_ADDRESS, memSpace.getAdrEvalAddress());
-	}
-
-	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testWhEnAddress(ISomMemspace memSpace, int n) {
+	void testWhComAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		assertEquals(ISomMemspace.WH_EN, memSpace.getWriteHookEnabledAddress());
+		assertEquals(ISomMemspace.WH_COM, memSpace.getWriteHookCommunicationAddress());
 	}
 
 	@ParameterizedTest
@@ -210,9 +486,9 @@ class MemspaceTests {
 
 	@ParameterizedTest
 	@MethodSource("matrixMemSpaceAndN")
-	void testWhComAddress(ISomMemspace memSpace, int n) {
+	void testWhEnAddress(ISomMemspace memSpace, int n) {
 		memSpace.setN(n);
-		assertEquals(ISomMemspace.WH_COM, memSpace.getWriteHookCommunicationAddress());
+		assertEquals(ISomMemspace.WH_EN, memSpace.getWriteHookEnabledAddress());
 	}
 
 	@ParameterizedTest
@@ -221,281 +497,5 @@ class MemspaceTests {
 		memSpace.setN(n);
 		memSpace.setN(n);
 		assertEquals(ISomMemspace.WH_SEL, memSpace.getWriteHookSelectAddress());
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testSetN(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
-		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
-			nBin = '0' + nBin;
-		}
-		for (int i = 0; i < nBin.toCharArray().length; i++) {
-			switch (nBin.toCharArray()[i]) {
-			case '0':
-				assertFalse(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
-				break;
-			case '1':
-				assertTrue(memSpace.getBit(ISomMemspace.ADDRESS_SIZE_START + i));
-				break;
-			default:
-				fail();
-				break;
-			}
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testGetN(ISomMemspace memSpace, int n) {
-		String nBin = Integer.toBinaryString(n - ISomMemspace.ADDRESS_SIZE_OFFSET);
-		while (nBin.length() < ISomMemspace.ADDRESS_SIZE_BIT_COUNT) {
-			nBin = '0' + nBin;
-		}
-		for (int i = 0; i < nBin.toCharArray().length; i++) {
-			switch (nBin.toCharArray()[i]) {
-			case '0':
-				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, false);
-				break;
-			case '1':
-				memSpace.setBit(ISomMemspace.ADDRESS_SIZE_START + i, true);
-				break;
-			default:
-				break;
-			}
-		}
-		assertEquals(n, memSpace.getN());
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndNAndAddress")
-	void testSetNAddress(ISomMemspace memSpace, int n, int address) {
-		memSpace.setN(n);
-		memSpace.setNextAddress(address);
-		String addressBin = Integer.toBinaryString(address);
-		while (addressBin.length() < n) {
-			addressBin = '0' + addressBin;
-		}
-		for (int i = 0; i < addressBin.toCharArray().length; i++) {
-			switch (addressBin.toCharArray()[i]) {
-			case '0':
-				assertFalse(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
-				break;
-			case '1':
-				assertTrue(memSpace.getBit(ISomMemspace.START_ADDRESS_START + i));
-				break;
-			default:
-				fail();
-				break;
-			}
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndNAndAddress")
-	void testGetNAddress(ISomMemspace memSpace, int n, int address) {
-		memSpace.setN(n);
-		String nAdressBin = Integer.toBinaryString(address);
-		while (nAdressBin.length() < n) {
-			nAdressBin = '0' + nAdressBin;
-		}
-		for (int i = 0; i < nAdressBin.toCharArray().length; i++) {
-			switch (nAdressBin.toCharArray()[i]) {
-			case '0':
-				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, false);
-				break;
-			case '1':
-				memSpace.setBit(ISomMemspace.START_ADDRESS_START + i, true);
-				break;
-			default:
-				break;
-			}
-		}
-		assertEquals(address, memSpace.getNextAddress());
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContent(ISomMemspace memSpace, int n) {
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill entire memspace with random bits
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		ISomMemspace clone = memSpace.clone();
-		for (int i = 0; i < memSpace.getSize(); i++) {
-			assertEquals(memSpace.getBit(i), clone.getBit(i));
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContentWithEqualContent(ISomMemspace memSpace, int n) {
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill entire memspace with random bits
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		ISomMemspace clone = memSpace.clone();
-		assertTrue(memSpace.equalContent(clone));
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameContentWithEquals(ISomMemspace memSpace, int n) {
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill entire memspace with random bits
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		ISomMemspace clone = memSpace.clone();
-		assertEquals(memSpace, clone);
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceClone(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		ISomMemspace clone = memSpace.clone();
-		assertNotNull(clone);
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneNotSameRef(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		ISomMemspace clone = memSpace.clone();
-		assertFalse(memSpace == clone);
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneNotSameRefBitSet(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		ISomMemspace clone = memSpace.clone();
-		memSpace.setBit(0, false);
-		clone.setBit(0, true);
-		assertNotEquals(memSpace.getBit(0), clone.getBit(0));
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCloneSameSize(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		ISomMemspace clone = memSpace.clone();
-		assertEquals(memSpace.getSize(), clone.getSize());
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeSmaller(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		if (n > 4) {
-			int newSize = (int) Math.pow(2, n - 1);
-			memSpace.resize(newSize, false);
-			assertTrue(newSize <= memSpace.getSize());
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeBigger(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		int newSize = (int) Math.pow(2, n + 1);
-		memSpace.resize(newSize, false);
-		assertTrue(newSize <= memSpace.getSize());
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeSmallerSetBits(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		if (n > 4) {
-			int newSize = (int) Math.pow(2, n - 1);
-			memSpace.resize(newSize, false);
-			for (int i = 8; i < newSize; i++) {
-				memSpace.setBit(i, true);
-			}
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeBiggerSetBits(ISomMemspace memSpace, int n) {
-		memSpace.setN(n);
-		int newSize = (int) Math.pow(2, n + 1);
-		memSpace.resize(newSize, false);
-		for (int i = 8; i < newSize; i++) {
-			memSpace.setBit(i, true);
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeSmallerRetainContent(ISomMemspace memSpace, int n) {
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill with random crap
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		ISomMemspace oldMemspace = memSpace.clone();
-		if (n > 4) {
-			int newSize = (int) Math.pow(2, n - 1);
-			memSpace.resize(newSize, true);
-			for (int i = 0; i < newSize; i++) {
-				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
-			}
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceResizeMakeBiggerRetainContent(ISomMemspace memSpace, int n) {
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill with random crap
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		ISomMemspace oldMemspace = memSpace.clone();
-		int newSize = (int) Math.pow(2, n + 1);
-		memSpace.resize(newSize, true);
-		for (int i = 0; i < newSize; i++) {
-			if (i < oldMemspace.getSize()) {
-				assertEquals(oldMemspace.getBit(i), memSpace.getBit(i));
-			}
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceCopy(ISomMemspace memSpace, int n) {
-		ISomMemspace clone = memSpace.clone();
-		Random r = new Random();
-		memSpace.setN(n);
-		// fill with random crap
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, r.nextBoolean());
-		}
-		clone.copy(memSpace);
-		assertTrue(memSpace.equalContent(clone));
-	}
-
-	@ParameterizedTest
-	@MethodSource("matrixMemSpaceAndN")
-	void testMemspaceNoCopy(ISomMemspace memSpace, int n) {
-		ISomMemspace clone = memSpace.clone();
-		memSpace.setN(n);
-		// set each bit to the inverse of clone. If clone() works as expected, they are
-		// different objects and content equals should return false afterwards
-		for (int i = 8; i < Math.pow(2, n); i++) {
-			memSpace.setBit(i, !clone.getBit(i));
-		}
-		assertFalse(memSpace.equalContent(clone));
 	}
 }

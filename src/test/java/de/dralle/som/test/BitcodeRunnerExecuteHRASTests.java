@@ -22,9 +22,6 @@ import de.dralle.som.languages.hras.model.HRASModel;
 
 class BitcodeRunnerExecuteHRASTests {
 
-	private Compiler c;
-	private FileLoader f;
-
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}
@@ -32,6 +29,10 @@ class BitcodeRunnerExecuteHRASTests {
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 	}
+
+	private Compiler c;
+
+	private FileLoader f;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -41,44 +42,6 @@ class BitcodeRunnerExecuteHRASTests {
 
 	@AfterEach
 	void tearDown() throws Exception {
-	}
-
-	@Test
-	void testReturnCode0() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0.hras", SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-	}
-
-	@Test
-	void testReturnCode1() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1.hras", SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertFalse(runner.execute());
-	}
-
-	@Test
-	@Timeout(10)
-	void testOpcodeNAR() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/test_nar.hras", SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		runner.execute();
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
-	}
-
-	@Test
-	@Timeout(10)
-	void testOpcodeNAW() throws IOException {
-		HRASModel model = f.loadFromFile("test/fixtures/hras/test_naw.hras", SOMFormats.HRAS);
-		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
 
 	@Test
@@ -112,5 +75,43 @@ class BitcodeRunnerExecuteHRASTests {
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+
+	@Test
+	@Timeout(10)
+	void testOpcodeNAR() throws IOException {
+		HRASModel model = f.loadFromFile("test/fixtures/hras/test_nar.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		runner.execute();
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+
+	@Test
+	@Timeout(10)
+	void testOpcodeNAW() throws IOException {
+		HRASModel model = f.loadFromFile("test/fixtures/hras/test_naw.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+
+	@Test
+	void testReturnCode0() throws IOException {
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return0.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+	}
+
+	@Test
+	void testReturnCode1() throws IOException {
+		HRASModel model = f.loadFromFile("test/fixtures/hras/minimal_return1.hras", SOMFormats.HRAS);
+		IMemspace memspace = c.compile(model, SOMFormats.HRAS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertFalse(runner.execute());
 	}
 }

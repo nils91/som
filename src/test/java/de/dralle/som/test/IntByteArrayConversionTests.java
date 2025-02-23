@@ -1,9 +1,8 @@
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
@@ -31,12 +30,13 @@ class IntByteArrayConversionTests {
 	static void tearDownAfterClass() throws Exception {
 	}
 
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
+	@Test
+	void byteArrToImgConvOnceTest() {
+		byte[] arr = new byte[10];
+		r.nextBytes(arr);
+		RenderedImage img = Util.byteArray2Image(arr);
+		byte[] narr = Util.image2ByteArray(img);
+		assertArrayEquals(arr, narr);
 	}
 
 	@RepeatedTest(10)
@@ -49,13 +49,12 @@ class IntByteArrayConversionTests {
 		assertArrayEquals(arr, narr);
 	}
 
-	@Test
-	void byteArrToImgConvOnceTest() {
-		byte[] arr = new byte[10];
-		r.nextBytes(arr);
-		RenderedImage img = Util.byteArray2Image(arr);
-		byte[] narr = Util.image2ByteArray(img);
-		assertArrayEquals(arr, narr);
+	@BeforeEach
+	void setUp() throws Exception {
+	}
+
+	@AfterEach
+	void tearDown() throws Exception {
 	}
 
 	@RepeatedTest(1000)

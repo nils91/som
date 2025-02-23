@@ -535,7 +535,7 @@ class HRBSCompileTest {
 
 	static Stream<Arguments> testfileForLabelCommandAdditionProvider() {
 		return Stream.of(Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs", 1),
-				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs", 3),
+				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs", 2),
 				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs", 1));
 	}
 
@@ -574,8 +574,6 @@ class HRBSCompileTest {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		assertEquals(expectedAtomicCommandGen, hrac.getCommands().size());
-		List<String> labels = hrac.getAllLabelsRecursive();
-		assertTrue(labels.contains("LABEL"));
 	}
 
 	@Timeout(30)

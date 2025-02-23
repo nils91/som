@@ -20,6 +20,7 @@ import de.dralle.som.FileLoader;
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
 import de.dralle.som.Opcode;
+import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACCommand;
@@ -377,7 +378,14 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	private String name;
-
+	/**
+	 * Map of all global directives.
+	 */
+	private static Map<String, String> globalDirectives = new HashMap<>();
+	/**
+	 * Map of additional global directives added at compile time directives.
+	 */
+	private static Map<String, String> additionalGlobalDirectives = new HashMap<>();
 	/**
 	 * Map of all directives.
 	 */
@@ -479,7 +487,12 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 
 	}
-
+	public static void addGlobalDirective(String name, String value) {
+		globalDirectives.put(name, value);
+	}
+	public static void addAdditionalGlobalDirective(String name, String value) {
+		additionalGlobalDirectives.put(name, value);
+	}
 	public void addDirective(String name, String value) {
 		directives.put(name, value);
 	}
@@ -1059,8 +1072,21 @@ public class HRBSModel implements ISetN, IHeap {
 		return tmp;
 	}
 
-	private int getDirectiveAsInt(String key) {
-		return Integer.parseInt(directives.getOrDefault(key, "0"));
+	private Integer getDirectiveAsInt(String key) {
+		String value = globalDirectives.get(key);
+		if(additionalGlobalDirectives.containsKey(key)) {
+			value=additionalGlobalDirectives.get(key);
+		}
+		if(directives.containsKey(key)) {
+			value=directives.get(key);
+		}
+		if(addDirectives.containsKey(key)) {
+			value=addDirectives.get(key);
+		}
+		if(value==null) {
+			return null;
+		}
+		return Util.decodeInt(value);
 	}
 
 	public Map<String, String> getDirectives() {
@@ -1094,7 +1120,9 @@ public class HRBSModel implements ISetN, IHeap {
 	}
 
 	public int getHeapSizeDirect() {
-		return getDirectiveAsInt("heap");
+		Integer h = getDirectiveAsInt("heap");
+		if(h==null) {return 0;}
+		return h;
 	}
 
 	public List<Map.Entry<AbstractHRBSMemoryAddress, Boolean>> getInitOnceList() {
@@ -1135,7 +1163,11 @@ public class HRBSModel implements ISetN, IHeap {
 	 * @return
 	 */
 	public int getMinimumNDirect() {
-		return getDirectiveAsInt("n");
+		Integer n= getDirectiveAsInt("n");
+		if(n==null) {
+			return 0;
+		}
+		return n;
 	}
 
 	@Override

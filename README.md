@@ -123,10 +123,11 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	- When using symbols, a address offset can be used:
 	`NAR A[42]`
 	`B A[42]`
-	- There are built-in symbols. For these see the table 'basic memory layout'.
+	- Header symbols, like those of the accumulator, must be declared by the user if needed:
+	```ACC 0```
 - Commands
 	- Available commands are `NAW` and `NAR`. Both can be used with symbols or memory addresses.
-	- First command must be `NAW ADR_EVAL` to clear the ADR_EVAL bit.
+	- First command must be `NAW ADR_EVAL` to clear the ADR_EVAL bit. `ADR_EVAL` must be declared: `ADR_EVAL 1`
 	
 The accumulator will be set at program start.
 	
@@ -152,7 +153,8 @@ Symbols are placeholders for memory addresses. They can be used within commands.
 	- When using symbols, a address offset can be used:
 	`NAR A[4]`
 	`B A[4]`
-	- There are built-in symbols. For these see the table 'basic memory layout'.
+	- Header symbols, like those of the accumulator, must be declared by the user if needed:
+	```ACC 0```
 - Commands
 	- Available commands are `NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
 	- The first command `NAW ADR_EVAL` to clear the ADR_EVAL bit is added automatically.

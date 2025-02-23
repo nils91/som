@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -524,7 +525,57 @@ class HRBSCompileTest {
 				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_2nd.hrbs",
 				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer_gen.hrbs",
 				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child_label_defer.hrbs",
-				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs");
+				"test/fixtures/hrbs/issue/145_no_atomic_childs_label_compile/test_label_compile_no_atomic_childs_child.hrbs",
+				// The next 4 files are not issue 145
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs",
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs",
+				"test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
+				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
+	}
+
+	static Stream<Arguments> testfileForLabelCommandAdditionProvider() {
+		return Stream.of(Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump.hrbs", 1),
+				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_more.hrbs", 3),
+				Arguments.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs", 1));
+	}
+
+	static Stream<String> testfileForNotOverwritingLabelProvider() {
+		return Stream.of("test/fixtures/hrbs/features/lbl_bump/test_label_bump_no_overwrite.hrbs",
+				"test/fixtures/hrbs/test_label_child_no_overwrite.hrbs");
+	}
+
+	
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForNotOverwritingLabelProvider")
+	void testLabelNotOverwriteLabelExist(String testFile) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<String> labels = hrac.getAllLabelsRecursive();
+		//Label could exist as mirrorsymbol, that would be ok to
+		HRACSymbol symbol = hrac.getSymbolByName("LABEL");
+		assertTrue(labels.contains("LABEL")||symbol!=null);
+	}
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForNotOverwritingLabelProvider")
+	void testLabelNotOverwriteLabelExist2(String testFile) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<String> labels = hrac.getAllLabelsRecursive();
+		//Label could exist as mirrorsymbol, that would be ok to
+		HRACSymbol symbol = hrac.getSymbolByName("OVERWRITING_LABEL");
+		assertTrue(labels.contains("OVERWRITING_LABEL")||symbol!=null);
+	}
+	@Timeout(30)
+	@ParameterizedTest
+	@MethodSource("testfileForLabelCommandAdditionProvider")
+	void testLabelCommandAddition(String testFile, int expectedAtomicCommandGen) throws IOException {
+		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		assertEquals(expectedAtomicCommandGen, hrac.getCommands().size());
+		List<String> labels = hrac.getAllLabelsRecursive();
+		assertTrue(labels.contains("LABEL"));
 	}
 
 	@Timeout(30)

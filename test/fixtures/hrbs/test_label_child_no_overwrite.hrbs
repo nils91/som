@@ -1,0 +1,5 @@
+MAIN:
+	global OVERWRITING_LABEL : C0;
+	
+C0:
+	global LABEL : NAR @0;

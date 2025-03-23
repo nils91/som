@@ -1,5 +1,6 @@
 MAIN:
 	alloc TW
+	global symbol ACC @0;
 	WRITE1 TW;
 	NAR TW;
 	NAR ACC;

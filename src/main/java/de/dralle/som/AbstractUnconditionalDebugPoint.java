@@ -9,6 +9,7 @@ package de.dralle.som;
  */
 public abstract class AbstractUnconditionalDebugPoint {
 	private String name;
+
 	public AbstractUnconditionalDebugPoint(String name) {
 		super();
 		this.name = name;
@@ -22,9 +23,9 @@ public abstract class AbstractUnconditionalDebugPoint {
 		this.name = name;
 	}
 
-	public boolean update(int cmdAddress,Opcode op,int tgtAddress,ISomMemspace memspace) {
-		return trigger(cmdAddress,op,tgtAddress,memspace);
-	}
-
 	public abstract boolean trigger(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace);
+
+	public boolean update(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
+		return trigger(cmdAddress, op, tgtAddress, memspace);
+	}
 }

@@ -1,18 +1,18 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACNegationExpressionNode;
-import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
-import de.dralle.som.languages.hras.model.HRASIntegerNode;
-import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
-import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 
 public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode implements Cloneable {
 
 	public HRBSNegationExpressionNode(HRBSAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACNegationExpressionNode(getChild().compileToHRAC());
 	}
 
 	@Override
@@ -31,12 +31,7 @@ public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode im
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "- "+getChild().toString();
-	}
-
-	@Override
-	public HRACAbstractExpressionNode compileToHRAC( ) {
-		return new HRACNegationExpressionNode(getChild().compileToHRAC());
+		return "- " + getChild().toString();
 	}
 
 }

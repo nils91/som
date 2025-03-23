@@ -15,68 +15,30 @@ import de.dralle.som.writehooks.StdWriteHook;
  */
 public class SOMBitcodeRunner {
 	private ISomMemspace memspace;
-	private List<AbstractUnconditionalDebugPoint> dps=new ArrayList<>();
-	public void addDebugPoint(AbstractUnconditionalDebugPoint dp) {
-		dps.add(dp);
-	}
+	private List<AbstractUnconditionalDebugPoint> dps = new ArrayList<>();
+
 	private WriteHookManager writeHookManager = new WriteHookManager();
 
-	public WriteHookManager getWriteHookManager() {
-		return writeHookManager;
-	}
-
-	public void setWriteHookManager(WriteHookManager writeHookManager) {
-		this.writeHookManager = writeHookManager;
-	}
-
-	public ISomMemspace getMemspace() {
-		return memspace;
-	}
-
-	public void setMemspace(ISomMemspace memspace) {
-		this.memspace = memspace;
-	}
-
-	private ISomMemspace initMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress) {
-		int bitCnt = (int) Math.pow(2, addressSizeBits);
-		ISomMemspace memSpace = new ByteArrayMemspace(bitCnt);
-		memSpace = initEmptyMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress, memSpace);
-		return memSpace;
-	}
-
-	private ISomMemspace initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
-			ISomMemspace memSpace) {
-		memSpace.setN(addressSizeBits);
-		memSpace.setNextAddress(startAddress);
-		memSpace.setAdrEval();
-		return memSpace;
+	public SOMBitcodeRunner(IMemspace bin) {
+		this((ISomMemspace) bin);
 	}
 
 	public SOMBitcodeRunner(ISomMemspace memSpace) {
 		memSpace = initFromExistingPartialMemspace(memSpace);
 		this.memspace = memSpace;
-		
+
 		writeHookManager.registerWriteHook(1, new StdWriteHook());
 	}
 
-	public SOMBitcodeRunner(IMemspace bin) {
-		this((ISomMemspace)bin);
-	}
-
-	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {
-		int addressSizeBits = memSpace.getN();
-		int startAddress = memSpace.getNextAddress();
-		ISomMemspace origMemSpace = memSpace.clone();
-		memSpace = initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
-		memSpace.copy(origMemSpace);
-		return memSpace;
+	public void addDebugPoint(AbstractUnconditionalDebugPoint dp) {
+		dps.add(dp);
 	}
 
 	public boolean execute() {
 		int programCounter = 0;
 		boolean accumulator = false;
 		int addressSize = 0;
-		do {			
+		do {
 			addressSize = memspace.getN();
 			int startAddress = memspace.getNextAddress();
 			boolean addressEval = memspace.isAdrEvalSet();
@@ -96,9 +58,9 @@ public class SOMBitcodeRunner {
 				tgtAddress[i] = nextCommand[i + opcodeSize];
 			}
 			int tgtAddressValue = Util.getAsUnsignedInt(tgtAddress);
-			//update debug points
+			// update debug points
 			for (AbstractUnconditionalDebugPoint dp : dps) {
-				dp.update(programCounter, opCode?Opcode.NAW:Opcode.NAR, tgtAddressValue, memspace);
+				dp.update(programCounter, opCode ? Opcode.NAW : Opcode.NAR, tgtAddressValue, memspace);
 			}
 			accumulator = memspace.getAccumulatorValue();
 			boolean tgtBitValue = memspace.getBit(tgtAddressValue);
@@ -160,5 +122,45 @@ public class SOMBitcodeRunner {
 			programCounter += commandSize;
 		} while (programCounter < Math.pow(2, addressSize));
 		return memspace.getAccumulatorValue();
+	}
+
+	public ISomMemspace getMemspace() {
+		return memspace;
+	}
+
+	public WriteHookManager getWriteHookManager() {
+		return writeHookManager;
+	}
+
+	private ISomMemspace initEmptyMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress,
+			ISomMemspace memSpace) {
+		memSpace.setN(addressSizeBits);
+		memSpace.setNextAddress(startAddress);
+		memSpace.setAdrEval();
+		return memSpace;
+	}
+
+	private ISomMemspace initFromExistingPartialMemspace(ISomMemspace memSpace) {
+		int addressSizeBits = memSpace.getN();
+		int startAddress = memSpace.getNextAddress();
+		ISomMemspace origMemSpace = memSpace.clone();
+		memSpace = initMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress);
+		memSpace.copy(origMemSpace);
+		return memSpace;
+	}
+
+	private ISomMemspace initMemspaceFromAddressSizeAndStartAddress(int addressSizeBits, int startAddress) {
+		int bitCnt = (int) Math.pow(2, addressSizeBits);
+		ISomMemspace memSpace = new ByteArrayMemspace(bitCnt);
+		memSpace = initEmptyMemspaceFromAddressSizeAndStartAddress(addressSizeBits, startAddress, memSpace);
+		return memSpace;
+	}
+
+	public void setMemspace(ISomMemspace memspace) {
+		this.memspace = memspace;
+	}
+
+	public void setWriteHookManager(WriteHookManager writeHookManager) {
+		this.writeHookManager = writeHookManager;
 	}
 }

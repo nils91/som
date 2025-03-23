@@ -1,5 +1,9 @@
 MAIN:
-	alloc H[3]
+	alloc H[3];
+	symbol WH_EN @2;
+	symbol WH_COM @8;
+	symbol WH_DIR @9;
+	symbol WH_SEL @10;
 	SET1 WH_SEL;
 	TRIGGER1 WH_EN;
 	COPY2 WH_COM, H[0];
@@ -100,4 +104,5 @@ WRITE1 A:
 	INV0;
 	
 INV0:
+	symbol ACC @0;
 	NAR ACC;

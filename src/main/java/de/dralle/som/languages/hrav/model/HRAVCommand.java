@@ -12,38 +12,44 @@ import de.dralle.som.Opcode;
 public class HRAVCommand {
 	private Opcode op;
 	private int address;
-	
-	public int getAddress() {
-		return address;
+
+	public HRAVCommand() {
+		super();
 	}
+
+	public String asHRAVCode() {
+		return String.format("%s %d", op, address);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof HRAVCommand) {
-			HRAVCommand other = (HRAVCommand)obj;
+		if (obj instanceof HRAVCommand) {
+			HRAVCommand other = (HRAVCommand) obj;
 			boolean equal = op.equals(other.op);
-			equal=equal&&address==other.address;
+			equal = equal && address == other.address;
 			return equal;
 		}
 		return super.equals(obj);
 	}
-	public void setAddress(int address) {
-		this.address = address;
+
+	public int getAddress() {
+		return address;
 	}
+
 	public Opcode getOp() {
 		return op;
 	}
+
+	public void setAddress(int address) {
+		this.address = address;
+	}
+
 	public void setOp(Opcode op) {
 		this.op = op;
 	}
-public String asHRAVCode() {
-	return String.format("%s %d", op,address);
-}
-	
+
 	@Override
-public String toString() {
-	return asHRAVCode();
-}
-	public HRAVCommand() {
-		super();
+	public String toString() {
+		return asHRAVCode();
 	}
 }

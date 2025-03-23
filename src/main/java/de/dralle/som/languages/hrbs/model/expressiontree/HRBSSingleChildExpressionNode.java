@@ -1,28 +1,17 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
-import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
-import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
 
 public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode implements Cloneable {
 	private HRBSAbstractExpressionNode child;
-
-	public HRBSSingleChildExpressionNode(HRBSAbstractExpressionNode child) {
-		super();
-		this.child = child;
-	}
 
 	public HRBSSingleChildExpressionNode() {
 		super();
 	}
 
-	public HRBSAbstractExpressionNode getChild() {
-		return child;
-	}
-
-	public void setChild(HRBSAbstractExpressionNode child) {
+	public HRBSSingleChildExpressionNode(HRBSAbstractExpressionNode child) {
+		super();
 		this.child = child;
 	}
 
@@ -33,11 +22,12 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 		cl.child = child.clone();
 		return cl;
 	}
+
 	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return child.hashCode();
+	public HRACAbstractExpressionNode compileToHRAC() {
+		return new HRACSingleChildExpressionNode(getChild().compileToHRAC());
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof HRBSSingleChildExpressionNode) {
@@ -47,15 +37,23 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 		return false;
 	}
 
+	public HRBSAbstractExpressionNode getChild() {
+		return child;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return child.hashCode();
+	}
+
+	public void setChild(HRBSAbstractExpressionNode child) {
+		this.child = child;
+	}
+
 	@Override
 	public String toString() {
 		return child.toString();
 	}
-
-	@Override
-	public HRACAbstractExpressionNode compileToHRAC() {
-		return new HRACSingleChildExpressionNode(getChild().compileToHRAC());
-	}
-
 
 }

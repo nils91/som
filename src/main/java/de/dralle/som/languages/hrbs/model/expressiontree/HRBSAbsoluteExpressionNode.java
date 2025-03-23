@@ -23,7 +23,7 @@ public class HRBSAbsoluteExpressionNode extends HRBSSingleChildExpressionNode im
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "| "+getChild().toString()+" |";
+		return "| " + getChild().toString() + " |";
 	}
 
 }

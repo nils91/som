@@ -8,5 +8,5 @@ package de.dralle.som.languages.hrbs.model;
  *
  */
 public enum HRBSSymbolType {
-	global,shared,local
+	global, shared, local
 }

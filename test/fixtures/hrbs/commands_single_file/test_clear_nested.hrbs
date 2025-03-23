@@ -12,10 +12,12 @@ CLEAR0:
 	
 SET0:
 	shared alloc H
+	symbol ACC @0;
 	NAW H;
 	NAR ACC;
 	NAW H;
 	NAR H;
 	
 INV0:
+	symbol ACC @0;
 	NAR ACC;

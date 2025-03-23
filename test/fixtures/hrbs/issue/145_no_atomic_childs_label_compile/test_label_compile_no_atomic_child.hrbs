@@ -1,0 +1,5 @@
+MAIN:
+	global LABEL : C0;
+	
+C0:
+	alloc A;

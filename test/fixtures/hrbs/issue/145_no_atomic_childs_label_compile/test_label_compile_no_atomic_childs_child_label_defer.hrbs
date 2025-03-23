@@ -1,0 +1,9 @@
+MAIN:
+	global LABEL : C0;
+	
+C0:
+	CC0;
+	NAR @0;
+	
+CC0:
+	alloc A;

@@ -1,13 +1,14 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-public abstract class HRBSCommutativeDualChildExpressionNode extends HRBSDualChildExpressionNode implements Cloneable{
-	
+public abstract class HRBSCommutativeDualChildExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
+
 	public HRBSCommutativeDualChildExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRBSCommutativeDualChildExpressionNode(HRBSAbstractExpressionNode child1, HRBSAbstractExpressionNode child2) {
+	public HRBSCommutativeDualChildExpressionNode(HRBSAbstractExpressionNode child1,
+			HRBSAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -19,11 +20,12 @@ public abstract class HRBSCommutativeDualChildExpressionNode extends HRBSDualChi
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof HRBSCommutativeDualChildExpressionNode) {
-			HRBSCommutativeDualChildExpressionNode oth = (HRBSCommutativeDualChildExpressionNode)obj;
+		if (obj instanceof HRBSCommutativeDualChildExpressionNode) {
+			HRBSCommutativeDualChildExpressionNode oth = (HRBSCommutativeDualChildExpressionNode) obj;
 			HRBSAbstractExpressionNode[] childs = getChilds();
 			HRBSAbstractExpressionNode[] othChilds = oth.getChilds();
-			return (childs[0].equals(othChilds[0])&&childs[1].equals(othChilds[1]))||(childs[0].equals(othChilds[1])&&childs[1].equals(othChilds[0]));
+			return (childs[0].equals(othChilds[0]) && childs[1].equals(othChilds[1]))
+					|| (childs[0].equals(othChilds[1]) && childs[1].equals(othChilds[0]));
 		}
 		return false;
 	}

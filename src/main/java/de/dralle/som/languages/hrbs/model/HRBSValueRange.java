@@ -9,27 +9,18 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 
 	private List<HRBSAbstractExpressionNode> values = new ArrayList<HRBSAbstractExpressionNode>();
 
-	public List<HRBSAbstractExpressionNode> getValues() {
-		return values;
-	}
-
-	public void setValues(List<HRBSAbstractExpressionNode> values) {
-		this.values = values;
-	}
-
 	public void addValue(HRBSAbstractExpressionNode value) {
 		values.add(value);
 	}
 
 	@Override
-	public int hashCode() {
-		int hc = super.hashCode();
-		for (int i = 0; i < values.size(); i++) {
-			HRBSAbstractExpressionNode array_element = values.get(i);
-			hc += array_element.hashCode() * (i + 1);
-
+	public HRBSValueRange clone() {
+		HRBSValueRange cl = (HRBSValueRange) super.clone();
+		cl.values = new ArrayList<>();
+		for (HRBSAbstractExpressionNode hrbsMemoryAddressOffset : values) {
+			cl.values.add(hrbsMemoryAddressOffset.clone());
 		}
-		return hc;
+		return cl;
 	}
 
 	@Override
@@ -51,25 +42,45 @@ public class HRBSValueRange extends AbstractHRBSRange implements Cloneable {
 		return false;
 	}
 
+	public List<HRBSAbstractExpressionNode> getValues() {
+		return values;
+	}
+
 	@Override
-	public HRBSValueRange clone() {
-		HRBSValueRange cl=(HRBSValueRange) super.clone();
-		cl.values=new ArrayList<>();
-		for (HRBSAbstractExpressionNode hrbsMemoryAddressOffset : values) {
-			cl.values.add(hrbsMemoryAddressOffset.clone());
+	public int hashCode() {
+		int hc = super.hashCode();
+		for (int i = 0; i < values.size(); i++) {
+			HRBSAbstractExpressionNode array_element = values.get(i);
+			hc += array_element.hashCode() * (i + 1);
+
 		}
-		return cl;
+		return hc;
+	}
+
+	public void setValues(List<HRBSAbstractExpressionNode> values) {
+		this.values = values;
 	}
 
 	@Override
 	public String toString() {
 		String str = super.toString();
-		str+="{";
+		str += "{";
 		for (HRBSAbstractExpressionNode hrbsMemoryAddressOffset : values) {
-			str+=hrbsMemoryAddressOffset.toString()+", ";
+			str += hrbsMemoryAddressOffset.toString() + ", ";
 		}
-		str=str.substring(0, str.length()-2)+"}";
+		str = str.substring(0, str.length() - 2) + "}";
 		return str;
 	}
 
+	@Override
+	/**
+	 * Calculates the size of this range.
+	 */
+	public int tryGetRangeSize() {
+		int rangeSize = 0;
+		for (HRBSAbstractExpressionNode hrbsAbstractExpressionNode : values) {
+			rangeSize += 1;
+		}
+		return rangeSize;
+	}
 }

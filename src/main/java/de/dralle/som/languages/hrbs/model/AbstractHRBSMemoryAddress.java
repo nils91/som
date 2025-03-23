@@ -16,81 +16,16 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 	private String tgtCmdInst;
 	private boolean tgtCmdInstIsDirective;
 
-	public String getTgtCmdInst() {
-		return tgtCmdInst;
-	}
-
-	public void setTgtCmdInst(String tgtCmdInst) {
-		this.tgtCmdInst = tgtCmdInst;
-	}
-
-	public String getTgtCmd() {
-		return tgtCmd;
-	}
-
-	public void setTgtCmd(String tgtCmd) {
-		this.tgtCmd = tgtCmd;
-	}
-
 	private HRBSAbstractExpressionNode offset;
+
 	private HRBSAbstractExpressionNode derefOffset;
-
-	public HRBSAbstractExpressionNode getOffset() {
-		return offset;
-	}
-
-	public void setOffset(HRBSAbstractExpressionNode offset) {
-		this.offset = offset;
-	}
-
-	public void setOffset(int offset) {
-		this.offset = new HRBSIntegerNode(offset);
-	}
 
 	public AbstractHRBSMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public int hashCode() {
-		int hashc = 0;
-		if (tgtCmd != null) {
-			hashc += tgtCmd.hashCode();
-		}
-		if (offset != null) {
-			hashc += offset.hashCode();
-		}
-		if (derefOffset != null) {
-			hashc += derefOffset.hashCode();
-		}
-		if (isDeref) {
-			hashc *= 1337;
-		}
-		return hashc;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof AbstractHRBSMemoryAddress) {
-			AbstractHRBSMemoryAddress other = (AbstractHRBSMemoryAddress) obj;
-			boolean equal = (isDeref == other.isDeref);
-			if (equal && offset != null) {
-				equal = offset.equals(other.offset);
-			}
-			if (equal && derefOffset != null) {
-				equal = derefOffset.equals(other.derefOffset);
-			}
-			if (equal && tgtCmd != null) {
-				equal = tgtCmd.equals(other.tgtCmd);
-			}
-			return equal;
-		}
-		return super.equals(obj);
-	}
-
-	@Override
-	public String toString() {
-		return asHRBSCode();
+	public String asHRBSCode() {
+		return getFirstPartHRBSCode() + getSecondPartHRBSCode();
 	}
 
 	@Override
@@ -114,8 +49,27 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		return copy;
 	}
 
-	public String asHRBSCode() {
-		return getFirstPartHRBSCode() + getSecondPartHRBSCode();
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj instanceof AbstractHRBSMemoryAddress) {
+			AbstractHRBSMemoryAddress other = (AbstractHRBSMemoryAddress) obj;
+			boolean equal = (isDeref == other.isDeref);
+			if (equal && offset != null) {
+				equal = offset.equals(other.offset);
+			}
+			if (equal && derefOffset != null) {
+				equal = derefOffset.equals(other.derefOffset);
+			}
+			if (equal && tgtCmd != null) {
+				equal = tgtCmd.equals(other.tgtCmd);
+			}
+			return equal;
+		}
+		return super.equals(obj);
+	}
+
+	public HRBSAbstractExpressionNode getDerefOffset() {
+		return derefOffset;
 	}
 
 	protected String getFirstPartHRBSCode() {
@@ -133,6 +87,10 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		return s;
 	}
 
+	public HRBSAbstractExpressionNode getOffset() {
+		return offset;
+	}
+
 	protected String getSecondPartHRBSCode() {
 		String s = "";
 		if (offset != null) {
@@ -145,16 +103,42 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		return s;
 	}
 
+	public String getTgtCmd() {
+		return tgtCmd;
+	}
+
+	public String getTgtCmdInst() {
+		return tgtCmdInst;
+	}
+
+	@Override
+	public int hashCode() {
+		int hashc = 0;
+		if (tgtCmd != null) {
+			hashc += tgtCmd.hashCode();
+		}
+		if (offset != null) {
+			hashc += offset.hashCode();
+		}
+		if (derefOffset != null) {
+			hashc += derefOffset.hashCode();
+		}
+		if (isDeref) {
+			hashc *= 1337;
+		}
+		return hashc;
+	}
+
 	public boolean isDeref() {
 		return isDeref;
 	}
 
-	public void setDeref(boolean isDeref) {
-		this.isDeref = isDeref;
+	public boolean isTgtCmdInstIsDirective() {
+		return tgtCmdInstIsDirective;
 	}
 
-	public HRBSAbstractExpressionNode getDerefOffset() {
-		return derefOffset;
+	public void setDeref(boolean isDeref) {
+		this.isDeref = isDeref;
 	}
 
 	public void setDerefOffset(HRBSAbstractExpressionNode derefOffset) {
@@ -165,12 +149,29 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		this.derefOffset = new HRBSIntegerNode(derefOffset);
 	}
 
-	public boolean isTgtCmdInstIsDirective() {
-		return tgtCmdInstIsDirective;
+	public void setOffset(HRBSAbstractExpressionNode offset) {
+		this.offset = offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = new HRBSIntegerNode(offset);
+	}
+
+	public void setTgtCmd(String tgtCmd) {
+		this.tgtCmd = tgtCmd;
+	}
+
+	public void setTgtCmdInst(String tgtCmdInst) {
+		this.tgtCmdInst = tgtCmdInst;
 	}
 
 	public void setTgtCmdInstIsDirective(boolean tgtCmdInstIsDirective) {
 		this.tgtCmdInstIsDirective = tgtCmdInstIsDirective;
+	}
+
+	@Override
+	public String toString() {
+		return asHRBSCode();
 	}
 
 }

@@ -1,6 +1,5 @@
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -22,9 +21,6 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 
-	private Compiler c;
-	private FileLoader f;
-
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}
@@ -33,81 +29,91 @@ class BitcodeRunnerExecuteHRBsSameFileCommandsTests {
 	static void tearDownAfterClass() throws Exception {
 	}
 
+	private Compiler c;
+
+	private FileLoader f;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
-		f=new FileLoader();
+		f = new FileLoader();
 	}
-                         
+
 	@AfterEach
 	void tearDown() throws Exception {
 	}
 
 	@Test
 	@Timeout(10)
-	void testInvert() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_invert_acc.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
-	}
-	@Test
-	@Timeout(10)
-	void testSet() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_set.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
-		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
-		assertTrue(runner.execute());
-		// should have written accumulator to 1
-		assertTrue(runner.getMemspace().getAccumulatorValue());
-	}
-	@Test
-	@Timeout(10)
 	void testClear() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_clear.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_clear.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testClearNest() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_clear_nested.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_clear_nested.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
+	@Test
+	@Timeout(10)
+	void testInvert() throws IOException {
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_invert_acc.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+
+	@Test
+	@Timeout(10)
+	void testSet() throws IOException {
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_set.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
+		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
+		assertTrue(runner.execute());
+		// should have written accumulator to 1
+		assertTrue(runner.getMemspace().getAccumulatorValue());
+	}
+
 	@Test
 	@Timeout(10)
 	void testSimpleRead() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_read_simple.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_read_simple.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testSimpleWrite() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_simple.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_simple.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1
 		assertTrue(runner.getMemspace().getAccumulatorValue());
 	}
+
 	@Test
 	@Timeout(10)
 	void testWriteNested() throws IOException {
-		HRBSModel model =f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_nested.hrbs");
-		IMemspace memspace=c.compile(model, SOMFormats.HRBS	, SOMFormats.BIN);
+		HRBSModel model = f.readHRBSFile("test/fixtures/hrbs/commands_single_file/test_write_nested.hrbs");
+		IMemspace memspace = c.compile(model, SOMFormats.HRBS, SOMFormats.BIN);
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		assertTrue(runner.execute());
 		// should have written accumulator to 1

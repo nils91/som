@@ -8,8 +8,9 @@ package de.dralle.som;
  *
  */
 public abstract class AbstractCommandAddressListenerDP extends AbstractUnconditionalDebugPoint {
-	private int trgAdr=-1;
-	public AbstractCommandAddressListenerDP(String name,int trgAdr) {
+	private int trgAdr = -1;
+
+	public AbstractCommandAddressListenerDP(String name, int trgAdr) {
 		super(name);
 		this.trgAdr = trgAdr;
 	}
@@ -19,11 +20,11 @@ public abstract class AbstractCommandAddressListenerDP extends AbstractUnconditi
 
 	@Override
 	public boolean update(int cmdAddress, Opcode op, int tgtAddress, ISomMemspace memspace) {
-		if(cmdAddress==trgAdr) {
+		if (cmdAddress == trgAdr) {
 			return super.update(cmdAddress, op, tgtAddress, memspace);
-		}else {
+		} else {
 			return true;
 		}
-		
+
 	}
 }

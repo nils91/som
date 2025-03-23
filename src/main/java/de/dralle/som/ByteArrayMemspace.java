@@ -10,46 +10,67 @@ package de.dralle.som;
 public class ByteArrayMemspace extends AbstractSomMemspace {
 
 	private byte[] memory;
-	
+
 	/**
-	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
-	 * @param size Size of the new memory space in bits.
-	 */
-	public ByteArrayMemspace(int size) {
-		int sizeBytes = size/8;
-		if(size%8!=0) {
-			sizeBytes++;
-		}
-		memory=new byte[sizeBytes];
-	}
-	
-	/**
-	 * Creates a new memory space from a given byte array.vNote that this does not check if N and the size of the byte array match up.
-	 */
-	public ByteArrayMemspace(byte[] memory) {
-		this.memory=memory;
-	}
-	/**
-	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
+	 * Creates a new memory space. Note that will not initialize the memspace and
+	 * for example set the bits for N in the memspace.
+	 * 
 	 * @param size Size of the new memory space in bits.
 	 */
 	public ByteArrayMemspace() {
-		memory=new byte[0];
+		memory = new byte[0];
 	}
-	
-	@Override
-	public void setBit(int address, boolean bitValue) {
-		int byteAddress = address / 8;
-		int offset = 7 - address % 8;
-		byte bite = memory[byteAddress];
-		byte bitmask = (byte) (1 << offset);
-		if (!bitValue) {
-			bitmask = (byte) ~bitmask;
-			bite = (byte) (bite & bitmask);
-		} else {
-			bite = (byte) (bite | bitmask);
+
+	/**
+	 * Creates a new memory space from a given byte array.vNote that this does not
+	 * check if N and the size of the byte array match up.
+	 */
+	public ByteArrayMemspace(byte[] memory) {
+		this.memory = memory;
+	}
+
+	/**
+	 * Creates a new memory space. Note that will not initialize the memspace and
+	 * for example set the bits for N in the memspace.
+	 * 
+	 * @param size Size of the new memory space in bits.
+	 */
+	public ByteArrayMemspace(int size) {
+		int sizeBytes = size / 8;
+		if (size % 8 != 0) {
+			sizeBytes++;
 		}
-		memory[byteAddress] = bite;
+		memory = new byte[sizeBytes];
+	}
+
+	@Override
+	public ByteArrayMemspace clone() {
+		ByteArrayMemspace newmemSpace = new ByteArrayMemspace(getSize());
+		newmemSpace.copy(this);
+		return newmemSpace;
+	}
+
+	@Override
+	public void copy(IMemspace from) {
+		if (from instanceof ByteArrayMemspace) {
+			ByteArrayMemspace fromByteArrayMemspace = (ByteArrayMemspace) from;
+			for (int i = 0; i < memory.length; i++) {
+				if (i * 8 < fromByteArrayMemspace.getSize()) {
+					memory[i] = fromByteArrayMemspace.memory[i];
+				}
+			}
+		} else {
+			super.copy(from);
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ByteArrayMemspace) {
+			ByteArrayMemspace cTo = (ByteArrayMemspace) obj;
+			return equalContent(cTo);
+		}
+		return false;
 	}
 
 	@Override
@@ -64,49 +85,34 @@ public class ByteArrayMemspace extends AbstractSomMemspace {
 
 	@Override
 	public int getSize() {
-		return memory.length*8;
+		return memory.length * 8;
 	}
 
-	@Override
-	public void copy(IMemspace from) {
-		if(from instanceof ByteArrayMemspace) {
-			ByteArrayMemspace fromByteArrayMemspace = (ByteArrayMemspace)from;
-			for (int i = 0; i < memory.length; i++) {
-				if(i*8<fromByteArrayMemspace.getSize()) {
-					memory[i]=fromByteArrayMemspace.memory[i];
-				}
-			}
-		}else {
-			super.copy(from);
-		}		
+	public byte[] getUnderlyingByteArray() {
+		return memory;
 	}
 
 	@Override
 	public void resize(int newSize, boolean copyContent) {
 		ByteArrayMemspace newmemSpace = new ByteArrayMemspace(newSize);
-		if(copyContent) {
+		if (copyContent) {
 			newmemSpace.copy(this);
 		}
-		memory=newmemSpace.memory;
+		memory = newmemSpace.memory;
 	}
 
 	@Override
-	public ByteArrayMemspace clone() {
-		ByteArrayMemspace newmemSpace = new ByteArrayMemspace(getSize());
-		newmemSpace.copy(this);
-		return newmemSpace;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof ByteArrayMemspace) {
-			ByteArrayMemspace cTo = (ByteArrayMemspace)obj;
-			return equalContent(cTo);
+	public void setBit(int address, boolean bitValue) {
+		int byteAddress = address / 8;
+		int offset = 7 - address % 8;
+		byte bite = memory[byteAddress];
+		byte bitmask = (byte) (1 << offset);
+		if (!bitValue) {
+			bitmask = (byte) ~bitmask;
+			bite = (byte) (bite & bitmask);
+		} else {
+			bite = (byte) (bite | bitmask);
 		}
-		return false;
-	}
-	
-	public byte[] getUnderlyingByteArray() {
-		return memory;
+		memory[byteAddress] = bite;
 	}
 }

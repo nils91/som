@@ -1,5 +1,6 @@
 alloc A[$N]
 symbol A_MIR A[-1]
+symbol ACC @0;
 for[1:$N] dup:
 {
 	NAW A_MIR[$i]

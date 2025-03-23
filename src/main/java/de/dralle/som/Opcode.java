@@ -9,23 +9,29 @@ package de.dralle.som;
  */
 public enum Opcode {
 	NAR("0"), NAW("1");
+
 	private boolean bit;
-	private Opcode (String bitcode){
-		this.bit=!("0".equals(bitcode));
+
+	private Opcode(boolean bit) {
+		this.bit = bit;
 	}
-	private Opcode (char bitcode){
-		this.bit=!('0'==bitcode);
+
+	private Opcode(char bitcode) {
+		this.bit = !('0' == bitcode);
 	}
-	private Opcode (boolean bit){
-		this.bit=bit;
+
+	private Opcode(String bitcode) {
+		this.bit = !("0".equals(bitcode));
 	}
+
 	public char getBitChar() {
-		if(bit) {
+		if (bit) {
 			return '1';
-		}else {
+		} else {
 			return '0';
 		}
 	}
+
 	public boolean getBitValue() {
 		return bit;
 	}

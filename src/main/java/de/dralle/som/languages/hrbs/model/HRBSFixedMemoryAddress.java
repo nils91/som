@@ -4,17 +4,21 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionN
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
 public class HRBSFixedMemoryAddress extends AbstractHRBSMemoryAddress {
-	@Override
-	public int hashCode() {
-		return super.hashCode() + address.hashCode();
+	private HRBSAbstractExpressionNode address;
+
+	public HRBSFixedMemoryAddress(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {
+		super();
+		this.address = hrbsAbstractExpressionNode;
+	}
+
+	public HRBSFixedMemoryAddress(int address) {
+		super();
+		this.address = new HRBSIntegerNode(address);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof HRBSFixedMemoryAddress) {
-			return address == ((HRBSFixedMemoryAddress) obj).address && super.equals(obj);
-		}
-		return super.equals(obj);
+	public String asHRBSCode() {
+		return getFirstPartHRBSCode() + "@(" + address + ")" + getSecondPartHRBSCode();
 	}
 
 	@Override
@@ -26,30 +30,27 @@ public class HRBSFixedMemoryAddress extends AbstractHRBSMemoryAddress {
 	}
 
 	@Override
-	public String asHRBSCode() {
-		return getFirstPartHRBSCode() + "@(" + address +")"+ getSecondPartHRBSCode();
-	}
-
-	private HRBSAbstractExpressionNode address;
-
-	public HRBSFixedMemoryAddress(int address) {
-		super();
-		this.address = new HRBSIntegerNode(address);
-	}
-
-	public HRBSFixedMemoryAddress(HRBSAbstractExpressionNode hrbsAbstractExpressionNode) {
-		super();
-		this.address = hrbsAbstractExpressionNode;
+	public boolean equals(Object obj) {
+		if (obj instanceof HRBSFixedMemoryAddress) {
+			return address == ((HRBSFixedMemoryAddress) obj).address && super.equals(obj);
+		}
+		return super.equals(obj);
 	}
 
 	public HRBSAbstractExpressionNode getAddress() {
 		return address;
 	}
 
-	public void setAddress(int address) {
-		this.address = new HRBSIntegerNode(address);
+	@Override
+	public int hashCode() {
+		return super.hashCode() + address.hashCode();
 	}
+
 	public void setAddress(HRBSAbstractExpressionNode address) {
 		this.address = (address);
+	}
+
+	public void setAddress(int address) {
+		this.address = new HRBSIntegerNode(address);
 	}
 }

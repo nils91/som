@@ -1,18 +1,31 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
+import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hras.model.HRASAbsoluteExpressionNode;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbsoluteExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
 public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
-	}
-
 	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int calculateNumericalValue() {
+		return Math.abs(super.calculateNumericalValue());
+	}
+
+	@Override
+	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
+		return new HRASAbsoluteExpressionNode(getChild().compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
 	}
 
 	@Override
@@ -31,7 +44,7 @@ public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode im
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "| "+getChild().toString()+" |";
+		return "| " + getChild().toString() + " |";
 	}
 
 }

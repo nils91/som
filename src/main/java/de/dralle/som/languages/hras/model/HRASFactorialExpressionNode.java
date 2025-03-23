@@ -1,7 +1,6 @@
 package de.dralle.som.languages.hras.model;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACFactorialExpressionNode;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 
 public class HRASFactorialExpressionNode extends HRASSingleChildExpressionNode implements Cloneable {
 
@@ -13,6 +12,17 @@ public class HRASFactorialExpressionNode extends HRASSingleChildExpressionNode i
 	public HRASFactorialExpressionNode(HRASAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getFac(getChild().calculateNumericalValue());
+	}
+
+	@Override
+	public HRACFactorialExpressionNode compileToHRAC() {
+		return new HRACFactorialExpressionNode(getChild().compileToHRAC());
 	}
 
 	@Override
@@ -31,20 +41,9 @@ public class HRASFactorialExpressionNode extends HRASSingleChildExpressionNode i
 	}
 
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getFac(getChild().calculateNumericalValue());
-	}
-
-	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getChild().toString() + "!";
-	}
-
-	@Override
-	public HRACFactorialExpressionNode compileToHRAC() {
-		return new HRACFactorialExpressionNode(getChild().compileToHRAC());
 	}
 
 }

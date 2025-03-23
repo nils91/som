@@ -4,7 +4,8 @@ MAIN:
 	READ1 TR;
 	
 READ1 A:
-	local alloc H
+	local alloc H;
+	symbol ACC @0;
 	NAW H;
 	NAR ACC;
 	NAR H;

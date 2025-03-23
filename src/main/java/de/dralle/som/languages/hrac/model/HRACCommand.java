@@ -12,51 +12,24 @@ import de.dralle.som.languages.hras.model.SymbolHRASMemoryAddress;
  * @author Nils
  *
  */
-public class HRACCommand implements Cloneable{
+public class HRACCommand implements Cloneable {
 	private HRACSymbol label;
 	private Opcode op;
 	private AbstractHRACMemoryAddress target;
 
-	public HRACSymbol getLabel() {
-		return label;
+	public HRACCommand() {
+		super();
 	}
 
-	@Override
-	protected HRACCommand clone(){
-		HRACCommand copy = null;
-		try {
-			copy = (HRACCommand) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public HRACCommand(HRASCommand val) {
+		op = val.getOp();
+		AbstractHRASMemoryAddress hrascaddress = val.getAddress();
+		if (hrascaddress instanceof SymbolHRASMemoryAddress) {
+			target = new NamedHRACMemoryAddress(((SymbolHRASMemoryAddress) val.getAddress()).getSymbol());
+		} else {
+			target = new NamedHRACMemoryAddress((val.getAddress()).toString());
 		}
-		if(label!=null) {
-			copy.label=label.clone();
-		}
-		if(target!=null) {
-			copy.target=target.clone();
-		}
-		return copy;
-	}
 
-	public void setLabel(HRACSymbol label) {
-		this.label = label;
-	}
-
-	public AbstractHRACMemoryAddress getTarget() {
-		return target;
-	}
-
-	public void setTarget(AbstractHRACMemoryAddress target) {
-		this.target = target;
-	}
-
-	public Opcode getOp() {
-		return op;
-	}
-
-	public void setOp(Opcode op) {
-		this.op = op;
 	}
 
 	public String asCode() {
@@ -69,22 +42,49 @@ public class HRACCommand implements Cloneable{
 	}
 
 	@Override
+	protected HRACCommand clone() {
+		HRACCommand copy = null;
+		try {
+			copy = (HRACCommand) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (label != null) {
+			copy.label = label.clone();
+		}
+		if (target != null) {
+			copy.target = target.clone();
+		}
+		return copy;
+	}
+
+	public HRACSymbol getLabel() {
+		return label;
+	}
+
+	public Opcode getOp() {
+		return op;
+	}
+
+	public AbstractHRACMemoryAddress getTarget() {
+		return target;
+	}
+
+	public void setLabel(HRACSymbol label) {
+		this.label = label;
+	}
+
+	public void setOp(Opcode op) {
+		this.op = op;
+	}
+
+	public void setTarget(AbstractHRACMemoryAddress target) {
+		this.target = target;
+	}
+
+	@Override
 	public String toString() {
 		return asCode();
-	}
-
-	public HRACCommand() {
-		super();
-	}
-
-	public HRACCommand(HRASCommand val) {
-		op=val.getOp();
-		AbstractHRASMemoryAddress hrascaddress = val.getAddress();
-		if(hrascaddress instanceof SymbolHRASMemoryAddress) {
-			target=new NamedHRACMemoryAddress(((SymbolHRASMemoryAddress)val.getAddress()).getSymbol());
-		}else {
-			target=new NamedHRACMemoryAddress((val.getAddress()).toString());
-		}
-		
 	}
 }

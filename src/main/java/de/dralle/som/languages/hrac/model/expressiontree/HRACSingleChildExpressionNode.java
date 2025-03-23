@@ -9,28 +9,21 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionN
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSSingleChildExpressionNode;
 
 public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable {
-	@Override
-	public Collection<String> getUsedDirectives() {
-		return child.getUsedDirectives();
-	}
-
 	private HRACAbstractExpressionNode child;
+
+	public HRACSingleChildExpressionNode() {
+		super();
+	}
 
 	public HRACSingleChildExpressionNode(HRACAbstractExpressionNode child) {
 		super();
 		this.child = child;
 	}
 
-	public HRACSingleChildExpressionNode() {
-		super();
-	}
-
-	public HRACAbstractExpressionNode getChild() {
-		return child;
-	}
-
-	public void setChild(HRACAbstractExpressionNode child) {
-		this.child = child;
+	@Override
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getChild().calculateNumericalValue();
 	}
 
 	@Override
@@ -39,36 +32,6 @@ public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode im
 		HRACSingleChildExpressionNode cl = (HRACSingleChildExpressionNode) super.clone();
 		cl.child = child.clone();
 		return cl;
-	}
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChild().calculateNumericalValue();
-	}
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return child.hashCode();
-	}
-
-	@Override
-	public HRACAbstractExpressionNode resolve(HRACModel parent) {
-		child=child.resolve(parent);
-		return this;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof HRACSingleChildExpressionNode) {
-			HRACSingleChildExpressionNode oth = (HRACSingleChildExpressionNode) obj;
-			return child.equals(oth.child);
-		}
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return child.toString();
 	}
 
 	@Override
@@ -81,5 +44,43 @@ public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode im
 		return new HRBSSingleChildExpressionNode(child.compileToHRBS());
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof HRACSingleChildExpressionNode) {
+			HRACSingleChildExpressionNode oth = (HRACSingleChildExpressionNode) obj;
+			return child.equals(oth.child);
+		}
+		return false;
+	}
+
+	public HRACAbstractExpressionNode getChild() {
+		return child;
+	}
+
+	@Override
+	public Collection<String> getUsedDirectives() {
+		return child.getUsedDirectives();
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return child.hashCode();
+	}
+
+	@Override
+	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+		child = child.resolve(parent);
+		return this;
+	}
+
+	public void setChild(HRACAbstractExpressionNode child) {
+		this.child = child;
+	}
+
+	@Override
+	public String toString() {
+		return child.toString();
+	}
 
 }

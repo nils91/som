@@ -10,26 +10,41 @@ package de.dralle.som;
 public class BooleanArrayMemspace extends AbstractSomMemspace {
 
 	private boolean[] memory;
-	
+
 	/**
-	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
-	 * @param size Size of the new memory space in bits.
-	 */
-	public BooleanArrayMemspace(int size) {
-		memory=new boolean[size];
-	}
-	
-	/**
-	 * Creates a new memory space. Note that will not initialize the memspace and for example set the bits for N in the memspace.
+	 * Creates a new memory space. Note that will not initialize the memspace and
+	 * for example set the bits for N in the memspace.
+	 * 
 	 * @param size Size of the new memory space in bits.
 	 */
 	public BooleanArrayMemspace() {
-		memory=new boolean[0];
+		memory = new boolean[0];
 	}
-	
+
+	/**
+	 * Creates a new memory space. Note that will not initialize the memspace and
+	 * for example set the bits for N in the memspace.
+	 * 
+	 * @param size Size of the new memory space in bits.
+	 */
+	public BooleanArrayMemspace(int size) {
+		memory = new boolean[size];
+	}
+
 	@Override
-	public void setBit(int address, boolean bitValue) {
-		memory[address]=bitValue;
+	public BooleanArrayMemspace clone() {
+		BooleanArrayMemspace newmemSpace = new BooleanArrayMemspace(getSize());
+		newmemSpace.copy(this);
+		return newmemSpace;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof BooleanArrayMemspace) {
+			BooleanArrayMemspace cTo = (BooleanArrayMemspace) obj;
+			return equalContent(cTo);
+		}
+		return false;
 	}
 
 	@Override
@@ -45,25 +60,14 @@ public class BooleanArrayMemspace extends AbstractSomMemspace {
 	@Override
 	public void resize(int newSize, boolean copyContent) {
 		BooleanArrayMemspace newmemSpace = new BooleanArrayMemspace(newSize);
-		if(copyContent) {
+		if (copyContent) {
 			newmemSpace.copy(this);
 		}
-		memory=newmemSpace.memory;
+		memory = newmemSpace.memory;
 	}
 
 	@Override
-	public BooleanArrayMemspace clone() {
-		BooleanArrayMemspace newmemSpace = new BooleanArrayMemspace(getSize());
-		newmemSpace.copy(this);
-		return newmemSpace;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof BooleanArrayMemspace) {
-			BooleanArrayMemspace cTo = (BooleanArrayMemspace)obj;
-			return equalContent(cTo);
-		}
-		return false;
+	public void setBit(int address, boolean bitValue) {
+		memory[address] = bitValue;
 	}
 }

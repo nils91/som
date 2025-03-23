@@ -3,10 +3,12 @@ import SET1;
 import CLEAR1;
 import TRIGGER1;
 import COPY2;
+import INIT_BUILTINS0;
 
 MAIN:
 #allocate enough storage for hello world + line feed as string
 	alloc STR[96];
+	INIT_BUILTINS0;
 #H
 	SETCHAR_H STR;
 #e

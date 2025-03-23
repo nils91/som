@@ -1,18 +1,16 @@
 package de.dralle.som.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -24,6 +22,33 @@ import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
 
 class SampleFilesTests {
+
+	static List<File> fileProvider() {
+		List<File> fileList = new ArrayList<>();
+		getFiles(new File("sample/"), fileList);
+		if (fileList.isEmpty()) {
+			// Make sure the list has at least on entry, but skip it pin test, to make junit
+			// happy
+			fileList.add(null);
+		}
+		return fileList;
+	}
+
+	private static void getFiles(File folder, List<File> fileList) {
+		File[] files = folder.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.isFile()) {
+					SOMFormats format = new FileLoader().getFormatFromFilename(file);
+					if (format != null) {
+						fileList.add(file);
+					}
+				} else if (file.isDirectory()) {
+					getFiles(file, fileList);
+				}
+			}
+		}
+	}
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -39,19 +64,6 @@ class SampleFilesTests {
 
 	@AfterEach
 	void tearDown() throws Exception {
-	}
-
-	@ParameterizedTest(name = "{index} - Test loading with file ''{0}''")
-	@MethodSource("fileProvider")
-	void testLoadFile(File file) throws IOException {
-		if (file != null) {
-			// get format
-			SOMFormats format = new FileLoader().getFormatFromFilename(file);
-			if (format != null) {
-				Object model = new FileLoader().loadFromFile(file, format);
-				assertNotNull(model);
-			}
-		}
 	}
 
 	@ParameterizedTest(name = "{index} - Test compilation with file ''{0}''")
@@ -83,29 +95,15 @@ class SampleFilesTests {
 		}
 	}
 
-	static List<File> fileProvider() {
-		List<File> fileList = new ArrayList<>();
-		getFiles(new File("sample/"), fileList);
-		if (fileList.isEmpty()) {
-			// Make sure the list has at least on entry, but skip it pin test, to make junit
-			// happy
-			fileList.add(null);
-		}
-		return fileList;
-	}
-
-	private static void getFiles(File folder, List<File> fileList) {
-		File[] files = folder.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (file.isFile()) {
-					SOMFormats format = new FileLoader().getFormatFromFilename(file);
-					if (format != null) {
-						fileList.add(file);
-					}
-				} else if (file.isDirectory()) {
-					getFiles(file, fileList);
-				}
+	@ParameterizedTest(name = "{index} - Test loading with file ''{0}''")
+	@MethodSource("fileProvider")
+	void testLoadFile(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				assertNotNull(model);
 			}
 		}
 	}

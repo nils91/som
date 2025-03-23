@@ -1,3 +1,4 @@
+symbol ACC @0;
 for[0:5] dup:
 {
 	NAR ACC

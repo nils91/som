@@ -3,4 +3,5 @@ MAIN:
 	INV0;
 
 INV0:
+	symbol ACC @0;
 	NAW ACC;

@@ -3,7 +3,6 @@
  */
 package de.dralle.som.languages.hrbs.visitors;
 
-import de.dralle.som.Util;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cnt_specifyContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Directive_accessContext;
@@ -23,13 +22,13 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 		s = new HRBSSymbol();
 	}
 
+	public HRBSSymbolVisitor(HRBSSymbol s) {
+		this.s = s;
+	}
+
 	public HRBSSymbolVisitor(HRBSSymbolType type) {
 		this();
 		s.setType(type);
-	}
-
-	public HRBSSymbolVisitor(HRBSSymbol s) {
-		this.s = s;
 	}
 
 	@Override
@@ -37,7 +36,7 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 		if (ctx.primary_expr() != null) {
 			s.setBitCnt((ctx.primary_expr().accept(new HRBSExpressionVisitor())));
 		}
-		if(ctx.directive_access()!=null) {
+		if (ctx.directive_access() != null) {
 			ctx.directive_access().accept(this);
 		}
 		return s;
@@ -67,10 +66,10 @@ public class HRBSSymbolVisitor extends HRBSGrammarBaseVisitor<HRBSSymbol> {
 	@Override
 	public HRBSSymbol visitSymbol_ns(Symbol_nsContext ctx) {
 		HRBSSymbolType symbolType = HRBSSymbolType.local;
-		if(ctx.def_scope()!=null) {
-			symbolType= ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
-		}else {
-			
+		if (ctx.def_scope() != null) {
+			symbolType = ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
+		} else {
+
 		}
 		s.setType(symbolType);
 		return ctx.symbol_dec().accept(this);

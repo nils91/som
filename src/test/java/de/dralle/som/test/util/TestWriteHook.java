@@ -21,22 +21,21 @@ public class TestWriteHook extends AbstractWriteHook {
 		return bitsProvidedForRead;
 	}
 
-	public void setBitsProvidedForRead(boolean[] bitsProvidedForRead) {
-		this.bitsProvidedForRead = bitsProvidedForRead;
+	public int getReadTrgCnt() {
+		return readTrgCnt;
+	}
+
+	public int getWriteTrgCnt() {
+		return writeTrgCnt;
 	}
 
 	public boolean[] getWrittenBits() {
 		return writtenBits;
 	}
 
-	
-
-	public int getWriteTrgCnt() {
-		return writeTrgCnt;
-	}
-
-	public int getReadTrgCnt() {
-		return readTrgCnt;
+	@Override
+	public boolean hasDataAvailable() {
+		return bitsProvidedForRead.length > 0;
 	}
 
 	@Override
@@ -50,14 +49,13 @@ public class TestWriteHook extends AbstractWriteHook {
 				bitsProvidedForReadNew[i] = bitsProvidedForRead[i + 1];
 			}
 			bitToReturn = bitsProvidedForRead[0];
-		} 
+		}
 		bitsProvidedForRead = bitsProvidedForReadNew;
 		return bitToReturn;
 	}
 
-	@Override
-	public boolean hasDataAvailable() {
-		return bitsProvidedForRead.length>0;
+	public void setBitsProvidedForRead(boolean[] bitsProvidedForRead) {
+		this.bitsProvidedForRead = bitsProvidedForRead;
 	}
 
 	@Override

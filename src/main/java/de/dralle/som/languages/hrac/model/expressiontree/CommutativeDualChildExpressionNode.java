@@ -1,7 +1,7 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
-public abstract class CommutativeDualChildExpressionNode extends HRACDualChildExpressionNode implements Cloneable{
-	
+public abstract class CommutativeDualChildExpressionNode extends HRACDualChildExpressionNode implements Cloneable {
+
 	public CommutativeDualChildExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -19,11 +19,12 @@ public abstract class CommutativeDualChildExpressionNode extends HRACDualChildEx
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof CommutativeDualChildExpressionNode) {
-			CommutativeDualChildExpressionNode oth = (CommutativeDualChildExpressionNode)obj;
+		if (obj instanceof CommutativeDualChildExpressionNode) {
+			CommutativeDualChildExpressionNode oth = (CommutativeDualChildExpressionNode) obj;
 			HRACAbstractExpressionNode[] childs = getChilds();
 			HRACAbstractExpressionNode[] othChilds = oth.getChilds();
-			return (childs[0].equals(othChilds[0])&&childs[1].equals(othChilds[1]))||(childs[0].equals(othChilds[1])&&childs[1].equals(othChilds[0]));
+			return (childs[0].equals(othChilds[0]) && childs[1].equals(othChilds[1]))
+					|| (childs[0].equals(othChilds[1]) && childs[1].equals(othChilds[0]));
 		}
 		return false;
 	}

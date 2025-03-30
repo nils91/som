@@ -1,4 +1,5 @@
 MAIN:
+	global symbol ACC @0;
 	CLEAR0;
 	NAR ACC;
 	

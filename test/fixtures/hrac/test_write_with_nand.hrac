@@ -2,7 +2,12 @@
 #000 0 11 10 //WH bits will not be used, address is 29
 #1
 #0 //this bit will be written to (I7, IOO OOI)
-TW
+symbol WH_EN @2;
+symbol WH_COM @8;
+symbol WH_DIR @9;
+symbol WH_SEL @10;
+symbol ACC @0;
+symbol TW;
 #00000000000 //filler bits
 #1 000 001 //reset ADR_EVAL(not needed in HRAC)
 #1 100 001

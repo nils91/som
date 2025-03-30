@@ -1,237 +1,219 @@
 package de.dralle.som;
 
-import javax.imageio.*;
-import javax.imageio.metadata.*;
-import javax.imageio.stream.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
+import javax.imageio.IIOException;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+
 /**
- * This class will generate an animated GIF from a sequence of individual images. Embedded in Wayang
- * to facilitate capturing animations and interfaces rendered on the Push, for producing great online
- * documentation.
+ * This class will generate an animated GIF from a sequence of individual
+ * images. Embedded in Wayang to facilitate capturing animations and interfaces
+ * rendered on the Push, for producing great online documentation.
  *
- * Originally created by Elliot Kroo on 2009-04-25. See http://elliot.kroo.net/software/java/GifSequenceWriter/
- * James Elliott split the constructor into a variety of different versions, to accommodate the needs of Wayang.
+ * Originally created by Elliot Kroo on 2009-04-25. See
+ * http://elliot.kroo.net/software/java/GifSequenceWriter/ James Elliott split
+ * the constructor into a variety of different versions, to accommodate the
+ * needs of Wayang.
  *
- * This work is licensed under the Creative Commons Attribution 3.0 Unported License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/
- * or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
+ * This work is licensed under the Creative Commons Attribution 3.0 Unported
+ * License. To view a copy of this license, visit
+ * http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
+ * Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
  *
  * @author Elliot Kroo (elliot[at]kroo[dot]net)
  */
 public class GifSequenceWriter {
-    protected ImageWriter gifWriter;
-    protected ImageWriteParam imageWriteParam;
-    protected IIOMetadata imageMetaData;
+	/**
+	 * Returns an existing child node, or creates and returns a new child node (if
+	 * the requested node does not exist).
+	 *
+	 * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
+	 * @param nodeName the name of the child node.
+	 *
+	 * @return the child node, if found or a new node created with the given name.
+	 */
+	private static IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
+		int nNodes = rootNode.getLength();
+		for (int i = 0; i < nNodes; i++) {
+			if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName) == 0) {
+				return ((IIOMetadataNode) rootNode.item(i));
+			}
+		}
+		IIOMetadataNode node = new IIOMetadataNode(nodeName);
+		rootNode.appendChild(node);
+		return (node);
+	}
 
+	/**
+	 * Returns the first available GIF ImageWriter using
+	 * ImageIO.getImageWritersBySuffix("gif").
+	 *
+	 * @return a GIF ImageWriter object
+	 * @throws IIOException if no GIF image writers are returned
+	 */
+	private static ImageWriter getWriter() throws IIOException {
+		Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix("gif");
+		if (!iter.hasNext()) {
+			throw new IIOException("No GIF Image Writers Exist");
+		} else {
+			return iter.next();
+		}
+	}
 
-    /**
-     * Creates a new GifSequenceWriter from an existing buffered image.
-     *
-     * @param outputStream the ImageOutputStream to be written to
-     * @param image the source image that will be written to the output
-     * @param timeBetweenFramesMS the time between frames in miliseconds
-     * @param loopContinuously wether the gif should loop repeatedly
-     * @throws IIOException if no gif ImageWriters are found
-     *
-     * @author James Elliott
-     */
-    public GifSequenceWriter(
-            ImageOutputStream outputStream,
-            RenderedImage image,
-            int timeBetweenFramesMS,
-            boolean loopContinuously) throws IIOException, IOException {
-        this(outputStream, ImageTypeSpecifier.createFromRenderedImage(image), timeBetweenFramesMS,
-                loopContinuously);
-    }
+	/**
+	 * Support invocation from the command line; provide a list of input file names,
+	 * followed by a single output file name.
+	 *
+	 * @param args the names of the image files to be combined into a GIF sequence,
+	 *             folloewd by the output file name.
+	 *
+	 * @throws Exception if there is a problem reading the inputs or writing the
+	 *                   output.
+	 */
+	public static void main(String[] args) throws Exception {
+		if (args.length > 1) {
+			// grab the output image type from the first image in the sequence
+			BufferedImage firstImage = ImageIO.read(new File(args[0]));
 
-    /**
-     * Creates a new GifSequenceWriter
-     *
-     * @param outputStream the ImageOutputStream to be written to
-     * @param imageType one of the imageTypes specified in BufferedImage
-     * @param timeBetweenFramesMS the time between frames in miliseconds
-     * @param loopContinuously wether the gif should loop repeatedly
-     * @throws IIOException if no gif ImageWriters are found
-     *
-     * @author Elliot Kroo (elliot[at]kroo[dot]net)
-     */
-    public GifSequenceWriter(
-            ImageOutputStream outputStream,
-            int imageType,
-            int timeBetweenFramesMS,
-            boolean loopContinuously) throws IIOException, IOException {
-        this(outputStream, ImageTypeSpecifier.createFromBufferedImageType(imageType), timeBetweenFramesMS,
-                loopContinuously);
+			// create a new BufferedOutputStream with the last argument
+			ImageOutputStream output = new FileImageOutputStream(new File(args[args.length - 1]));
 
-    }
+			// create a gif sequence with the type of the first image, 1 second
+			// between frames, which loops continuously
+			GifSequenceWriter writer = new GifSequenceWriter(output, firstImage.getType(), 1, false);
 
-    /**
-     * Creates a new GifSequenceWriter
-     *
-     * @param outputStream the ImageOutputStream to be written to
-     * @param imageTypeSpecifier the type of images to be written
-     * @param timeBetweenFramesMS the time between frames in miliseconds
-     * @param loopContinuously wether the gif should loop repeatedly
-     * @throws IIOException if no gif ImageWriters are found
-     *
-     * @author Elliot Kroo (elliot[at]kroo[dot]net)
-     */
-    public GifSequenceWriter(
-            ImageOutputStream outputStream,
-            ImageTypeSpecifier imageTypeSpecifier,
-            int timeBetweenFramesMS,
-            boolean loopContinuously) throws IIOException, IOException {
+			// write out the first image to our sequence...
+			writer.writeToSequence(firstImage);
+			for (int i = 1; i < args.length - 1; i++) {
+				BufferedImage nextImage = ImageIO.read(new File(args[i]));
+				writer.writeToSequence(nextImage);
+			}
 
-        // my method to create a writer
-        gifWriter = getWriter();
-        imageWriteParam = gifWriter.getDefaultWriteParam();
+			writer.close();
+			output.close();
+		} else {
+			System.out.println("Usage: java GifSequenceWriter [list of gif files] [output file]");
+		}
+	}
 
-        imageMetaData =
-                gifWriter.getDefaultImageMetadata(imageTypeSpecifier,
-                        imageWriteParam);
+	protected ImageWriter gifWriter;
 
-        String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+	protected ImageWriteParam imageWriteParam;
 
-        IIOMetadataNode root = (IIOMetadataNode)
-                imageMetaData.getAsTree(metaFormatName);
+	protected IIOMetadata imageMetaData;
 
-        IIOMetadataNode graphicsControlExtensionNode = getNode(
-                root,
-                "GraphicControlExtension");
+	/**
+	 * Creates a new GifSequenceWriter
+	 *
+	 * @param outputStream        the ImageOutputStream to be written to
+	 * @param imageTypeSpecifier  the type of images to be written
+	 * @param timeBetweenFramesMS the time between frames in miliseconds
+	 * @param loopContinuously    wether the gif should loop repeatedly
+	 * @throws IIOException if no gif ImageWriters are found
+	 *
+	 * @author Elliot Kroo (elliot[at]kroo[dot]net)
+	 */
+	public GifSequenceWriter(ImageOutputStream outputStream, ImageTypeSpecifier imageTypeSpecifier,
+			int timeBetweenFramesMS, boolean loopContinuously) throws IIOException, IOException {
 
-        graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
-        graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
-        graphicsControlExtensionNode.setAttribute(
-                "transparentColorFlag",
-                "FALSE");
-        graphicsControlExtensionNode.setAttribute(
-                "delayTime",
-                Integer.toString(timeBetweenFramesMS / 10));
-        graphicsControlExtensionNode.setAttribute(
-                "transparentColorIndex",
-                "0");
+		// my method to create a writer
+		gifWriter = getWriter();
+		imageWriteParam = gifWriter.getDefaultWriteParam();
 
-        IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
-        commentsNode.setAttribute("CommentExtension", "Created by MAH");
+		imageMetaData = gifWriter.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
 
-        IIOMetadataNode appEntensionsNode = getNode(
-                root,
-                "ApplicationExtensions");
+		String metaFormatName = imageMetaData.getNativeMetadataFormatName();
 
-        IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
+		IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
 
-        child.setAttribute("applicationID", "NETSCAPE");
-        child.setAttribute("authenticationCode", "2.0");
+		IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
 
-        int loop = loopContinuously ? 0 : 1;
+		graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
+		graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
+		graphicsControlExtensionNode.setAttribute("transparentColorFlag", "FALSE");
+		graphicsControlExtensionNode.setAttribute("delayTime", Integer.toString(timeBetweenFramesMS / 10));
+		graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
 
-        child.setUserObject(new byte[]{ 0x1, (byte) (loop & 0xFF), (byte)
-                ((loop >> 8) & 0xFF)});
-        appEntensionsNode.appendChild(child);
+		IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
+		commentsNode.setAttribute("CommentExtension", "Created by MAH");
 
-        imageMetaData.setFromTree(metaFormatName, root);
+		IIOMetadataNode appEntensionsNode = getNode(root, "ApplicationExtensions");
 
-        gifWriter.setOutput(outputStream);
+		IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
 
-        gifWriter.prepareWriteSequence(null);
-    }
+		child.setAttribute("applicationID", "NETSCAPE");
+		child.setAttribute("authenticationCode", "2.0");
 
-    public void writeToSequence(RenderedImage img) throws IOException {
-        gifWriter.writeToSequence(
-                new IIOImage(
-                        img,
-                        null,
-                        imageMetaData),
-                imageWriteParam);
-    }
+		int loop = loopContinuously ? 0 : 1;
 
-    /**
-     * Close this GifSequenceWriter object. This does not close the underlying
-     * stream, just finishes off the GIF.
-     *
-     * @throws IOException if there is a problem writing the last bytes.
-     */
-    public void close() throws IOException {
-        gifWriter.endWriteSequence();
-    }
+		child.setUserObject(new byte[] { 0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF) });
+		appEntensionsNode.appendChild(child);
 
-    /**
-     * Returns the first available GIF ImageWriter using
-     * ImageIO.getImageWritersBySuffix("gif").
-     *
-     * @return a GIF ImageWriter object
-     * @throws IIOException if no GIF image writers are returned
-     */
-    private static ImageWriter getWriter() throws IIOException {
-        Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix("gif");
-        if(!iter.hasNext()) {
-            throw new IIOException("No GIF Image Writers Exist");
-        } else {
-            return iter.next();
-        }
-    }
+		imageMetaData.setFromTree(metaFormatName, root);
 
-    /**
-     * Returns an existing child node, or creates and returns a new child node (if
-     * the requested node does not exist).
-     *
-     * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
-     * @param nodeName the name of the child node.
-     *
-     * @return the child node, if found or a new node created with the given name.
-     */
-    private static IIOMetadataNode getNode(
-            IIOMetadataNode rootNode,
-            String nodeName) {
-        int nNodes = rootNode.getLength();
-        for (int i = 0; i < nNodes; i++) {
-            if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName)
-                    == 0) {
-                return((IIOMetadataNode) rootNode.item(i));
-            }
-        }
-        IIOMetadataNode node = new IIOMetadataNode(nodeName);
-        rootNode.appendChild(node);
-        return(node);
-    }
+		gifWriter.setOutput(outputStream);
 
-    /**
-     * Support invocation from the command line; provide a list of input file names, followed by a single output
-     * file name.
-     *
-     * @param args the names of the image files to be combined into a GIF sequence, folloewd by the output file name.
-     *
-     * @throws Exception if there is a problem reading the inputs or writing the output.
-     */
-    public static void main(String[] args) throws Exception {
-        if (args.length > 1) {
-            // grab the output image type from the first image in the sequence
-            BufferedImage firstImage = ImageIO.read(new File(args[0]));
+		gifWriter.prepareWriteSequence(null);
+	}
 
-            // create a new BufferedOutputStream with the last argument
-            ImageOutputStream output =
-                    new FileImageOutputStream(new File(args[args.length - 1]));
+	/**
+	 * Creates a new GifSequenceWriter
+	 *
+	 * @param outputStream        the ImageOutputStream to be written to
+	 * @param imageType           one of the imageTypes specified in BufferedImage
+	 * @param timeBetweenFramesMS the time between frames in miliseconds
+	 * @param loopContinuously    wether the gif should loop repeatedly
+	 * @throws IIOException if no gif ImageWriters are found
+	 *
+	 * @author Elliot Kroo (elliot[at]kroo[dot]net)
+	 */
+	public GifSequenceWriter(ImageOutputStream outputStream, int imageType, int timeBetweenFramesMS,
+			boolean loopContinuously) throws IIOException, IOException {
+		this(outputStream, ImageTypeSpecifier.createFromBufferedImageType(imageType), timeBetweenFramesMS,
+				loopContinuously);
 
-            // create a gif sequence with the type of the first image, 1 second
-            // between frames, which loops continuously
-            GifSequenceWriter writer =
-                    new GifSequenceWriter(output, firstImage.getType(), 1, false);
+	}
 
-            // write out the first image to our sequence...
-            writer.writeToSequence(firstImage);
-            for(int i=1; i<args.length-1; i++) {
-                BufferedImage nextImage = ImageIO.read(new File(args[i]));
-                writer.writeToSequence(nextImage);
-            }
+	/**
+	 * Creates a new GifSequenceWriter from an existing buffered image.
+	 *
+	 * @param outputStream        the ImageOutputStream to be written to
+	 * @param image               the source image that will be written to the
+	 *                            output
+	 * @param timeBetweenFramesMS the time between frames in miliseconds
+	 * @param loopContinuously    wether the gif should loop repeatedly
+	 * @throws IIOException if no gif ImageWriters are found
+	 *
+	 * @author James Elliott
+	 */
+	public GifSequenceWriter(ImageOutputStream outputStream, RenderedImage image, int timeBetweenFramesMS,
+			boolean loopContinuously) throws IIOException, IOException {
+		this(outputStream, ImageTypeSpecifier.createFromRenderedImage(image), timeBetweenFramesMS, loopContinuously);
+	}
 
-            writer.close();
-            output.close();
-        } else {
-            System.out.println(
-                    "Usage: java GifSequenceWriter [list of gif files] [output file]");
-        }
-    }
+	/**
+	 * Close this GifSequenceWriter object. This does not close the underlying
+	 * stream, just finishes off the GIF.
+	 *
+	 * @throws IOException if there is a problem writing the last bytes.
+	 */
+	public void close() throws IOException {
+		gifWriter.endWriteSequence();
+	}
+
+	public void writeToSequence(RenderedImage img) throws IOException {
+		gifWriter.writeToSequence(new IIOImage(img, null, imageMetaData), imageWriteParam);
+	}
 }

@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -29,6 +28,7 @@ public class HRASParser {
 		HRASModel model = pt.accept(new ProgramVisitor());
 		return model;
 	}
+
 	public HRASModel parse(String s) throws IOException {
 		return parse(new ByteArrayInputStream(s.getBytes()));
 	}

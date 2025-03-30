@@ -1,10 +1,15 @@
 MAIN:
+	symbol WH_EN @2;
+	symbol WH_COM @8;
+	symbol WH_DIR @9;
+	symbol WH_SEL @10;
 	SET1 WH_COM;
 	SET1 WH_DIR;
 	SET1 WH_SEL;
 
 SET0:
 	shared alloc H
+	symbol ACC @0;
 	NAW H;
 	NAR ACC;
 	NAW H;
@@ -21,4 +26,5 @@ WRITE1 A:
 	INV0;
 	
 INV0:
+	symbol ACC @0;
 	NAR ACC;

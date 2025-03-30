@@ -3,32 +3,23 @@
  */
 package de.dralle.som;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Target;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-
-import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
-import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
@@ -38,55 +29,18 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
  *
  */
 public class Compiler {
-	public Compiler() {
-
-	}
-
-	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target) {
-		return findCompilePath(start, target, null);
-	}
-
-	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target, List<SOMFormats> path) {
-		if (path == null) {
-			path = new ArrayList<>();
-		}
-		List<SOMFormats> cPath = new ArrayList<>();
-		if (!path.contains(start)) {
-			path.add(start);
-			cPath.add(start);
-		} else {
-			return null;
-		}
-		if (start != null && start.equals(target)) {
-			return cPath;
-		} else {
-			SOMFormats[] availTargets = ATOMIC_COMPILE_PATHS.get(start);
-			if (availTargets == null) {
-				return null;
-			}
-			for (int i = 0; i < availTargets.length; i++) {
-				SOMFormats somFormats = availTargets[i];
-				List<SOMFormats> ccPathh = findCompilePath(somFormats, target, path);
-				if (ccPathh != null) {
-					cPath.addAll(ccPathh);
-					return cPath;
-				}
-			}
-			return null;
-		}
-	}
-
 	public static final Map<SOMFormats, SOMFormats[]> ATOMIC_COMPILE_PATHS = Stream
 			.of(new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.AB,
 					new SOMFormats[] { SOMFormats.BIN }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.BIN,
-							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE, SOMFormats.B64,SOMFormats.HRAV }),
+							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE, SOMFormats.B64,
+									SOMFormats.HRAV }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAV,
-							new SOMFormats[] { SOMFormats.BIN,SOMFormats.HRAS }),
+							new SOMFormats[] { SOMFormats.BIN, SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
-							new SOMFormats[] { SOMFormats.HRAV,SOMFormats.HRAC }),
+							new SOMFormats[] { SOMFormats.HRAV, SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
-							new SOMFormats[] { SOMFormats.HRAS,SOMFormats.HRBS, SOMFormats.HRAP }),
+							new SOMFormats[] { SOMFormats.HRAS, SOMFormats.HRBS, SOMFormats.HRAP }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAP,
 							new SOMFormats[] { SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRBS,
@@ -98,9 +52,86 @@ public class Compiler {
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.B64,
 							new SOMFormats[] { SOMFormats.BIN }))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-public HRACModel compileHRAS2HRAC(HRASModel m) {
-	return HRACModel.compileFromHRAS(m);
-}
+
+	public Compiler() {
+
+	}
+
+	public IMemspace abStringToMemspace(char[] chars) {
+		List<Boolean> bits = new ArrayList<>();
+		for (int i = 0; i < chars.length; i++) {
+			switch (chars[i]) {
+			case '0':
+				bits.add(false);
+				break;
+			case '1':
+				bits.add(true);
+				break;
+			default:
+				break;
+			}
+
+		}
+		return booleanListToMemspace(bits);
+	}
+
+	public IMemspace abStringToMemspace(String s) {
+		return abStringToMemspace(s.toCharArray());
+	}
+
+	private IMemspace base64String2Memspace(String sourceModel) {
+		byte[] arr = Base64.getDecoder().decode(sourceModel);
+		return new ByteArrayMemspace(arr);
+	}
+
+	public IMemspace booleanListToMemspace(List<Boolean> bits) {
+		ISomMemspace m = new BooleanArrayMemspace(bits.size());
+		for (int i = 0; i < bits.size(); i++) {
+			m.setBit(i, bits.get(i));
+		}
+		int n = m.getN();
+		m.resize((int) Math.pow(2, n), true);
+		return m;
+	}
+
+	public IMemspace byteArrayToMemspace(byte[] byteArray) {
+		ISomMemspace m = new ByteArrayMemspace(byteArray);
+		int n = m.getN();
+		m.resize((int) Math.pow(2, n), true);
+		return m;
+	}
+
+	public byte[] byteListToByteArray(List<Byte> bytes) {
+		byte[] byteArray = new byte[bytes.size()];
+		for (int i = 0; i < byteArray.length; i++) {
+			byteArray[i] = bytes.get(i);
+		}
+		return byteArray;
+	}
+
+	public IMemspace byteListToMemspace(List<Byte> bytes) {
+		return byteArrayToMemspace(byteListToByteArray(bytes));
+	}
+
+	/**
+	 * This version of a compile method will try to automatically determine the
+	 * correct source model type.
+	 * 
+	 * @param <T>
+	 * @param sourceModel
+	 * @param targetFormat
+	 * @return
+	 */
+	public <T> T compile(Object sourceModel, SOMFormats targetFormat) {
+		SOMFormats sourceFormat = null;
+		for (SOMFormats iterable_element : SOMFormats.values()) {
+			if (sourceModel.getClass().isAssignableFrom(iterable_element.getInternalClazz().getClass())) {
+				sourceFormat = iterable_element;
+			}
+		}
+		return compile(sourceModel, sourceFormat, targetFormat);
+	}
+
 	public <T> T compile(Object sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		List<SOMFormats> cPath = findCompilePath(sourceFormat, targetFormat);
 		if (cPath == null || cPath.size() == 0) {
@@ -121,37 +152,23 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 			return (T) somModel;
 		}
 	}
-	/**
-	 * This version of a compile method will try to automatically determine the correct source model type.
-	 * @param <T>
-	 * @param sourceModel
-	 * @param targetFormat
-	 * @return
-	 */
-	public <T> T compile(Object sourceModel ,SOMFormats targetFormat) {
-		SOMFormats sourceFormat = null;
-		for (SOMFormats iterable_element : SOMFormats.values()) {
-			if(sourceModel.getClass().isAssignableFrom(iterable_element.getInternalClazz().getClass())) {
-				sourceFormat=iterable_element;
-			}
-		}
-		return compile(sourceModel, sourceFormat, targetFormat);
-	}
 
-	public <S,T> T compileDirect(S sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
+	public <S, T> T compileDirect(S sourceModel, SOMFormats sourceFormat, SOMFormats targetFormat) {
 		if (sourceFormat.equals(SOMFormats.HRBS) && targetFormat.equals(SOMFormats.HRAC)) {
 			return (T) compileHRBStoHRAC((HRBSModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAS)) {
 			return (T) compileHRACtoHRAS((HRACModel) sourceModel);
-		}if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRBS)) {
+		}
+		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRBS)) {
 			return (T) compileHRAC2HRBS((HRACModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAC) && targetFormat.equals(SOMFormats.HRAP)) {
 			return (T) compileHRAC2HRAP((HRACModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAP) && targetFormat.equals(SOMFormats.HRAC)) {
-			return (T) ((HRACModel) sourceModel); //no compilation needed. HRAP is no language in itself, but a modified ("precompiled") version of HRAC
+			return (T) ((HRACModel) sourceModel); // no compilation needed. HRAP is no language in itself, but a
+													// modified ("precompiled") version of HRAC
 		}
 		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
 			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
@@ -195,86 +212,34 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 		return null;
 	}
 
-	private HRBSModel compileHRAC2HRBS(HRACModel sourceModel) {
-		return HRBSModel.compileFromHRAC(sourceModel, "MAIN");
-	}
 	private HRACModel compileHRAC2HRAP(HRACModel sourceModel) {
 		HRACModel clone = sourceModel.clone();
 		clone.precompile("", new HashMap<>(), true);
 		return clone;
 	}
 
-	private String memspace2Base64String(IMemspace sourceModel) {
-		byte[] data = memspaceToByteArray(sourceModel);
-		return new String(Base64.getEncoder().encode(data));
-	}
-
-	private IMemspace base64String2Memspace(String sourceModel) {
-		byte[] arr = Base64.getDecoder().decode(sourceModel);
-		return new ByteArrayMemspace(arr);
-	}
-
-	private IMemspace Image2Memspace(RenderedImage sourceModel) {
-		byte[] arr = Util.image2ByteArray(sourceModel);
-		ByteArrayMemspace mem = new ByteArrayMemspace(arr);
-		return mem;
-	}
-
-	private RenderedImage memspace2Image(IMemspace sourceModel) {
-		byte[] data = memspaceToByteArray(sourceModel);
-		return Util.byteArray2Image(data);
-	}
-
-	public HRACModel compileHRBStoHRAC(HRBSModel m) {
-		return m.compileToHRAC("GL", null, "HRBS_START");
+	private HRBSModel compileHRAC2HRBS(HRACModel sourceModel) {
+		return HRBSModel.compileFromHRAC(sourceModel, "MAIN");
 	}
 
 	public HRASModel compileHRACtoHRAS(HRACModel m) {
 		return m.compileToHRAS();
 	}
+
+	public HRACModel compileHRAS2HRAC(HRASModel m) {
+		return HRACModel.compileFromHRAS(m);
+	}
+
 	public HRAVModel compileHRAStoHRAV(HRASModel m) {
 		return m.compileToHRAV();
-	}
-	public IMemspace abStringToMemspace(String s) {
-		return abStringToMemspace(s.toCharArray());
 	}
 
 	public IMemspace compileHRAVtoMemspace(HRAVModel model) {
 		return model.compileToMemspace();
 	}
 
-	public String memSpaceToABString(IMemspace memspace) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < memspace.getSize(); i++) {
-			sb.append(memspace.getBit(i) ? '1' : '0');
-		}
-		return sb.toString();
-	}
-
-	public byte[] compressMemspace(IMemspace memspace) {
-		ByteArrayMemspace bam = null;
-		if (memspace instanceof ByteArrayMemspace) {
-			bam = (ByteArrayMemspace) memspace;
-		} else {
-			bam = new ByteArrayMemspace();
-			bam.copy(memspace);
-		}
-		byte[] unc = bam.getUnderlyingByteArray();
-		// Create a ByteArrayOutputStream to write the compressed data to
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
-		ZipEntry entry = new ZipEntry("BIN");
-		entry.setSize(unc.length);
-		try {
-			zos.putNextEntry(entry);
-			zos.write(unc);
-			zos.closeEntry();
-			zos.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return baos.toByteArray();
+	public HRACModel compileHRBStoHRAC(HRBSModel m) {
+		return m.compileToHRAC("GL", null, "HRBS_START");
 	}
 
 	public IMemspace compressedArrayToMemspace(byte[] content) {
@@ -310,51 +275,88 @@ public HRACModel compileHRAS2HRAC(HRASModel m) {
 
 	}
 
-	public IMemspace booleanListToMemspace(List<Boolean> bits) {
-		ISomMemspace m = new BooleanArrayMemspace(bits.size());
-		for (int i = 0; i < bits.size(); i++) {
-			m.setBit(i, bits.get(i));
+	public byte[] compressMemspace(IMemspace memspace) {
+		ByteArrayMemspace bam = null;
+		if (memspace instanceof ByteArrayMemspace) {
+			bam = (ByteArrayMemspace) memspace;
+		} else {
+			bam = new ByteArrayMemspace();
+			bam.copy(memspace);
 		}
-		int n = m.getN();
-		m.resize((int) Math.pow(2, n), true);
-		return m;
+		byte[] unc = bam.getUnderlyingByteArray();
+		// Create a ByteArrayOutputStream to write the compressed data to
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ZipOutputStream zos = new ZipOutputStream(baos);
+		ZipEntry entry = new ZipEntry("BIN");
+		entry.setSize(unc.length);
+		try {
+			zos.putNextEntry(entry);
+			zos.write(unc);
+			zos.closeEntry();
+			zos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return baos.toByteArray();
 	}
 
-	public IMemspace abStringToMemspace(char[] chars) {
-		List<Boolean> bits = new ArrayList<>();
-		for (int i = 0; i < chars.length; i++) {
-			switch (chars[i]) {
-			case '0':
-				bits.add(false);
-				break;
-			case '1':
-				bits.add(true);
-				break;
-			default:
-				break;
+	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target) {
+		return findCompilePath(start, target, null);
+	}
+
+	public List<SOMFormats> findCompilePath(SOMFormats start, SOMFormats target, List<SOMFormats> path) {
+		if (path == null) {
+			path = new ArrayList<>();
+		}
+		List<SOMFormats> cPath = new ArrayList<>();
+		if (!path.contains(start)) {
+			path.add(start);
+			cPath.add(start);
+		} else {
+			return null;
+		}
+		if (start != null && start.equals(target)) {
+			return cPath;
+		} else {
+			SOMFormats[] availTargets = ATOMIC_COMPILE_PATHS.get(start);
+			if (availTargets == null) {
+				return null;
 			}
-
+			for (int i = 0; i < availTargets.length; i++) {
+				SOMFormats somFormats = availTargets[i];
+				List<SOMFormats> ccPathh = findCompilePath(somFormats, target, path);
+				if (ccPathh != null) {
+					cPath.addAll(ccPathh);
+					return cPath;
+				}
+			}
+			return null;
 		}
-		return booleanListToMemspace(bits);
 	}
 
-	public IMemspace byteListToMemspace(List<Byte> bytes) {
-		return byteArrayToMemspace(byteListToByteArray(bytes));
+	private IMemspace Image2Memspace(RenderedImage sourceModel) {
+		byte[] arr = Util.image2ByteArray(sourceModel);
+		ByteArrayMemspace mem = new ByteArrayMemspace(arr);
+		return mem;
 	}
 
-	public byte[] byteListToByteArray(List<Byte> bytes) {
-		byte[] byteArray = new byte[bytes.size()];
-		for (int i = 0; i < byteArray.length; i++) {
-			byteArray[i] = bytes.get(i);
+	private String memspace2Base64String(IMemspace sourceModel) {
+		byte[] data = memspaceToByteArray(sourceModel);
+		return new String(Base64.getEncoder().encode(data));
+	}
+
+	private RenderedImage memspace2Image(IMemspace sourceModel) {
+		byte[] data = memspaceToByteArray(sourceModel);
+		return Util.byteArray2Image(data);
+	}
+
+	public String memSpaceToABString(IMemspace memspace) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < memspace.getSize(); i++) {
+			sb.append(memspace.getBit(i) ? '1' : '0');
 		}
-		return byteArray;
-	}
-
-	public IMemspace byteArrayToMemspace(byte[] byteArray) {
-		ISomMemspace m = new ByteArrayMemspace(byteArray);
-		int n = m.getN();
-		m.resize((int) Math.pow(2, n), true);
-		return m;
+		return sb.toString();
 	}
 
 	public byte[] memspaceToByteArray(IMemspace memspace) {

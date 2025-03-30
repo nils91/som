@@ -9,22 +9,29 @@ package de.dralle.som;
  */
 public abstract class AbstractSomMemspace implements ISomMemspace {
 
-	
-
 	@Override
-	public int getAccumulatorAddress() {
-		return ACC_ADDRESS;
+	public void clearAdrEval() {
+		setAdrEval(false);
 	}
 
 	@Override
 	public abstract AbstractSomMemspace clone();
-		
+
+	@Override
+	public void copy(IMemspace from) {
+		for (int i = 0; i < from.getSize(); i++) {
+			if (i < getSize()) {
+				setBit(i, from.getBit(i));
+			}
+		}
+	}
+
 	public boolean equalContent(IMemspace obj) {
-		if(obj instanceof IMemspace) {
-			IMemspace cTo = (IMemspace)obj;
-			if(getSize()==cTo.getSize()) {
+		if (obj instanceof IMemspace) {
+			IMemspace cTo = (IMemspace) obj;
+			if (getSize() == cTo.getSize()) {
 				for (int i = 0; i < getSize(); i++) {
-					if(getBit(i)!=cTo.getBit(i)) {
+					if (getBit(i) != cTo.getBit(i)) {
 						return false;
 					}
 				}
@@ -35,37 +42,8 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
-	public void copy(IMemspace from) {
-		for (int i = 0; i < from.getSize(); i++) {
-			if(i<getSize()) {
-				setBit(i, from.getBit(i));
-			}
-		}		
-	}
-
-	@Override
-	public int getAdrEvalAddress() {
-		return ADR_EVAL_ADDRESS;
-	}
-
-	@Override
-	public int getWriteHookEnabledAddress() {
-		return WH_EN;
-	}
-
-	@Override
-	public int getWriteHookDirectionAddress() {
-		return WH_DIR;
-	}
-
-	@Override
-	public int getWriteHookCommunicationAddress() {
-		return WH_COM;
-	}
-
-	@Override
-	public int getWriteHookSelectAddress() {
-		return WH_SEL;
+	public int getAccumulatorAddress() {
+		return ACC_ADDRESS;
 	}
 
 	@Override
@@ -74,89 +52,13 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
-	public void setAccumulatorValue(boolean value) {
-		setBit(getAccumulatorAddress(), value);
+	public int getAdrEvalAddress() {
+		return ADR_EVAL_ADDRESS;
 	}
 
 	@Override
-	public boolean isAdrEvalSet() {
-		return getBit(getAdrEvalAddress());
-	}
-
-	@Override
-	public void setAdrEval(boolean value) {
-		setBit(getAdrEvalAddress(), value);
-	}
-
-	@Override
-	public void setAdrEval() {
-		setAdrEval(true);
-	}
-
-	@Override
-	public void clearAdrEval() {
-		setAdrEval(false);
-	}
-
-	@Override
-	public boolean isWriteHookEnabled() {
-		return getBit(getWriteHookEnabledAddress());
-	}
-
-	@Override
-	public boolean getWriteHookCommunicationBit() {
-		return getBit(getWriteHookCommunicationAddress());
-	}
-
-	@Override
-	public void setWriteHookCommunicationBit(boolean value) {
-		setBit(getWriteHookCommunicationAddress(), value);		
-	}
-
-	@Override
-	public void setWriteHookDirectionBit(boolean value) {
-		setBit(getWriteHookDirectionAddress(), value);		
-	}
-
-	@Override
-	public boolean isWriteHookReadmode() {
-		return !getBit(getWriteHookDirectionAddress());
-	}
-
-	@Override
-	public boolean isWriteHookWritemode() {
-		return getBit(getWriteHookDirectionAddress());
-	}
-
-	@Override
-	public boolean isWriteHookSelected() {
-		return getBit(getWriteHookSelectAddress());
-	}
-
-	@Override
-	public boolean isWriteHookSwitchmodeSelected() {
-		return !getBit(getWriteHookSelectAddress());
-	}
-
-	@Override
-	public int getN() {
-		return getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START+ADDRESS_SIZE_BIT_COUNT)+ADDRESS_SIZE_OFFSET;
-	}
-
-	@Override
-	public void setN(int n) {
-		setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START+ADDRESS_SIZE_BIT_COUNT, n-ADDRESS_SIZE_OFFSET);
-		}
-
-	@Override
-	public int getNextAddress() {
-		return getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + getN());
-	}
-
-	@Override
-	public void setNextAddress(int address) {
-		setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START+getN(), address);
-
+	public int getBitsUnsigned(int lowerBound, int n) {
+		return getBitsUnsignedBounds(lowerBound, lowerBound + n);
 	}
 
 	@Override
@@ -173,6 +75,93 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
+	public int getN() {
+		return getBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START + ADDRESS_SIZE_BIT_COUNT)
+				+ ADDRESS_SIZE_OFFSET;
+	}
+
+	@Override
+	public int getNextAddress() {
+		return getBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + getN());
+	}
+
+	@Override
+	public int getWriteHookCommunicationAddress() {
+		return WH_COM;
+	}
+
+	@Override
+	public boolean getWriteHookCommunicationBit() {
+		return getBit(getWriteHookCommunicationAddress());
+	}
+
+	@Override
+	public int getWriteHookDirectionAddress() {
+		return WH_DIR;
+	}
+
+	@Override
+	public int getWriteHookEnabledAddress() {
+		return WH_EN;
+	}
+
+	@Override
+	public int getWriteHookSelectAddress() {
+		return WH_SEL;
+	}
+
+	@Override
+	public boolean isAdrEvalSet() {
+		return getBit(getAdrEvalAddress());
+	}
+
+	@Override
+	public boolean isWriteHookEnabled() {
+		return getBit(getWriteHookEnabledAddress());
+	}
+
+	@Override
+	public boolean isWriteHookReadmode() {
+		return !getBit(getWriteHookDirectionAddress());
+	}
+
+	@Override
+	public boolean isWriteHookSelected() {
+		return getBit(getWriteHookSelectAddress());
+	}
+
+	@Override
+	public boolean isWriteHookSwitchmodeSelected() {
+		return !getBit(getWriteHookSelectAddress());
+	}
+
+	@Override
+	public boolean isWriteHookWritemode() {
+		return getBit(getWriteHookDirectionAddress());
+	}
+
+	@Override
+	public void setAccumulatorValue(boolean value) {
+		setBit(getAccumulatorAddress(), value);
+	}
+
+	@Override
+	public void setAdrEval() {
+		setAdrEval(true);
+	}
+
+	@Override
+	public void setAdrEval(boolean value) {
+		setBit(getAdrEvalAddress(), value);
+	}
+
+	@Override
+	public void setBitsUnsigned(int lowerBound, int n, int value) {
+		setBitsUnsignedBounds(lowerBound, lowerBound + n, value);
+
+	}
+
+	@Override
 	public void setBitsUnsignedBounds(int lowerBound, int upperBound, int value) {
 		int bits = upperBound - lowerBound;
 		for (int i = 0; i < bits; i++) {
@@ -185,14 +174,24 @@ public abstract class AbstractSomMemspace implements ISomMemspace {
 	}
 
 	@Override
-	public int getBitsUnsigned(int lowerBound, int n) {
-		return getBitsUnsignedBounds(lowerBound, lowerBound + n);
+	public void setN(int n) {
+		setBitsUnsignedBounds(ADDRESS_SIZE_START, ADDRESS_SIZE_START + ADDRESS_SIZE_BIT_COUNT, n - ADDRESS_SIZE_OFFSET);
 	}
 
 	@Override
-	public void setBitsUnsigned(int lowerBound, int n, int value) {
-		setBitsUnsignedBounds(lowerBound, lowerBound + n, value);
+	public void setNextAddress(int address) {
+		setBitsUnsignedBounds(START_ADDRESS_START, START_ADDRESS_START + getN(), address);
 
+	}
+
+	@Override
+	public void setWriteHookCommunicationBit(boolean value) {
+		setBit(getWriteHookCommunicationAddress(), value);
+	}
+
+	@Override
+	public void setWriteHookDirectionBit(boolean value) {
+		setBit(getWriteHookDirectionAddress(), value);
 	}
 
 }

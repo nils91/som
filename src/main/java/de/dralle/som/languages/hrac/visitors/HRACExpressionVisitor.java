@@ -1,6 +1,5 @@
 package de.dralle.som.languages.hrac.visitors;
 
-
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Absolute_exprContext;
@@ -25,84 +24,32 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpre
 import de.dralle.som.languages.hrac.model.expressiontree.HRACNegationExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACPlusExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode;
-import de.dralle.som.languages.hras.generated.HRASGrammarParser.Signed_integerContext;
 
-public class HRACExpressionVisitor extends HRACGrammarBaseVisitor<de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode>{
-
-	@Override
-	public HRACAbstractExpressionNode visitPrimary_expr(Primary_exprContext ctx) {
-		return ctx.additive_expr().accept(this);
-	}
-
-	@Override
-	public HRACAbstractExpressionNode visitAdditive_expr(Additive_exprContext ctx) {
-		HRACAbstractExpressionNode child1 = ctx.multiplicative_expr().accept(this);
-		HRACAbstractExpressionNode child0 = null;
-		if(ctx.additive_expr()!=null) {
-			child0=ctx.additive_expr().accept(this);
-			if(ctx.PLUS()!=null) {
-				return new HRACPlusExpressionNode(child0,child1);
-			}else if(ctx.DASH()!=null) {
-				return new HRACMinusExpressionNode(child0,child1);
-			}
-		}
-		return child1;
-	}
-
-	@Override
-	public HRACAbstractExpressionNode visitMultiplicative_expr(Multiplicative_exprContext ctx) {
-		HRACAbstractExpressionNode child1 = ctx.power_expr().accept(this);
-		HRACAbstractExpressionNode child0 = null;
-		if(ctx.multiplicative_expr()!=null) {
-			child0=ctx.multiplicative_expr().accept(this);
-			if(ctx.MUL()!=null) {
-				return new HRACMultiplicationExpressionNode(child0,child1);
-			}else if(ctx.DIV()!=null) {
-				return new HRACDivisionExpressionNode(child0,child1);
-			}else if(ctx.MOD()!=null) {
-				return new HRACModuloExpressionNode(child0,child1);
-			}
-		}
-		return child1;
-	}
-
-	@Override
-	public HRACAbstractExpressionNode visitPower_expr(Power_exprContext ctx) {
-		HRACAbstractExpressionNode child0 = ctx.factorial_expr().accept(this);
-		HRACAbstractExpressionNode child1 = null;
-		if(ctx.power_expr()!=null) {
-			child1=ctx.power_expr().accept(this);
-				return new HRACPowerExpressionNode(child0,child1);
-			
-		}
-		return child0;
-	}
-
-	@Override
-	public HRACAbstractExpressionNode visitFactorial_expr(Factorial_exprContext ctx) {
-		HRACAbstractExpressionNode child0 = ctx.absolute_expr().accept(this);
-		if(ctx.EXCL()!=null) {
-			return new HRACFactorialExpressionNode(child0);
-		}
-		return child0;
-	}
+public class HRACExpressionVisitor
+		extends HRACGrammarBaseVisitor<de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode> {
 
 	@Override
 	public HRACAbstractExpressionNode visitAbsolute_expr(Absolute_exprContext ctx) {
 		HRACAbstractExpressionNode child0 = ctx.par_expr().accept(this);
-		if(ctx.PIPE()!=null&&ctx.PIPE().size()==2) {
+		if (ctx.PIPE() != null && ctx.PIPE().size() == 2) {
 			return new HRACAbsoluteExpressionNode(child0);
 		}
 		return child0;
 	}
 
 	@Override
-	public HRACAbstractExpressionNode visitSigned_integer_or_directive(Signed_integer_or_directiveContext ctx) {
-		HRACAbstractExpressionNode childNode = ctx.integer_or_directive().accept(this);
-		if(ctx.DASH()!=null) {
-			return new HRACNegationExpressionNode(childNode);
+	public HRACAbstractExpressionNode visitAdditive_expr(Additive_exprContext ctx) {
+		HRACAbstractExpressionNode child1 = ctx.multiplicative_expr().accept(this);
+		HRACAbstractExpressionNode child0 = null;
+		if (ctx.additive_expr() != null) {
+			child0 = ctx.additive_expr().accept(this);
+			if (ctx.PLUS() != null) {
+				return new HRACPlusExpressionNode(child0, child1);
+			} else if (ctx.DASH() != null) {
+				return new HRACMinusExpressionNode(child0, child1);
+			}
 		}
-		return childNode;
+		return child1;
 	}
 
 	@Override
@@ -111,23 +58,76 @@ public class HRACExpressionVisitor extends HRACGrammarBaseVisitor<de.dralle.som.
 	}
 
 	@Override
+	public HRACAbstractExpressionNode visitFactorial_expr(Factorial_exprContext ctx) {
+		HRACAbstractExpressionNode child0 = ctx.absolute_expr().accept(this);
+		if (ctx.EXCL() != null) {
+			return new HRACFactorialExpressionNode(child0);
+		}
+		return child0;
+	}
+
+	@Override
 	public HRACAbstractExpressionNode visitInteger_or_directive(Integer_or_directiveContext ctx) {
-		if(ctx.INT()!=null) {
+		if (ctx.INT() != null) {
 			return new HRACIntegerNode(Util.decodeInt(ctx.INT().getText()));
-		}else if(ctx.directive_access()!=null) {
+		} else if (ctx.directive_access() != null) {
 			return ctx.directive_access().accept(this);
-		}return null;
+		}
+		return null;
+	}
+
+	@Override
+	public HRACAbstractExpressionNode visitMultiplicative_expr(Multiplicative_exprContext ctx) {
+		HRACAbstractExpressionNode child1 = ctx.power_expr().accept(this);
+		HRACAbstractExpressionNode child0 = null;
+		if (ctx.multiplicative_expr() != null) {
+			child0 = ctx.multiplicative_expr().accept(this);
+			if (ctx.MUL() != null) {
+				return new HRACMultiplicationExpressionNode(child0, child1);
+			} else if (ctx.DIV() != null) {
+				return new HRACDivisionExpressionNode(child0, child1);
+			} else if (ctx.MOD() != null) {
+				return new HRACModuloExpressionNode(child0, child1);
+			}
+		}
+		return child1;
 	}
 
 	@Override
 	public HRACAbstractExpressionNode visitPar_expr(Par_exprContext ctx) {
-		if(ctx.signed_integer_or_directive()!=null) {
+		if (ctx.signed_integer_or_directive() != null) {
 			return ctx.signed_integer_or_directive().accept(this);
 		}
-		if(ctx.primary_expr()!=null) {
+		if (ctx.primary_expr() != null) {
 			return ctx.primary_expr().accept(this);
 		}
 		return null;
+	}
+
+	@Override
+	public HRACAbstractExpressionNode visitPower_expr(Power_exprContext ctx) {
+		HRACAbstractExpressionNode child0 = ctx.factorial_expr().accept(this);
+		HRACAbstractExpressionNode child1 = null;
+		if (ctx.power_expr() != null) {
+			child1 = ctx.power_expr().accept(this);
+			return new HRACPowerExpressionNode(child0, child1);
+
+		}
+		return child0;
+	}
+
+	@Override
+	public HRACAbstractExpressionNode visitPrimary_expr(Primary_exprContext ctx) {
+		return ctx.additive_expr().accept(this);
+	}
+
+	@Override
+	public HRACAbstractExpressionNode visitSigned_integer_or_directive(Signed_integer_or_directiveContext ctx) {
+		HRACAbstractExpressionNode childNode = ctx.integer_or_directive().accept(this);
+		if (ctx.DASH() != null) {
+			return new HRACNegationExpressionNode(childNode);
+		}
+		return childNode;
 	}
 
 }

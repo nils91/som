@@ -1,0 +1,5 @@
+alloc A[2];
+for [0:1;1] dup:
+{
+	LBL: NAR A[$i];
+}

@@ -1,0 +1,6 @@
+MAIN:
+	symbol A @0;
+symbol B A[3^2];
+symbol C B[-9];
+NAR A;
+NAR C;

@@ -8,6 +8,7 @@ package de.dralle.som;
  *
  */
 public interface IHeap {
-	void setHeapSize(int cnt);
 	int getHeapSize();
+
+	void setHeapSize(int cnt);
 }

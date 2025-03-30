@@ -20,23 +20,40 @@ public class HRAVProgramVisitor extends HRAVGrammarBaseVisitor<HRAVModel> {
 	private HRAVModel model;
 
 	@Override
+	public HRAVModel visitDirective(DirectiveContext ctx) {
+		if (ctx.number() != null) {
+			int address = ctx.number().accept(new HRAVNumberVisitor());
+			if (ctx.START() != null) {
+				model.setStartAdress(address);
+				model.setStartAddressExplicit(true);
+				model.setNextCommandAddress(address);
+			} else if (ctx.CONT() != null) {
+				model.setNextCommandAddress(address);
+			} else if (ctx.D_N() != null) {
+				model.setN(address);
+			}
+		}
+		return model;
+	}
+
+	@Override
 	public HRAVModel visitLine(LineContext ctx) {
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
 		} else if (ctx.command() != null) {
 			HRAVCommand c = ctx.command().accept(new HRAVCommandVisitor());
 			model.addCommand(c);
-		} else if(ctx.oti()!=null) {
+		} else if (ctx.oti() != null) {
 			ctx.oti().accept(this);
 		}
 		return model;
-	}	
+	}
 
 	@Override
 	public HRAVModel visitOti(OtiContext ctx) {
-		if(ctx.OTI_CLEAR()!=null) {
+		if (ctx.OTI_CLEAR() != null) {
 			model.addInitOnceAddress(ctx.number().accept(new HRAVNumberVisitor()), false);
-		}else { //setonce
+		} else { // setonce
 			model.addInitOnceAddress(ctx.number().accept(new HRAVNumberVisitor()), true);
 		}
 		return model;
@@ -47,23 +64,6 @@ public class HRAVProgramVisitor extends HRAVGrammarBaseVisitor<HRAVModel> {
 		model = new HRAVModel();
 		for (LineContext line : ctx.line()) {
 			line.accept(this);
-		}
-		return model;
-	}
-
-	@Override
-	public HRAVModel visitDirective(DirectiveContext ctx) {
-		if (ctx.number() != null) {
-			int address = ctx.number().accept(new HRAVNumberVisitor());
-			if (ctx.START() != null) {
-				model.setStartAdress(address);
-				model.setStartAddressExplicit(true);
-				model.setNextCommandAddress(address);
-			} else if (ctx.CONT() != null) {
-				model.setNextCommandAddress(address);
-			}else if(ctx.D_N()!=null) {
-				model.setN(address);
-			}
 		}
 		return model;
 	}

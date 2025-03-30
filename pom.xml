@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 
 	<modelVersion>4.0.0</modelVersion>
@@ -18,7 +20,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.4.1</version>
 				<executions>
 					<execution>
 						<id>remove-generated-mvn-properties</id>
@@ -31,7 +33,8 @@
 								<fileset>
 									<directory>${project.mainResourceFolder}</directory>
 									<includes>
-										<include>${maven.properties.out.file.name}</include>
+										<include>
+											${maven.properties.out.file.name}</include>
 									</includes>
 								</fileset>
 							</filesets>
@@ -42,7 +45,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
@@ -65,7 +68,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Build executable jar. Executable will be under target/ and have suffix 
+			<!-- Build executable jar. Executable will be under target/ and have
+			suffix 
 				'-shaded' -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -77,9 +81,11 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached> <!-- Add all dependencies -->
+							<shadedArtifactAttached>true</shadedArtifactAttached> <!--
+							Add all dependencies -->
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>de.dralle.som.Main</mainClass>
 								</transformer>
 							</transformers>
@@ -90,7 +96,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.2</version>
+				<version>3.2.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.antlr</groupId>
@@ -151,11 +157,12 @@
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		<junit.jupiter.version>5.11.3</junit.jupiter.version>
+		<junit.jupiter.version>5.12.1</junit.jupiter.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainResourceFolder>src/main/resources</project.mainResourceFolder>
 		<maven.properties.file.out.name>maven.properties</maven.properties.file.out.name>
-		<maven.properties.file.out.fullPath>${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
+		<maven.properties.file.out.fullPath>
+			${project.mainResourceFolder}/${maven.properties.file.out.name}</maven.properties.file.out.fullPath>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>${project.version}</project.version>
 		<antlr.version>4.13.2</antlr.version>

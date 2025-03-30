@@ -37,13 +37,15 @@ import de.dralle.som.SOMBitcodeRunner;
  *
  */
 class FormatsAbAndBinEquivalencyTests {
-	private Compiler c;
-	private FileLoader f;
-
 	private static Path tmpPath;
 	private static Path tmpPathWithAB;
+
 	private static Path tmpPathWithBIN;
 	private static Path testFixturesABPath;
+
+	private static Stream<File> filesABFixturesInFolder() {
+		return Stream.of(testFixturesABPath.toFile().listFiles());
+	}
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -59,6 +61,10 @@ class FormatsAbAndBinEquivalencyTests {
 		tmpPathWithBIN.toFile().delete();
 	}
 
+	private Compiler c;
+
+	private FileLoader f;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		c = new Compiler();
@@ -71,40 +77,6 @@ class FormatsAbAndBinEquivalencyTests {
 		for (int i = 0; i < binFiles.length; i++) {
 			File file = binFiles[i];
 			file.delete();
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
-	void testLoadSuccess(File file) throws IOException {
-		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			assertNotNull(m);
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
-	void testConvertSuccess(File file) throws IOException {
-		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			byte[] ba = c.memspaceToByteArray(m);
-			IMemspace nm = c.byteArrayToMemspace(ba);
-			assertNotNull(nm);
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
-	void testConvertSuccessContentEqual(File file) throws IOException {
-		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			byte[] ba = c.memspaceToByteArray(m);
-			IMemspace nm = c.byteArrayToMemspace(ba);
-			assertTrue(m.equalContent(nm));
 		}
 	}
 
@@ -130,19 +102,6 @@ class FormatsAbAndBinEquivalencyTests {
 			f.writeBinaryFile(m, Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
 			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
 			assertNotNull(nm);
-		}
-	}
-
-	@ParameterizedTest
-	@MethodSource("filesABFixturesInFolder")
-	void testConvertAndWriteSuccessLoadSuccessContenEqual(File file) throws IOException {
-		String fileName = file.getName();
-		if (fileName.endsWith("ab")) {
-			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
-			String newFileName = fileName + ".bin";
-			f.writeBinaryFile(m, Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
-			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
-			assertTrue(m.equalContent(nm));
 		}
 	}
 
@@ -177,8 +136,51 @@ class FormatsAbAndBinEquivalencyTests {
 		}
 	}
 
-	private static Stream<File> filesABFixturesInFolder() {
-		return Stream.of(testFixturesABPath.toFile().listFiles());
+	@ParameterizedTest
+	@MethodSource("filesABFixturesInFolder")
+	void testConvertAndWriteSuccessLoadSuccessContenEqual(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("ab")) {
+			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+			String newFileName = fileName + ".bin";
+			f.writeBinaryFile(m, Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
+			IMemspace nm = f.loadBinaryFile(Paths.get(tmpPathWithBIN.toString(), newFileName).toString());
+			assertTrue(m.equalContent(nm));
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("filesABFixturesInFolder")
+	void testConvertSuccess(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("ab")) {
+			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+			byte[] ba = c.memspaceToByteArray(m);
+			IMemspace nm = c.byteArrayToMemspace(ba);
+			assertNotNull(nm);
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("filesABFixturesInFolder")
+	void testConvertSuccessContentEqual(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("ab")) {
+			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+			byte[] ba = c.memspaceToByteArray(m);
+			IMemspace nm = c.byteArrayToMemspace(ba);
+			assertTrue(m.equalContent(nm));
+		}
+	}
+
+	@ParameterizedTest
+	@MethodSource("filesABFixturesInFolder")
+	void testLoadSuccess(File file) throws IOException {
+		String fileName = file.getName();
+		if (fileName.endsWith("ab")) {
+			IMemspace m = f.loadAsciiBinaryFile(file.getPath());
+			assertNotNull(m);
+		}
 	}
 
 }

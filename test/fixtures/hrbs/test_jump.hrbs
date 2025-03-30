@@ -3,7 +3,8 @@ import SET1;
 import READ1;
 import INV0;
 import JUMPADR1;
-import JUMPTARGET0;
+import JUMPTARGET0; 
+import NOOP0;
 
 MAIN:
 	alloc F;

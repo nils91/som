@@ -8,14 +8,17 @@ MAIN:
 CMD1:
 ;n=9
 ;heap=10
+	symbol ACC @0;
 	NAR ACC;
 	
 CMD2:
 ;n=11
 ;heap=7
+	symbol ACC @0;
 	NAR ACC;
 	
 CMD3:
 ;n=10
 ;heap=15
+	symbol ACC @0;
 	NAR ACC;

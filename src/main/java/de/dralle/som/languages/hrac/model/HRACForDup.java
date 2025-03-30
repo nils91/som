@@ -18,31 +18,52 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
  */
 public class HRACForDup implements ISetN, IHeap, Cloneable {
 	private static int runId;
-	private int id;
-	public int getId() {
-		return id;
+
+	public static <V, K> void putNoOverwrite(Map<K, V> src, Map<K, V> tgt) {
+		if (src != null) {
+			if (tgt != null) {
+				for (Entry<K, V> entry : src.entrySet()) {
+					K key = entry.getKey();
+					V val = entry.getValue();
+					tgt.putIfAbsent(key, val);
+
+				}
+			}
+		}
 	}
+
+	private int id;
 
 	private HRACModel parent;
 
-	public HRACModel getModel() {
-		return model;
-	}
-
-	public void setModel(HRACModel model) {
-		this.model = model;
-	}
-
-	public HRACCommand getCmd() {
-		return cmd;
-	}
-
-	public void setCmd(HRACCommand cmd) {
-		this.cmd = cmd;
-	}
-
 	private IHRACRangeProvider range = null;
+
 	private HRACModel model = null;
+
+	private HRACCommand cmd = null;
+
+	public HRACForDup() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public HRACForDup(HRACCommand cmd) {
+		super();
+		this.cmd = cmd;
+		id = runId++;
+	}
+
+	public String asCode() {
+		if (cmd != null) {
+			if (range != null) {
+				return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), cmd.asCode());
+			}
+			return cmd.asCode();
+		}
+		if (model != null) {
+			return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
+		}
+		return "";
+	}
 
 	@Override
 	protected HRACForDup clone() {
@@ -56,104 +77,47 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		if (cmd != null) {
 			clone.cmd = cmd.clone();
 		}
-		if(model!=null) {
-			clone.model=model.clone();
+		if (model != null) {
+			clone.model = model.clone();
 		}
-		if(range!=null) {
-			clone.range= range.clone();
+		if (range != null) {
+			clone.range = range.clone();
 		}
 		return clone;
 	}
 
-	private HRACCommand cmd = null;
+	/**
+	 * Only returns the contained command. use getPrecompile to get all resolved
+	 * 
+	 * @return
+	 */
+	public HRACCommand getCmd() {
+		return cmd;
+	}
 
-	
-	public static <V, K> void putNoOverwrite(Map<K, V> src, Map<K, V> tgt) {
-		if (src != null) {
-			if (tgt != null) {
-				for (Entry<K, V> entry : src.entrySet()) {
-					K key = entry.getKey();
-					V val = entry.getValue();
-					tgt.putIfAbsent(key, val);
-
+	public int getCommandCountRecursive(int n) {
+		int cnt = 0;
+		if (range == null) {
+			if (cmd != null) {
+				cnt += 1;
+			}
+			if (model != null) {
+				cnt += model.getCommandCount(n);
+			}
+		} else {
+			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			if (cmd != null) {
+				cnt += rng.length;
+			}
+			if (model != null) {
+				for (int i = 0; i < rng.length; i++) {
+					HRACAbstractExpressionNode j = rng[i];
+					model.addAddDirective(range.getRunningDirectiveName(), j);
+					cnt += model.getCommandCount(n);
 				}
 			}
 		}
-	}
-/**
- * Note: Not Recursive on purpose. Change Commad targets during compile. FixedMemoryAddresses do not need to be changed.
- * @param symbolNameReplacementMap
- */
-	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {
-		if(cmd!=null) {
-			AbstractHRACMemoryAddress ma = cmd.getTarget();			
-			if(ma instanceof NamedHRACMemoryAddress) {
-				String name=((NamedHRACMemoryAddress) ma).getName();
-				String resolvedNamed = symbolNameReplacementMap.getOrDefault(name, name);
-				((NamedHRACMemoryAddress) ma).setName(resolvedNamed);
-			}
-		}
-	}
-	/**
-	 * Note: Not recursive on purpose.
-	 * @param symbolNameReplacementMap
-	 * @param suffix
-	 * @return
-	 */
-	public Map<String, String> renameLabels(Map<String, String> symbolNameReplacementMap, String suffix) {
-		if(symbolNameReplacementMap==null) {
-			symbolNameReplacementMap=new HashMap<>();
-		}
-		if(cmd!=null) {
-			HRACSymbol label = cmd.getLabel();
-			if(label!=null){
-				String newName=label.getName()+suffix;
-				symbolNameReplacementMap.put(label.getName(), newName);
-				label.setName(newName);
-			}				
-		}
-		return symbolNameReplacementMap;
-	}
-	
-	public HRACForDup(HRACCommand cmd) {
-		super();
-		this.cmd = cmd;
-		id = runId++;
-	}
-
-	public HRACForDup() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public String asCode() {
-		if (cmd != null) {
-			return cmd.asCode();
-		}
-		if (model != null) {
-			return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
-		}
-		return "";
-	}
-
-	@Override
-	public String toString() {
-		return "HRACForDup [asCode()=" + asCode() + "]";
-	}
-
-	public IHRACRangeProvider getRange() {
-		return range;
-	}
-
-	public void setRange(IHRACRangeProvider range) {
-		this.range = range;
-	}
-
-	@Override
-	public void setHeapSize(int cnt) {
-		if (model != null) {
-			model.setHeapSize(cnt);
-		}
-
+		return cnt;
 	}
 
 	@Override
@@ -162,6 +126,14 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			return model.getHeapSize();
 		}
 		return 0;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public HRACModel getModel() {
+		return model;
 	}
 
 	@Override
@@ -175,6 +147,137 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		return 0;// assuming special is n
 	}
 
+	public HRACModel getParent() {
+		return parent;
+	}
+
+	public List<HRACCommand> getPrecompiledCmds() {
+		List<HRACCommand> cmds = new ArrayList<HRACCommand>();
+		if (range == null || parent == null) {
+			cmds.add(cmd);
+		} else {
+			AbstractHRACMemoryAddress cmdTgt = cmd.getTarget();
+			if (cmdTgt != null) {
+				HRACAbstractExpressionNode cmdTOfs = cmdTgt.getOffset();
+				if (cmdTOfs != null) {
+					for (int i = 0; i < range.getRange(parent).length; i++) {
+						HRACAbstractExpressionNode si = range.getRange(parent)[i];
+						String rangeVar = range.getRunningDirectiveName();
+						if (rangeVar == null) {
+							rangeVar = "i";
+						}
+						HRACModel parentClone = parent.clone();
+						parentClone.addAddDirective(rangeVar, si);
+						HRACAbstractExpressionNode cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone,
+								new String[] { rangeVar });
+						HRACCommand cmdClone = cmd.clone();
+						cmdClone.getTarget().setOffset(cmdOfsRes);
+						cmds.add(cmdClone);
+					}
+				}
+			}
+		}
+		return cmds;
+	}
+
+	public IHRACRangeProvider getRange() {
+		return range;
+	}
+
+	public int getSymbolBitCount(int n) {
+		int cnt = 0;
+		if (range == null) {
+			if (model != null) {
+				cnt += model.getSymbolBitCnt(n);
+			}
+		} else {
+			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			if (model != null) {
+				for (int i = 0; i < rng.length; i++) {
+					HRACAbstractExpressionNode j = rng[i];
+					model.addAddDirective("i", j);
+					cnt += model.getSymbolBitCnt(n);
+				}
+			}
+		}
+		return cnt;
+	}
+
+	public List<HRACModel> precompileChilds(String suffix, Map<String, String> symbolNameReplacementList) {
+		List<HRACModel> retList = new ArrayList<>();
+		if (model != null) {
+			model.setMinimumN(parent.getN());
+			if (range != null) {
+				for (int i = 0; i < range.getRange(parent).length; i++) {
+					HRACAbstractExpressionNode si = range.getRange(parent)[i];
+					HRACModel modelClone = model.clone();
+					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
+					modelClone.precompile(suffix + "_FD" + id + "_" + i, symbolNameReplacementList, i == 0);
+					retList.add(modelClone);
+				}
+			} else {
+				model.precompile(suffix + "_FD" + id, symbolNameReplacementList, true);
+				retList.add(model);
+			}
+		}
+		return retList;
+	}
+
+	/**
+	 * Note: Not recursive on purpose.
+	 * 
+	 * @param symbolNameReplacementMap
+	 * @param suffix
+	 * @return
+	 */
+	public Map<String, String> renameLabels(Map<String, String> symbolNameReplacementMap, String suffix) {
+		if (symbolNameReplacementMap == null) {
+			symbolNameReplacementMap = new HashMap<>();
+		}
+		if (cmd != null) {
+			HRACSymbol label = cmd.getLabel();
+			if (label != null) {
+				String newName = label.getName() + suffix;
+				symbolNameReplacementMap.put(label.getName(), newName);
+				label.setName(newName);
+			}
+		}
+		return symbolNameReplacementMap;
+	}
+
+	/**
+	 * Note: Not Recursive on purpose. Change Commad targets during compile.
+	 * FixedMemoryAddresses do not need to be changed.
+	 * 
+	 * @param symbolNameReplacementMap
+	 */
+	public void replaceTargetOnCommand(Map<String, String> symbolNameReplacementMap) {
+		if (cmd != null) {
+			AbstractHRACMemoryAddress ma = cmd.getTarget();
+			if (ma instanceof NamedHRACMemoryAddress) {
+				String name = ((NamedHRACMemoryAddress) ma).getName();
+				String resolvedNamed = symbolNameReplacementMap.getOrDefault(name, name);
+				((NamedHRACMemoryAddress) ma).setName(resolvedNamed);
+			}
+		}
+	}
+
+	public void setCmd(HRACCommand cmd) {
+		this.cmd = cmd;
+	}
+
+	@Override
+	public void setHeapSize(int cnt) {
+		if (model != null) {
+			model.setHeapSize(cnt);
+		}
+
+	}
+
+	public void setModel(HRACModel model) {
+		this.model = model;
+	}
+
 	@Override
 	public void setN(int n) {
 		if (model != null) {
@@ -182,76 +285,17 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		}
 	}
 
-	public HRACModel getParent() {
-		return parent;
-	}
-
 	public void setParent(HRACModel parent) {
 		this.parent = parent;
 	}
-	public List<HRACModel> precompileChilds(String suffix,Map<String, String> symbolNameReplacementList) {
-		List<HRACModel> retList=new ArrayList<>();
-		if(model!=null) {
-			model.setMinimumN(parent.getN());
-			if(range!=null) {
-				for (int i = 0; i < range.getRange(parent).length; i++) {
-					HRACAbstractExpressionNode si = range.getRange(parent)[i];
-					HRACModel modelClone = model.clone();
-					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
-					modelClone.precompile(suffix+"_FD"+id+"_"+i, symbolNameReplacementList,i==0);
-					retList.add(modelClone);
-				}
-			}else {
-				model.precompile(suffix+"_FD"+id, symbolNameReplacementList,true);
-				retList.add(model);
-			}			
-		}		
-		return retList;
+
+	public void setRange(IHRACRangeProvider range) {
+		this.range = range;
 	}
 
-	public int getCommandCountRecursive(int n) {
-		int cnt=0;
-		if(range==null) {
-			if(cmd!=null) {
-				cnt+=1;
-			}
-			if(model!=null) {
-				cnt+=model.getCommandCount(n);
-			}
-		}else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);			
-			if(cmd!=null) {
-				cnt+=rng.length;
-			}if(model!=null) {
-				for (int i = 0; i < rng.length; i++) {
-					HRACAbstractExpressionNode j = rng[i];
-					model.addAddDirective(range.getRunningDirectiveName(), j);
-					cnt+=model.getCommandCount(n);
-				}
-			}
-		}
-		return cnt;
+	@Override
+	public String toString() {
+		return "" + asCode() + "";
 	}
-
-	public int getSymbolBitCount(int n) {
-		int cnt=0;
-		if(range==null) {			
-			if(model!=null) {
-				cnt+=model.getSymbolBitCnt(n);
-			}
-		}else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);
-		if(model!=null) {
-			for (int i = 0; i < rng.length; i++) {
-				HRACAbstractExpressionNode j = rng[i];
-				model.addAddDirective("i", j);
-				cnt+=model.getSymbolBitCnt(n);
-			}
-			}
-		}
-		return cnt;
-	}
-
-	
 
 }

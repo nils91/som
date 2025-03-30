@@ -3,7 +3,6 @@
  */
 package de.dralle.som;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,72 +53,80 @@ public class FileLoader {
 		c = new Compiler();
 	}
 
-	public HRASModel readHRASFile(String path) throws IOException {
-		File f = new File(path);
-		FileInputStream fis = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		HRASParser hp = new HRASParser();
-		HRASModel m = hp.parse(bis);
-		bis.close();
-		return m;
+	public SOMFormats getFormatFromFilename(File file) {
+		return getFormatFromFilename(file.getName());
 	}
 
-	public void writeHRASFile(HRASModel m, String path) throws IOException {
-		File f = new File(path);
-		FileWriter fis = new FileWriter(f);
-		BufferedWriter bis = new BufferedWriter(fis);
-		bis.write(m.asCode());
-		bis.close();
-	}
-
-	public HRACModel readHRACFile(String path) throws IOException {
-		File f = new File(path);
-		FileInputStream fis = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		HRACParser hp = new HRACParser();
-		HRACModel m = hp.parse(bis);
-		bis.close();
-		return m;
-	}
-
-	public void writeHRBSFile(HRBSModel m, String path) throws IOException {
-		File f = new File(path);
-		FileWriter fis = new FileWriter(f);
-		BufferedWriter bis = new BufferedWriter(fis);
-		bis.write(m.asCode());
-		bis.close();
-	}
-
-	public HRBSModel readHRBSFile(String path) throws IOException {
-		File f = new File(path);
-		FileInputStream fis = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		HRBSParser hp = new HRBSParser();
-		HRBSModel m = hp.parse(bis);
-		bis.close();
-		return m;
-	}
-
-	public HRBSModel readHRBSFileFromInternal(String path) throws IOException {
-		ClassLoader cl = getClass().getClassLoader();
-		InputStream is = cl.getResourceAsStream(path);
-		BufferedInputStream bis = new BufferedInputStream(is);
-		HRBSParser hp = new HRBSParser();
-		HRBSModel m = hp.parse(bis);
-		bis.close();
-		return m;
-	}
-
-	public HRBSModel readHRBSFileInternalFirst(String path) throws IOException {
-		try {
-			return readHRBSFileFromInternal(path);
-		} catch (IOException e) {
+	public SOMFormats getFormatFromFilename(String name) {
+		if (name == null) {
+			return null;
 		}
-		return readHRBSFile(path);
+		for (SOMFormats format : SOMFormats.values()) {
+			String[] possibleFileExtensions = format.getFileExtensionString();
+			for (int i = 0; i < possibleFileExtensions.length; i++) {
+				String string = possibleFileExtensions[i];
+				if (name.toLowerCase().endsWith(string.toLowerCase())) {
+					return format;
+				}
+			}
+
+		}
+		return null;
 	}
 
-	public HRBSModel loadHRBSByName(String name) throws IOException {
-		return readHRBSFileInternalFirst("includes/hrbs/" + name + ".hrbs");
+	public SOMFormats getFormatFromName(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (SOMFormats format : SOMFormats.values()) {
+			if (format.name().toLowerCase().equals(name.toLowerCase())) {
+				return format;
+			}
+			if (format.getShortName().toLowerCase().equals(name.toLowerCase())) {
+				return format;
+			}
+		}
+		return null;
+	}
+
+	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
+		File f = new File(path);
+		FileReader fis = new FileReader(f);
+		BufferedReader bis = new BufferedReader(fis);
+		List<Boolean> bits = new ArrayList<>();
+		String nxtLine;
+		while ((nxtLine = bis.readLine()) != null) {
+			char[] chars = nxtLine.toCharArray();
+			for (int i = 0; i < chars.length; i++) {
+				switch (chars[i]) {
+				case '0':
+					bits.add(false);
+					break;
+				case '1':
+					bits.add(true);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		bis.close();
+		IMemspace m = c.booleanListToMemspace(bits);
+		return m;
+	}
+
+	public IMemspace loadBinaryFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		List<Byte> bytes = new ArrayList<>();
+		int b;
+		while ((b = bis.read()) != -1) {
+			bytes.add((byte) b);
+		}
+		bis.close();
+		IMemspace m = c.byteListToMemspace(bytes);
+		return m;
 	}
 
 	public <T> T loadByName(String name, SOMFormats format) {
@@ -151,8 +157,8 @@ public class FileLoader {
 
 		}
 		// Alright then, why not include more shit, ECLIPSE?
-		List<String> apaths=new ArrayList<>();
-		for (String string : paths) {			
+		List<String> apaths = new ArrayList<>();
+		for (String string : paths) {
 			if (!string.startsWith("/")) {
 				apaths.add("/" + string);
 			}
@@ -197,40 +203,6 @@ public class FileLoader {
 		return model;
 	}
 
-	public void writeHRACFile(HRACModel m, String path) throws IOException {
-		File f = new File(path);
-		FileWriter fis = new FileWriter(f);
-		BufferedWriter bis = new BufferedWriter(fis);
-		bis.write(m.asCode());
-		bis.close();
-	}
-
-	public IMemspace loadBinaryFile(String path) throws IOException {
-		File f = new File(path);
-		FileInputStream fis = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		List<Byte> bytes = new ArrayList<>();
-		int b;
-		while ((b = bis.read()) != -1) {
-			bytes.add((byte) b);
-		}
-		bis.close();
-		IMemspace m = c.byteListToMemspace(bytes);
-		return m;
-	}
-
-	public void writeBinaryFile(byte[] content, String path) throws IOException {
-		File f = new File(path);
-		FileOutputStream fis = new FileOutputStream(f);
-		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		bis.write(content);
-		bis.close();
-	}
-
-	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
-		writeBinaryFile(c.memspaceToByteArray(memspace), path);
-	}
-
 	public IMemspace loadCompressedBinaryFile(String path) throws IOException {
 		ZipFile f = new ZipFile(path);
 		ZipEntry somBinary = f.getEntry("BIN");
@@ -259,51 +231,8 @@ public class FileLoader {
 		return c.byteListToByteArray(bytes);
 	}
 
-	public void writeCompressedBinaryFile(byte[] content, String path) throws IOException {
-		File f = new File(path);
-		FileOutputStream fis = new FileOutputStream(f);
-		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		ZipOutputStream zos = new ZipOutputStream(bis);
-		ZipEntry ze = new ZipEntry("BIN");
-		zos.putNextEntry(ze);
-		zos.write(content);
-		zos.closeEntry();
-		zos.close();
-		bis.close();
-	}
-
-	public IMemspace loadAsciiBinaryFile(String path) throws IOException {
-		File f = new File(path);
-		FileReader fis = new FileReader(f);
-		BufferedReader bis = new BufferedReader(fis);
-		List<Boolean> bits = new ArrayList<>();
-		String nxtLine;
-		while ((nxtLine = bis.readLine()) != null) {
-			char[] chars = nxtLine.toCharArray();
-			for (int i = 0; i < chars.length; i++) {
-				switch (chars[i]) {
-				case '0':
-					bits.add(false);
-					break;
-				case '1':
-					bits.add(true);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		bis.close();
-		IMemspace m = c.booleanListToMemspace(bits);
-		return m;
-	}
-
-	public void writeAsciiBinaryFile(IMemspace memspace, String path) throws IOException {
-		writeToFile(memspace, SOMFormats.BIN, path);
-	}
-
-	public Object loadFromString(String source, SOMFormats sourceFormat) throws IOException {
-		return loadFromInputStream(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)), sourceFormat);
+	public Object loadFromFile(File f) throws IOException {
+		return loadFromFile(f, getFormatFromFilename(f.getName()));
 	}
 
 	public Object loadFromFile(File f, SOMFormats sourceFormat) throws IOException {
@@ -314,25 +243,12 @@ public class FileLoader {
 		return obj;
 	}
 
-	public Object loadFromPath(Path p, SOMFormats sourceFormat) throws IOException {
-		return loadFromFile(p.toFile(), sourceFormat);
-	}
-
-	public <T> T loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
-		return (T) loadFromFile(new File(path), sourceFormat);
-	}
-
-	
 	public <T> T loadFromFile(String path) throws IOException {
 		return (T) loadFromFile(new File(path));
 	}
 
-	public Object loadFromFile(File f) throws IOException {
-		return loadFromFile(f, getFormatFromFilename(f.getName()));
-	}
-
-	public Object loadFromPath(Path p) throws IOException {
-		return loadFromFile(p.toFile());
+	public <T> T loadFromFile(String path, SOMFormats sourceFormat) throws IOException {
+		return (T) loadFromFile(new File(path), sourceFormat);
 	}
 
 	public Object loadFromInputStream(InputStream source, SOMFormats sourceFormat) throws IOException {
@@ -387,6 +303,139 @@ public class FileLoader {
 			return m;
 		}
 		return null;
+	}
+
+	public Object loadFromPath(Path p) throws IOException {
+		return loadFromFile(p.toFile());
+	}
+
+	public Object loadFromPath(Path p, SOMFormats sourceFormat) throws IOException {
+		return loadFromFile(p.toFile(), sourceFormat);
+	}
+
+	public Object loadFromString(String source, SOMFormats sourceFormat) throws IOException {
+		return loadFromInputStream(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)), sourceFormat);
+	}
+
+	public HRBSModel loadHRBSByName(String name) throws IOException {
+		return readHRBSFileInternalFirst("includes/hrbs/" + name + ".hrbs");
+	}
+
+	public HRACModel readHRACFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		HRACParser hp = new HRACParser();
+		HRACModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+
+	public HRASModel readHRASFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		HRASParser hp = new HRASParser();
+		HRASModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+
+	public HRBSModel readHRBSFile(String path) throws IOException {
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		HRBSParser hp = new HRBSParser();
+		HRBSModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+
+	public HRBSModel readHRBSFileFromInternal(String path) throws IOException {
+		ClassLoader cl = getClass().getClassLoader();
+		InputStream is = cl.getResourceAsStream(path);
+		BufferedInputStream bis = new BufferedInputStream(is);
+		HRBSParser hp = new HRBSParser();
+		HRBSModel m = hp.parse(bis);
+		bis.close();
+		return m;
+	}
+
+	public HRBSModel readHRBSFileInternalFirst(String path) throws IOException {
+		try {
+			return readHRBSFileFromInternal(path);
+		} catch (IOException e) {
+		}
+		return readHRBSFile(path);
+	}
+
+	public void writeAsciiBinaryFile(IMemspace memspace, String path) throws IOException {
+		writeToFile(memspace, SOMFormats.BIN, path);
+	}
+
+	public void writeBinaryFile(byte[] content, String path) throws IOException {
+		File f = new File(path);
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		bis.write(content);
+		bis.close();
+	}
+
+	public void writeBinaryFile(IMemspace memspace, String path) throws IOException {
+		writeBinaryFile(c.memspaceToByteArray(memspace), path);
+	}
+
+	public void writeCompressedBinaryFile(byte[] content, String path) throws IOException {
+		File f = new File(path);
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		ZipOutputStream zos = new ZipOutputStream(bis);
+		ZipEntry ze = new ZipEntry("BIN");
+		zos.putNextEntry(ze);
+		zos.write(content);
+		zos.closeEntry();
+		zos.close();
+		bis.close();
+	}
+
+	public void writeHRACFile(HRACModel m, String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+		bis.write(m.asCode());
+		bis.close();
+	}
+
+	public void writeHRASFile(HRASModel m, String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+		bis.write(m.asCode());
+		bis.close();
+	}
+
+	public void writeHRBSFile(HRBSModel m, String path) throws IOException {
+		File f = new File(path);
+		FileWriter fis = new FileWriter(f);
+		BufferedWriter bis = new BufferedWriter(fis);
+		bis.write(m.asCode());
+		bis.close();
+	}
+
+	public File writeToFile(Object obj, SOMFormats format, File f) throws IOException {
+		FileOutputStream fis = new FileOutputStream(f);
+		BufferedOutputStream bis = new BufferedOutputStream(fis);
+		OutputStream os = writeToOutputStream(obj, format, bis);
+		os.close();
+		return f;
+	}
+
+	public File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
+		return writeToFile(obj, format, p.toFile());
+	}
+
+	public File writeToFile(Object obj, SOMFormats format, String filePath) throws IOException {
+		return writeToFile(obj, format, Paths.get(filePath));
 	}
 
 	public OutputStream writeToOutputStream(Object obj, SOMFormats format, OutputStream out) throws IOException {
@@ -467,57 +516,5 @@ public class FileLoader {
 		os.close();
 		return os.toString();
 
-	}
-
-	public File writeToFile(Object obj, SOMFormats format, File f) throws IOException {
-		FileOutputStream fis = new FileOutputStream(f);
-		BufferedOutputStream bis = new BufferedOutputStream(fis);
-		OutputStream os = writeToOutputStream(obj, format, bis);
-		os.close();
-		return f;
-	}
-
-	public File writeToFile(Object obj, SOMFormats format, Path p) throws IOException {
-		return writeToFile(obj, format, p.toFile());
-	}
-
-	public File writeToFile(Object obj, SOMFormats format, String filePath) throws IOException {
-		return writeToFile(obj, format, Paths.get(filePath));
-	}
-
-	public SOMFormats getFormatFromFilename(String name) {
-		if (name == null) {
-			return null;
-		}
-		for (SOMFormats format : SOMFormats.values()) {
-			String[] possibleFileExtensions = format.getFileExtensionString();
-			for (int i = 0; i < possibleFileExtensions.length; i++) {
-				String string = possibleFileExtensions[i];
-				if (name.toLowerCase().endsWith(string.toLowerCase())) {
-					return format;
-				}
-			}
-
-		}
-		return null;
-	}
-
-	public SOMFormats getFormatFromName(String name) {
-		if (name == null) {
-			return null;
-		}
-		for (SOMFormats format : SOMFormats.values()) {
-			if (format.name().toLowerCase().equals(name.toLowerCase())) {
-				return format;
-			}
-			if (format.getShortName().toLowerCase().equals(name.toLowerCase())) {
-				return format;
-			}
-		}
-		return null;
-	}
-
-	public SOMFormats getFormatFromFilename(File file) {
-		return getFormatFromFilename(file.getName());
 	}
 }

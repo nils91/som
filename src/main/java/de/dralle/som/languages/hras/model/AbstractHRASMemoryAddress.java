@@ -7,62 +7,19 @@ package de.dralle.som.languages.hras.model;
  * @author Nils
  *
  */
-public abstract class AbstractHRASMemoryAddress implements Cloneable{
+public abstract class AbstractHRASMemoryAddress implements Cloneable {
+
+	private HRASAbstractExpressionNode addressOffset;
 
 	public AbstractHRASMemoryAddress() {
 		// TODO Auto-generated constructor stub
 	}
 
-
-	public HRASAbstractExpressionNode getAddressOffset() {
-		return addressOffset;
-	}
-
-	public void setAddressOffset(Integer addressOffset) {
-		if(addressOffset==null) {
-			addressOffset=0;
+	public String asHRASCode() {
+		if (addressOffset != null) {
+			return "[" + addressOffset + "]";
 		}
-		this.addressOffset = new HRASIntegerNode(addressOffset);
-	}
-	public void setAddressOffset(HRASAbstractExpressionNode addressOffset) {
-		if(addressOffset==null) {
-			addressOffset=new HRASIntegerNode(0);
-		}
-		this.addressOffset = addressOffset;
-	}
-
-	private HRASAbstractExpressionNode addressOffset;
-
-	public int resolve(HRASModel model) {
-		if(addressOffset!=null) {
-			return addressOffset.calculateNumericalValue();
-		}
-		return 0;
-	}
-	@Override
-	public int hashCode() {
-		int hashc =0;
-		if(addressOffset!=null) {
-			hashc+=addressOffset.hashCode();
-		}
-		return hashc;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(obj!=null&&obj instanceof AbstractHRASMemoryAddress) {
-			if(addressOffset!=null) {
-				return addressOffset.equals(((AbstractHRASMemoryAddress)obj).addressOffset);
-			}else {
-				return ((AbstractHRASMemoryAddress)obj).addressOffset==null;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return asHRASCode();
+		return "";
 	}
 
 	@Override
@@ -74,18 +31,61 @@ public abstract class AbstractHRASMemoryAddress implements Cloneable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(addressOffset!=null) { 
-			copy.addressOffset=addressOffset.clone();
-		}		
+		if (addressOffset != null) {
+			copy.addressOffset = addressOffset.clone();
+		}
 		return copy;
 	}
 
-	public String asHRASCode() {
-		if(addressOffset!=null) {
-			return "["+addressOffset+"]";}
-		return "";
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj instanceof AbstractHRASMemoryAddress) {
+			if (addressOffset != null) {
+				return addressOffset.equals(((AbstractHRASMemoryAddress) obj).addressOffset);
+			} else {
+				return ((AbstractHRASMemoryAddress) obj).addressOffset == null;
+			}
+		}
+		return false;
 	}
 
+	public HRASAbstractExpressionNode getAddressOffset() {
+		return addressOffset;
+	}
 
-	
+	@Override
+	public int hashCode() {
+		int hashc = 0;
+		if (addressOffset != null) {
+			hashc += addressOffset.hashCode();
+		}
+		return hashc;
+	}
+
+	public int resolve(HRASModel model) {
+		if (addressOffset != null) {
+			return addressOffset.calculateNumericalValue();
+		}
+		return 0;
+	}
+
+	public void setAddressOffset(HRASAbstractExpressionNode addressOffset) {
+		if (addressOffset == null) {
+			addressOffset = new HRASIntegerNode(0);
+		}
+		this.addressOffset = addressOffset;
+	}
+
+	public void setAddressOffset(Integer addressOffset) {
+		if (addressOffset == null) {
+			addressOffset = 0;
+		}
+		this.addressOffset = new HRASIntegerNode(addressOffset);
+	}
+
+	@Override
+	public String toString() {
+		return asHRASCode();
+	}
+
 }

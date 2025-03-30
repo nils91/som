@@ -12,38 +12,30 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
  */
 public class AbstractHRACMemoryAddress implements Cloneable {
 	private HRACAbstractExpressionNode offset;
-	private boolean offsetSpecial;
-	private String offsetSpecialnName;
 
-	public boolean isOffsetSpecial() {
-		return offsetSpecial;
-	}
-
-	public void setOffsetSpecial(boolean offsetSpecial) {
-		this.offsetSpecial = offsetSpecial;
-	}
-
-	public HRACAbstractExpressionNode getOffset() {
-		return offset;
-	}
-
-	public void setOffset(HRACAbstractExpressionNode offset) {
-		this.offset = offset;
-	}
-	public void setOffset(int offset) {
-		this.offset = new HRACIntegerNode(offset);
-	}
 	protected AbstractHRACMemoryAddress() {
-		
+
+	}
+
+	public String asHRACCode() {
+		if (offset != null) {
+			return String.format("[%s]", offset);
+		} else {
+			return "";
+		}
 	}
 
 	@Override
-	public int hashCode() {
-		int hashc=0;
-		if (offset != null) {
-			hashc += offset.hashCode();
+	public AbstractHRACMemoryAddress clone() {
+		AbstractHRACMemoryAddress copy = new AbstractHRACMemoryAddress();
+		try {
+			copy = (AbstractHRACMemoryAddress) super.clone();
+		} catch (CloneNotSupportedException e) {
 		}
-		return hashc;
+		if (offset != null) {
+			copy.offset = offset.clone();
+		}
+		return copy;
 	}
 
 	@Override
@@ -51,9 +43,6 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		if (obj != null && obj instanceof AbstractHRACMemoryAddress) {
 			AbstractHRACMemoryAddress other = (AbstractHRACMemoryAddress) obj;
 			boolean equal = true;
-			if (equal && isOffsetSpecial()) {
-				return offsetSpecialnName.equals(other.offsetSpecialnName);
-			}
 			if (equal && offset != null) {
 				return offset.equals(((AbstractHRACMemoryAddress) obj).offset);
 			}
@@ -62,48 +51,29 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		return false;
 	}
 
+	public HRACAbstractExpressionNode getOffset() {
+		return offset;
+	}
+
+	@Override
+	public int hashCode() {
+		int hashc = 0;
+		if (offset != null) {
+			hashc += offset.hashCode();
+		}
+		return hashc;
+	}
+
+	public void setOffset(HRACAbstractExpressionNode offset) {
+		this.offset = offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = new HRACIntegerNode(offset);
+	}
+
 	@Override
 	public String toString() {
 		return asHRACCode();
-	}
-
-	@Override
-	public AbstractHRACMemoryAddress clone() {
-		AbstractHRACMemoryAddress copy = new AbstractHRACMemoryAddress();
-		try {
-			copy=(AbstractHRACMemoryAddress) super.clone();
-		} catch (CloneNotSupportedException e) {
-		}
-		copy.offsetSpecial = offsetSpecial;
-		if (offset != null) {
-			copy.offset = offset.clone();
-		}
-		copy.offsetSpecialnName = offsetSpecialnName;
-		return copy;
-	}
-
-	public String asHRACCode() {
-		if (offsetSpecial) {
-			return String.format("[$%s]",  offsetSpecialnName);
-		}
-		if (offset != null) {
-			return String.format("[%s]", offset);
-		} else {
-			return "";
-		}
-	}
-
-	@Deprecated
-	public boolean getOffsetSpecial() {
-		// TODO Auto-generated method stub
-		return isOffsetSpecial();
-	}
-
-	public String getOffsetSpecialnName() {
-		return offsetSpecialnName;
-	}
-
-	public void setOffsetSpecialName(String offsetSpecialnName) {
-		this.offsetSpecialnName = offsetSpecialnName;
 	}
 }

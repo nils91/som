@@ -8,16 +8,22 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_s
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_valuesContext;
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
-import de.dralle.som.languages.hrac.model.HRACMemoryOffset;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvider> {
-	private IHRACRangeProvider r =null;
+	private IHRACRangeProvider r = null;
+
+	@Override
+	public IHRACRangeProvider visitDirective_access(Directive_accessContext ctx) {
+		r.setRunningDirectiveName(ctx.getText());
+		return r;
+	}
 
 	@Override
 	public HRACForDupBoundingRangeProvider visitOffset_specify_range(Offset_specify_rangeContext ctx) {
-		HRACForDupBoundingRangeProvider r=new HRACForDupBoundingRangeProvider();
+		HRACForDupBoundingRangeProvider r = new HRACForDupBoundingRangeProvider();
 		boolean rangeStartExclusive = false;
 		if (ctx.children.get(0) == ctx.B_OPEN(0))// lower inclusive
 		{
@@ -42,90 +48,77 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 				rangeEndExclusive = false;
 			}
 		}
-		boolean stepSpecified=ctx.SEMICOLON()!=null;
-		int cntVal=ctx.offset_specify_number().size();
-		HRACMemoryOffset step = new HRACMemoryOffset(1);
-		HRACMemoryOffset start=new HRACMemoryOffset(0);
-		HRACMemoryOffset end=new HRACMemoryOffset(0);
-		if(cntVal==1) {
-			if(stepSpecified) {
-				step=ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-			}else {
-				//step not specified, find ofs idx
-				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
-				if(rangeStartSpecified) {
+		boolean stepSpecified = ctx.SEMICOLON() != null;
+		int cntVal = ctx.offset_specify_number().size();
+		HRACAbstractExpressionNode step = new HRACIntegerNode(1);
+		HRACAbstractExpressionNode start = new HRACIntegerNode(0);
+		HRACAbstractExpressionNode end = new HRACIntegerNode(0);
+		if (cntVal == 1) {
+			if (stepSpecified) {
+				step = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
+			} else {
+				// step not specified, find ofs idx
+				boolean rangeStartSpecified = ctx.getChild(1) == ctx.offset_specify_number(0);
+				if (rangeStartSpecified) {
 					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-				}else {
+				} else {
 					end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 				}
 			}
 		}
-		if(cntVal==2) {
-			if(!stepSpecified) {
-				//start to end, no step
+		if (cntVal == 2) {
+			if (!stepSpecified) {
+				// start to end, no step
 				start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
 				end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
-			}else {
-				boolean rangeStartSpecified=ctx.getChild(1)==ctx.offset_specify_number(0);
-				if(rangeStartSpecified) {
+			} else {
+				boolean rangeStartSpecified = ctx.getChild(1) == ctx.offset_specify_number(0);
+				if (rangeStartSpecified) {
 					start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
-				}else {
+				} else {
 					step = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 				}
 			}
 		}
-		if(cntVal==3) {
-			//all specified
+		if (cntVal == 3) {
+			// all specified
 			start = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
 			end = ctx.offset_specify_number(1).accept(new HRACOSVisitor());
 			step = ctx.offset_specify_number(2).accept(new HRACOSVisitor());
 		}
 		r.setRangeEndBoundExclusive(rangeEndExclusive);
 		r.setRangeStartBoundExclusive(rangeStartExclusive);
-		r.setRangeEnd(end.getOffset());
-		r.setRangeEndSpecial(end.getDirectiveName());
-		r.setRangeStart(start.getOffset());
-		r.setRangeStartSpecial(start.getDirectiveName());
-		r.setStepSize(step.getOffset());
-		r.setStepSizeSpecial(step.getDirectiveName());
+		r.setRangeEnd(end);
+		r.setRangeStart(start);
+		r.setStepSize(step);
 		return r;
 	}
-
-	@Override
-	public IHRACRangeProvider visitOffset_specify_values(Offset_specify_valuesContext ctx) {
-		if(ctx.offset_specify_range()!=null) {
-			r=ctx.offset_specify_range().accept(this);
-		}
-		if(ctx.offset_specify_set()!=null) {
-			r=ctx.offset_specify_set().accept(this);
-		}
-		if(ctx.directive_access()!=null) {
-			ctx.directive_access().accept(this);
-		}
-		return r;
-	}
-
-	@Override
-	public IHRACRangeProvider visitDirective_access(Directive_accessContext ctx) {
-		r.setRunningDirectiveName(ctx.getText());
-		return r;
-	}
-
-	
 
 	@Override
 	public IHRACRangeProvider visitOffset_specify_set(Offset_specify_setContext ctx) {
 		HRACForDupFixedRangeProvider rl = new HRACForDupFixedRangeProvider();
-		
+
 		for (Offset_specify_numberContext iterable_element : ctx.offset_specify_number()) {
-			HRACMemoryOffset ofs = iterable_element.accept(new HRACOSVisitor());
-			if(ofs.getDirectiveName()!=null) {
-				rl.addReplacingDirective(ofs.getDirectiveName());
-			}else {
-				rl.addValue( (ofs.getOffset()));
+			HRACAbstractExpressionNode ofs = iterable_element.accept(new HRACOSVisitor());
+			{
+				rl.addValue((ofs));
 			}
 		}
 		return rl;
+	}
+
+	@Override
+	public IHRACRangeProvider visitOffset_specify_values(Offset_specify_valuesContext ctx) {
+		if (ctx.offset_specify_range() != null) {
+			r = ctx.offset_specify_range().accept(this);
+		}
+		if (ctx.offset_specify_set() != null) {
+			r = ctx.offset_specify_set().accept(this);
+		}
+		if (ctx.directive_access() != null) {
+			ctx.directive_access().accept(this);
+		}
+		return r;
 	}
 
 }

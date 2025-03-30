@@ -1,8 +1,9 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
-import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASFactorialExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSFactorialExpressionNode;
 
 public class HRACFactorialExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
@@ -17,16 +18,27 @@ public class HRACFactorialExpressionNode extends HRACSingleChildExpressionNode i
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof HRACFactorialExpressionNode) {
-			return super.equals(obj);
-		}
-		return false;
+	public int calculateNumericalValue() {
+		// TODO Auto-generated method stub
+		return getFac(getChild().calculateNumericalValue());
 	}
 
 	@Override
 	public HRASFactorialExpressionNode compileToHRAS(HRACModel parent) {
 		return new HRASFactorialExpressionNode(getChild().compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSFactorialExpressionNode(getChild().compileToHRBS());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof HRACFactorialExpressionNode) {
+			return super.equals(obj);
+		}
+		return false;
 	}
 
 	private int getFac(int n) {
@@ -37,14 +49,9 @@ public class HRACFactorialExpressionNode extends HRACSingleChildExpressionNode i
 	}
 
 	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getFac(getChild().calculateNumericalValue());
-	}
-	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return getChild().toString()+"!";
+		return getChild().toString() + "!";
 	}
 
 }

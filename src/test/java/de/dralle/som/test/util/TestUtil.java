@@ -14,16 +14,16 @@ import java.io.IOException;
  */
 public class TestUtil {
 	public static String readFileToString(String path) throws IOException {
-		File f=new File(path);
+		File f = new File(path);
 		BufferedReader br = new BufferedReader(new FileReader(f));
-		String entireFile="";
-		String nextLine=null;
+		String entireFile = "";
+		String nextLine = null;
 		do {
-			nextLine=br.readLine();
-			if(nextLine!=null) {
-				entireFile+=nextLine;
-			}			
-		}while(nextLine!=null);
+			nextLine = br.readLine();
+			if (nextLine != null) {
+				entireFile += nextLine;
+			}
+		} while (nextLine != null);
 		br.close();
 		return entireFile;
 	}

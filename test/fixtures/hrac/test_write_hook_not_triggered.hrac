@@ -3,6 +3,10 @@
 #0000000000 //filler
 #1 00001 //reset adr eval(not needed in HRAC)
 #set other wh bits
+symbol WH_EN @2;
+symbol WH_COM @8;
+symbol WH_DIR @9;
+symbol WH_SEL @10;
 NAW WH_COM
 NAW WH_DIR
 NAW WH_SEL

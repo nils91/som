@@ -1,0 +1,5 @@
+import NOOP0;
+
+MAIN:
+	global LBL: NOOP0;
+	NAR LBL;

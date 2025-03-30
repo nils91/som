@@ -109,6 +109,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
+	private Map<String, Object> globalDirectives;//global directives. During precompile, only global directives from child models/commands will be passed on.
+	
 	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
 											// shall be used. But Integer should also be checked, just in case). Making
 											// it Object is only a workaround however, the long-term solutiopn would be
@@ -125,6 +127,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRACModel() {
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
+		globalDirectives=new HashMap<String, Object>();
 		directives = new HashMap<>();
 		additionalDirectives = new HashMap<>();
 	}
@@ -134,7 +137,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, int value) {
-		addAddDirective(name, value + "");
+		addAddDirective(name,new HRACIntegerNode(value));
 	}
 
 	public void addAddDirective(String name, String value) {
@@ -145,6 +148,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		additionalDirectives.putAll(additionals);
 	}
 
+	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
+		globalDirectives.put(name, value);
+	}
+
+	public void addGlobalDirective(String name, int value) {
+		addGlobalDirective(name, new HRACIntegerNode(value));
+	}
+
+	public void addGlobalDirective(String name, String value) {
+		globalDirectives.put(name, value);
+	}
+
+	public void addGlobalDirectives(Map<String, String> globals) {
+		globalDirectives.putAll(globals);
+	}
+
+	
 	public void addCommand(HRACCommand c) {
 		addCommand(new HRACForDup(c));
 	}

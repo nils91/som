@@ -677,7 +677,6 @@ public class HRBSModel implements ISetN, IHeap {
 				try {
 					tgtAdrNumericalValue = tgtAdr.compileToHRAC().calculateNumericalValue();
 				} catch (Exception e) {
-
 					logger.warning("Fixed address " + tgtAdr
 							+ " could not be resolved to a numerical value. Usually this isnt a problem, it just means thie compiler couldnt chec k wether its negative");
 				}

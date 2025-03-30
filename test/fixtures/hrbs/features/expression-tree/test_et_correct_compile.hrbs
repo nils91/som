@@ -2,7 +2,7 @@
 MAIN:
 	;a=11
 	;b=13
-	symbol A @($a*$b);
-	symbol B @(11*13);
+	global symbol A @($a*$b);
+	global symbol B @(11*13);
 	NAR @($a*$b);
 	NAR @(11*13);

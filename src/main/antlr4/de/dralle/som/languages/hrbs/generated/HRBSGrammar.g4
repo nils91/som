@@ -86,7 +86,7 @@ def_scope
 
 directive
 :
-	SEMICOLON directive_name EQ
+	SEMICOLON GLOBAL?  directive_name EQ
 	(
 		primary_expr
 		| DIRECTIVE_VALUE_STR

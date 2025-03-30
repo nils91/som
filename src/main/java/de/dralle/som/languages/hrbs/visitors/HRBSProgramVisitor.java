@@ -12,10 +12,13 @@ import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_headContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_head_paramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.CommandContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Command_defContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectiveContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectivesContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Import_stmtContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.OtiContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_blkContext;
+import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_definitionContext;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
@@ -80,26 +83,8 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	}
 
 	@Override
-	public HRBSModel visitDirective(HRBSGrammarParser.DirectiveContext ctx) {
-		if (ctx.directive_name() != null) {
-			String name = ctx.directive_name().getText();
-			String value = null;
-			if (ctx.primary_expr() != null) {
-				value = ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()
-						+ "";
-			}
-			if (ctx.DIRECTIVE_VALUE_STR() != null) {
-				value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1,
-						ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);
-			}
-			model.addDirective(name, value);
-		}
-		return model;
-	}
-
-	@Override
 	public HRBSModel visitDirectives(DirectivesContext ctx) {
-		for (de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.DirectiveContext dc : ctx.directive()) {
+		for (DirectiveContext dc : ctx.directive()) {
 			dc.accept(this);
 		}
 		return model;
@@ -116,7 +101,7 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	}
 
 	@Override
-	public HRBSModel visitProgram(de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.ProgramContext ctx) {
+	public HRBSModel visitProgram(ProgramContext ctx) {
 		List<HRBSModel> childModels = new ArrayList<HRBSModel>();
 		List<HRBSModel> importedModels = new ArrayList<HRBSModel>();
 		if (ctx.import_stmt() != null) {
@@ -159,12 +144,37 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 	}
 
 	@Override
+	public HRBSModel visitDirective(HRBSGrammarParser.DirectiveContext ctx) {
+		if (ctx.directive_name() != null) {
+			String name = ctx.directive_name().getText();
+			String value = null;
+			boolean gD = false;
+			if (ctx.GLOBAL() != null) {
+				gD = true;
+			}
+			if (ctx.primary_expr() != null) {
+				value = ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()
+						+ "";
+			}
+			if (ctx.DIRECTIVE_VALUE_STR() != null) {
+				value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1,
+						ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);
+			}
+			if(gD) {
+				HRBSModel.addGlobalDirective(name, value);
+			}else {
+				model.addDirective(name, value);
+			}
+		}
+		return model;
+	}
+
 	public HRBSModel visitSymbol_blk(Symbol_blkContext ctx) {
 		HRBSSymbolType symbolType = HRBSSymbolType.local;
 		if (ctx.def_scope() != null) {
 			symbolType = ctx.def_scope().accept(new HBRSSymbolTypeVisitor());
 		}
-		for (de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Symbol_decContext sd : ctx.symbol_dec()) {
+		for (Symbol_decContext sd : ctx.symbol_dec()) {
 			HRBSSymbol symbol = sd.accept(new HRBSSymbolVisitor(symbolType));
 			model.addSymbol(symbol);
 		}

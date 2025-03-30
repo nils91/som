@@ -27,7 +27,7 @@ symbol_dec
 
 directive
 :
-	SEMICOLON directive_name EQ
+	SEMICOLON GLOBAL? directive_name EQ
 	(
 		par_expr
 		| DIRECTIVE_VALUE_STR
@@ -271,6 +271,8 @@ ALLOC_KW
 	'allocate'
 	| 'alloc'
 ;
+
+GLOBAL:'global';
 
 DUPLICATE
 :

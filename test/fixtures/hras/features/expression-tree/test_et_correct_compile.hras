@@ -1,0 +1,6 @@
+#if correct the expression trees here should resolve wehen compiled to hrav
+;n=5
+;start=26
+symbol B 11*13;
+;continuer=26
+NAR 11*13

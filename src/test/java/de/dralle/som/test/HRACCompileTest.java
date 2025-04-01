@@ -1,6 +1,7 @@
 package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -31,7 +34,13 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
+import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hras.model.HRASCommand;
+import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASModel;
+import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class HRACCompileTest {
@@ -132,10 +141,11 @@ class HRACCompileTest {
 		}
 		assertTrue(eval > 0);
 	}
-	
+
 	@Test
 	void testExpressionTreePassdownDirectivesResolveHRAC2HRAP() throws IOException {
-		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrac", SOMFormats.HRAC);
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrac",
+				SOMFormats.HRAC);
 		HRACModel hrac = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
 		List<HRACSymbol> hracS = hrac.getSymbols();
 		List<HRACForDup> hracC = hrac.getCommands();
@@ -145,24 +155,62 @@ class HRACCompileTest {
 				hracSA = hracSymbol;
 			}
 		}
-		HRACForDup hrbsS=hracC.get(0);
+		HRACForDup hrbsS = hracC.get(0);
 		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
-		
+
 		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
-		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		address = ((FixedHRACMemoryAddress) cmdT).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		multiNode = (HRACMultiplicationExpressionNode)address;
+		multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
 	}
-	
+
+	@Test
+	void testExpressionTreePassdownHRAP2HRAS() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrap",
+				SOMFormats.HRAP);
+		HRASModel hrac = c.compile(model, SOMFormats.HRAP, SOMFormats.HRAS);
+		Map<String, AbstractHRASMemoryAddress> hracS = hrac.getSymbols();
+		Map<AbstractHRASMemoryAddress, HRASCommand> hracC = hrac.getCommands();
+		AbstractHRASMemoryAddress hracSA = hracS.get("B");
+		assertNotNull(hracSA);
+		assertInstanceOf(ExpressionHRASMemoryAddress.class, hracSA);
+		ExpressionHRASMemoryAddress ma = (ExpressionHRASMemoryAddress) hracSA;
+		HRASAbstractExpressionNode ex = ma.getExpression();
+		assertTrue(ex instanceof HRASMultiplicationExpression);
+		HRASMultiplicationExpression multiNode = (HRASMultiplicationExpression) ex;
+		assertTrue(multiNode.getChilds()[0] instanceof HRASIntegerNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRASIntegerNode);
+
+		HRASCommand compiledCmd = null;
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> entry : hracC.entrySet()) {
+			AbstractHRASMemoryAddress key = entry.getKey();
+			HRASCommand val = entry.getValue();
+			if (val.getAddress() instanceof ExpressionHRASMemoryAddress) {
+				compiledCmd = val;
+			}
+
+		}
+		assertNotNull(compiledCmd);
+		AbstractHRASMemoryAddress address = compiledCmd.getAddress();
+		assertInstanceOf(ExpressionHRASMemoryAddress.class, address);
+		ma = (ExpressionHRASMemoryAddress) address;
+		ex = ma.getExpression();
+		assertTrue(ex instanceof HRASMultiplicationExpression);
+		multiNode = (HRASMultiplicationExpression) ex;
+		assertTrue(multiNode.getChilds()[0] instanceof HRASIntegerNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRASIntegerNode);
+	}
+
 	@Test
 	void testExpressionTreePassdownHRAC2HRAP() throws IOException {
-		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrac", SOMFormats.HRAC);
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrac",
+				SOMFormats.HRAC);
 		HRACModel hrac = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
 		List<HRACSymbol> hracS = hrac.getSymbols();
 		List<HRACForDup> hracC = hrac.getCommands();
@@ -172,17 +220,17 @@ class HRACCompileTest {
 				hracSA = hracSymbol;
 			}
 		}
-		HRACForDup hrbsS=hracC.get(1);
+		HRACForDup hrbsS = hracC.get(1);
 		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
-		
+
 		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
-		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		address = ((FixedHRACMemoryAddress) cmdT).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		multiNode = (HRACMultiplicationExpressionNode)address;
+		multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
 	}

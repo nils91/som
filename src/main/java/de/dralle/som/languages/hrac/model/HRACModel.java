@@ -336,17 +336,17 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				m.addSymbol(s.getName(), new SymbolHRASMemoryAddress(address));
 			} else {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
-				SymbolHRASMemoryAddress tgtHras = new SymbolHRASMemoryAddress();
+				AbstractHRASMemoryAddress tgtHras = null;
 				if (tgt instanceof NamedHRACMemoryAddress) {
-					tgtHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
+					tgtHras=new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) tgt).getName());
 				} else if (tgt instanceof FixedHRACMemoryAddress) {
-					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
-							.calculateNumericalValue();
-					if (tgtAdr < 0) {
+					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
+							;
+					tgtHras=new ExpressionHRASMemoryAddress(tgtAdr);
+					if (tgtAdr.calculateNumericalValue() < 0) {
 						log.warning("Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
 
 					}
-					tgtHras.setSymbol(tgtAdr + "");
 				}
 				if (tgt.getOffset() != null) {
 					tgtHras.setAddressOffset(tgt.getOffset().compileToHRAS(this));

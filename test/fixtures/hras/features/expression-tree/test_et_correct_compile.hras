@@ -2,5 +2,5 @@
 ;n=5
 ;start=26
 symbol B 11*13;
-;continuer=26
+;continue=26
 NAR 11*13

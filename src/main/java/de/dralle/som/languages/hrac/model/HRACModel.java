@@ -684,28 +684,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets offsets
 			if (symbol.getTargetSymbol() != null) {
 				AbstractHRACMemoryAddress ma = symbol.getTargetSymbol();
-				if (ma.getOffset() == null) {
-					ma.setOffset(0);
-				} else {
-					ma.setOffset(ma.getOffset().resolve(this));
-				}
-				if(ma instanceof FixedHRACMemoryAddress) { //and the symbol target itself if its a fixed address
-					((FixedHRACMemoryAddress)ma).setAddress(
-					((FixedHRACMemoryAddress)ma).getAddress().resolve(this));
-				}
+				ma.resolve(this);
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
 			if (hracForDup.getCmd() != null) {
 				HRACCommand cmd = hracForDup.getCmd();
 				AbstractHRACMemoryAddress ma = cmd.getTarget();
-				if (ma.getOffset() != null) {
-					ma.setOffset(ma.getOffset().getResolvedExpressionTree(this));
-				}
-				if(ma instanceof FixedHRACMemoryAddress) { //and the command target itself if its a fixed address
-					((FixedHRACMemoryAddress)ma).setAddress(
-					((FixedHRACMemoryAddress)ma).getAddress().resolve(this));
-				}
+				ma.resolve(this);
 			}
 		}
 		List<HRACCommand> newCommandList = new ArrayList<>();

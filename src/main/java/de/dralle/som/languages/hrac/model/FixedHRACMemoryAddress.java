@@ -33,6 +33,16 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	}
 
 	@Override
+	public void resolve(HRACModel parent, String[] directives) {
+		super.resolve(parent, directives);
+		if(directives==null) {
+			address=address.resolve(parent);
+		}else {
+			address=address.resolve(parent, directives);
+		}
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof FixedHRACMemoryAddress) {
 			FixedHRACMemoryAddress other = (FixedHRACMemoryAddress) obj;

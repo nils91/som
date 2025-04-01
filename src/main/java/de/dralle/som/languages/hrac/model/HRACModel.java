@@ -390,7 +390,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				HRASCommand hrasc = new HRASCommand();
 				hrasc.setOp(c.getOp());
 				AbstractHRACMemoryAddress hracCmdTgt = c.getTarget();
-				SymbolHRASMemoryAddress address = null;
+				AbstractHRASMemoryAddress address = null;
 				if (hracCmdTgt instanceof NamedHRACMemoryAddress) {
 					address = new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) hracCmdTgt).getName());
 				}
@@ -400,7 +400,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					if (tgtAdr.calculateNumericalValue() < 0) {
 						System.out.println("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
 					}
-					address = new SymbolHRASMemoryAddress(tgtAdr.calculateNumericalValue());
+					address = new ExpressionHRASMemoryAddress(tgtAdr);
 				}
 				if (c.getTarget().getOffset() != null) {
 					address.setAddressOffset(c.getTarget().getOffset().compileToHRAS(this));

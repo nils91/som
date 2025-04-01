@@ -689,7 +689,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				} else {
 					ma.setOffset(ma.getOffset().resolve(this));
 				}
-
+				if(ma instanceof FixedHRACMemoryAddress) { //and the symbol target itself if its a fixed address
+					((FixedHRACMemoryAddress)ma).setAddress(
+					((FixedHRACMemoryAddress)ma).getAddress().resolve(this));
+				}
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
@@ -698,6 +701,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				AbstractHRACMemoryAddress ma = cmd.getTarget();
 				if (ma.getOffset() != null) {
 					ma.setOffset(ma.getOffset().getResolvedExpressionTree(this));
+				}
+				if(ma instanceof FixedHRACMemoryAddress) { //and the command target itself if its a fixed address
+					((FixedHRACMemoryAddress)ma).setAddress(
+					((FixedHRACMemoryAddress)ma).getAddress().resolve(this));
 				}
 			}
 		}

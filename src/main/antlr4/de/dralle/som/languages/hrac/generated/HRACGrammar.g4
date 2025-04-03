@@ -37,6 +37,7 @@ directive
 commadn_or_for
 :
 	command
+	| program_blk
 	| for_duplication
 ;
 

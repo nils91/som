@@ -4,7 +4,9 @@
 package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.OtiContext;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Program_blkContext;
 import de.dralle.som.languages.hrac.model.HRACModel;
 
@@ -31,7 +33,7 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 	}
 
 	@Override
-	public HRACModel visitLine(de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext ctx) {
+	public HRACModel visitLine(LineContext ctx) {
 
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
@@ -41,7 +43,7 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 			model.addSymbol(ctx.symbol_dec().accept(new HRACSymbolVisitor()));
 		} else if (ctx.oti() != null) {
 			ctx.oti().accept(this);
-		}
+		} 
 
 		return model;
 	}
@@ -58,9 +60,9 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 	}
 
 	@Override
-	public HRACModel visitProgram(de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext ctx) {
+	public HRACModel visitProgram(ProgramContext ctx) {
 		model = new HRACModel();
-		for (de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext l : ctx.line()) {
+		for (LineContext l : ctx.line()) {
 			l.accept(this);
 		}
 		return model;

@@ -29,12 +29,19 @@ import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.SOMBitcodeRunner;
 import de.dralle.som.SOMFormats;
+import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
+import de.dralle.som.languages.hrbs.model.HRBSFixedMemoryAddress;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 import de.dralle.som.languages.hrbs.model.HRBSSymbol;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
@@ -566,6 +573,60 @@ class HRBSCompileTest {
 				((HRACDirectiveNode) hracSA.getBitCnt()).getDirectiveName());
 	}
 
+	@Test
+	void testExpressionTreePassdownDirectives() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		List<HRACForDup> hracC = hrac.getCommands();
+		HRACSymbol hracSA = null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if (hracSymbol.getName().equals("A")) {
+				hracSA = hracSymbol;
+			}
+		}
+		HRACForDup hrbsS=hracC.get(0);
+		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
+		assertTrue(address instanceof HRACMultiplicationExpressionNode);
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		assertTrue(multiNode.getChilds()[0] instanceof HRACDirectiveNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRACDirectiveNode);
+		
+		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
+		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		assertTrue(address instanceof HRACMultiplicationExpressionNode);
+		multiNode = (HRACMultiplicationExpressionNode)address;
+		assertTrue(multiNode.getChilds()[0] instanceof HRACDirectiveNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRACDirectiveNode);
+	}
+	
+	@Test
+	void testExpressionTreePassdown() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		List<HRACSymbol> hracS = hrac.getSymbols();
+		List<HRACForDup> hracC = hrac.getCommands();
+		HRACSymbol hracSA = null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if (hracSymbol.getName().equals("B")) {
+				hracSA = hracSymbol;
+			}
+		}
+		HRACForDup hrbsS=hracC.get(1);
+		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
+		assertTrue(address instanceof HRACMultiplicationExpressionNode);
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
+		
+		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
+		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		assertTrue(address instanceof HRACMultiplicationExpressionNode);
+		multiNode = (HRACMultiplicationExpressionNode)address;
+		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
+	}
+	
 	@Test
 	void testNAllocPassdownParse() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);

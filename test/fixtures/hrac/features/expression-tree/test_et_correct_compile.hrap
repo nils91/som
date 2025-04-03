@@ -1,0 +1,3 @@
+#if correct the expression trees here should compile as-is to hras
+symbol B @(11*13);
+NAR @(11*13);

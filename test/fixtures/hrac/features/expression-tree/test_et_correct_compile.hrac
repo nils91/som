@@ -1,0 +1,7 @@
+#if correct the expression trees here should compile as-is to hrap, but with the directives resolved
+;a=11
+;b=13
+symbol A @($a*$b);
+symbol B @(11*13);
+NAR @($a*$b);
+NAR @(11*13);

@@ -50,7 +50,23 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		}
 		return false;
 	}
+	/**
+	 * Resolve used directives, if any
+	 * @param parent
+	 */
+	public void resolve(HRACModel parent) {
+		resolve(parent, null);
+	}
 
+	public void resolve(HRACModel parent,String[] directives) {
+		if(offset!=null) {
+			if(directives!=null) {
+				offset=offset.resolve(parent,directives);
+			}else {
+				offset=offset.resolve(parent);
+			}
+		}
+	}
 	public HRACAbstractExpressionNode getOffset() {
 		return offset;
 	}

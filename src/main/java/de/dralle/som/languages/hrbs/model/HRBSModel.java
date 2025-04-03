@@ -547,6 +547,20 @@ public class HRBSModel implements ISetN, IHeap {
 			sb.append(System.lineSeparator());
 			sb.append(getHeapDirective());
 			sb.append(System.lineSeparator());
+			for (Entry<String, String> entry : globalDirectives.entrySet()) {
+				String key = entry.getKey();
+				String val = entry.getValue();
+				sb.append("; global "+key+"="+val+" ;");
+				sb.append(System.lineSeparator());
+				
+			}
+			for (Entry<String, String> entry : directives.entrySet()) {
+				String key = entry.getKey();
+				String val = entry.getValue();
+				sb.append("; "+key+"="+val+" ;");
+				sb.append(System.lineSeparator());
+				
+			}
 			for (String symbolString : getSymbolsAsStrings()) {
 				sb.append(symbolString);
 				sb.append(System.lineSeparator());
@@ -677,7 +691,6 @@ public class HRBSModel implements ISetN, IHeap {
 				try {
 					tgtAdrNumericalValue = tgtAdr.compileToHRAC().calculateNumericalValue();
 				} catch (Exception e) {
-
 					logger.warning("Fixed address " + tgtAdr
 							+ " could not be resolved to a numerical value. Usually this isnt a problem, it just means thie compiler couldnt chec k wether its negative");
 				}

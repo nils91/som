@@ -109,6 +109,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
+	private Map<String, Object> globalDirectives;//global directives. During precompile, only global directives from child models/commands will be passed on.
+	
 	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
 											// shall be used. But Integer should also be checked, just in case). Making
 											// it Object is only a workaround however, the long-term solutiopn would be
@@ -125,6 +127,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRACModel() {
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
+		globalDirectives=new HashMap<String, Object>();
 		directives = new HashMap<>();
 		additionalDirectives = new HashMap<>();
 	}
@@ -134,7 +137,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, int value) {
-		addAddDirective(name, value + "");
+		addAddDirective(name,new HRACIntegerNode(value));
 	}
 
 	public void addAddDirective(String name, String value) {
@@ -145,6 +148,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		additionalDirectives.putAll(additionals);
 	}
 
+	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
+		globalDirectives.put(name, value);
+	}
+
+	public void addGlobalDirective(String name, int value) {
+		addGlobalDirective(name, new HRACIntegerNode(value));
+	}
+
+	public void addGlobalDirective(String name, String value) {
+		globalDirectives.put(name, value);
+	}
+
+	public void addGlobalDirectives(Map<String, String> globals) {
+		globalDirectives.putAll(globals);
+	}
+
+	
 	public void addCommand(HRACCommand c) {
 		addCommand(new HRACForDup(c));
 	}
@@ -316,17 +336,17 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				m.addSymbol(s.getName(), new SymbolHRASMemoryAddress(address));
 			} else {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
-				SymbolHRASMemoryAddress tgtHras = new SymbolHRASMemoryAddress();
+				AbstractHRASMemoryAddress tgtHras = null;
 				if (tgt instanceof NamedHRACMemoryAddress) {
-					tgtHras.setSymbol(((NamedHRACMemoryAddress) tgt).getName());
+					tgtHras=new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) tgt).getName());
 				} else if (tgt instanceof FixedHRACMemoryAddress) {
-					int tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
-							.calculateNumericalValue();
-					if (tgtAdr < 0) {
+					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
+							;
+					tgtHras=new ExpressionHRASMemoryAddress(tgtAdr);
+					if (tgtAdr.calculateNumericalValue() < 0) {
 						log.warning("Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
 
 					}
-					tgtHras.setSymbol(tgtAdr + "");
 				}
 				if (tgt.getOffset() != null) {
 					tgtHras.setAddressOffset(tgt.getOffset().compileToHRAS(this));
@@ -370,7 +390,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				HRASCommand hrasc = new HRASCommand();
 				hrasc.setOp(c.getOp());
 				AbstractHRACMemoryAddress hracCmdTgt = c.getTarget();
-				SymbolHRASMemoryAddress address = null;
+				AbstractHRASMemoryAddress address = null;
 				if (hracCmdTgt instanceof NamedHRACMemoryAddress) {
 					address = new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) hracCmdTgt).getName());
 				}
@@ -380,7 +400,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					if (tgtAdr.calculateNumericalValue() < 0) {
 						System.out.println("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
 					}
-					address = new SymbolHRASMemoryAddress(tgtAdr.calculateNumericalValue());
+					address = new ExpressionHRASMemoryAddress(tgtAdr);
 				}
 				if (c.getTarget().getOffset() != null) {
 					address.setAddressOffset(c.getTarget().getOffset().compileToHRAS(this));
@@ -664,21 +684,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol symbol : symbols) {// resolve symbols targets offsets
 			if (symbol.getTargetSymbol() != null) {
 				AbstractHRACMemoryAddress ma = symbol.getTargetSymbol();
-				if (ma.getOffset() == null) {
-					ma.setOffset(0);
-				} else {
-					ma.setOffset(ma.getOffset().resolve(this));
-				}
-
+				ma.resolve(this);
 			}
 		}
 		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
 			if (hracForDup.getCmd() != null) {
 				HRACCommand cmd = hracForDup.getCmd();
 				AbstractHRACMemoryAddress ma = cmd.getTarget();
-				if (ma.getOffset() != null) {
-					ma.setOffset(ma.getOffset().getResolvedExpressionTree(this));
-				}
+				ma.resolve(this);
 			}
 		}
 		List<HRACCommand> newCommandList = new ArrayList<>();

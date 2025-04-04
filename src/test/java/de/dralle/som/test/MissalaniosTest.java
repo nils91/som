@@ -66,4 +66,27 @@ class MissalaniosTest {
 		wh.write(false, null);
 		wh.write(true, null);
 	}
+	@Test
+	void testBranchingJava() {
+		if(true) {
+			branch1();
+		}else {
+			branch2();
+		}
+		int v = true?branch1():branch2();
+	}
+
+	private int branch2() {
+		System.out.println("b2");
+		return 0;
+		// TODO Auto-generated method stub
+		
+	}
+
+	private int branch1() {
+		System.out.println("b1");
+		return 0;
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -278,6 +278,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		clone.globalDirectives = new HashMap<>(cloneDirectiveMap(globalDirectives, true));
 		clone.directives = new HashMap<>(cloneDirectiveMap(directives, true));
 		clone.additionalDirectives = new HashMap<>(cloneDirectiveMap(additionalDirectives, true));
+		if (initOnceAddresses != null) {
+			clone.initOnceAddresses = new ArrayList<Map.Entry<AbstractHRACMemoryAddress, Boolean>>();
+			for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : initOnceAddresses) {
+				clone.initOnceAddresses.add(new AbstractMap.SimpleEntry<AbstractHRACMemoryAddress, Boolean>(
+						hracForDup.getKey().clone(), hracForDup.getValue()));
+			}
+		}
+
 		if (symbols != null) {
 			clone.symbols = new ArrayList<>();
 			for (HRACSymbol hracForDup : symbols) {

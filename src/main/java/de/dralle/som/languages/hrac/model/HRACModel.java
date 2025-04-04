@@ -3,6 +3,8 @@
  */
 package de.dralle.som.languages.hrac.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,8 +111,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
-	private Map<String, Object> globalDirectives;//global directives. During precompile, only global directives from child models/commands will be passed on.
-	
+	private Map<String, Object> globalDirectives;// global directives. During precompile, only global directives from
+													// child models/commands will be passed on.
+
 	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
 											// shall be used. But Integer should also be checked, just in case). Making
 											// it Object is only a workaround however, the long-term solutiopn would be
@@ -127,7 +130,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRACModel() {
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
-		globalDirectives=new HashMap<String, Object>();
+		globalDirectives = new HashMap<String, Object>();
 		directives = new HashMap<>();
 		additionalDirectives = new HashMap<>();
 	}
@@ -137,7 +140,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, int value) {
-		addAddDirective(name,new HRACIntegerNode(value));
+		addAddDirective(name, new HRACIntegerNode(value));
 	}
 
 	public void addAddDirective(String name, String value) {
@@ -164,7 +167,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		globalDirectives.putAll(globals);
 	}
 
-	
 	public void addCommand(HRACCommand c) {
 		addCommand(new HRACForDup(c));
 	}
@@ -273,8 +275,9 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.directives = new HashMap<>(directives);
-		clone.additionalDirectives = new HashMap<>(additionalDirectives);
+		clone.globalDirectives = new HashMap<>(cloneDirectiveMap(globalDirectives, true));
+		clone.directives = new HashMap<>(cloneDirectiveMap(directives, true));
+		clone.additionalDirectives = new HashMap<>(cloneDirectiveMap(additionalDirectives, true));
 		if (symbols != null) {
 			clone.symbols = new ArrayList<>();
 			for (HRACSymbol hracForDup : symbols) {
@@ -288,6 +291,82 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 		}
 		return clone;
+	}
+
+	private <T1, T2> Map<T1, T2> cloneDirectiveMap(Map<T1, T2> directives, boolean addNonClonables) { // since clone is
+																										// protected on
+																										// Object, a
+																										// generic
+																										// approach
+																										// needs this
+																										// rather ugly
+																										// reflective
+																										// call
+		Map<T1, T2> retMap = new HashMap<T1, T2>();
+		if (directives != null) {
+			for (Entry<T1, T2> entry : directives.entrySet()) {
+				T1 key = entry.getKey();
+				T2 val = entry.getValue();
+				T1 keyClone = null;
+				T2 valClone = null;
+				if (key instanceof Cloneable) {
+					// Getting the clone() method using reflection
+					Method cloneMethod = null;
+					try {
+						cloneMethod = key.getClass().getDeclaredMethod("clone");
+					} catch (NoSuchMethodException | SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (cloneMethod != null) {
+						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
+
+						// Invoking the clone() method reflectively
+						try {
+							keyClone = (T1) cloneMethod.invoke(key);
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if (val instanceof Cloneable) {
+					// Getting the clone() method using reflection
+					Method cloneMethod = null;
+					try {
+						cloneMethod = key.getClass().getDeclaredMethod("clone");
+					} catch (NoSuchMethodException | SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (cloneMethod != null) {
+						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
+
+						// Invoking the clone() method reflectively
+						try {
+							valClone = (T2) cloneMethod.invoke(val);
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if (addNonClonables) {
+					if (keyClone == null) {
+						keyClone = key;
+					}
+					if (valClone == null) {
+						valClone = val;
+					}
+				}
+				if (keyClone != null) {
+					if (valClone != null || addNonClonables) {
+						retMap.put(keyClone, valClone);
+					}
+				}
+			}
+		}
+		return retMap;
 	}
 
 	public HRASModel compileToHRAS() {
@@ -338,11 +417,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
 				AbstractHRASMemoryAddress tgtHras = null;
 				if (tgt instanceof NamedHRACMemoryAddress) {
-					tgtHras=new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) tgt).getName());
+					tgtHras = new SymbolHRASMemoryAddress(((NamedHRACMemoryAddress) tgt).getName());
 				} else if (tgt instanceof FixedHRACMemoryAddress) {
-					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this)
-							;
-					tgtHras=new ExpressionHRASMemoryAddress(tgtAdr);
+					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) tgt).getAddress().compileToHRAS(this);
+					tgtHras = new ExpressionHRASMemoryAddress(tgtAdr);
 					if (tgtAdr.calculateNumericalValue() < 0) {
 						log.warning("Warning: (HRAC -> HRAS) Symbol " + s.getName() + " points to negative address.");
 

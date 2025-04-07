@@ -177,7 +177,14 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		}
 		commands.add(c);
 	}
-
+	public void addCommand(HRACModel c) {
+		HRACForDup fd = new HRACForDup();
+		fd.setModel(c);
+		HRACForDupFixedRangeProvider range = new HRACForDupFixedRangeProvider();
+		range.addValue(0);
+		fd.setRange(range);
+		addCommand(fd);
+	}
 	/**
 	 * Adds commands and symbols from one hrac model to another (from other to
 	 * target, returns target)

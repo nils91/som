@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -384,7 +385,7 @@ class HRBSCompileTest {
 	void testIssue145NoAtomicChildsLabelGen(String testFile) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		List<String> labels = hrac.getAllLabelsRecursive();
+		Collection<String> labels = hrac.getAllLabelsRecursive(true);
 		assertTrue(labels.contains("LABEL"));
 	}
 
@@ -426,7 +427,7 @@ class HRBSCompileTest {
 	void testLabelNotOverwriteLabelExist(String testFile) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		List<String> labels = hrac.getAllLabelsRecursive();
+		Collection<String> labels = hrac.getAllLabelsRecursive(true);
 		// Label could exist as mirrorsymbol, that would be ok to
 		HRACSymbol symbol = hrac.getSymbolByName("LABEL");
 		assertTrue(labels.contains("LABEL") || symbol != null);
@@ -438,7 +439,7 @@ class HRBSCompileTest {
 	void testLabelNotOverwriteLabelExist2(String testFile) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		List<String> labels = hrac.getAllLabelsRecursive();
+		Collection<String> labels = hrac.getAllLabelsRecursive(true);
 		// Label could exist as mirrorsymbol, that would be ok to
 		HRACSymbol symbol = hrac.getSymbolByName("OVERWRITING_LABEL");
 		assertTrue(labels.contains("OVERWRITING_LABEL") || symbol != null);

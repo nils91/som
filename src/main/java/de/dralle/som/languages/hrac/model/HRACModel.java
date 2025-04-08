@@ -7,10 +7,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import de.dralle.som.IHeap;
@@ -509,8 +512,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return retMap;
 	}
 
-	public List<String> getAllLabelsRecursive() {
-		List<String> labels = new ArrayList<String>();
+	public Collection<String> getAllLabelsRecursive(boolean includeMirrorSymbols) {
+		Set<String> labels = new HashSet<String>();
 		for (HRACForDup string : commands) {
 			HRACCommand cmd = string.getCmd();
 			if (cmd != null) {
@@ -521,7 +524,25 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 			HRACModel model = string.getModel();
 			if (model != null) {
-				labels.addAll(model.getAllLabelsRecursive());
+				labels.addAll(model.getAllLabelsRecursive(includeMirrorSymbols));
+			}
+			if (includeMirrorSymbols)// search through symbols
+			{
+				int listSizePreRun=0;
+				do {
+					listSizePreRun = labels.size();
+					for (HRACSymbol string2 : symbols) {
+						if (string2.getTargetSymbol() != null) {
+							AbstractHRACMemoryAddress tgt = string2.getTargetSymbol();
+							if (tgt instanceof NamedHRACMemoryAddress) {
+								String name = ((NamedHRACMemoryAddress) tgt).getName();
+								if (labels.contains(name)) {
+									labels.add(string2.getName());
+								}
+							}
+						}
+					}
+				} while (labels.size()>listSizePreRun);
 			}
 		}
 		return labels;

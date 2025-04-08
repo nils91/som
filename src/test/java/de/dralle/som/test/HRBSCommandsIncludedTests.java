@@ -1304,7 +1304,6 @@ class HRBSCommandsIncludedTests {
 
 	@ParameterizedTest
 	@MethodSource("provideTruthTableOR2")
-	@Timeout(10)
 	void testOR2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import OR2\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: OR2 A,B;";

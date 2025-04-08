@@ -60,7 +60,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			return cmd.asCode();
 		}
 		if (model != null) {
-			return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
+			if (range != null) {
+				return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
+			} else {
+				return "{" + System.lineSeparator() + "\t" + model.asCode() + System.lineSeparator() + "}"
+						+ System.lineSeparator();
+			}
 		}
 		return "";
 	}

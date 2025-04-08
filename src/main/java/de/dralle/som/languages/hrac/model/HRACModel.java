@@ -185,28 +185,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		fd.setRange(range);
 		addCommand(fd);
 	}
-	/**
-	 * Adds commands and symbols from one hrac model to another (from other to
-	 * target, returns target)
-	 * 
-	 * @param target
-	 * @param other
-	 * @return
-	 */
-	public void addCommandsAndSymbolsFromOther(HRACModel other) {
-		List<HRACSymbol> osymbols = other.getSymbols();
-		List<HRACForDup> oCommands = other.getCommands();
-		if (osymbols != null) {
-			for (HRACSymbol s : osymbols) {
-				addSymbol(s);
-			}
-		}
-		if (oCommands != null) {
-			for (HRACForDup hracCommand : oCommands) {
-				addCommand(hracCommand);
-			}
-		}
-	}
+
 
 	public void addDirective(String name, int value) {
 		addDirective(name, new HRACIntegerNode(value));
@@ -447,23 +426,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				m.addSymbol(s.getName(), tgtHras);
 			}
 		}
-		for (var hracForDup : initOnceAddresses) {
-			HRACAbstractExpressionNode hracOfs = hracForDup.getKey().getOffset();
+		for (var oti : initOnceAddresses) {
+			HRACAbstractExpressionNode hracOfs = oti.getKey().getOffset();
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
 			if (hracOfs != null) {
-				newmadr.setAddressOffset(hracForDup.getKey().getOffset().compileToHRAS(this));
+				newmadr.setAddressOffset(oti.getKey().getOffset().compileToHRAS(this));
 			} else {
 				newmadr.setAddressOffset(new HRASIntegerNode(0));
 			}
 
-			if (hracForDup.getKey() instanceof FixedHRACMemoryAddress) {
-				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) hracForDup.getKey();
+			if (oti.getKey() instanceof FixedHRACMemoryAddress) {
+				FixedHRACMemoryAddress f = (FixedHRACMemoryAddress) oti.getKey();
 				newmadr.setSymbol(f.getAddress().toString());
-			} else if (hracForDup.getKey() instanceof NamedHRACMemoryAddress) {
-				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress) hracForDup.getKey();
+			} else if (oti.getKey() instanceof NamedHRACMemoryAddress) {
+				NamedHRACMemoryAddress na = (NamedHRACMemoryAddress) oti.getKey();
 				newmadr.setSymbol(na.getName());
 			}
-			m.addInitOnceValue(newmadr, hracForDup.getValue());
+			m.addInitOnceValue(newmadr, oti.getValue());
 		}
 		m.addSymbol(HRAC_HEAP_START_MARKER, new SymbolHRASMemoryAddress(toc.getHeapStartAddress(n)));// place HRAC heap
 																										// start

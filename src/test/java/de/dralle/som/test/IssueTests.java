@@ -268,7 +268,8 @@ class IssueTests {
 				SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACForDup> coms = hrac.getCommands();
-		assertEquals("HRBS_START", coms.get(0).getCmd().getLabel().getName());
+		HRACCommand firstCommand = getFirstCommand(coms);
+		assertEquals("HRBS_START", firstCommand.getLabel().getName());
 	}
 
 	@Test
@@ -277,7 +278,25 @@ class IssueTests {
 				SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACForDup> coms = hrac.getCommands();
-		assertEquals("HRBS_START", coms.get(0).getCmd().getLabel().getName());
+		HRACCommand firstCommand = getFirstCommand(coms);
+		assertEquals("HRBS_START", firstCommand.getLabel().getName());
+	}
+
+	private HRACCommand getFirstCommand(List<HRACForDup> coms) {
+		for (HRACForDup hracForDup : coms) {
+			return getFirstCommand(hracForDup);
+		}
+		return null;
+	}
+
+	private HRACCommand getFirstCommand(HRACForDup hracForDup) {
+		if (hracForDup.getCmd() != null) {
+			return hracForDup.getCmd();
+		}
+		if (hracForDup.getModel() != null) {
+			return getFirstCommand(hracForDup.getModel().getCommands());
+		}
+		return null;
 	}
 
 	@ParameterizedTest

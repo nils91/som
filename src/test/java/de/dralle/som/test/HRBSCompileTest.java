@@ -418,7 +418,7 @@ class HRBSCompileTest {
 	void testLabelCommandAddition(String testFile, int expectedAtomicCommandGen) throws IOException {
 		HRBSModel model = f.loadFromFile(testFile, SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
-		assertEquals(expectedAtomicCommandGen, hrac.getCommands().size());
+		assertEquals(expectedAtomicCommandGen, hrac.getCommandCountSimple());
 	}
 
 	@Timeout(30)

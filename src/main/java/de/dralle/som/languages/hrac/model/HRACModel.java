@@ -137,6 +137,22 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		directives = new HashMap<>();
 		additionalDirectives = new HashMap<>();
 	}
+	/**
+	 * Doesn´t take ranges into account
+	 * @return
+	 */
+	public int getCommandCountSimple() {
+		int cnt=0;
+		for (HRACForDup hracForDup : commands) {
+			if(hracForDup.getCmd()!=null) {
+				cnt++;
+			}
+			if(hracForDup.getModel()!=null) {
+				cnt+=hracForDup.getModel().getCommandCountSimple();
+			}
+		}
+		return cnt;
+	}
 
 	public void addAddDirective(String name, HRACAbstractExpressionNode value) {
 		additionalDirectives.put(name, value);

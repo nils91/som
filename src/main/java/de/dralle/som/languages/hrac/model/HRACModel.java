@@ -204,7 +204,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			log.warning("Child equal to parent, not adding");
 		} else {
 			HRACForDup fd = new HRACForDup();
-			fd.setModel(c);			
+			fd.setModel(c);
 			addCommand(fd);
 		}
 	}
@@ -249,7 +249,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		if (!duplicate || symbol.isOp()) {
 			symbols.add(symbol);
 		}
-
 	}
 
 	public String asCode() {
@@ -760,12 +759,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (!oldName.equals(newName)) {// prevent self-referencing symbols
 				hracForDup.setName(newName);
 				localSymbolNameReplacementList.put(oldName, newName);
-				if (!symbolNameReplacementList.containsKey(oldName)) {
-					// retain old symbol name by creating a mirror
-					HRACSymbol newSymbol = new HRACSymbol(oldName);
-					newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(newName));
-					newSymbols.add(newSymbol);
-				}
+				// retain old symbol name by creating a mirror
+				HRACSymbol newSymbol = new HRACSymbol(oldName);
+				newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(newName));
+				newSymbol.setOp(hracForDup.isOp()); // if the symbol this is referencing is op, make this op too
+				newSymbols.add(newSymbol);
+
 			}
 		}
 

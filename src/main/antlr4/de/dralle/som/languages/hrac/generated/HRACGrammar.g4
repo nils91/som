@@ -19,6 +19,7 @@ line
 
 symbol_dec
 :
+	OP?
 	(
 		SYMBOL_KW
 		| ALLOC_KW
@@ -261,6 +262,11 @@ NAW
 	'NAW'
 ;
 
+OP
+:
+	'op'
+;
+
 SYMBOL_KW
 :
 	'symbol'
@@ -273,7 +279,10 @@ ALLOC_KW
 	| 'alloc'
 ;
 
-GLOBAL:'global';
+GLOBAL
+:
+	'global'
+;
 
 DUPLICATE
 :
@@ -327,6 +336,7 @@ INT
 		| BASE_NUMBER_PREFIX
 	)? [0-9a-zA-Z]+
 ;
+
 DIRECTIVE_VALUE_STR
 :
 	(

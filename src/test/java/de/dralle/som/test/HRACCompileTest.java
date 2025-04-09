@@ -203,8 +203,8 @@ class HRACCompileTest {
 		HRASCommand l1c=hras.getCommandAtAddress(l1);
 		assertNotNull(l0c);
 		assertNotNull(l1c);
-		assertEquals(a0, l0c.getAddress().resolve(hras));
-		assertEquals(a0, l1c.getAddress().resolve(hras));
+		assertEquals(a1, l0c.getAddress().resolve(hras));
+		assertEquals(a1, l1c.getAddress().resolve(hras));
 	}
 	@Test
 	void testFDSymbolGenPrecompiledNaming() throws IOException {

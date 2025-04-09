@@ -49,7 +49,6 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 
 	@Override
 	public HRACModel visitLine(LineContext ctx) {
-
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
 		} else if (ctx.commadn_or_for() != null) {
@@ -59,7 +58,6 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		} else if (ctx.oti() != null) {
 			ctx.oti().accept(this);
 		}
-
 		return model;
 	}
 

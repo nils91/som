@@ -26,6 +26,7 @@ public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 			ctx.for_duplication().accept(this);
 		} else if(ctx.program_blk()!=null) {
 			HRACModel childModel = ctx.program_blk().accept(new HRACProgramVisitor());
+			f.setModel(childModel);
 		}
 		return f;
 	}

@@ -55,7 +55,6 @@ public class ExpressionHRASMemoryAddress extends AbstractHRASMemoryAddress imple
 
 	public int resolve(HRASModel model) {
 		int address = expression.calculateNumericalValue();
-
 		return address + super.resolve(model);
 	}
 

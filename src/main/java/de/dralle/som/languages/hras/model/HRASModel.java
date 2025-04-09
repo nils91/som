@@ -81,6 +81,16 @@ public class HRASModel implements ISetN {
 	public HRASModel() {
 		symbols = new LinkedHashMap<>();
 	}
+	
+	public HRASCommand getCommandAtAddress(int address) {
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> entry : commands.entrySet()) {
+			AbstractHRASMemoryAddress abstractAdrt = entry.getKey();
+			if(abstractAdrt.resolve(this)==address) {
+				return entry.getValue();
+			}			
+		}
+		return null;
+	}
 
 	public AbstractHRASMemoryAddress addCommand(HRASCommand c) {
 		if (commands == null) {

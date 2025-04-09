@@ -12,7 +12,10 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
  */
 public class HRACSymbol implements Cloneable {
 	private String name;
-
+	/**
+	 * Op means 'overwrite parent'. Controls wether this symbol should overwrite a symbol of the same name in the parent scope when merging
+	 */
+	private boolean op=false;
 	/**
 	 * Potential target symbol. Might be null.
 	 */
@@ -29,6 +32,9 @@ public class HRACSymbol implements Cloneable {
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
+		if(op) {
+			sb.append("op ");
+		}
 		if (targetSymbol != null) {
 			sb.append("symbol ");
 		} else {
@@ -68,16 +74,23 @@ public class HRACSymbol implements Cloneable {
 	public boolean equals(Object obj) {
 		if (obj instanceof HRACSymbol) {
 			HRACSymbol oth = (HRACSymbol) obj;
-			boolean equals = name == oth.name || name.equals(oth.name);
+			boolean equals = equalsName(oth);
 			if (equals) {
 				equals = bitCnt == oth.bitCnt || bitCnt.equals(oth.bitCnt);
 			}
 			if (equals) {
 				equals = targetSymbol == oth.targetSymbol || targetSymbol.equals(oth.targetSymbol);
 			}
+			if(equals) {
+				equals=op==oth.op;
+			}
 			return equals;
 		}
 		return super.equals(obj);
+	}
+	
+	public boolean equalsName(HRACSymbol oth) {
+		return name == oth.name || name.equals(oth.name);
 	}
 
 	public HRACAbstractExpressionNode getBitCnt() {
@@ -121,5 +134,13 @@ public class HRACSymbol implements Cloneable {
 	@Override
 	public String toString() {
 		return asCode();
+	}
+
+	public boolean isOp() {
+		return op;
+	}
+
+	public void setOp(boolean op) {
+		this.op = op;
 	}
 }

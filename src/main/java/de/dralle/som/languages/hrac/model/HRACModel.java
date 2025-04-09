@@ -137,18 +137,20 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		directives = new HashMap<>();
 		additionalDirectives = new HashMap<>();
 	}
+
 	/**
 	 * Doesn´t take ranges into account
+	 * 
 	 * @return
 	 */
 	public int getCommandCountSimple() {
-		int cnt=0;
+		int cnt = 0;
 		for (HRACForDup hracForDup : commands) {
-			if(hracForDup.getCmd()!=null) {
+			if (hracForDup.getCmd() != null) {
 				cnt++;
 			}
-			if(hracForDup.getModel()!=null) {
-				cnt+=hracForDup.getModel().getCommandCountSimple();
+			if (hracForDup.getModel() != null) {
+				cnt += hracForDup.getModel().getCommandCountSimple();
 			}
 		}
 		return cnt;
@@ -231,11 +233,26 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		initOnceAddresses.add(ent);
 	}
 
+	public void addMultipleSymbols(Collection<HRACSymbol> symbols) {
+		for (HRACSymbol hracSymbol : symbols) {
+			this.addSymbol(hracSymbol);
+		}
+	}
+
 	public void addSymbol(HRACSymbol symbol) {
 		if (symbols == null) {
 			symbols = new ArrayList<>();
 		}
-		symbols.add(symbol);
+		boolean duplicate = false;
+		for (HRACSymbol hracForDup : symbols) {
+			if (hracForDup.equalsName(symbol)) {
+				duplicate = true;
+			}
+		}
+		if (!duplicate || symbol.isOp()) {
+			symbols.add(symbol);
+		}
+
 	}
 
 	public String asCode() {
@@ -332,8 +349,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					try {
 						cloneMethod = key.getClass().getDeclaredMethod("clone");
 					} catch (NoSuchMethodException | SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 					if (cloneMethod != null) {
 						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
@@ -353,8 +368,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					try {
 						cloneMethod = key.getClass().getDeclaredMethod("clone");
 					} catch (NoSuchMethodException | SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 					if (cloneMethod != null) {
 						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
@@ -493,7 +506,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 					HRASAbstractExpressionNode tgtAdr = ((FixedHRACMemoryAddress) hracCmdTgt).getAddress()
 							.compileToHRAS(this);
 					if (tgtAdr.calculateNumericalValue() < 0) {
-						System.out.println("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
+						log.warning("Warning: (HRAC -> HRAS) Command " + cf + " points to negative address.");
 					}
 					address = new ExpressionHRASMemoryAddress(tgtAdr);
 				}
@@ -544,7 +557,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 			if (includeMirrorSymbols)// search through symbols
 			{
-				int listSizePreRun=0;
+				int listSizePreRun = 0;
 				do {
 					listSizePreRun = labels.size();
 					for (HRACSymbol string2 : symbols) {
@@ -558,7 +571,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 							}
 						}
 					}
-				} while (labels.size()>listSizePreRun);
+				} while (labels.size() > listSizePreRun);
 			}
 		}
 		return labels;
@@ -742,13 +755,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		if (symbolNameReplacementList == null) {
 			symbolNameReplacementList = new HashMap<>();
 		}
+		List<HRACSymbol> newSymbols = new ArrayList<HRACSymbol>();
 		Map<String, String> localSymbolNameReplacementList = new HashMap<>(symbolNameReplacementList);
 		for (HRACSymbol hracForDup : symbols) {// rename symbols
 			String oldName = hracForDup.getName();
 			String newName = oldName + suffix;
-			hracForDup.setName(newName);
-			localSymbolNameReplacementList.put(oldName, newName);
+			if (!oldName.equals(newName)) {// prevent self-referencing symbols
+				hracForDup.setName(newName);
+				localSymbolNameReplacementList.put(oldName, newName);
+				if (!symbolNameReplacementList.containsKey(oldName)) {
+					// retain old symbol name by creating a mirror
+					HRACSymbol newSymbol = new HRACSymbol(oldName);
+					newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(newName));
+					newSymbols.add(newSymbol);
+				}
+			}
 		}
+
 		for (HRACForDup hracForDup : commands) {// rename command labels
 			String oldLabelName = null;
 			if (hracForDup.getCmd() != null) {
@@ -816,9 +839,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			List<HRACModel> precompiledChildModels = hracForDup.precompileChilds(suffix,
 					localSymbolNameReplacementList);// precompile/resolve/expand loops
 			for (HRACModel hracModel : precompiledChildModels) {
-				for (HRACSymbol hracModel2 : hracModel.symbols) {
-					symbols.add(hracModel2);
-				}
+				addMultipleSymbols(hracModel.symbols);
 				for (HRACForDup hracCommand : hracModel.commands) {
 					if (hracCommand.getCmd() != null) {
 						newCommandList.add(hracCommand.getCmd());
@@ -830,7 +851,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACCommand hracCommand : newCommandList) {
 			addCommand(hracCommand);
 		}
-
+		addMultipleSymbols(newSymbols);
 	}
 
 	public void setHeapSize(int heapSize) {

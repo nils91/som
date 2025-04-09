@@ -19,6 +19,7 @@ line
 
 symbol_dec
 :
+	OP?
 	(
 		SYMBOL_KW
 		| ALLOC_KW
@@ -27,7 +28,7 @@ symbol_dec
 
 directive
 :
-	SEMICOLON directive_name EQ
+	SEMICOLON GLOBAL? directive_name EQ
 	(
 		par_expr
 		| DIRECTIVE_VALUE_STR
@@ -37,6 +38,7 @@ directive
 commadn_or_for
 :
 	command
+	| program_blk
 	| for_duplication
 ;
 
@@ -260,6 +262,11 @@ NAW
 	'NAW'
 ;
 
+OP
+:
+	'op'
+;
+
 SYMBOL_KW
 :
 	'symbol'
@@ -270,6 +277,11 @@ ALLOC_KW
 :
 	'allocate'
 	| 'alloc'
+;
+
+GLOBAL
+:
+	'global'
 ;
 
 DUPLICATE
@@ -324,6 +336,7 @@ INT
 		| BASE_NUMBER_PREFIX
 	)? [0-9a-zA-Z]+
 ;
+
 DIRECTIVE_VALUE_STR
 :
 	(

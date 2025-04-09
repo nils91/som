@@ -5,6 +5,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Commadn_or_forCo
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplicationContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.For_duplication_headContext;
 import de.dralle.som.languages.hrac.model.HRACForDup;
+import de.dralle.som.languages.hrac.model.HRACModel;
 
 public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 	private HRACForDup f = null;
@@ -23,6 +24,9 @@ public class HRACForVisitor extends HRACGrammarBaseVisitor<HRACForDup> {
 			f.setCmd(ctx.command().accept(new HRACCommandVisitor()));
 		} else if (ctx.for_duplication() != null) {
 			ctx.for_duplication().accept(this);
+		} else if(ctx.program_blk()!=null) {
+			HRACModel childModel = ctx.program_blk().accept(new HRACProgramVisitor());
+			f.setModel(childModel);
 		}
 		return f;
 	}

@@ -3,8 +3,13 @@
  */
 package de.dralle.som.languages.hrac.visitors;
 
+import java.util.logging.Logger;
+
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.DirectiveContext;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.OtiContext;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Program_blkContext;
 import de.dralle.som.languages.hrac.model.HRACModel;
 
@@ -14,25 +19,36 @@ import de.dralle.som.languages.hrac.model.HRACModel;
  */
 public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 
+	private static final Logger log = Logger.getLogger(HRACProgramVisitor.class.getName());
+
 	private HRACModel model;
 
 	@Override
-	public HRACModel visitDirective(de.dralle.som.languages.hrac.generated.HRACGrammarParser.DirectiveContext ctx) {
-		String name = ctx.directive_name().getText();
-		Object value = "";
-		if (ctx.par_expr() != null) {
-			value = ctx.par_expr().accept(new HRACExpressionVisitor());
+	public HRACModel visitDirective(DirectiveContext ctx) {
+		if (ctx.directive_name() != null) {
+			String name = ctx.directive_name().getText();
+			
+			if (name != null) {
+				Object value = "";
+				if (ctx.par_expr() != null) {
+					value = ctx.par_expr().accept(new HRACExpressionVisitor());
+				}
+				if (ctx.DIRECTIVE_VALUE_STR() != null) {
+					value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1,
+							ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);
+				}
+				model.addDirective(name, value);
+			} else {
+				log.info("Directive with no name. Discarding...");
+			}
+		}else {
+			log.warning("Incomplete directive. Please check the syntax of your file."); //This shouldn´t happen, yet it does, indicating that theres something wrong with either the grammar or ANTLR. probably grammar
 		}
-		if (ctx.DIRECTIVE_VALUE_STR() != null) {
-			value = ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length() - 1);
-		}
-		model.addDirective(name, value);
 		return model;
 	}
 
 	@Override
-	public HRACModel visitLine(de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext ctx) {
-
+	public HRACModel visitLine(LineContext ctx) {
 		if (ctx.directive() != null) {
 			ctx.directive().accept(this);
 		} else if (ctx.commadn_or_for() != null) {
@@ -42,7 +58,6 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 		} else if (ctx.oti() != null) {
 			ctx.oti().accept(this);
 		}
-
 		return model;
 	}
 
@@ -58,9 +73,9 @@ public class HRACProgramVisitor extends HRACGrammarBaseVisitor<HRACModel> {
 	}
 
 	@Override
-	public HRACModel visitProgram(de.dralle.som.languages.hrac.generated.HRACGrammarParser.ProgramContext ctx) {
+	public HRACModel visitProgram(ProgramContext ctx) {
 		model = new HRACModel();
-		for (de.dralle.som.languages.hrac.generated.HRACGrammarParser.LineContext l : ctx.line()) {
+		for (LineContext l : ctx.line()) {
 			l.accept(this);
 		}
 		return model;

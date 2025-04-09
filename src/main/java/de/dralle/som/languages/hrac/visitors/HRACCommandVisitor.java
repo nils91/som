@@ -5,6 +5,7 @@ package de.dralle.som.languages.hrac.visitors;
 
 import de.dralle.som.Opcode;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
+import de.dralle.som.languages.hrac.generated.HRACGrammarParser.CommandContext;
 import de.dralle.som.languages.hrac.model.HRACCommand;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 
@@ -16,7 +17,7 @@ public class HRACCommandVisitor extends HRACGrammarBaseVisitor<HRACCommand> {
 	private HRACCommand c;
 
 	@Override
-	public HRACCommand visitCommand(de.dralle.som.languages.hrac.generated.HRACGrammarParser.CommandContext ctx) {
+	public HRACCommand visitCommand(CommandContext ctx) {
 		c = new HRACCommand();
 		if (ctx.SYMBOL() != null) {
 			HRACSymbol s = new HRACSymbol();

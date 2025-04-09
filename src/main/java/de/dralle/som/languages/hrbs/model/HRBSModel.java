@@ -251,6 +251,7 @@ public class HRBSModel implements ISetN, IHeap {
 		if (symbol.getBitCnt() != null) {
 			s.setBitCnt(symbol.getBitCnt().compileToHRAC());
 		}
+		s.setOp(symbol.getType().equals(HRBSSymbolType.global));
 		return s;
 	}
 
@@ -614,11 +615,6 @@ public class HRBSModel implements ISetN, IHeap {
 																									// NAMES
 			convertSymbols(parentCmdName, cmdExecId, additionalSymbols, localSymbolNames, m,
 					additionalAvailableCommands); // make sure to also generate local symbol names
-//			for (HRBSSymbol s : additionalSymbols) {
-//				HRACSymbol hracS = getAsHRACSymbol(s, localSymbolNames, parentCmdName, cmdExecId, m,
-//						additionalAvailableCommands);
-//				m.addSymbol(hracS);
-//			}
 			for (HRBSCommand hrbsCommand : additionalCommands) {
 				convertAnyCommand(hrbsCommand, parentCmdName, cmdExecId, null, localSymbolNames,
 						additionalAvailableCommands, m);
@@ -907,7 +903,7 @@ public class HRBSModel implements ISetN, IHeap {
 
 		}
 		m = addCommandsAndSymbolsFromOther(m, tempModel);// merge tempModel (which has been created for the sole
-															// purpoose of holding commands for dereffing params) into
+															// purpose of holding commands for dereffing params) into
 															// this one
 		addDirectives.remove("instanceid");
 		return m;
@@ -995,7 +991,8 @@ public class HRBSModel implements ISetN, IHeap {
 				fd.setModel(compiledCmdModel);
 				m.addCommand(fd);
 			} else {
-				m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
+				m.addCommand(compiledCmdModel);
+				//m = addCommandsAndSymbolsFromOther(m, compiledCmdModel);
 			}
 		}
 		incCommandUsage(c);

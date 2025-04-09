@@ -1,0 +1,16 @@
+alloc A1
+alloc A2
+alloc A0
+symbol A A0
+L0: NAR A
+NAW A
+{
+	symbol A A1
+	L1: NAR A
+	NAW A
+	{
+		symbol A A2
+		L2: NAR A
+		NAW A
+	}
+}

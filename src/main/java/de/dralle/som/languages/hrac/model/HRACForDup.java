@@ -18,6 +18,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
  */
 public class HRACForDup implements ISetN, IHeap, Cloneable {
 	private static int runId;
+	private static int getn_cnt = 0;
 
 	public static <V, K> void putNoOverwrite(Map<K, V> src, Map<K, V> tgt) {
 		if (src != null) {
@@ -31,6 +32,8 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			}
 		}
 	}
+
+	private Integer cachedN;
 
 	private int id;
 
@@ -60,7 +63,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			return cmd.asCode();
 		}
 		if (model != null) {
-			return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
+			if (range != null) {
+				return String.format("for %s dup:\n{\n%s\n}\n", range.asCode(), model.asCode());
+			} else {
+				return "{" + System.lineSeparator() + "\t" + model.asCode() + System.lineSeparator() + "}"
+						+ System.lineSeparator();
+			}
 		}
 		return "";
 	}
@@ -138,13 +146,27 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	@Override
 	public int getN() {
-		if (model != null) {
-			return model.getN();
+		getn_cnt++;
+		if (getn_cnt % 1000000000 == 0) {
+			System.out.println(getn_cnt);
 		}
-		if (parent != null) {
-			parent.getDirectiveAsExpressionTree("N");
+		if (cachedN == null) {
+			int n = 0;
+			if (model != null) {
+				if (model == parent) {
+					System.out.println("Error");
+				}
+				n = model.getN();
+				cachedN = n;
+				return n;
+			}
+			if (parent != null) {
+				parent.getDirectiveAsExpressionTree("N");
+			}
+			cachedN = 0;
+			return cachedN;// assuming special is n
 		}
-		return 0;// assuming special is n
+		return cachedN;
 	}
 
 	public HRACModel getParent() {
@@ -264,6 +286,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 
 	public void setCmd(HRACCommand cmd) {
 		this.cmd = cmd;
+		cachedN = null;
 	}
 
 	@Override
@@ -271,11 +294,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		if (model != null) {
 			model.setHeapSize(cnt);
 		}
-
+		cachedN = null;
 	}
 
 	public void setModel(HRACModel model) {
 		this.model = model;
+		cachedN = null;
 	}
 
 	@Override
@@ -283,14 +307,18 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		if (model != null) {
 			model.setN(n);
 		}
+		cachedN = null;
 	}
 
 	public void setParent(HRACModel parent) {
+		if(this.parent!=parent) {
 		this.parent = parent;
+		cachedN = null;}
 	}
 
 	public void setRange(IHRACRangeProvider range) {
 		this.range = range;
+		cachedN = null;
 	}
 
 	@Override

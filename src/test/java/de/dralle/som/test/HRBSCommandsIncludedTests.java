@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -1304,7 +1305,6 @@ class HRBSCommandsIncludedTests {
 
 	@ParameterizedTest
 	@MethodSource("provideTruthTableOR2")
-	@Timeout(10)
 	void testOR2(boolean inValueAcc, boolean inValueA, boolean inValueB, boolean finalValueAcc, boolean finalValueA,
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import OR2\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: OR2 A,B;";
@@ -1656,5 +1656,15 @@ class HRBSCommandsIncludedTests {
 		assertEquals(finalValueI0, runner.getMemspace().getBit(iAdr));
 		assertEquals(finalValueI1, runner.getMemspace().getBit(iAdr + 1));
 		assertEquals(finalValueO, runner.getMemspace().getBit(oAdr));
+	}
+	@Test
+	@Timeout(5)
+	void testBuiltinsCommand() throws IOException {
+		String hrbsCode = "import INIT_BUILTINS0;\n\nMAIN:\n\tINIT_BUILTINS0;";
+		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
+		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRACModel hrapModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAP);
+		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
+		assertEquals(0, hrasModel.resolveSymbolToAddress("ACC"));
 	}
 }

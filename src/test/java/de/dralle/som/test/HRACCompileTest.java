@@ -41,6 +41,7 @@ import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
+import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
 
 class HRACCompileTest {
@@ -92,13 +93,13 @@ class HRACCompileTest {
 	}
 
 	@Test
-	void testFDCorrectAllocNumm() throws IOException {
+	void testFDCorrectAllocNum() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen2.hrac", SOMFormats.HRAC);
 		HRASModel m = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
-		assertEquals(1 + 3 + 5, m.getSymbolCount());
+		assertEquals(1 + 3 + 5 + 1, m.getSymbolCount());
 	}// 3+1 (2 start markers+1 heap marker+ADR_EVAL for now) symbols should be added
 		// by
-		// compiler, 5 from input
+		// compiler, 5 from input, 1 from input retaining original symbol name
 
 	@Test
 	void testFDIndependentAlloc() throws IOException {
@@ -115,6 +116,96 @@ class HRACCompileTest {
 		assertNotNull(m);
 	}
 
+	@Test
+	void testFDSymbolGenNested() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen_nested_rep5.hrac", SOMFormats.HRAC);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		IMemspace m = c.compile(model, SOMFormats.HRAC, SOMFormats.BIN);
+		assertNotNull(m);
+	}
+	@Test
+	void testFDSymbolGenNestedRefCorrectLevelR5() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen_nested_rep5.hrac", SOMFormats.HRAC);
+		HRACModel hrap=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hrav=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAV);
+		int a0=hras.resolveSymbolToAddress("A0");
+		int a1=hras.resolveSymbolToAddress("A1");
+		int a2=hras.resolveSymbolToAddress("A2");
+		int l0=hras.resolveSymbolToAddress("L0");
+		int l1=hras.resolveSymbolToAddress("L1");
+		int l2=hras.resolveSymbolToAddress("L2");
+		HRASCommand l0c=hras.getCommandAtAddress(l0);
+		HRASCommand l1c=hras.getCommandAtAddress(l1);
+		HRASCommand l2c=hras.getCommandAtAddress(l2);
+		assertNotNull(l0c);
+		assertNotNull(l1c);
+		assertNotNull(l2c);
+		assertEquals(a0, l0c.getAddress().resolve(hras));
+		assertEquals(a1, l1c.getAddress().resolve(hras));
+		assertEquals(a2, l2c.getAddress().resolve(hras));
+	}
+	@Test
+	void testFDSymbolGenNestedRefCorrectLevelR1() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen_nested_rep1.hrac", SOMFormats.HRAC);
+		HRACModel hrap=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hrav=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAV);
+		int a0=hras.resolveSymbolToAddress("A0");
+		int a1=hras.resolveSymbolToAddress("A1");
+		int a2=hras.resolveSymbolToAddress("A2");
+		int l0=hras.resolveSymbolToAddress("L0");
+		int l1=hras.resolveSymbolToAddress("L1");
+		int l2=hras.resolveSymbolToAddress("L2");
+		HRASCommand l0c=hras.getCommandAtAddress(l0);
+		HRASCommand l1c=hras.getCommandAtAddress(l1);
+		HRASCommand l2c=hras.getCommandAtAddress(l2);
+		assertNotNull(l0c);
+		assertNotNull(l1c);
+		assertNotNull(l2c);
+		assertEquals(a0, l0c.getAddress().resolve(hras));
+		assertEquals(a1, l1c.getAddress().resolve(hras));
+		assertEquals(a2, l2c.getAddress().resolve(hras));
+	}
+	@Test
+	void testBLKSymbolGenNestedRefCorrectLevel() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_blk_smbol_gen_nested.hrac", SOMFormats.HRAC);
+		HRACModel hrap=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hrav=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAV);
+		int a0=hras.resolveSymbolToAddress("A0");
+		int a1=hras.resolveSymbolToAddress("A1");
+		int a2=hras.resolveSymbolToAddress("A2");
+		int l0=hras.resolveSymbolToAddress("L0");
+		int l1=hras.resolveSymbolToAddress("L1");
+		int l2=hras.resolveSymbolToAddress("L2");
+		HRASCommand l0c=hras.getCommandAtAddress(l0);
+		HRASCommand l1c=hras.getCommandAtAddress(l1);
+		HRASCommand l2c=hras.getCommandAtAddress(l2);
+		assertNotNull(l0c);
+		assertNotNull(l1c);
+		assertNotNull(l2c);
+		assertEquals(a0, l0c.getAddress().resolve(hras));
+		assertEquals(a1, l1c.getAddress().resolve(hras));
+		assertEquals(a2, l2c.getAddress().resolve(hras));
+	}
+	@Test
+	void testBLKSymbolGenOp() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_blk_smbol_gen_op.hrac", SOMFormats.HRAC);
+		HRACModel hrap=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hrav=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAV);
+		int a0=hras.resolveSymbolToAddress("A0");
+		int a1=hras.resolveSymbolToAddress("A1");
+		int l0=hras.resolveSymbolToAddress("L0");
+		int l1=hras.resolveSymbolToAddress("L1");
+		HRASCommand l0c=hras.getCommandAtAddress(l0);
+		HRASCommand l1c=hras.getCommandAtAddress(l1);
+		assertNotNull(l0c);
+		assertNotNull(l1c);
+		assertEquals(a0, l0c.getAddress().resolve(hras));
+		assertEquals(a0, l1c.getAddress().resolve(hras));
+	}
 	@Test
 	void testFDSymbolGenPrecompiledNaming() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac", SOMFormats.HRAC);

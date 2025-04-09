@@ -204,10 +204,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			log.warning("Child equal to parent, not adding");
 		} else {
 			HRACForDup fd = new HRACForDup();
-			fd.setModel(c);
-			HRACForDupFixedRangeProvider range = new HRACForDupFixedRangeProvider();
-			range.addValue(0);
-			fd.setRange(range);
+			fd.setModel(c);			
 			addCommand(fd);
 		}
 	}

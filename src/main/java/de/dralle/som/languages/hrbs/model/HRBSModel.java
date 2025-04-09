@@ -251,6 +251,7 @@ public class HRBSModel implements ISetN, IHeap {
 		if (symbol.getBitCnt() != null) {
 			s.setBitCnt(symbol.getBitCnt().compileToHRAC());
 		}
+		s.setOp(symbol.getType().equals(HRBSSymbolType.global));
 		return s;
 	}
 

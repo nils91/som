@@ -59,7 +59,6 @@ public class SymbolHRASMemoryAddress extends AbstractHRASMemoryAddress implement
 
 	public int resolve(HRASModel model) {
 		int address = model.resolveSymbolToAddress(symbol);
-
 		return address + super.resolve(model);
 	}
 

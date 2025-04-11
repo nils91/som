@@ -131,7 +131,7 @@ public class HRBSModel implements ISetN, IHeap {
 		newm.setHeapSize(m.getHeapSize());
 		newm.setName(name);
 		// only required for transition. change back to direct set later
-		Map<String, Object> hracDirectives = m.getDirectives();
+		Map<String, Object> hracDirectives = m.getDirectivesAsMap();
 		Map<String, String> hrbsDirectives = new HashMap<String, String>();
 		for (Entry<String, Object> entry : hracDirectives.entrySet()) {
 			String key = entry.getKey();

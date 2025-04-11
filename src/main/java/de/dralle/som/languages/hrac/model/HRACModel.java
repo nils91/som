@@ -597,7 +597,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				}
 			}
 		}
-		if(found==null) {
+		if (found == null) {
 			log.warning("Directive " + name + " not found");
 			return null;
 		}
@@ -614,23 +614,27 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	/**
 	 * Deprecated. Use getDirectives() instead
+	 * 
 	 * @return
 	 */
 	@Deprecated
 	public Map<String, Object> getDirectivesAsMap() {
-		Map<String, Object> retMap=new HashMap<String, Object>();
+		Map<String, Object> retMap = new HashMap<String, Object>();
 		for (AbstractDirective<?> abstractDirective : directives) {
 			retMap.put(abstractDirective.getName(), abstractDirective.getValue());
 		}
 		return retMap;
 	}
+
 	/**
 	 * Returns the directives (but not the additional ones)
+	 * 
 	 * @return
 	 */
 	public Collection<AbstractDirective<?>> getDirectives() {
 		return directives;
-	} 
+	}
+
 	private List<String> getDirectivesAsStrings() {
 		List<String> tmp = new ArrayList<>();
 		for (AbstractDirective<?> symbol : directives) {
@@ -645,7 +649,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	public int getHeapSize() {
 		HRACAbstractExpressionNode heapNode = getDirectiveAsExpressionTree("heap");
-		if(heapNode!=null) {
+		if (heapNode != null) {
 			return heapNode.calculateNumericalValue();
 		}
 		return 0;
@@ -661,7 +665,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	public int getMinimumN() {
 		HRACAbstractExpressionNode minNNode = getDirectiveAsExpressionTree("n");
-		if(minNNode!=null) {
+		if (minNNode != null) {
 			return minNNode.calculateNumericalValue();
 		}
 		return 0;
@@ -846,11 +850,37 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void setHeapSize(int heapSize) {
-		directives.add(new HRACIntegerDirective(false, "heap", heapSize));
+		int curValue = getHeapSize();
+		if (heapSize > curValue) {
+			AbstractDirective<?> directive = null;
+			for (AbstractDirective<?> abstractDirective : directives) {
+				if ("heap".equals(abstractDirective.getName())) {
+					directive = abstractDirective;
+				}
+			}
+			if (directive != null) {
+				directives.remove(directive);
+			}
+			directives.add(new HRACIntegerDirective(false, "heap", heapSize));
+		}
+
 	}
 
 	public void setMinimumN(int minimumN) {
-		directives.add(new HRACIntegerDirective(false, "n", minimumN));
+		int curValue = getMinimumN();
+		if (minimumN > curValue) {
+			AbstractDirective<?> directive = null;
+			for (AbstractDirective<?> abstractDirective : directives) {
+				if ("n".equals(abstractDirective.getName())) {
+					directive = abstractDirective;
+				}
+			}
+			if (directive != null) {
+				directives.remove(directive);
+			}
+			directives.add(new HRACIntegerDirective(false, "n", minimumN));
+		}
+
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.dralle.som.languages.hrac.model;
+package de.dralle.som.languages.hrac.model.directive;
 
 public class StringDirective extends AbstractDirective<String> {
 

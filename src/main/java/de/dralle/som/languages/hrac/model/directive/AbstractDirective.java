@@ -1,4 +1,4 @@
-package de.dralle.som.languages.hrac.model;
+package de.dralle.som.languages.hrac.model.directive;
 
 public abstract class AbstractDirective<T> implements Cloneable {
 	private boolean global;

@@ -21,6 +21,7 @@ import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
+import de.dralle.som.languages.hrac.model.directive.AbstractDirective;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
@@ -114,15 +115,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
-	private Map<String, Object> globalDirectives;// global directives. During precompile, only global directives from
+	private Collection<AbstractDirective<?>> directives=new ArrayList<AbstractDirective<?>>();// Directives can either be String or an expression (for int IntegerNode
+											// shall be used. But Integer should also be checked, just in case). During precompile, only global directives from
 													// child models/commands will be passed on.
 
-	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
-											// shall be used. But Integer should also be checked, just in case). Making
-											// it Object is only a workaround however, the long-term solutiopn would be
-											// an additional directive class to handle this.
-
-	private Map<String, Object> additionalDirectives;// additionals added at runtime
+	private Collection<AbstractDirective<?>> additionalDirectives=new ArrayList<AbstractDirective<?>>();// additionals added at runtime. wont be output
 
 	private List<HRACSymbol> symbols;
 
@@ -133,9 +130,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRACModel() {
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
-		globalDirectives = new HashMap<String, Object>();
-		directives = new HashMap<>();
-		additionalDirectives = new HashMap<>();
 	}
 
 	/**

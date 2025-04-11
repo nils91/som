@@ -644,7 +644,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public int getHeapSize() {
-		return getDirectiveAsExpressionTree("heap").calculateNumericalValue();
+		HRACAbstractExpressionNode heapNode = getDirectiveAsExpressionTree("heap");
+		if(heapNode!=null) {
+			return heapNode.calculateNumericalValue();
+		}
+		return 0;
 	}
 
 	private int getHeapStartAddress(int n) {
@@ -656,7 +660,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public int getMinimumN() {
-		return getDirectiveAsExpressionTree("n").calculateNumericalValue();
+		HRACAbstractExpressionNode minNNode = getDirectiveAsExpressionTree("n");
+		if(minNNode!=null) {
+			return minNNode.calculateNumericalValue();
+		}
+		return 0;
 	}
 
 	@Override

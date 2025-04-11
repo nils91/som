@@ -22,6 +22,9 @@ import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.directive.AbstractDirective;
+import de.dralle.som.languages.hrac.model.directive.HRACExpressionTreeDirective;
+import de.dralle.som.languages.hrac.model.directive.HRACIntegerDirective;
+import de.dralle.som.languages.hrac.model.directive.StringDirective;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
@@ -151,7 +154,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, HRACAbstractExpressionNode value) {
-		additionalDirectives.put(name, value);
+		additionalDirectives.add(new HRACExpressionTreeDirective(false, name, value));
 	}
 
 	public void addAddDirective(String name, int value) {
@@ -159,15 +162,19 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, String value) {
-		additionalDirectives.put(name, value);
+		additionalDirectives.add(new StringDirective(false, name, value));
 	}
 
 	public void addAddDirectives(Map<String, String> additionals) {
-		additionalDirectives.putAll(additionals);
+		for (Entry<String, String> entry : additionals.entrySet()) {
+			String key = entry.getKey();
+			String val = entry.getValue();
+			addAddDirective(key, val);
+		}
 	}
 
 	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
-		globalDirectives.put(name, value);
+		directives.add(new HRACExpressionTreeDirective(true, name, value));
 	}
 
 	public void addGlobalDirective(String name, int value) {
@@ -175,11 +182,15 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addGlobalDirective(String name, String value) {
-		globalDirectives.put(name, value);
+		directives.add(new StringDirective(true, name, value));
 	}
 
 	public void addGlobalDirectives(Map<String, String> globals) {
-		globalDirectives.putAll(globals);
+		for (Entry<String, String> entry : globals.entrySet()) {
+			String key = entry.getKey();
+			String val = entry.getValue();
+			addGlobalDirective(key, val);
+		}
 	}
 
 	public void addCommand(HRACCommand c) {
@@ -208,12 +219,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, Object value) {
-		directives.put(name, value);
-
+		if(value instanceof String) {
+			addDirective(name, value.toString());
+		}
+		if(value instanceof HRACAbstractExpressionNode) {
+			directives.add(new HRACExpressionTreeDirective(false, name, (HRACAbstractExpressionNode) value));
+		}
+		if(value instanceof HRACIntegerNode) {
+			directives.add(new HRACIntegerDirective(false, name, (HRACIntegerNode) value));
+		}
+		if(value instanceof Integer) {
+			addDirective(name, new HRACIntegerNode((Integer)value));
+		}
+		addAddDirective(name, value.toString());
 	}
 
 	public void addDirective(String name, String value) {
-		directives.put(name, value);
+		directives.add(new StringDirective(false,name,value));
 	}
 
 	public void addInitOnceAdress(AbstractHRACMemoryAddress adr, boolean set) {

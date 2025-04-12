@@ -175,7 +175,21 @@ class IssueTests {
 	void testIssue152_HRBSForDupCompileRangeCommandOffsetNotDiscard() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
-		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
+		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
+		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
+		HRASCommand[] cmds=new HRASCommand[2];
+		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdOfs=new int[cmds.length];
+		for (int i = 0; i < cmds.length; i++) {
+			HRASCommand j = cmds[i];
+			if(j.getAddress().getAddressOffset()!=null) {
+				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
+			}
+			
+		}
+		assertEquals(0, cmdOfs[0]);
+		assertEquals(1, cmdOfs[1]);
 	}
 	@Test
 	void testIssue62_HRAPCompilation() throws IOException {

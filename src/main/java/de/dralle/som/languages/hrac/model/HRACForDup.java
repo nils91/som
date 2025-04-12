@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
@@ -17,6 +19,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
  *
  */
 public class HRACForDup implements ISetN, IHeap, Cloneable {
+	private static final Logger log = Logger.getLogger(HRACForDup.class.getName());
 	private static int runId;
 	private static int getn_cnt = 0;
 
@@ -154,14 +157,32 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			int n = 0;
 			if (model != null) {
 				if (model == parent) {
-					System.out.println("Error");
+					log.log(Level.SEVERE		, "Child and parent are the same object");
+					throw new RuntimeException("Child and parent are the same object");
 				}
-				n = model.getN();
+				if(range!=null) {
+					HRACAbstractExpressionNode[] rng = range.getRange(parent);
+					for (HRACAbstractExpressionNode hracAbstractExpressionNode : rng) {
+						String runDir=range.getRunningDirectiveName();
+						HRACModel mc = model.clone();
+						mc.addAddDirective(runDir, hracAbstractExpressionNode);
+						int ln = mc.getN();
+						if(ln>n) {
+							n=ln;
+						}
+					}
+					for (int i = rng.length; i <= 0; i/=2) {
+						n++;
+					}
+				}else {
+					n = model.getN();
+				}				
 				cachedN = n;
 				return n;
 			}
 			if (parent != null) {
-				parent.getDirectiveAsExpressionTree("N");
+				cachedN =  parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent).calculateNumericalValue();;
+				return cachedN;
 			}
 			cachedN = 0;
 			return cachedN;// assuming special is n

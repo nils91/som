@@ -162,7 +162,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, HRACAbstractExpressionNode value) {
-		additionalDirectives.add(new HRACExpressionTreeDirective(false, name, value));
+		addAddDirective(new HRACExpressionTreeDirective(false, name, value));
 	}
 
 	public void addAddDirective(String name, int value) {
@@ -170,7 +170,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, String value) {
-		additionalDirectives.add(new StringDirective(false, name, value));
+		addAddDirective(new StringDirective(false, name, value));
 	}
 
 	public void addAddDirectives(Map<String, String> additionals) {
@@ -181,8 +181,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		}
 	}
 
+	public void addAddDirective(AbstractDirective<?> additional) {
+		addDirectiveToCollection(additional, additionalDirectives);
+	}
+	
 	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
-		directives.add(new HRACExpressionTreeDirective(true, name, value));
+		addDirective(new HRACExpressionTreeDirective(true, name, value));
 	}
 
 	public void addGlobalDirective(String name, int value) {
@@ -190,7 +194,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addGlobalDirective(String name, String value) {
-		directives.add(new StringDirective(true, name, value));
+		addDirective(new StringDirective(true, name, value));
 	}
 
 	public void addGlobalDirectives(Map<String, String> globals) {
@@ -231,10 +235,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			addDirective(name, value.toString());
 		}
 		if (value instanceof HRACAbstractExpressionNode) {
-			directives.add(new HRACExpressionTreeDirective(false, name, (HRACAbstractExpressionNode) value));
+			addDirective(new HRACExpressionTreeDirective(false, name, (HRACAbstractExpressionNode) value));
 		}
 		if (value instanceof HRACIntegerNode) {
-			directives.add(new HRACIntegerDirective(false, name, (HRACIntegerNode) value));
+			addDirective(new HRACIntegerDirective(false, name, (HRACIntegerNode) value));
 		}
 		if (value instanceof Integer) {
 			addDirective(name, new HRACIntegerNode((Integer) value));
@@ -243,7 +247,25 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, String value) {
-		directives.add(new StringDirective(false, name, value));
+		addDirective(new StringDirective(false, name, value));
+	}
+
+	public void addDirective(AbstractDirective<?> directive) {
+		addDirectiveToCollection(directive, directives);
+	}
+
+	public static void addDirectiveToCollection(AbstractDirective<?> directive,
+			Collection<AbstractDirective<?>> directivse) {
+		AbstractDirective<?> foundDirective = null;
+		for (AbstractDirective<?> abstractDirective : directivse) {
+			if (abstractDirective.getName().equals(directive.getName())) {
+				foundDirective = abstractDirective;
+			}
+		}
+		if (foundDirective != null) {
+			directivse.remove(foundDirective);
+		}
+		directivse.add(directive);
 	}
 
 	public void addInitOnceAdress(AbstractHRACMemoryAddress adr, boolean set) {
@@ -861,7 +883,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (directive != null) {
 				directives.remove(directive);
 			}
-			directives.add(new HRACIntegerDirective(false, "heap", heapSize));
+			addDirective("heap", heapSize);
 		}
 
 	}
@@ -878,9 +900,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (directive != null) {
 				directives.remove(directive);
 			}
-			directives.add(new HRACIntegerDirective(false, "n", minimumN));
+			addDirective("n", minimumN);
 		}
-
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	}
 
 	/**
-	 * return the EXpression tree behind this directive name.
+	 * return the Expression tree behind this directive name.
 	 */
 	@Override
 	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
@@ -69,7 +69,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 
 	/**
 	 * If strings is null, the directive is resolved regardless of name. Otherwise
-	 * the directive is only reolved if its part of the strings array.
+	 * the directive is only resolved if its part of the strings array.
 	 */
 	@Override
 	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
@@ -80,7 +80,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 				}
 			}
 		}
-		return this.clone();
+		return getResolvedExpressionTree(parentClone);
 	}
 
 	@Override

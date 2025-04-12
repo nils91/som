@@ -45,7 +45,7 @@ public abstract class HRACAbstractExpressionNode implements Cloneable {
 	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
 		HRACAbstractExpressionNode clone = this.clone();
 		clone = clone.resolve(parentClone, strings);
-		return this;
+		return clone;
 	}
 
 	public Collection<String> getUsedDirectives() {

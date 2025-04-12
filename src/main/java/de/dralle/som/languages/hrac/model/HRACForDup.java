@@ -157,31 +157,33 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			int n = 0;
 			if (model != null) {
 				if (model == parent) {
-					log.log(Level.SEVERE		, "Child and parent are the same object");
+					log.log(Level.SEVERE, "Child and parent are the same object");
 					throw new RuntimeException("Child and parent are the same object");
 				}
-				if(range!=null) {
+				if (range != null) {
 					HRACAbstractExpressionNode[] rng = range.getRange(parent);
 					for (HRACAbstractExpressionNode hracAbstractExpressionNode : rng) {
-						String runDir=range.getRunningDirectiveName();
+						String runDir = range.getRunningDirectiveName();
 						HRACModel mc = model.clone();
 						mc.addAddDirective(runDir, hracAbstractExpressionNode);
 						int ln = mc.getN();
-						if(ln>n) {
-							n=ln;
+						if (ln > n) {
+							n = ln;
 						}
 					}
-					for (int i = rng.length; i <= 0; i/=2) {
+					for (int i = rng.length; i <= 0; i /= 2) {
 						n++;
 					}
-				}else {
+				} else {
 					n = model.getN();
-				}				
+				}
 				cachedN = n;
 				return n;
 			}
 			if (parent != null) {
-				cachedN =  parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent).calculateNumericalValue();;
+				cachedN = parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent)
+						.calculateNumericalValue();
+				;
 				return cachedN;
 			}
 			cachedN = 0;
@@ -202,21 +204,21 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			AbstractHRACMemoryAddress cmdTgt = cmd.getTarget();
 			if (cmdTgt != null) {
 				HRACAbstractExpressionNode cmdTOfs = cmdTgt.getOffset();
-				if (cmdTOfs != null) {
-					for (int i = 0; i < range.getRange(parent).length; i++) {
-						HRACAbstractExpressionNode si = range.getRange(parent)[i];
-						String rangeVar = range.getRunningDirectiveName();
-						if (rangeVar == null) {
-							rangeVar = "i";
-						}
-						HRACModel parentClone = parent.clone();
-						parentClone.addAddDirective(rangeVar, si);
-						HRACAbstractExpressionNode cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone,
-								new String[] { rangeVar });
-						HRACCommand cmdClone = cmd.clone();
-						cmdClone.getTarget().setOffset(cmdOfsRes);
-						cmds.add(cmdClone);
+				for (int i = 0; i < range.getRange(parent).length; i++) {
+					HRACAbstractExpressionNode si = range.getRange(parent)[i];
+					String rangeVar = range.getRunningDirectiveName();
+					if (rangeVar == null) {
+						rangeVar = "i";
 					}
+					HRACModel parentClone = parent.clone();
+					parentClone.addAddDirective(rangeVar, si);
+					HRACAbstractExpressionNode cmdOfsRes = null;
+					if (cmdTOfs != null) {
+						cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone, new String[] { rangeVar });
+					}
+					HRACCommand cmdClone = cmd.clone();
+					cmdClone.getTarget().setOffset(cmdOfsRes);
+					cmds.add(cmdClone);
 				}
 			}
 		}
@@ -332,9 +334,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	}
 
 	public void setParent(HRACModel parent) {
-		if(this.parent!=parent) {
-		this.parent = parent;
-		cachedN = null;}
+		if (this.parent != parent) {
+			this.parent = parent;
+			cachedN = null;
+		}
 	}
 
 	public void setRange(IHRACRangeProvider range) {

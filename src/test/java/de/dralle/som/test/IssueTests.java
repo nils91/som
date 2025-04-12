@@ -167,11 +167,16 @@ class IssueTests {
 //
 //		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
 //		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
-
+	@Test
+	void testIssue152_HRBSForDupCompileRangeCommandOffsetNotDiscard() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
+	}
 	@Test
 	void testIssue62_HRAPCompilation() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_simple.hrac", SOMFormats.HRAC);

@@ -310,12 +310,18 @@ class HRBSCompileTest {
 	}
 
 	@Test
-	void testForDupCompileHBRS() throws IOException { // see also issue 142 on github and issueTests
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+	void testForDupCompileHBRSAtomic() throws IOException { // see also issue 142 on github and issueTests
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
 
+	@Test
+	void testForDupCompileHBRSNonAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
+	}
 	@Test
 	void testIfDirectiveAccessCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_if_da.hrbs", SOMFormats.HRBS);

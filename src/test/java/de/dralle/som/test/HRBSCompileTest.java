@@ -40,6 +40,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
+import de.dralle.som.languages.hras.model.HRASCommand;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSFixedMemoryAddress;
@@ -321,6 +322,46 @@ class HRBSCompileTest {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
+	}
+	@Test
+	void testForDupCompileHBRSAtomicOffsetResolve() throws IOException { //also in issuetests as 152
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
+		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
+		HRASCommand[] cmds=new HRASCommand[2];
+		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdOfs=new int[cmds.length];
+		for (int i = 0; i < cmds.length; i++) {
+			HRASCommand j = cmds[i];
+			if(j.getAddress().getAddressOffset()!=null) {
+				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
+			}
+			
+		}
+		assertEquals(0, cmdOfs[0]);
+		assertEquals(1, cmdOfs[1]);
+	}
+	@Test
+	void testForDupCompileHBRSNonAtomicOffsetResolve() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
+		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
+		HRASCommand[] cmds=new HRASCommand[2];
+		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdOfs=new int[cmds.length];
+		for (int i = 0; i < cmds.length; i++) {
+			HRASCommand j = cmds[i];
+			if(j.getAddress().getAddressOffset()!=null) {
+				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
+			}
+			
+		}
+		assertEquals(0, cmdOfs[0]);
+		assertEquals(1, cmdOfs[1]);
 	}
 	@Test
 	void testIfDirectiveAccessCompile() throws IOException {

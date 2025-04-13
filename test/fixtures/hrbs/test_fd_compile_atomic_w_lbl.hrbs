@@ -1,0 +1,3 @@
+MAIN:
+	alloc A[2];
+	global LABEL : [0:1] NAR A[$i];

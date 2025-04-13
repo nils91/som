@@ -175,6 +175,8 @@ class IssueTests {
 	@Test
 	void testIssue152_HRBSForDupCompileRangeCommandOffsetNotDiscard() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
 		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
@@ -186,7 +188,6 @@ class IssueTests {
 			HRASCommand j = cmds[i];
 			assertNotNull(j);
 			cmdTgtAdr[i] = j.getAddress().resolve(hras);
-
 		}
 		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
 	}
@@ -196,7 +197,8 @@ class IssueTests {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
 		List<HRACForDup> cmds = hrap.getCommands();
-		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		HRACCommand startingCommand = cmds.get(0).getCmd();
+		String startlabel = startingCommand.getLabel().getName();
 		assertNotNull(startlabel);
 		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
 		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
@@ -262,6 +264,32 @@ class IssueTests {
 		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
 		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
 		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_HRBSForDupCompileLabelAtomic() throws IOException { 
+//		Ok, so this only happens if:
+//
+//		    The compile path starts at HRBS
+//		    The command is a standard command (NAR or NAW)
+//		    Theres a range on that command
+//Theres a label on it
+//		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
+//		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic_w_lbl.hrbs", SOMFormats.HRBS);
+		HRACModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP);
+		List<HRACForDup> hsCom = hras.getCommands();
+		int lblCnt = 0;
+		for (HRACForDup hracForDup : hsCom) {
+			if(hracForDup.getCmd()!=null) {
+				HRACCommand cmd = hracForDup.getCmd();
+				if(cmd.getLabel()!=null) {
+					if(cmd.getLabel().getName().equals("LABEL")) {
+						lblCnt++;
+					}
+				}
+			}
+		}
+		assertEquals(1, lblCnt);
 	}
 	//to here
 	@Test

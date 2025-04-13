@@ -327,6 +327,8 @@ class HRBSCompileTest {
 	@Test
 	void testForDupCompileHBRSAtomicOffsetResolve() throws IOException { // also in issuetests as 152
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		//HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC); //This problem lies with the precompiler, so enable hrac and hrap (with these 2 lines) for debugging
+		//HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
 		int secCmdAddress = hrbsStartAddress + hras.getN() + 1;

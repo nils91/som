@@ -840,13 +840,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				ma.resolve(this);
 			}
 		}
-		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
-			if (hracForDup.getCmd() != null) {
-				HRACCommand cmd = hracForDup.getCmd();
-				AbstractHRACMemoryAddress ma = cmd.getTarget();
-				ma.resolve(this);
-			}
-		}
+		
 		List<HRACCommand> newCommandList = new ArrayList<>();
 		for (HRACForDup hracForDup : commands) {// precompile childs
 			if (hracForDup.getCmd() != null) {
@@ -867,6 +861,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		commands = new ArrayList<>();
 		for (HRACCommand hracCommand : newCommandList) {
 			addCommand(hracCommand);
+		}
+		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
+			if (hracForDup.getCmd() != null) {
+				HRACCommand cmd = hracForDup.getCmd();
+				AbstractHRACMemoryAddress ma = cmd.getTarget();
+				ma.resolve(this);
+			}
 		}
 		addMultipleSymbols(newSymbols);
 	}

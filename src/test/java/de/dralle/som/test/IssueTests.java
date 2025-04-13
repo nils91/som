@@ -190,6 +190,80 @@ class IssueTests {
 		}
 		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
 	}
+	//Test for issue 153
+	@Test
+	void testIssue153_StartLabelWhereExpectedForDupCompileAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedForDupCompileNonAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileNonAtomic2() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_nonatomic2.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileAtomic2() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_atomic2.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileNonAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	//to here
 	@Test
 	void testIssue62_HRAPCompilation() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_simple.hrac", SOMFormats.HRAC);

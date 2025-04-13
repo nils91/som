@@ -118,7 +118,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
-	private Collection<AbstractDirective<?>> directives = new ArrayList<AbstractDirective<?>>();// Directives can either
+	private Map<String,AbstractDirective<?>> directives = new HashMap<String,AbstractDirective<?>>();// Directives can either
 																								// be String or an
 																								// expression (for int
 																								// IntegerNode
@@ -126,7 +126,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	// precompile, only global directives from
 	// child models/commands will be passed on.
 
-	private Collection<AbstractDirective<?>> additionalDirectives = new ArrayList<AbstractDirective<?>>();// additionals
+	private Map<String,AbstractDirective<?>> additionalDirectives = new HashMap<String,AbstractDirective<?>>();// additionals
 																											// added at
 																											// runtime.
 																											// wont be
@@ -182,7 +182,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(AbstractDirective<?> additional) {
-		addDirectiveToCollection(additional, additionalDirectives);
+		addDirectiveToMap(additional, additionalDirectives);
 	}
 	
 	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
@@ -251,21 +251,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(AbstractDirective<?> directive) {
-		addDirectiveToCollection(directive, directives);
+		addDirectiveToMap(directive, directives);
 	}
 
-	public static void addDirectiveToCollection(AbstractDirective<?> directive,
-			Collection<AbstractDirective<?>> directivse) {
-		AbstractDirective<?> foundDirective = null;
-		for (AbstractDirective<?> abstractDirective : directivse) {
-			if (abstractDirective.getName().equals(directive.getName())) {
-				foundDirective = abstractDirective;
-			}
-		}
-		if (foundDirective != null) {
-			directivse.remove(foundDirective);
-		}
-		directivse.add(directive);
+	public static void addDirectiveToMap(AbstractDirective<?> directive,
+			Map<String,AbstractDirective<?>> directivse) {		
+		directivse.put(directive.getName(),directive);
 	}
 
 	public void addInitOnceAdress(AbstractHRACMemoryAddress adr, boolean set) {
@@ -343,8 +334,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.directives = new ArrayList<AbstractDirective<?>>(cloneDirectiveList(directives));
-		clone.additionalDirectives = new ArrayList<AbstractDirective<?>>(cloneDirectiveList(additionalDirectives));
+		clone.directives = new HashMap<String,AbstractDirective<?>>(cloneDirectiveMap(directives));
+		clone.additionalDirectives = new HashMap<String,AbstractDirective<?>>(cloneDirectiveMap(additionalDirectives));
 		if (initOnceAddresses != null) {
 			clone.initOnceAddresses = new ArrayList<Map.Entry<AbstractHRACMemoryAddress, Boolean>>();
 			for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : initOnceAddresses) {
@@ -368,10 +359,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return clone;
 	}
 
-	private <T extends AbstractDirective<?>> Collection<T> cloneDirectiveList(Collection<? extends T> directives) {
-		Collection<T> retMap = new ArrayList<T>();
-		for (T t : directives) {
-			retMap.add((T) t.clone());
+	private <T extends AbstractDirective<?>> Map<String,T> cloneDirectiveMap(Map<String,? extends T> directives) {
+		Map<String,T> retMap = new HashMap<String,T>();
+		for (Entry<String, ? extends T> entry : directives.entrySet()) {
+			String key = entry.getKey();
+			T val = entry.getValue();
+			retMap.put(key, (T) val.clone());
+			
 		}
 		return retMap;
 	}
@@ -513,8 +507,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 
 	public Collection<AbstractDirective<?>> getAllDirectives() {
 		Collection<AbstractDirective<?>> retList = new ArrayList<AbstractDirective<?>>();
-		retList.addAll(additionalDirectives);
-		retList.addAll(directives);
+		retList.addAll(additionalDirectives.values());
+		retList.addAll(directives.values());
 		return retList;
 	}
 
@@ -600,24 +594,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		if (name == null) {
 			return null;
 		}
-		AbstractDirective<?> found = null;
-		HRACAbstractExpressionNode dValue = null;
-		for (AbstractDirective<?> abstractDirective : additionalDirectives) {
-			if (name.equals(abstractDirective.getName())) {
-				found = abstractDirective;
-				if (abstractDirective instanceof HRACExpressionTreeDirective) {
-					return ((HRACExpressionTreeDirective) abstractDirective).getValue();
-				}
-			}
+		AbstractDirective<?> found = additionalDirectives.get(name);
+		if (found instanceof HRACExpressionTreeDirective) {
+			return ((HRACExpressionTreeDirective) found).getValue();
 		}
-
-		for (AbstractDirective<?> abstractDirective : directives) {
-			if (name.equals(abstractDirective.getName())) {
-				found = abstractDirective;
-				if (abstractDirective instanceof HRACExpressionTreeDirective) {
-					return ((HRACExpressionTreeDirective) abstractDirective).getValue();
-				}
-			}
+		found = directives.get(name);
+		if (found instanceof HRACExpressionTreeDirective) {
+			return ((HRACExpressionTreeDirective) found).getValue();
 		}
 		if (found == null) {
 			log.warning("Directive " + name + " not found");
@@ -642,7 +625,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	@Deprecated
 	public Map<String, Object> getDirectivesAsMap() {
 		Map<String, Object> retMap = new HashMap<String, Object>();
-		for (AbstractDirective<?> abstractDirective : directives) {
+		for (AbstractDirective<?> abstractDirective : directives.values()) {
 			retMap.put(abstractDirective.getName(), abstractDirective.getValue());
 		}
 		return retMap;
@@ -653,13 +636,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	 * 
 	 * @return
 	 */
-	public Collection<AbstractDirective<?>> getDirectives() {
+	public Map<String, AbstractDirective<?>> getDirectives() {
 		return directives;
 	}
 
 	private List<String> getDirectivesAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (AbstractDirective<?> symbol : directives) {
+		for (AbstractDirective<?> symbol : directives.values()) {
 			tmp.add(symbol.toString());
 		}
 		return tmp;
@@ -875,15 +858,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public void setHeapSize(int heapSize) {
 		int curValue = getHeapSize();
 		if (heapSize > curValue) {
-			AbstractDirective<?> directive = null;
-			for (AbstractDirective<?> abstractDirective : directives) {
-				if ("heap".equals(abstractDirective.getName())) {
-					directive = abstractDirective;
-				}
-			}
-			if (directive != null) {
-				directives.remove(directive);
-			}
 			addDirective("heap", heapSize);
 		}
 
@@ -892,15 +866,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public void setMinimumN(int minimumN) {
 		int curValue = getMinimumN();
 		if (minimumN > curValue) {
-			AbstractDirective<?> directive = null;
-			for (AbstractDirective<?> abstractDirective : directives) {
-				if ("n".equals(abstractDirective.getName())) {
-					directive = abstractDirective;
-				}
-			}
-			if (directive != null) {
-				directives.remove(directive);
-			}
 			addDirective("n", minimumN);
 		}
 	}

@@ -471,9 +471,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD13.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: ADD13 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -503,9 +502,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO, boolean finalValueCB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/ADD14.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tglobal alloc CB\n\tDEBUG: ADD14 I[0], I[1], O, CB;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int cbAdr = hrasModel.resolveSymbolToAddress("CB");
@@ -536,9 +534,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testAND1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: AND1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -563,9 +560,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: AND2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -593,9 +589,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/AND3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: AND3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -623,9 +618,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testCLEAR0(boolean inValueAcc, boolean finalValueAcc) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/CLEAR0.hrbs\"\n\nMAIN:\n\tDEBUG: CLEAR0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
@@ -646,9 +640,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testCLEARP1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/CLEAR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: CLEAR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -672,9 +665,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: COMPARE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -699,9 +691,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueA, boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: COMPARE2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -729,9 +720,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COMPARE3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: COMPARE3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -760,9 +750,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/COPY2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: COPY2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -788,9 +777,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testFLIP1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: FLIP1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -814,9 +802,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/FLIP2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: FLIP2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -843,9 +830,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD13.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: HADD13 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -875,9 +861,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI0, boolean finalValueI1, boolean finalValueO, boolean finalValueCB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/HADD14.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tglobal alloc CB\n\tDEBUG: HADD14 I[0], I[1], O, CB;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int cbAdr = hrasModel.resolveSymbolToAddress("CB");
@@ -908,9 +893,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testINV0(boolean inAcc, boolean finalAcc) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV0.hrbs\"\n\nMAIN:\n\tglobal DEBUG: INV0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
@@ -931,9 +915,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testINV1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/INV1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: INV1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -957,9 +940,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NAND1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -984,9 +966,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: NAND2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1014,9 +995,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAND3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: NAND3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1044,9 +1024,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testNAR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1070,9 +1049,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testNAW1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NAW1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: NAW1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1096,9 +1074,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testNOOP0(boolean inAcc, boolean finalAcc) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOOP0.hrbs\"\n\nMAIN:\n\tglobal DEBUG: NOOP0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
@@ -1119,9 +1096,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testNOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NOR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1146,9 +1122,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: NOR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1176,9 +1151,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: NOR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1206,9 +1180,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testNOT1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/NOT1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: NOT1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1232,9 +1205,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: OR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1259,9 +1231,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: OR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1289,9 +1260,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/OR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: OR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1320,9 +1290,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/READ1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: READ1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1346,9 +1315,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testSET0(boolean inAcc, boolean finalAcc) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SET0.hrbs\"\n\nMAIN:\n\tDEBUG: SET0;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
 		runner.addDebugPoint(new AbstractCommandAddressListenerDP("DEBUG", dbgAdr) {
@@ -1369,9 +1337,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testSET1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SET1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: SET1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1395,9 +1362,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: SWAP1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1422,9 +1388,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/SWAP2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: SWAP2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1450,9 +1415,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testTRIGGER1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/TRIGGER1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: TRIGGER1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1475,9 +1439,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testWRITE1(boolean inValueAcc, boolean inValueA, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: WRITE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1501,9 +1464,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/WRITEPE1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal DEBUG: WRITEPE1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1527,9 +1489,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 	void testXOR1(boolean inValueAcc, boolean inValueA, boolean finalValueAcc, boolean finalValueA) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR1.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tDEBUG: XOR1 A;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
 		SOMBitcodeRunner runner = new SOMBitcodeRunner((ISomMemspace) memspace);
@@ -1554,9 +1515,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueB) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR2.hrbs\"\n\nMAIN:\n\tglobal alloc A\n\tglobal alloc B\n\tDEBUG: XOR2 A,B;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int aAdr = hrasModel.resolveSymbolToAddress("A");
 		int bAdr = hrasModel.resolveSymbolToAddress("B");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");
@@ -1584,9 +1544,8 @@ class HRBSIndividualCommandsFixturesFilesTests {
 			boolean finalValueI1, boolean finalValueO) throws IOException {
 		String hrbsCode = "import \"test/fixtures/hrbs/individual_commands/XOR3.hrbs\"\n\nMAIN:\n\tglobal alloc I[2]\n\tglobal alloc O\n\tDEBUG: XOR3 I[0], I[1], O;";
 		HRBSModel hrbsModel = (HRBSModel) f.loadFromString(hrbsCode, SOMFormats.HRBS);
-		HRACModel hracModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAC);
 		HRASModel hrasModel = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.HRAS);
-		IMemspace memspace = c.compile(hrbsModel, SOMFormats.HRBS, SOMFormats.BIN);
+		IMemspace memspace = c.compile(hrasModel, SOMFormats.HRAS, SOMFormats.BIN);
 		int iAdr = hrasModel.resolveSymbolToAddress("I");
 		int oAdr = hrasModel.resolveSymbolToAddress("O");
 		int dbgAdr = hrasModel.resolveSymbolToAddress("MAIN_GL_DEBUG");

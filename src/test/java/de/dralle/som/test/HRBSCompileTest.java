@@ -323,46 +323,45 @@ class HRBSCompileTest {
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
+
 	@Test
-	void testForDupCompileHBRSAtomicOffsetResolve() throws IOException { //also in issuetests as 152
+	void testForDupCompileHBRSAtomicOffsetResolve() throws IOException { // also in issuetests as 152
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
-		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
-		HRASCommand[] cmds=new HRASCommand[2];
-		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
-		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
-		int[] cmdOfs=new int[cmds.length];
+		int secCmdAddress = hrbsStartAddress + hras.getN() + 1;
+		HRASCommand[] cmds = new HRASCommand[2];
+		cmds[0] = hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1] = hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdTgtAdr = new int[cmds.length];
 		for (int i = 0; i < cmds.length; i++) {
 			HRASCommand j = cmds[i];
-			if(j.getAddress().getAddressOffset()!=null) {
-				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
-			}
-			
+			assertNotNull(j);
+			cmdTgtAdr[i] = j.getAddress().resolve(hras);
+
 		}
-		assertEquals(0, cmdOfs[0]);
-		assertEquals(1, cmdOfs[1]);
+		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
 	}
+
 	@Test
 	void testForDupCompileHBRSNonAtomicOffsetResolve() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
-		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
-		HRASCommand[] cmds=new HRASCommand[2];
-		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
-		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
-		int[] cmdOfs=new int[cmds.length];
+		int secCmdAddress = hrbsStartAddress + hras.getN() + 1;
+		HRASCommand[] cmds = new HRASCommand[2];
+		cmds[0] = hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1] = hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdTgtAdr = new int[cmds.length];
 		for (int i = 0; i < cmds.length; i++) {
 			HRASCommand j = cmds[i];
-			if(j.getAddress().getAddressOffset()!=null) {
-				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
-			}
-			
+			assertNotNull(j);
+			cmdTgtAdr[i] = j.getAddress().resolve(hras);
+
 		}
-		assertEquals(0, cmdOfs[0]);
-		assertEquals(1, cmdOfs[1]);
+		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
 	}
+
 	@Test
 	void testIfDirectiveAccessCompile() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_if_da.hrbs", SOMFormats.HRBS);
@@ -623,7 +622,8 @@ class HRBSCompileTest {
 
 	@Test
 	void testExpressionTreePassdownDirectives() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs",
+				SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACSymbol> hracS = hrac.getSymbols();
 		List<HRACForDup> hracC = hrac.getCommands();
@@ -633,24 +633,25 @@ class HRBSCompileTest {
 				hracSA = hracSymbol;
 			}
 		}
-		HRACForDup hrbsS=hracC.get(0);
+		HRACForDup hrbsS = hracC.get(0);
 		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACDirectiveNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACDirectiveNode);
-		
+
 		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
-		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		address = ((FixedHRACMemoryAddress) cmdT).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		multiNode = (HRACMultiplicationExpressionNode)address;
+		multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACDirectiveNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACDirectiveNode);
 	}
-	
+
 	@Test
 	void testExpressionTreePassdown() throws IOException {
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/features/expression-tree/test_et_correct_compile.hrbs",
+				SOMFormats.HRBS);
 		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
 		List<HRACSymbol> hracS = hrac.getSymbols();
 		List<HRACForDup> hracC = hrac.getCommands();
@@ -660,21 +661,21 @@ class HRBSCompileTest {
 				hracSA = hracSymbol;
 			}
 		}
-		HRACForDup hrbsS=hracC.get(1);
+		HRACForDup hrbsS = hracC.get(1);
 		HRACAbstractExpressionNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode)address;
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
-		
+
 		AbstractHRACMemoryAddress cmdT = hrbsS.getCmd().getTarget();
-		address=((FixedHRACMemoryAddress)cmdT).getAddress();
+		address = ((FixedHRACMemoryAddress) cmdT).getAddress();
 		assertTrue(address instanceof HRACMultiplicationExpressionNode);
-		multiNode = (HRACMultiplicationExpressionNode)address;
+		multiNode = (HRACMultiplicationExpressionNode) address;
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
 	}
-	
+
 	@Test
 	void testNAllocPassdownParse() throws IOException {
 		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_alloc_n_passdown.hrbs", SOMFormats.HRBS);

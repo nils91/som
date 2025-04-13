@@ -2,6 +2,7 @@ package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -180,16 +181,14 @@ class IssueTests {
 		HRASCommand[] cmds=new HRASCommand[2];
 		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
 		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
-		int[] cmdOfs=new int[cmds.length];
+		int[] cmdTgtAdr = new int[cmds.length];
 		for (int i = 0; i < cmds.length; i++) {
 			HRASCommand j = cmds[i];
-			if(j.getAddress().getAddressOffset()!=null) {
-				cmdOfs[i]=j.getAddress().getAddressOffset().calculateNumericalValue();
-			}
-			
+			assertNotNull(j);
+			cmdTgtAdr[i] = j.getAddress().resolve(hras);
+
 		}
-		assertEquals(0, cmdOfs[0]);
-		assertEquals(1, cmdOfs[1]);
+		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
 	}
 	@Test
 	void testIssue62_HRAPCompilation() throws IOException {

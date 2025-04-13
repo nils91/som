@@ -217,6 +217,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 						cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone, new String[] { rangeVar });
 					}
 					HRACCommand cmdClone = cmd.clone();
+					//prevent label duplication #153
+					if(i>0&&cmdClone.getLabel()!=null) {
+						cmdClone.setLabel(null);
+					}
 					cmdClone.getTarget().setOffset(cmdOfsRes);
 					cmds.add(cmdClone);
 				}

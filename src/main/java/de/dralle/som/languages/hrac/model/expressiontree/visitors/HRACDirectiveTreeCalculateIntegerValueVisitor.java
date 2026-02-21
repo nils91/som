@@ -34,6 +34,26 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirect
 
 
 	@Override
+	public Long visit(HRACAbstractDirectiveExpressionTreeNode node) {
+		return switch (node) {
+		case HRACDirectiveNode n -> visit(n);
+		case HRACAbsoluteExpressionNode n -> visit(n);
+		case HRACDivisionExpressionNode n -> visit(n);
+		case HRACFactorialExpressionNode n -> visit(n);
+		case HRACIntegerNode n -> visit(n);
+		case HRACMinusExpressionNode n -> visit(n);
+		case HRACModuloExpressionNode n -> visit(n);
+		case HRACMultiplicationExpressionNode n -> visit(n);
+		case HRACNegationExpressionNode n -> visit(n);
+		case HRACPlusExpressionNode n -> visit(n);
+		case HRACPowerExpressionNode n -> visit(n);
+		case HRACSingleChildExpressionNode n -> visit(n);
+		case null -> null;
+		default -> null;
+		};
+	}
+
+	@Override
 	public Long visit(HRACDirectiveNode node) {
 		throw new RuntimeException("Unresolved directive node: " + node.getDirectiveName());
 	}

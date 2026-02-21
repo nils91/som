@@ -8,7 +8,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveE
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
-public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
+public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneable{
 	public HRACAbstractDirectiveExpressionTreeNode() {
 
 	}

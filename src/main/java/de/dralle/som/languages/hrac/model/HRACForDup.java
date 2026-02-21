@@ -12,6 +12,7 @@ import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * Holds a single command or an entire HRACChildModel
@@ -182,9 +183,9 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				return n;
 			}
 			if (parent != null) {
-				HRACAbstractDirectiveExpressionTreeNode et = parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent);
-				cachedN = et.
-						accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
+				HRACAbstractDirectiveExpressionTreeNode et = parent.getDirectiveAsExpressionTree("N").clone()
+						.accept(new HRACResolveDirectiveTreeVisitor(parent));
+				cachedN = et.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 				return cachedN;
 			}
 			cachedN = 0;
@@ -215,11 +216,12 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 					parentClone.addAddDirective(rangeVar, si);
 					HRACAbstractDirectiveExpressionTreeNode cmdOfsRes = null;
 					if (cmdTOfs != null) {
-						cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone, new String[] { rangeVar });
+						cmdOfsRes = cmdTOfs.accept(
+								new HRACResolveDirectiveTreeVisitor(parentClone, new String[] { rangeVar }, true));
 					}
 					HRACCommand cmdClone = cmd.clone();
-					//prevent label duplication #153
-					if(i>0&&cmdClone.getLabel()!=null) {
+					// prevent label duplication #153
+					if (i > 0 && cmdClone.getLabel() != null) {
 						cmdClone.setLabel(null);
 					}
 					cmdClone.getTarget().setOffset(cmdOfsRes);

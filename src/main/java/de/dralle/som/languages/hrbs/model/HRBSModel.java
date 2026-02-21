@@ -31,6 +31,7 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.directive.AbstractDirective;
 import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
@@ -132,9 +133,9 @@ public class HRBSModel implements ISetN, IHeap {
 		newm.setHeapSize(m.getHeapSize());
 		newm.setName(name);
 		// only required for transition. change back to direct set later
-		Map<String, Object> hracDirectives = m.getDirectivesAsMap();
+		Map<String, AbstractDirective<?>> hracDirectives = m.getDirectives();
 		Map<String, String> hrbsDirectives = new HashMap<String, String>();
-		for (Entry<String, Object> entry : hracDirectives.entrySet()) {
+		for (Entry<String, AbstractDirective<?>> entry : hracDirectives.entrySet()) {
 			String key = entry.getKey();
 			Object val = entry.getValue();
 			hrbsDirectives.put(key, val.toString());

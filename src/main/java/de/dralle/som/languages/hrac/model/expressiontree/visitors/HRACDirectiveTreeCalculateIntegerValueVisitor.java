@@ -30,8 +30,8 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor
 		HRACAbstractDirectiveExpressionTreeNode c = node.getChild();
 		Long val = c.accept(this);
 		return Math.abs(val);
-
 	}
+	
 
 	@Override
 	public Long visit(HRACDirectiveNode node) {

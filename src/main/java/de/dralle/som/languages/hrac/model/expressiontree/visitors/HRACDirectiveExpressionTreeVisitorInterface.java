@@ -19,7 +19,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressi
 //Partially generated with GenerateHRACDirectiveTreeVisitorInterface.java
 public interface HRACDirectiveExpressionTreeVisitorInterface<T> {
 	default T visit(HRACAbsoluteExpressionNode node) {
-		return null;
+		return visit((HRACSingleChildExpressionNode)node);
 	}
 
 	default T visit(HRACAbstractDirectiveExpressionTreeNode node) {
@@ -36,15 +36,22 @@ public interface HRACDirectiveExpressionTreeVisitorInterface<T> {
 		case HRACPlusExpressionNode n -> visit(n);
 		case HRACPowerExpressionNode n -> visit(n);
 		case HRACSingleChildExpressionNode n -> visit(n);
-		case HRACCommutativeDualChildExpressionNode n -> visit(n);
-		case HRACDualChildExpressionNode n -> visit(n);
 		case null -> null;
-		default -> null;
+		default -> node.accept(this); // Fallback: If
+										// for whatever
+										// reason the
+										// node type
+										// isnt known
+										// here, its
+										// .accept()
+		// is called. For that reason unknown node types must implement .accept() (which
+		// they may not, in which case this would turn into an endless loop of calling
+		// itsself, but its a last resort type thing)
 		};
 	}
 
 	default T visit(HRACCommutativeDualChildExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACDirectiveNode node) {
@@ -52,7 +59,7 @@ public interface HRACDirectiveExpressionTreeVisitorInterface<T> {
 	}
 
 	default T visit(HRACDivisionExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACDualChildExpressionNode node) {
@@ -60,7 +67,7 @@ public interface HRACDirectiveExpressionTreeVisitorInterface<T> {
 	}
 
 	default T visit(HRACFactorialExpressionNode node) {
-		return null;
+		return visit((HRACSingleChildExpressionNode)node);
 	}
 
 	default T visit(HRACIntegerNode node) {
@@ -68,27 +75,27 @@ public interface HRACDirectiveExpressionTreeVisitorInterface<T> {
 	}
 
 	default T visit(HRACMinusExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACModuloExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACMultiplicationExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACNegationExpressionNode node) {
-		return null;
+		return visit((HRACSingleChildExpressionNode)node);
 	}
 
 	default T visit(HRACPlusExpressionNode node) {
-		return null;
+		return visit((HRACCommutativeDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACPowerExpressionNode node) {
-		return null;
+		return visit((HRACDualChildExpressionNode)node);
 	}
 
 	default T visit(HRACSingleChildExpressionNode node) {

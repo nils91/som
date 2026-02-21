@@ -94,8 +94,8 @@ public class HRACDirectiveNode extends HRACAbstractDirectiveExpressionTreeNode i
 
 	@Override
 	/**
-	 * return the EXpression tree behind this directive name. Since this node can
-	 * not replace itsself, the return value should always be assigned to itsself;
+	 * return the Expression tree behind this directive name. Since this node can
+	 * not replace itsself, the return value should always be assigned to itsself.
 	 */
 	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
 		return parent.getDirectiveAsExpressionTree(directiveName);

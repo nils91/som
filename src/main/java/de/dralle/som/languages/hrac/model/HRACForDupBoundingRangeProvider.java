@@ -6,6 +6,7 @@ import java.util.List;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * Provides a range of values (as an array) via getRange() if bounds and
@@ -67,9 +68,9 @@ public class HRACForDupBoundingRangeProvider implements IHRACRangeProvider, Clon
 	}
 
 	public int[] getRangeAsIntArray(HRACModel parent) {
-		HRACAbstractDirectiveExpressionTreeNode rangeStartResolved = rangeStart.getResolvedExpressionTree(parent);
-		HRACAbstractDirectiveExpressionTreeNode rangeEndResolved = rangeEnd.getResolvedExpressionTree(parent);
-		HRACAbstractDirectiveExpressionTreeNode stepSizeResolved = stepSize.getResolvedExpressionTree(parent);
+		HRACAbstractDirectiveExpressionTreeNode rangeStartResolved = rangeStart.clone().accept(new HRACResolveDirectiveTreeVisitor(parent));
+		HRACAbstractDirectiveExpressionTreeNode rangeEndResolved = rangeEnd.clone().accept(new HRACResolveDirectiveTreeVisitor(parent));
+		HRACAbstractDirectiveExpressionTreeNode stepSizeResolved = stepSize.clone().accept(new HRACResolveDirectiveTreeVisitor(parent));
 		int rangeStartResolvedInt = rangeStartResolved.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 		int rangeEndResolvedInt = rangeEndResolved.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 		int stepSizeResolvedInt = stepSizeResolved.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();

@@ -28,7 +28,7 @@ class TestFilesTests {
 		List<File> fileList = new ArrayList<>();
 		getFiles(new File("test/"), fileList);
 		if (fileList.isEmpty()) {
-			// Makle sure the list has at least on entry, but skip it pin test, to make
+			// Makle sure the list has at least on entry, but skip it in test, to make
 			// junit happy
 			fileList.add(null);
 		}

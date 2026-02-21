@@ -17,7 +17,8 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode
 import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
 
 //For abstract nodes, nothing needs to happen (hopefully)
-public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirectiveExpressionTreeVisitorInterface<Long> {
+public class HRACDirectiveTreeCalculateIntegerValueVisitor
+		implements HRACDirectiveExpressionTreeVisitorInterface<Long> {
 
 	@Override
 	public Long visit(HRACSingleChildExpressionNode node) {
@@ -29,28 +30,7 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirect
 		HRACAbstractDirectiveExpressionTreeNode c = node.getChild();
 		Long val = c.accept(this);
 		return Math.abs(val);
-		
-	}
 
-
-	@Override
-	public Long visit(HRACAbstractDirectiveExpressionTreeNode node) {
-		return switch (node) {
-		case HRACDirectiveNode n -> visit(n);
-		case HRACAbsoluteExpressionNode n -> visit(n);
-		case HRACDivisionExpressionNode n -> visit(n);
-		case HRACFactorialExpressionNode n -> visit(n);
-		case HRACIntegerNode n -> visit(n);
-		case HRACMinusExpressionNode n -> visit(n);
-		case HRACModuloExpressionNode n -> visit(n);
-		case HRACMultiplicationExpressionNode n -> visit(n);
-		case HRACNegationExpressionNode n -> visit(n);
-		case HRACPlusExpressionNode n -> visit(n);
-		case HRACPowerExpressionNode n -> visit(n);
-		case HRACSingleChildExpressionNode n -> visit(n);
-		case null -> null;
-		default -> null;
-		};
 	}
 
 	@Override
@@ -62,13 +42,14 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirect
 	public Long visit(HRACDivisionExpressionNode node) {
 		Long numeratorValue = node.getChilds()[0].accept(this);
 		Long denominatorValue = node.getChilds()[1].accept(this);
-		return numeratorValue/denominatorValue;
+		return numeratorValue / denominatorValue;
 	}
 
 	@Override
 	public Long visit(HRACFactorialExpressionNode node) {
 		return getFac(node.getChild().accept(this));
 	}
+
 	private long getFac(long n) {
 		if (n == 1) {
 			return n;
@@ -80,21 +61,21 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirect
 	public Long visit(HRACMinusExpressionNode node) {
 		Long v1 = node.getChilds()[0].accept(this);
 		Long v2 = node.getChilds()[1].accept(this);
-		return v1-v2;
+		return v1 - v2;
 	}
 
 	@Override
 	public Long visit(HRACModuloExpressionNode node) {
 		Long numeratorValue = node.getChilds()[0].accept(this);
 		Long denominatorValue = node.getChilds()[1].accept(this);
-		return numeratorValue%denominatorValue;
+		return numeratorValue % denominatorValue;
 	}
 
 	@Override
 	public Long visit(HRACMultiplicationExpressionNode node) {
 		Long v1 = node.getChilds()[0].accept(this);
 		Long v2 = node.getChilds()[1].accept(this);
-		return v1-v2;
+		return v1 - v2;
 	}
 
 	@Override
@@ -106,7 +87,7 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor implements HRACDirect
 	public Long visit(HRACPlusExpressionNode node) {
 		Long v1 = node.getChilds()[0].accept(this);
 		Long v2 = node.getChilds()[1].accept(this);
-		return v1+v2;
+		return v1 + v2;
 	}
 
 	@Override

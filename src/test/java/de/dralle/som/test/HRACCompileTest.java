@@ -208,6 +208,23 @@ class HRACCompileTest {
 		assertEquals(a1, l1c.getAddress().resolve(hras));
 	}
 	@Test
+	void testBLKSymbolGenNotOp() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_blk_smbol_gen_notop.hrac", SOMFormats.HRAC);
+		HRACModel hrap=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRAC, SOMFormats.HRAS);
+		HRAVModel hrav=c.compile(model, SOMFormats.HRAC, SOMFormats.HRAV);
+		int a0=hras.resolveSymbolToAddress("A0");
+		int a1=hras.resolveSymbolToAddress("A1");
+		int l0=hras.resolveSymbolToAddress("L0");
+		int l1=hras.resolveSymbolToAddress("L1");
+		HRASCommand l0c=hras.getCommandAtAddress(l0);
+		HRASCommand l1c=hras.getCommandAtAddress(l1);
+		assertNotNull(l0c);
+		assertNotNull(l1c);
+		assertEquals(a0, l0c.getAddress().resolve(hras));
+		assertEquals(a1, l1c.getAddress().resolve(hras));
+	}
+	@Test
 	void testFDSymbolGenPrecompiledNaming() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_fd_smbol_gen.hrac", SOMFormats.HRAC);
 		model.precompile("", null, true);

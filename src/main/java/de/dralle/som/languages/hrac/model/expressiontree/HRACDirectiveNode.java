@@ -9,7 +9,7 @@ import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
-public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Cloneable {
+public class HRACDirectiveNode extends HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private String directiveName;
 
 	public HRACDirectiveNode() {
@@ -21,10 +21,6 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 		this.directiveName = directiveName;
 	}
 
-	@Override
-	public int calculateNumericalValue() {
-		throw new RuntimeException("Unresolved directive node: " + directiveName);
-	}
 
 	@Override
 	public HRACDirectiveNode clone() {
@@ -34,7 +30,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 
 	@Override
 	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
-		HRACAbstractExpressionNode resolvedNode = this.getResolvedExpressionTree(parent);
+		HRACAbstractDirectiveExpressionTreeNode resolvedNode = this.getResolvedExpressionTree(parent);
 		if (resolvedNode != null) {
 			return resolvedNode.compileToHRAS(parent);
 		}
@@ -63,7 +59,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	 * return the Expression tree behind this directive name.
 	 */
 	@Override
-	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
+	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parent) {
 		return parent.getDirectiveAsExpressionTree(directiveName);
 	}
 
@@ -72,7 +68,7 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	 * the directive is only resolved if its part of the strings array.
 	 */
 	@Override
-	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
+	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
 		if (strings != null) {
 			for (int i = 0; i < strings.length; i++) {
 				if (strings[i].equals(directiveName)) {
@@ -101,12 +97,12 @@ public class HRACDirectiveNode extends HRACAbstractExpressionNode implements Clo
 	 * return the EXpression tree behind this directive name. Since this node can
 	 * not replace itsself, the return value should always be assigned to itsself;
 	 */
-	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
 		return parent.getDirectiveAsExpressionTree(directiveName);
 	}
 
 	@Override
-	public HRACAbstractExpressionNode resolve(HRACModel parentClone, String[] strings) {
+	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parentClone, String[] strings) {
 		if (strings != null) {
 			for (int i = 0; i < strings.length; i++) {
 				if (strings[i].equals(directiveName)) {

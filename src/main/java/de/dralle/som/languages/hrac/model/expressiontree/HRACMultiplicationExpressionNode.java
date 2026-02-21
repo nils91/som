@@ -5,22 +5,16 @@ import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSMultiplicationExpressionNode;
 
-public class HRACMultiplicationExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
+public class HRACMultiplicationExpressionNode extends HRACCommutativeDualChildExpressionNode implements Cloneable {
 
 	public HRACMultiplicationExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRACMultiplicationExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
+	public HRACMultiplicationExpressionNode(HRACAbstractDirectiveExpressionTreeNode child1, HRACAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue() * getChilds()[1].calculateNumericalValue();
 	}
 
 	@Override

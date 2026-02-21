@@ -4,21 +4,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveExpressionTreeVisitorInterface;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
-public abstract class HRACAbstractExpressionNode implements Cloneable {
-	public HRACAbstractExpressionNode() {
+public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
+	public HRACAbstractDirectiveExpressionTreeNode() {
 
 	}
 
-	public abstract int calculateNumericalValue();
+	public <T> T accept(HRACDirectiveExpressionTreeVisitorInterface<T> visitor) {
+		return visitor.visit(this);
+	}
 
 	@Override
-	public HRACAbstractExpressionNode clone() {
+	public HRACAbstractDirectiveExpressionTreeNode clone() {
 		// TODO Auto-generated method stub
 		try {
-			return (HRACAbstractExpressionNode) super.clone();
+			return (HRACAbstractDirectiveExpressionTreeNode) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,12 +41,12 @@ public abstract class HRACAbstractExpressionNode implements Cloneable {
 	 * @param allDirectives
 	 * @return
 	 */
-	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parent) {
+	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parent) {
 		return getResolvedExpressionTree(parent, null);
 	}
 
-	public HRACAbstractExpressionNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
-		HRACAbstractExpressionNode clone = this.clone();
+	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
+		HRACAbstractDirectiveExpressionTreeNode clone = this.clone();
 		clone = clone.resolve(parentClone, strings);
 		return clone;
 	}
@@ -58,11 +61,11 @@ public abstract class HRACAbstractExpressionNode implements Cloneable {
 	 * @param allDirectives
 	 * @return
 	 */
-	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
 		return resolve(parent, null);
 	}
 
-	public HRACAbstractExpressionNode resolve(HRACModel parentClone, String[] strings) {
+	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parentClone, String[] strings) {
 		return this;
 	}
 

@@ -9,7 +9,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_osContext
 import de.dralle.som.languages.hrac.model.AbstractHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 
 /**
  * @author Nils
@@ -28,7 +28,7 @@ public class HRACMemoryAddressVisitor extends HRACGrammarBaseVisitor<AbstractHRA
 	public AbstractHRACMemoryAddress visitOffset_specify(
 			de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specifyContext ctx) {
 		if (ctx.offset_specify_number() != null) {
-			HRACAbstractExpressionNode offset = ctx.offset_specify_number().accept(new HRACOSVisitor());
+			HRACAbstractDirectiveExpressionTreeNode offset = ctx.offset_specify_number().accept(new HRACOSVisitor());
 			address.setOffset(offset);
 		}
 		return address;

@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 
 public abstract class HRBSAbstractExpressionNode implements Cloneable {
 	public HRBSAbstractExpressionNode() {
@@ -19,6 +19,6 @@ public abstract class HRBSAbstractExpressionNode implements Cloneable {
 		return null;
 	}
 
-	public abstract HRACAbstractExpressionNode compileToHRAC();
+	public abstract HRACAbstractDirectiveExpressionTreeNode compileToHRAC();
 
 }

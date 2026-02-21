@@ -9,7 +9,7 @@ import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Offset_specify_v
 import de.dralle.som.languages.hrac.model.HRACForDupBoundingRangeProvider;
 import de.dralle.som.languages.hrac.model.HRACForDupFixedRangeProvider;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvider> {
@@ -50,9 +50,9 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		}
 		boolean stepSpecified = ctx.SEMICOLON() != null;
 		int cntVal = ctx.offset_specify_number().size();
-		HRACAbstractExpressionNode step = new HRACIntegerNode(1);
-		HRACAbstractExpressionNode start = new HRACIntegerNode(0);
-		HRACAbstractExpressionNode end = new HRACIntegerNode(0);
+		HRACAbstractDirectiveExpressionTreeNode step = new HRACIntegerNode(1);
+		HRACAbstractDirectiveExpressionTreeNode start = new HRACIntegerNode(0);
+		HRACAbstractDirectiveExpressionTreeNode end = new HRACIntegerNode(0);
 		if (cntVal == 1) {
 			if (stepSpecified) {
 				step = ctx.offset_specify_number(0).accept(new HRACOSVisitor());
@@ -99,7 +99,7 @@ public class HRACForRangeVisitor extends HRACGrammarBaseVisitor<IHRACRangeProvid
 		HRACForDupFixedRangeProvider rl = new HRACForDupFixedRangeProvider();
 
 		for (Offset_specify_numberContext iterable_element : ctx.offset_specify_number()) {
-			HRACAbstractExpressionNode ofs = iterable_element.accept(new HRACOSVisitor());
+			HRACAbstractDirectiveExpressionTreeNode ofs = iterable_element.accept(new HRACOSVisitor());
 			{
 				rl.addValue((ofs));
 			}

@@ -8,22 +8,16 @@ import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSSingleChildExpressionNode;
 
-public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable {
-	private HRACAbstractExpressionNode child;
+public class HRACSingleChildExpressionNode extends HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
+	private HRACAbstractDirectiveExpressionTreeNode child;
 
 	public HRACSingleChildExpressionNode() {
 		super();
 	}
 
-	public HRACSingleChildExpressionNode(HRACAbstractExpressionNode child) {
+	public HRACSingleChildExpressionNode(HRACAbstractDirectiveExpressionTreeNode child) {
 		super();
 		this.child = child;
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChild().calculateNumericalValue();
 	}
 
 	@Override
@@ -53,7 +47,7 @@ public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode im
 		return false;
 	}
 
-	public HRACAbstractExpressionNode getChild() {
+	public HRACAbstractDirectiveExpressionTreeNode getChild() {
 		return child;
 	}
 
@@ -69,12 +63,12 @@ public class HRACSingleChildExpressionNode extends HRACAbstractExpressionNode im
 	}
 
 	@Override
-	public HRACAbstractExpressionNode resolve(HRACModel parent) {
+	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
 		child = child.resolve(parent);
 		return this;
 	}
 
-	public void setChild(HRACAbstractExpressionNode child) {
+	public void setChild(HRACAbstractDirectiveExpressionTreeNode child) {
 		this.child = child;
 	}
 

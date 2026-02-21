@@ -6,7 +6,7 @@ package de.dralle.som.languages.hrac.visitors;
 import de.dralle.som.languages.hrac.generated.HRACGrammarBaseVisitor;
 import de.dralle.som.languages.hrac.generated.HRACGrammarParser.Symbol_decContext;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 
 /**
  * @author Nils
@@ -23,7 +23,7 @@ public class HRACSymbolVisitor extends HRACGrammarBaseVisitor<HRACSymbol> {
 			s.setName(ctx.SYMBOL().getText());
 		}
 		if (ctx.cnt_specify() != null) {
-			HRACAbstractExpressionNode cnt = ctx.cnt_specify().accept(new HRACOSVisitor());
+			HRACAbstractDirectiveExpressionTreeNode cnt = ctx.cnt_specify().accept(new HRACOSVisitor());
 			s.setBitCnt(cnt);
 		}
 		if (ctx.symbol_os() != null) {

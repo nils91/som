@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrbs.model;
 
 import java.util.logging.Logger;
 
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
@@ -155,17 +156,17 @@ public class HRBSBoundsRange extends AbstractHRBSRange implements Cloneable {
 		int endValue = 0;
 		int stepValue = 1;
 		try {
-			startValue = start.compileToHRAC().calculateNumericalValue();
+			startValue = start.compileToHRAC().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 		} catch (Exception e) {
 			logger.warning("Could not calculate range size." + e);
 		}
 		try {
-			endValue = end.compileToHRAC().calculateNumericalValue();
+			endValue = end.compileToHRAC().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 		} catch (Exception e) {
 			logger.warning("Could not calculate range size." + e);
 		}
 		try {
-			stepValue = step.compileToHRAC().calculateNumericalValue();
+			stepValue = step.compileToHRAC().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 		} catch (Exception e) {
 			logger.warning("Could not calculate range size." + e);
 		}

@@ -10,7 +10,8 @@ import java.util.logging.Logger;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
 
 /**
  * Holds a single command or an entire HRACChildModel
@@ -116,13 +117,13 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt += model.getCommandCount(n);
 			}
 		} else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
 			if (cmd != null) {
 				cnt += rng.length;
 			}
 			if (model != null) {
 				for (int i = 0; i < rng.length; i++) {
-					HRACAbstractExpressionNode j = rng[i];
+					HRACAbstractDirectiveExpressionTreeNode j = rng[i];
 					model.addAddDirective(range.getRunningDirectiveName(), j);
 					cnt += model.getCommandCount(n);
 				}
@@ -161,8 +162,8 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 					throw new RuntimeException("Child and parent are the same object");
 				}
 				if (range != null) {
-					HRACAbstractExpressionNode[] rng = range.getRange(parent);
-					for (HRACAbstractExpressionNode hracAbstractExpressionNode : rng) {
+					HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
+					for (HRACAbstractDirectiveExpressionTreeNode hracAbstractExpressionNode : rng) {
 						String runDir = range.getRunningDirectiveName();
 						HRACModel mc = model.clone();
 						mc.addAddDirective(runDir, hracAbstractExpressionNode);
@@ -181,9 +182,9 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				return n;
 			}
 			if (parent != null) {
-				cachedN = parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent)
-						.calculateNumericalValue();
-				;
+				HRACAbstractDirectiveExpressionTreeNode et = parent.getDirectiveAsExpressionTree("N").getResolvedExpressionTree(parent);
+				cachedN = et.
+						accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 				return cachedN;
 			}
 			cachedN = 0;
@@ -203,16 +204,16 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		} else {
 			AbstractHRACMemoryAddress cmdTgt = cmd.getTarget();
 			if (cmdTgt != null) {
-				HRACAbstractExpressionNode cmdTOfs = cmdTgt.getOffset();
+				HRACAbstractDirectiveExpressionTreeNode cmdTOfs = cmdTgt.getOffset();
 				for (int i = 0; i < range.getRange(parent).length; i++) {
-					HRACAbstractExpressionNode si = range.getRange(parent)[i];
+					HRACAbstractDirectiveExpressionTreeNode si = range.getRange(parent)[i];
 					String rangeVar = range.getRunningDirectiveName();
 					if (rangeVar == null) {
 						rangeVar = "i";
 					}
 					HRACModel parentClone = parent.clone();
 					parentClone.addAddDirective(rangeVar, si);
-					HRACAbstractExpressionNode cmdOfsRes = null;
+					HRACAbstractDirectiveExpressionTreeNode cmdOfsRes = null;
 					if (cmdTOfs != null) {
 						cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone, new String[] { rangeVar });
 					}
@@ -240,10 +241,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt += model.getSymbolBitCnt(n);
 			}
 		} else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
 			if (model != null) {
 				for (int i = 0; i < rng.length; i++) {
-					HRACAbstractExpressionNode j = rng[i];
+					HRACAbstractDirectiveExpressionTreeNode j = rng[i];
 					model.addAddDirective("i", j);
 					cnt += model.getSymbolBitCnt(n);
 				}
@@ -258,7 +259,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			model.setMinimumN(parent.getN());
 			if (range != null) {
 				for (int i = 0; i < range.getRange(parent).length; i++) {
-					HRACAbstractExpressionNode si = range.getRange(parent)[i];
+					HRACAbstractDirectiveExpressionTreeNode si = range.getRange(parent)[i];
 					HRACModel modelClone = model.clone();
 					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
 					modelClone.precompile(suffix + "_FD" + id + "_" + i, symbolNameReplacementList, i == 0);

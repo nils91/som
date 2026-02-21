@@ -12,15 +12,9 @@ public class HRACPowerExpressionNode extends HRACDualChildExpressionNode impleme
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRACPowerExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
+	public HRACPowerExpressionNode(HRACAbstractDirectiveExpressionTreeNode child1, HRACAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return (int) Math.pow(getChilds()[0].calculateNumericalValue(), getChilds()[1].calculateNumericalValue());
 	}
 
 	@Override

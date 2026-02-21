@@ -31,6 +31,7 @@ import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
 import de.dralle.som.languages.hrac.model.IHRACRangeProvider;
 import de.dralle.som.languages.hrac.model.NamedHRACMemoryAddress;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
 /**
@@ -188,13 +189,13 @@ public class HRBSModel implements ISetN, IHeap {
 		}
 		if (targetSymbol instanceof FixedHRACMemoryAddress) {
 			newma = new HRBSFixedMemoryAddress(
-					((FixedHRACMemoryAddress) targetSymbol).getAddress().calculateNumericalValue());// change to
+					((FixedHRACMemoryAddress) targetSymbol).getAddress().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue());// change to
 																									// compileToHRBSExpressionTree
 																									// once thats done
 		}
 		newma.setDeref(false);
 		if (targetSymbol.getOffset() != null) {
-			newma.setOffset(targetSymbol.getOffset().calculateNumericalValue()); // same here
+			newma.setOffset(targetSymbol.getOffset().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue()); // same here
 		}
 		return newma;
 
@@ -685,7 +686,7 @@ public class HRBSModel implements ISetN, IHeap {
 				logger.fine("Converting fixed address " + tgtAdr + " from HBRS to HRAC");
 				int tgtAdrNumericalValue = 0;
 				try {
-					tgtAdrNumericalValue = tgtAdr.compileToHRAC().calculateNumericalValue();
+					tgtAdrNumericalValue = tgtAdr.compileToHRAC().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 				} catch (Exception e) {
 					logger.warning("Fixed address " + tgtAdr
 							+ " could not be resolved to a numerical value. Usually this isnt a problem, it just means thie compiler couldnt chec k wether its negative");

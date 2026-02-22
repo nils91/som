@@ -62,11 +62,7 @@ public class HRACSingleChildExpressionNode extends HRACAbstractDirectiveExpressi
 		return child.hashCode();
 	}
 
-	@Override
-	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
-		child = child.resolve(parent);
-		return this;
-	}
+	
 
 	public void setChild(HRACAbstractDirectiveExpressionTreeNode child) {
 		this.child = child;

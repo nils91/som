@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrac.model;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	private HRACAbstractDirectiveExpressionTreeNode address;
@@ -35,10 +36,10 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	@Override
 	public void resolve(HRACModel parent, String[] directives) {
 		super.resolve(parent, directives);
-		if(directives==null) {
-			address=address.resolve(parent);
+		if(directives!=null) {
+			address=address.accept(new HRACResolveDirectiveTreeVisitor(parent, directives, false));
 		}else {
-			address=address.resolve(parent, directives);
+			address=address.accept(new HRACResolveDirectiveTreeVisitor(parent));
 		}
 	}
 

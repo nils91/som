@@ -456,9 +456,9 @@ class HRACCompileTest {
 			HRACForDup curCommand = model.getCommands().get(i);
 			HRACForDup nxtCommand = model.getCommands().get(i + 1);
 			assertEquals(
-					curCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model)
+					curCommand.getCmd().getTarget().getOffset().accept(new HRACResolveDirectiveTreeVisitor(model, true))
 							.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue() + 1,
-					nxtCommand.getCmd().getTarget().getOffset().getResolvedExpressionTree(model)
+					nxtCommand.getCmd().getTarget().getOffset().accept(new HRACResolveDirectiveTreeVisitor(model, true))
 							.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue());
 		}
 

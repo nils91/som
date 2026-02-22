@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrac.model;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * @author Nils
@@ -110,7 +111,7 @@ public class HRACSymbol implements Cloneable {
 	 * @return
 	 */
 	public int getBitCntAsInt(HRACModel model) {
-		return bitCnt.getResolvedExpressionTree(model).accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
+		return bitCnt.accept(new HRACResolveDirectiveTreeVisitor(model, true)).accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 	}
 
 	public String getName() {

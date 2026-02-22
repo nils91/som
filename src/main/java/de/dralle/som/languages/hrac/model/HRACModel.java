@@ -683,7 +683,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				if (s.getTargetSymbol() == null) {
 					HRACAbstractDirectiveExpressionTreeNode et = s.getBitCnt();
 					if (et != null) {
-						et = et.getResolvedExpressionTree(this);
+						et = et.accept(new HRACResolveDirectiveTreeVisitor(this, true));
 						cnt += et.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor());
 					} else {
 						cnt++;
@@ -800,7 +800,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (symbl.getBitCnt() == null) {
 				symbl.setBitCnt(1);
 			} else {
-				symbl.setBitCnt(symbl.getBitCnt().resolve(this));
+				symbl.setBitCnt(symbl.getBitCnt().accept(new HRACResolveDirectiveTreeVisitor(this)));
 			}
 
 		}

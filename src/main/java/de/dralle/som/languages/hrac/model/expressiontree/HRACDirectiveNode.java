@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
@@ -30,7 +31,7 @@ public class HRACDirectiveNode extends HRACAbstractDirectiveExpressionTreeNode i
 
 	@Override
 	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
-		HRACAbstractDirectiveExpressionTreeNode resolvedNode = this.getResolvedExpressionTree(parent);
+		HRACAbstractDirectiveExpressionTreeNode resolvedNode = this.accept(new HRACResolveDirectiveTreeVisitor(parent, true));
 		if (resolvedNode != null) {
 			return resolvedNode.compileToHRAS(parent);
 		}
@@ -55,30 +56,7 @@ public class HRACDirectiveNode extends HRACAbstractDirectiveExpressionTreeNode i
 		return directiveName;
 	}
 
-	/**
-	 * return the Expression tree behind this directive name.
-	 */
-	@Override
-	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parent) {
-		return parent.getDirectiveAsExpressionTree(directiveName);
-	}
-
-	/**
-	 * If strings is null, the directive is resolved regardless of name. Otherwise
-	 * the directive is only resolved if its part of the strings array.
-	 */
-	@Override
-	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
-		if (strings != null) {
-			for (int i = 0; i < strings.length; i++) {
-				if (strings[i].equals(directiveName)) {
-					return getResolvedExpressionTree(parentClone);
-				}
-			}
-		}
-		return getResolvedExpressionTree(parentClone);
-	}
-
+		
 	@Override
 	public Collection<String> getUsedDirectives() {
 		List<String> list = new ArrayList<String>();
@@ -92,28 +70,7 @@ public class HRACDirectiveNode extends HRACAbstractDirectiveExpressionTreeNode i
 		return directiveName.hashCode();
 	}
 
-	@Override
-	/**
-	 * return the Expression tree behind this directive name. Since this node can
-	 * not replace itsself, the return value should always be assigned to itsself.
-	 */
-	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
-		return parent.getDirectiveAsExpressionTree(directiveName);
-	}
-
-	@Override
-	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parentClone, String[] strings) {
-		if (strings != null) {
-			for (int i = 0; i < strings.length; i++) {
-				if (strings[i].equals(directiveName)) {
-					return getResolvedExpressionTree(parentClone);
-				}
-			}
-		}
-		return this.clone();
-	}
-
-	public void setdirectiveName(String directiveName) {
+	public void setDirectiveName(String directiveName) {
 		this.directiveName = directiveName;
 	}
 

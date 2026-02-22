@@ -60,14 +60,7 @@ public abstract class HRACDualChildExpressionNode extends HRACAbstractDirectiveE
 		return childs.hashCode();
 	}
 
-	@Override
-	public HRACDualChildExpressionNode resolve(HRACModel parent) {
-		for (int i = 0; i < childs.length; i++) {
-			childs[i] = childs[i].resolve(parent);
-		}
-		return this;
-	}
-
+	
 	public void setChild(HRACAbstractDirectiveExpressionTreeNode child, int i) {
 		this.childs[i] = child;
 	}

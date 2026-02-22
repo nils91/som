@@ -33,40 +33,11 @@ public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneab
 
 	public abstract HRBSAbstractExpressionNode compileToHRBS();
 
-	/**
-	 * Returns the very same expression tree as this with its directive nodes
-	 * resolved. To avoid modification of the original tree the returned one will be
-	 * a clone.
-	 * 
-	 * @param allDirectives
-	 * @return
-	 */
-	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parent) {
-		return getResolvedExpressionTree(parent, null);
-	}
-
-	public HRACAbstractDirectiveExpressionTreeNode getResolvedExpressionTree(HRACModel parentClone, String[] strings) {
-		HRACAbstractDirectiveExpressionTreeNode clone = this.clone();
-		clone = clone.resolve(parentClone, strings);
-		return clone;
-	}
-
+	
 	public Collection<String> getUsedDirectives() {
 		return new ArrayList<String>();
 	}
 
-	/**
-	 * Resolves all directive nodes in this expression tree.
-	 * 
-	 * @param allDirectives
-	 * @return
-	 */
-	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parent) {
-		return resolve(parent, null);
-	}
-
-	public HRACAbstractDirectiveExpressionTreeNode resolve(HRACModel parentClone, String[] strings) {
-		return this;
-	}
+	
 
 }

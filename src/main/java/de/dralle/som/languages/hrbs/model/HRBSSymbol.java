@@ -35,6 +35,7 @@ public class HRBSSymbol implements Cloneable {
 		if (type != null) {
 			sb.append(type + " ");
 		}
+		sb.append(targetSymbol==null?"alloc ":"symbol ");
 		sb.append(name);
 		if (bitCnt != null) {
 			sb.append(String.format("[%s]", bitCnt));

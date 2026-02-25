@@ -75,7 +75,7 @@ public class HRACDirectiveTreeCalculateIntegerValueVisitor
 	public Long visit(HRACMultiplicationExpressionNode node) {
 		Long v1 = node.getChilds()[0].accept(this);
 		Long v2 = node.getChilds()[1].accept(this);
-		return v1 - v2;
+		return v1 * v2;
 	}
 
 	@Override

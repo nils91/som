@@ -398,6 +398,25 @@ class HRACCompileTest {
 		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
 		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
 	}
+	@Test
+	void testExpressionTreeResolveCorrectValue() throws IOException {
+		HRACModel model = f.loadFromFile("test/fixtures/hrac/features/expression-tree/test_et_correct_compile.hrac",
+				SOMFormats.HRAC);
+		List<HRACSymbol> hracS = model.getSymbols();
+		HRACSymbol hracSA = null;
+		for (HRACSymbol hracSymbol : hracS) {
+			if (hracSymbol.getName().equals("B")) {
+				hracSA = hracSymbol;
+			}
+		}
+		HRACAbstractDirectiveExpressionTreeNode address = ((FixedHRACMemoryAddress) hracSA.getTargetSymbol()).getAddress();
+		assertTrue(address instanceof HRACMultiplicationExpressionNode);
+		HRACMultiplicationExpressionNode multiNode = (HRACMultiplicationExpressionNode) address;
+		assertTrue(multiNode.getChilds()[0] instanceof HRACIntegerNode);
+		assertTrue(multiNode.getChilds()[1] instanceof HRACIntegerNode);
+		
+		assertEquals(11*13, multiNode.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()));
+	}
 
 	@Test
 	void testNCorrectCalcNotPrec() throws IOException {

@@ -8,13 +8,22 @@ import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveE
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
-public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneable{
+public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
 	public HRACAbstractDirectiveExpressionTreeNode() {
 
 	}
 
 	public <T> T accept(HRACDirectiveExpressionTreeVisitorInterface<T> visitor) {
-		return visitor.visit(this);
+		return visitor.visitSwitch(this);
+	}
+
+	public <T> T postAccept(HRACDirectiveExpressionTreeVisitorInterface<T> visitor, T rv) {
+		return rv;
+
+	}
+
+	public boolean preAccept(HRACDirectiveExpressionTreeVisitorInterface<?> visitor) {
+		return true;
 	}
 
 	@Override
@@ -33,11 +42,8 @@ public abstract class HRACAbstractDirectiveExpressionTreeNode implements Cloneab
 
 	public abstract HRBSAbstractExpressionNode compileToHRBS();
 
-	
 	public Collection<String> getUsedDirectives() {
 		return new ArrayList<String>();
 	}
-
-	
 
 }

@@ -18,17 +18,22 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACPowerExpressionNode
 import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
 
 //For abstract nodes, nothing needs to happen
-//This visitor does not avoid modyfying the tree it visits by default. Either clone the tree first or use one of the constructors with the clone param
+//This visitor does not avoid modifying the tree it visits by default. Either clone the tree first or use one of the constructors with the clone param
 public class HRACResolveDirectiveTreeVisitor
 		implements HRACDirectiveExpressionTreeVisitorInterface<HRACAbstractDirectiveExpressionTreeNode> {
 
 	@Override
-	public HRACAbstractDirectiveExpressionTreeNode visit(HRACAbstractDirectiveExpressionTreeNode node) {
-		if (clone) {
-			node = node.clone();
-		}
-		HRACAbstractDirectiveExpressionTreeNode rv = HRACDirectiveExpressionTreeVisitorInterface.super.visit(node);
-		return rv == null ? node : rv;
+	public HRACAbstractDirectiveExpressionTreeNode postVisit(
+			HRACDirectiveExpressionTreeVisitorInterface<HRACAbstractDirectiveExpressionTreeNode> hracDirectiveExpressionTreeVisitorInterface,
+			HRACAbstractDirectiveExpressionTreeNode node, HRACAbstractDirectiveExpressionTreeNode returnyValue) {
+		return returnyValue!=null?returnyValue:node;
+	}
+
+	@Override
+	public HRACAbstractDirectiveExpressionTreeNode preVisit(
+			HRACDirectiveExpressionTreeVisitorInterface<HRACAbstractDirectiveExpressionTreeNode> hracDirectiveExpressionTreeVisitorInterface,
+			HRACAbstractDirectiveExpressionTreeNode node) {
+		return clone?node.clone():node;
 	}
 
 	private HRACModel parent;

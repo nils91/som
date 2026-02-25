@@ -37,7 +37,7 @@ public class HRACCommand implements Cloneable {
 		if (label != null) {
 			code += label.getName() + ": ";
 		}
-		code += op + " " + target.asHRACCode();
+		code += op + " " + target.asHRACCode()+";";
 		return code;
 	}
 

@@ -1,10 +1,14 @@
 package de.dralle.som.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +81,53 @@ class TestFilesTests {
 				Object model = new FileLoader().loadFromFile(file, format);
 				Object compiled = new Compiler().compile(model, format, SOMFormats.BIN);
 				assertNotNull(compiled);
+			}
+		}
+	}
+
+	@ParameterizedTest(name = "{index} - Test code output with file ''{0}''")
+	@MethodSource("fileProvider")
+	void testReadFileAndOutputCode(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				String code = model.toString();
+				assertNotNull(code);
+			}
+		}
+	}
+
+	@ParameterizedTest(name = "{index} - Test reparse with file ''{0}''")
+	@MethodSource("fileProvider")
+	void testReadFileAndReparseOutputCode(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				String code = model.toString();
+				assertNotNull(new FileLoader().loadFromString(code, format));
+			}
+		}
+	}
+
+	@ParameterizedTest(name = "{index} - Test reparse and compile/compare with file ''{0}''")
+	@MethodSource("fileProvider")
+	void testReadFileAndRecompileOutputCode(File file) throws IOException {
+		if (file != null) {
+			// get format
+			SOMFormats format = new FileLoader().getFormatFromFilename(file);
+			if (format != null) {
+				Object model = new FileLoader().loadFromFile(file, format);
+				String code = model.toString();
+				Object model2 = (new FileLoader().loadFromString(code, format));
+				//Files.writeString(Paths.get("tmp", file.getName() + ".1"), code);
+				//Files.writeString(Paths.get("tmp", file.getName() + ".2"), model2.toString());
+				IMemspace bin = new Compiler().compile(model, format, SOMFormats.BIN);
+				IMemspace bin2 = new Compiler().compile(model2, format, SOMFormats.BIN);
+				assertEquals(bin, bin2);
 			}
 		}
 	}

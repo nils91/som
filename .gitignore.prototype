@@ -34,3 +34,6 @@
 
 #local gitignore backups
 .gitignore.*.backup
+
+#tmp folder
+/tmp/

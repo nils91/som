@@ -11,6 +11,9 @@
 .classpath
 /.settings/
 
+#vscode
+/.vscode/
+
 #intellij
 /.idea
 /gen

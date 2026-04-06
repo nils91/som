@@ -24,18 +24,142 @@ oti
 
 directive
 :
-	SEMICOLON
+	SEMICOLON directive_name EQ
 	(
-		(
-			(
-				D_N
-				| START
-				| CONT
-			) EQ number
-		)
+		primary_expr
+		| DIRECTIVE_VALUE_STR
 	)
 ;
 
+directive_name
+:
+	INT
+	| NAME
+;
+directive_access
+:
+	DOLLAR directive_name
+;
+
+DOLLAR
+:
+	'$'
+;
+
+// following rules are for the expression tree
+
+primary_expr
+:
+	additive_expr
+;
+
+additive_expr
+:
+	multiplicative_expr
+	| additive_expr
+	(
+		PLUS
+		| DASH
+	) multiplicative_expr
+;
+
+PLUS
+:
+	'+'
+;
+
+multiplicative_expr
+:
+	power_expr
+	| multiplicative_expr
+	(
+		MUL
+		| DIV
+		| MOD
+	) power_expr
+;
+
+MOD
+:
+	'%'
+;
+
+DIV
+:
+	'/'
+;
+
+MUL
+:
+	'*'
+;
+
+power_expr
+:
+	factorial_expr
+	| factorial_expr CARET power_expr
+;
+
+CARET
+:
+	'^'
+;
+
+factorial_expr
+:
+	absolute_expr EXCL?
+;
+
+EXCL
+:
+	'!'
+;
+
+absolute_expr
+:
+	par_expr
+	| PIPE par_expr PIPE
+;
+
+PIPE
+:
+	'|'
+;
+
+par_expr
+:
+	signed_integer_or_directive
+	| P_OPEN primary_expr P_CLOSE
+;
+
+signed_integer_or_directive
+:
+	DASH? integer_or_directive
+;
+
+integer_or_directive
+:
+	directive_access
+	| INT
+;
+
+
+P_OPEN
+:
+	'('
+;
+
+P_CLOSE
+:
+	')'
+;
+
+DASH
+:
+	'-'
+;
+
+//expression tree end
 command
 :
 	(
@@ -125,6 +249,7 @@ OTI_CLEAR
 	'clearonce'
 ;
 
+
 CONT
 :
 	'continue'
@@ -140,6 +265,17 @@ D_N
 :
 	'n'
 ;
+DIRECTIVE_VALUE_STR
+:
+	(
+		'"'
+		| '\''
+	) .*?
+	(
+		'"'
+		| '\''
+	)
+;
 
 INT
 :
@@ -149,6 +285,11 @@ INT
 EINT
 :
 	[A-Z0-9]+
+;
+
+NAME
+:
+	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
 
 EQ

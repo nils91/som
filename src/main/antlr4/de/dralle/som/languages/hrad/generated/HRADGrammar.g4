@@ -27,7 +27,6 @@ directive
 	SEMICOLON directive_name EQ
 	(
 		primary_expr
-		| DIRECTIVE_VALUE_STR
 	)
 ;
 
@@ -140,7 +139,7 @@ signed_integer_or_directive
 integer_or_directive
 :
 	directive_access
-	| INT
+	| INT | DIRECTIVE_VALUE_STR
 ;
 
 

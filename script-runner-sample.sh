@@ -5,7 +5,7 @@ success=0
 failed=0
 total=0
 
-# Traverse the /test directory and execute all .sh scripts
+# Traverse the /sample directory and execute all .sh scripts
 for file in $(find sample -type f -name "*.sh"); do
     dir=$(dirname "$file")
     lfile=$(basename "$file")

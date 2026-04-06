@@ -1,10 +1,10 @@
 package de.dralle.som.languages.hrac.model.directive;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 /**
  * Also used for int.
  */
-public class HRACExpressionTreeDirective extends AbstractDirective<HRACAbstractExpressionNode>{
+public class HRACExpressionTreeDirective extends AbstractDirective<HRACAbstractDirectiveExpressionTreeNode>{
 
 	@Override
 	public HRACExpressionTreeDirective clone() {
@@ -16,7 +16,7 @@ public class HRACExpressionTreeDirective extends AbstractDirective<HRACAbstractE
 		return clone;
 	}
 
-	public HRACExpressionTreeDirective(boolean global, String name, HRACAbstractExpressionNode value) {
+	public HRACExpressionTreeDirective(boolean global, String name, HRACAbstractDirectiveExpressionTreeNode value) {
 		super(global, name, value);
 		// TODO Auto-generated constructor stub
 	}

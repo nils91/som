@@ -5,24 +5,17 @@ import de.dralle.som.languages.hras.model.PlusExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSPlusExpressionNode;
 
-public class HRACPlusExpressionNode extends CommutativeDualChildExpressionNode implements Cloneable {
+public class HRACPlusExpressionNode extends HRACCommutativeDualChildExpressionNode implements Cloneable {
 
 	public HRACPlusExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRACPlusExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
+	public HRACPlusExpressionNode(HRACAbstractDirectiveExpressionTreeNode child1, HRACAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue() + getChilds()[1].calculateNumericalValue();
-	}
-
 	@Override
 	public PlusExpressionNode compileToHRAS(HRACModel parent) {
 

@@ -5,19 +5,19 @@ import java.util.Collection;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
 
-public abstract class HRACDualChildExpressionNode extends HRACAbstractExpressionNode implements Cloneable {
-	private HRACAbstractExpressionNode[] childs = new HRACAbstractExpressionNode[2];
+public abstract class HRACDualChildExpressionNode extends HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
+	private HRACAbstractDirectiveExpressionTreeNode[] childs = new HRACAbstractDirectiveExpressionTreeNode[2];
 
 	public HRACDualChildExpressionNode() {
 		super();
 	}
 
-	public HRACDualChildExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
+	public HRACDualChildExpressionNode(HRACAbstractDirectiveExpressionTreeNode child1, HRACAbstractDirectiveExpressionTreeNode child2) {
 		super();
-		this.childs = new HRACAbstractExpressionNode[] { child1, child2 };
+		this.childs = new HRACAbstractDirectiveExpressionTreeNode[] { child1, child2 };
 	}
 
-	public HRACDualChildExpressionNode(HRACAbstractExpressionNode[] childs) {
+	public HRACDualChildExpressionNode(HRACAbstractDirectiveExpressionTreeNode[] childs) {
 		super();
 		this.childs = childs;
 	}
@@ -27,7 +27,7 @@ public abstract class HRACDualChildExpressionNode extends HRACAbstractExpression
 		// TODO Auto-generated method stub
 		HRACDualChildExpressionNode cl = (HRACDualChildExpressionNode) super.clone();
 		for (int i = 0; i < childs.length; i++) {
-			HRACAbstractExpressionNode abstractExpressionNode = childs[i];
+			HRACAbstractDirectiveExpressionTreeNode abstractExpressionNode = childs[i];
 			cl.childs[i] = abstractExpressionNode.clone();
 		}
 		return cl;
@@ -42,7 +42,7 @@ public abstract class HRACDualChildExpressionNode extends HRACAbstractExpression
 		return false;
 	}
 
-	public HRACAbstractExpressionNode[] getChilds() {
+	public HRACAbstractDirectiveExpressionTreeNode[] getChilds() {
 		return childs;
 	}
 
@@ -60,19 +60,12 @@ public abstract class HRACDualChildExpressionNode extends HRACAbstractExpression
 		return childs.hashCode();
 	}
 
-	@Override
-	public HRACDualChildExpressionNode resolve(HRACModel parent) {
-		for (int i = 0; i < childs.length; i++) {
-			childs[i] = childs[i].resolve(parent);
-		}
-		return this;
-	}
-
-	public void setChild(HRACAbstractExpressionNode child, int i) {
+	
+	public void setChild(HRACAbstractDirectiveExpressionTreeNode child, int i) {
 		this.childs[i] = child;
 	}
 
-	public void setChilds(HRACAbstractExpressionNode[] childs) {
+	public void setChilds(HRACAbstractDirectiveExpressionTreeNode[] childs) {
 		this.childs = childs;
 	}
 

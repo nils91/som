@@ -1,12 +1,13 @@
 package de.dralle.som.languages.hrac.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveExpressionTreeVisitorInterface;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hras.model.HRASIntegerNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
-public class HRACIntegerNode extends HRACAbstractExpressionNode implements Cloneable {
+public class HRACIntegerNode extends HRACAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private int value;
 
 	public HRACIntegerNode() {
@@ -18,9 +19,7 @@ public class HRACIntegerNode extends HRACAbstractExpressionNode implements Clone
 		this.value = value;
 	}
 
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
+	public int getValue() {
 		return value;
 	}
 
@@ -51,10 +50,6 @@ public class HRACIntegerNode extends HRACAbstractExpressionNode implements Clone
 			return value == oth.intValue();
 		}
 		return false;
-	}
-
-	public int getValue() {
-		return value;
 	}
 
 	@Override

@@ -3,15 +3,16 @@
  */
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * @author Nils
  *
  */
 public class AbstractHRACMemoryAddress implements Cloneable {
-	private HRACAbstractExpressionNode offset;
+	private HRACAbstractDirectiveExpressionTreeNode offset;
 
 	protected AbstractHRACMemoryAddress() {
 
@@ -61,13 +62,13 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 	public void resolve(HRACModel parent,String[] directives) {
 		if(offset!=null) {
 			if(directives!=null) {
-				offset=offset.resolve(parent,directives);
+				offset=offset.accept(new HRACResolveDirectiveTreeVisitor(parent, directives, false));
 			}else {
-				offset=offset.resolve(parent);
+				offset=offset.accept(new HRACResolveDirectiveTreeVisitor(parent));
 			}
 		}
 	}
-	public HRACAbstractExpressionNode getOffset() {
+	public HRACAbstractDirectiveExpressionTreeNode getOffset() {
 		return offset;
 	}
 
@@ -80,7 +81,7 @@ public class AbstractHRACMemoryAddress implements Cloneable {
 		return hashc;
 	}
 
-	public void setOffset(HRACAbstractExpressionNode offset) {
+	public void setOffset(HRACAbstractDirectiveExpressionTreeNode offset) {
 		this.offset = offset;
 	}
 

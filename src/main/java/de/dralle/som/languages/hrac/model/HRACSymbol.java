@@ -3,8 +3,10 @@
  */
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * @author Nils
@@ -21,7 +23,7 @@ public class HRACSymbol implements Cloneable {
 	 * Potential target symbol. Might be null.
 	 */
 	private AbstractHRACMemoryAddress targetSymbol;
-	private HRACAbstractExpressionNode bitCnt;
+	private HRACAbstractDirectiveExpressionTreeNode bitCnt;
 
 	public HRACSymbol() {
 		// TODO Auto-generated constructor stub
@@ -99,7 +101,7 @@ public class HRACSymbol implements Cloneable {
 		return name == oth.name || name.equals(oth.name);
 	}
 
-	public HRACAbstractExpressionNode getBitCnt() {
+	public HRACAbstractDirectiveExpressionTreeNode getBitCnt() {
 		return bitCnt;
 	}
 
@@ -110,7 +112,7 @@ public class HRACSymbol implements Cloneable {
 	 * @return
 	 */
 	public int getBitCntAsInt(HRACModel model) {
-		return bitCnt.getResolvedExpressionTree(model).calculateNumericalValue();
+		return bitCnt.accept(new HRACResolveDirectiveTreeVisitor(model, true)).accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 	}
 
 	public String getName() {
@@ -121,7 +123,7 @@ public class HRACSymbol implements Cloneable {
 		return targetSymbol;
 	}
 
-	public void setBitCnt(HRACAbstractExpressionNode bitCnt) {
+	public void setBitCnt(HRACAbstractDirectiveExpressionTreeNode bitCnt) {
 		this.bitCnt = bitCnt;
 	}
 

@@ -99,7 +99,7 @@ public abstract class AbstractHRBSMemoryAddress implements Cloneable {
 		if (derefOffset != null) {
 			s += "[" + derefOffset + "]";
 		}
-		s += ";";
+		//s += ";";
 		return s;
 	}
 

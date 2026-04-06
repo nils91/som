@@ -3,10 +3,10 @@ grammar HRBSGrammar;
 program
 :
 	(
-		import_stmt NEWLINE?
+		import_stmt NEWLINE*
 	)*
 	(
-		command_def NEWLINE?
+		command_def NEWLINE*
 	)+ EOF?
 ;
 

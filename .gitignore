@@ -11,6 +11,9 @@
 .classpath
 /.settings/
 
+#vscode
+/.vscode/
+
 #intellij
 /.idea
 /gen
@@ -33,6 +36,9 @@
 
 #local gitignore backups
 .gitignore.*.backup
+
+#tmp folder
+/tmp/
 
 #GENERATED START
 #Format AB (0)

@@ -90,7 +90,7 @@ public class HRBSModel implements ISetN, IHeap {
 			Map<String, String> lclSymbolReplacementMap) {
 		Map<String, AbstractHRBSMemoryAddress> retMap = new HashMap<>();
 		if (m == null) {
-			System.out.println("Warning: Cant get prototype param list for " + c);
+			logger.warning("Warning: Cant get prototype param list for " + c);
 		}
 		List<String> modelParams = m.getParams(); // A
 		List<AbstractHRBSMemoryAddress> cTargets = c.getTarget();// B | @0

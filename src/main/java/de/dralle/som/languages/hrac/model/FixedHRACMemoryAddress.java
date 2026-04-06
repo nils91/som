@@ -22,7 +22,12 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 
 	@Override
 	public String asHRACCode() {
-		return "@" + address + super.asHRACCode();
+		String addrStr = address.toString();
+		if (addrStr.matches("[0-9]+(\\.[0-9]+)?")) {//single number, not expression
+			return "@" + address + super.asHRACCode();
+		} else {
+			return "@(" + address + ")" + super.asHRACCode();
+		}
 	}
 
 	@Override
@@ -35,10 +40,10 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	@Override
 	public void resolve(HRACModel parent, String[] directives) {
 		super.resolve(parent, directives);
-		if(directives==null) {
-			address=address.resolve(parent);
-		}else {
-			address=address.resolve(parent, directives);
+		if (directives == null) {
+			address = address.resolve(parent);
+		} else {
+			address = address.resolve(parent, directives);
 		}
 	}
 

@@ -52,6 +52,7 @@ public class HRACSymbol implements Cloneable {
 		if (targetSymbol != null) {
 			sb.append(String.format(" %s", targetSymbol));
 		}
+		sb.append(";");
 		return sb.toString();
 	}
 

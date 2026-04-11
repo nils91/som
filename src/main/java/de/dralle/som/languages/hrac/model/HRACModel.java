@@ -24,7 +24,7 @@ import de.dralle.som.Util;
 import de.dralle.som.languages.hrac.model.directive.AbstractDirective;
 import de.dralle.som.languages.hrac.model.directive.HRACExpressionTreeDirective;
 import de.dralle.som.languages.hrac.model.directive.HRACIntegerDirective;
-import de.dralle.som.languages.hrac.model.directive.StringDirective;
+import de.dralle.som.languages.hrac.model.directive.HRACStringDirective;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
@@ -172,7 +172,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, String value) {
-		addAddDirective(new StringDirective(false, name, value));
+		addAddDirective(new HRACStringDirective(false, name, value));
 	}
 
 	public void addAddDirectives(Map<String, String> additionals) {
@@ -196,7 +196,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addGlobalDirective(String name, String value) {
-		addDirective(new StringDirective(true, name, value));
+		addDirective(new HRACStringDirective(true, name, value));
 	}
 
 	public void addGlobalDirectives(Map<String, String> globals) {
@@ -249,7 +249,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, String value) {
-		addDirective(new StringDirective(false, name, value));
+		addDirective(new HRACStringDirective(false, name, value));
 	}
 
 	public void addDirective(AbstractDirective<?> directive) {

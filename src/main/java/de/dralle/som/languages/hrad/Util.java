@@ -34,9 +34,9 @@ public class Util {
 	}
 
 	public static void main(String[] args) throws IOException {
-		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/model", "hrac", "hrad");
-		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/model", "HRAC", "HRAD");
-		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/model", "Hrac", "Hrad");
+		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/visitors", "hrav", "hrad");
+		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/visitors", "HRAV", "HRAD");
+		refactorDirectory("src/main/java/de/dralle/som/languages/hrad/visitors", "Hrav", "Hrad");
 	}
 
 }

@@ -2,7 +2,7 @@ package de.dralle.som.languages.hrad.model.directive;
 
 import de.dralle.som.languages.hrad.HRADSourceLocation;
 
-public abstract class HRADAbstractDirective<T> implements Cloneable {
+public abstract class HRADAbstractDirectiveValue<T> implements Cloneable {
 	
 	private HRADSourceLocation sourceLocation;
 	
@@ -14,30 +14,19 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		return sourceLocation;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		int hc = 1;
-		hc += name == null ? 0 : name.hashCode();
 		hc += value == null ? 0 : value.hashCode();
 		return hc;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRADAbstractDirective<?>) {
-			HRADAbstractDirective<?> oth = (HRADAbstractDirective<?>) obj;
-			boolean equal = name == oth.name;
-			if (name != null) {
-				equal = name.equals(oth.name);
-			}
+		if (obj instanceof HRADAbstractDirectiveValue<?>) {
+			HRADAbstractDirectiveValue<?> oth = (HRADAbstractDirectiveValue<?>) obj;
+			boolean equal = true;
 			if (equal) {
 				if (value != null) {
 					equal = value.equals(oth.value);
@@ -54,36 +43,29 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 	}
 
 	@Override
-	public HRADAbstractDirective<T> clone() {
-		HRADAbstractDirective<T> clone = null;
+	public HRADAbstractDirectiveValue<T> clone() {
+		HRADAbstractDirectiveValue<T> clone = null;
 		try {
-			clone = (HRADAbstractDirective<T>) super.clone();
+			clone = (HRADAbstractDirectiveValue<T>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		clone.name = name;
 		clone.value = value;
 		clone.sourceLocation=sourceLocation;
 		return clone;
 	}
 
 	@Override
-	public String toString() {
-		String str = ";";
-		
-		if(name!=null) {
-			str+=name;
-		}
-		str+=" = ";
+	public String toString() {		
+		String str="";
 		if(value!=null) {
 			str+=value.toString();
 		}
 		return str;
 	}
 
-	public HRADAbstractDirective(String name, T value, HRADSourceLocation sourceLocation) {
+	public HRADAbstractDirectiveValue( T value, HRADSourceLocation sourceLocation) {
 		super();
-		this.name = name;
 		this.value = value;
 		this.sourceLocation=sourceLocation;
 	}
@@ -96,6 +78,6 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		this.value = value;
 	}
 
-	private String name;
+	
 	private T value;
 }

@@ -33,7 +33,11 @@ public class HRADDirectiveTreeCalculateIntegerValueVisitor
 
 	@Override
 	public Long visit(HRADDirectiveNode node) {
-		throw new RuntimeException("Unresolved directive node: " + node.getDirectiveName());
+		String msg = "Unresolved directive node: " + node.getDirectiveName();
+		if(node.getSourceLocation()!=null) {
+			msg += " at "+node.getSourceLocation();
+		}
+		throw new RuntimeException(msg);
 	}
 
 	@Override

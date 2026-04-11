@@ -3,12 +3,29 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveExpressionTreeVisitorInterface;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 
 public abstract class HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
+	
+	private HRADSourceLocation sourceLocation;
+	
+	public HRADSourceLocation getSourceLocation() {
+		return sourceLocation;
+	}
+
+	public void setSourceLocation(HRADSourceLocation sourceLocation) {
+		this.sourceLocation = sourceLocation;
+	}
+
+	public HRADAbstractDirectiveExpressionTreeNode(HRADSourceLocation sourceLocation) {
+		super();
+		this.sourceLocation = sourceLocation;
+	}
+
 	public HRADAbstractDirectiveExpressionTreeNode() {
 
 	}

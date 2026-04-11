@@ -1,5 +1,7 @@
 package de.dralle.som.languages.hrad.model.directive;
 
+import de.dralle.som.languages.hrad.HRADSourceLocation;
+
 public class HRADStringDirective extends HRADAbstractDirective<String> {
 
 	@Override
@@ -21,8 +23,8 @@ public class HRADStringDirective extends HRADAbstractDirective<String> {
 		return str;
 	}
 
-	public HRADStringDirective(String name, String value) {
-		super(name, value);
+	public HRADStringDirective(String name, String value, HRADSourceLocation sourceLocation) {
+		super(name, value, sourceLocation);
 		// TODO Auto-generated constructor stub
 	}
 

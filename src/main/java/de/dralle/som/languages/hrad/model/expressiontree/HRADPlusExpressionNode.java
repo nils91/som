@@ -5,7 +5,7 @@ import de.dralle.som.languages.hras.model.PlusExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSPlusExpressionNode;
 
-public class HRADPlusExpressionNode extends HRADCommutativeDualChildExpressionNode implements Cloneable {
+public class HRADPlusExpressionNode extends HRADDualChildExpressionNode implements Cloneable {
 
 	public HRADPlusExpressionNode() {
 		super();

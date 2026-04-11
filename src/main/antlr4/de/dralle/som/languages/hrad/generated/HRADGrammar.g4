@@ -22,9 +22,19 @@ oti
 	) number
 ;
 
-directive
+directive: SEMICOLON (simple_directive | directive_function);
+
+directive_function
 :
-	SEMICOLON directive_name EQ
+	directive_name P_OPEN (directive_name COMMA)* directive_name P_CLOSE EQ
+	(
+		primary_expr
+	)
+;
+
+simple_directive
+:
+	directive_name EQ
 	(
 		primary_expr
 	)
@@ -300,6 +310,8 @@ SEMICOLON
 :
 	';'
 ;
+
+COMMA:',';
 
 B_OPEN
 :

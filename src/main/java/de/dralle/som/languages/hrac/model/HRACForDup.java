@@ -5,10 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.dralle.som.IHeap;
 import de.dralle.som.ISetN;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * Holds a single command or an entire HRACChildModel
@@ -17,6 +21,7 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionN
  *
  */
 public class HRACForDup implements ISetN, IHeap, Cloneable {
+	private static final Logger log = Logger.getLogger(HRACForDup.class.getName());
 	private static int runId;
 	private static int getn_cnt = 0;
 
@@ -113,13 +118,13 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt += model.getCommandCount(n);
 			}
 		} else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
 			if (cmd != null) {
 				cnt += rng.length;
 			}
 			if (model != null) {
 				for (int i = 0; i < rng.length; i++) {
-					HRACAbstractExpressionNode j = rng[i];
+					HRACAbstractDirectiveExpressionTreeNode j = rng[i];
 					model.addAddDirective(range.getRunningDirectiveName(), j);
 					cnt += model.getCommandCount(n);
 				}
@@ -154,14 +159,34 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			int n = 0;
 			if (model != null) {
 				if (model == parent) {
-					System.out.println("Error");
+					log.log(Level.SEVERE, "Child and parent are the same object");
+					throw new RuntimeException("Child and parent are the same object");
 				}
-				n = model.getN();
+				if (range != null) {
+					HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
+					for (HRACAbstractDirectiveExpressionTreeNode hracAbstractExpressionNode : rng) {
+						String runDir = range.getRunningDirectiveName();
+						HRACModel mc = model.clone();
+						mc.addAddDirective(runDir, hracAbstractExpressionNode);
+						int ln = mc.getN();
+						if (ln > n) {
+							n = ln;
+						}
+					}
+					for (int i = rng.length; i <= 0; i /= 2) {
+						n++;
+					}
+				} else {
+					n = model.getN();
+				}
 				cachedN = n;
 				return n;
 			}
 			if (parent != null) {
-				parent.getDirectiveAsExpressionTree("N");
+				HRACAbstractDirectiveExpressionTreeNode et = parent.getDirectiveAsExpressionTree("N").clone()
+						.accept(new HRACResolveDirectiveTreeVisitor(parent));
+				cachedN = et.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
+				return cachedN;
 			}
 			cachedN = 0;
 			return cachedN;// assuming special is n
@@ -180,22 +205,27 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 		} else {
 			AbstractHRACMemoryAddress cmdTgt = cmd.getTarget();
 			if (cmdTgt != null) {
-				HRACAbstractExpressionNode cmdTOfs = cmdTgt.getOffset();
-				if (cmdTOfs != null) {
-					for (int i = 0; i < range.getRange(parent).length; i++) {
-						HRACAbstractExpressionNode si = range.getRange(parent)[i];
-						String rangeVar = range.getRunningDirectiveName();
-						if (rangeVar == null) {
-							rangeVar = "i";
-						}
-						HRACModel parentClone = parent.clone();
-						parentClone.addAddDirective(rangeVar, si);
-						HRACAbstractExpressionNode cmdOfsRes = cmdTOfs.getResolvedExpressionTree(parentClone,
-								new String[] { rangeVar });
-						HRACCommand cmdClone = cmd.clone();
-						cmdClone.getTarget().setOffset(cmdOfsRes);
-						cmds.add(cmdClone);
+				HRACAbstractDirectiveExpressionTreeNode cmdTOfs = cmdTgt.getOffset();
+				for (int i = 0; i < range.getRange(parent).length; i++) {
+					HRACAbstractDirectiveExpressionTreeNode si = range.getRange(parent)[i];
+					String rangeVar = range.getRunningDirectiveName();
+					if (rangeVar == null) {
+						rangeVar = "i";
 					}
+					HRACModel parentClone = parent.clone();
+					parentClone.addAddDirective(rangeVar, si);
+					HRACAbstractDirectiveExpressionTreeNode cmdOfsRes = null;
+					if (cmdTOfs != null) {
+						cmdOfsRes = cmdTOfs.accept(
+								new HRACResolveDirectiveTreeVisitor(parentClone, new String[] { rangeVar }, true));
+					}
+					HRACCommand cmdClone = cmd.clone();
+					// prevent label duplication #153
+					if (i > 0 && cmdClone.getLabel() != null) {
+						cmdClone.setLabel(null);
+					}
+					cmdClone.getTarget().setOffset(cmdOfsRes);
+					cmds.add(cmdClone);
 				}
 			}
 		}
@@ -213,10 +243,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 				cnt += model.getSymbolBitCnt(n);
 			}
 		} else {
-			HRACAbstractExpressionNode[] rng = range.getRange(parent);
+			HRACAbstractDirectiveExpressionTreeNode[] rng = range.getRange(parent);
 			if (model != null) {
 				for (int i = 0; i < rng.length; i++) {
-					HRACAbstractExpressionNode j = rng[i];
+					HRACAbstractDirectiveExpressionTreeNode j = rng[i];
 					model.addAddDirective("i", j);
 					cnt += model.getSymbolBitCnt(n);
 				}
@@ -231,7 +261,7 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 			model.setMinimumN(parent.getN());
 			if (range != null) {
 				for (int i = 0; i < range.getRange(parent).length; i++) {
-					HRACAbstractExpressionNode si = range.getRange(parent)[i];
+					HRACAbstractDirectiveExpressionTreeNode si = range.getRange(parent)[i];
 					HRACModel modelClone = model.clone();
 					modelClone.addAddDirective(range.getRunningDirectiveName(), si);
 					modelClone.precompile(suffix + "_FD" + id + "_" + i, symbolNameReplacementList, i == 0);
@@ -311,9 +341,10 @@ public class HRACForDup implements ISetN, IHeap, Cloneable {
 	}
 
 	public void setParent(HRACModel parent) {
-		if(this.parent!=parent) {
-		this.parent = parent;
-		cachedN = null;}
+		if (this.parent != parent) {
+			this.parent = parent;
+			cachedN = null;
+		}
 	}
 
 	public void setRange(IHRACRangeProvider range) {

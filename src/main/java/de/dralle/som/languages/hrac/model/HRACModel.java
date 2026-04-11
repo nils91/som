@@ -21,8 +21,14 @@ import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.directive.AbstractDirective;
+import de.dralle.som.languages.hrac.model.directive.HRACExpressionTreeDirective;
+import de.dralle.som.languages.hrac.model.directive.HRACIntegerDirective;
+import de.dralle.som.languages.hrac.model.directive.StringDirective;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.ExpressionHRASMemoryAddress;
 import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
@@ -71,7 +77,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		List<Entry<AbstractHRASMemoryAddress, Boolean>> otiAddresses = m.getInitOnceList();
 		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : otiAddresses) {
 			AbstractHRASMemoryAddress hrasAdr = entry.getKey();
-			HRACAbstractExpressionNode hrasOfs = hrasAdr.getAddressOffset().compileToHRAC();
+			HRACAbstractDirectiveExpressionTreeNode hrasOfs = hrasAdr.getAddressOffset().compileToHRAC();
 			String hrasName = null;
 			if (hrasAdr instanceof SymbolHRASMemoryAddress) {
 				hrasName = ((SymbolHRASMemoryAddress) hrasAdr).getSymbol();
@@ -114,15 +120,19 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return newm;
 	}
 
-	private Map<String, Object> globalDirectives;// global directives. During precompile, only global directives from
-													// child models/commands will be passed on.
+	private Map<String,AbstractDirective<?>> directives = new HashMap<String,AbstractDirective<?>>();// Directives can either
+																								// be String or an
+																								// expression (for int
+																								// IntegerNode
+	// shall be used. But Integer should also be checked, just in case). During
+	// precompile, only global directives from
+	// child models/commands will be passed on.
 
-	private Map<String, Object> directives;// Directives can either be String or an expression (for int IntegerNode
-											// shall be used. But Integer should also be checked, just in case). Making
-											// it Object is only a workaround however, the long-term solutiopn would be
-											// an additional directive class to handle this.
-
-	private Map<String, Object> additionalDirectives;// additionals added at runtime
+	private Map<String,AbstractDirective<?>> additionalDirectives = new HashMap<String,AbstractDirective<?>>();// additionals
+																											// added at
+																											// runtime.
+																											// wont be
+																											// output
 
 	private List<HRACSymbol> symbols;
 
@@ -133,9 +143,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRACModel() {
 		symbols = new ArrayList<>();
 		commands = new ArrayList<>();
-		globalDirectives = new HashMap<String, Object>();
-		directives = new HashMap<>();
-		additionalDirectives = new HashMap<>();
 	}
 
 	/**
@@ -156,8 +163,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return cnt;
 	}
 
-	public void addAddDirective(String name, HRACAbstractExpressionNode value) {
-		additionalDirectives.put(name, value);
+	public void addAddDirective(String name, HRACAbstractDirectiveExpressionTreeNode value) {
+		addAddDirective(new HRACExpressionTreeDirective(false, name, value));
 	}
 
 	public void addAddDirective(String name, int value) {
@@ -165,15 +172,23 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addAddDirective(String name, String value) {
-		additionalDirectives.put(name, value);
+		addAddDirective(new StringDirective(false, name, value));
 	}
 
 	public void addAddDirectives(Map<String, String> additionals) {
-		additionalDirectives.putAll(additionals);
+		for (Entry<String, String> entry : additionals.entrySet()) {
+			String key = entry.getKey();
+			String val = entry.getValue();
+			addAddDirective(key, val);
+		}
 	}
 
-	public void addGlobalDirective(String name, HRACAbstractExpressionNode value) {
-		globalDirectives.put(name, value);
+	public void addAddDirective(AbstractDirective<?> additional) {
+		addDirectiveToMap(additional, additionalDirectives);
+	}
+	
+	public void addGlobalDirective(String name, HRACAbstractDirectiveExpressionTreeNode value) {
+		addDirective(new HRACExpressionTreeDirective(true, name, value));
 	}
 
 	public void addGlobalDirective(String name, int value) {
@@ -181,11 +196,15 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addGlobalDirective(String name, String value) {
-		globalDirectives.put(name, value);
+		addDirective(new StringDirective(true, name, value));
 	}
 
 	public void addGlobalDirectives(Map<String, String> globals) {
-		globalDirectives.putAll(globals);
+		for (Entry<String, String> entry : globals.entrySet()) {
+			String key = entry.getKey();
+			String val = entry.getValue();
+			addGlobalDirective(key, val);
+		}
 	}
 
 	public void addCommand(HRACCommand c) {
@@ -205,9 +224,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		} else {
 			HRACForDup fd = new HRACForDup();
 			fd.setModel(c);
-			HRACForDupFixedRangeProvider range = new HRACForDupFixedRangeProvider();
-			range.addValue(0);
-			fd.setRange(range);
 			addCommand(fd);
 		}
 	}
@@ -217,12 +233,32 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public void addDirective(String name, Object value) {
-		directives.put(name, value);
-
+		if (value instanceof String) {
+			addDirective(name, value.toString());
+		}
+		if (value instanceof HRACAbstractDirectiveExpressionTreeNode) {
+			addDirective(new HRACExpressionTreeDirective(false, name, (HRACAbstractDirectiveExpressionTreeNode) value));
+		}
+		if (value instanceof HRACIntegerNode) {
+			addDirective(new HRACIntegerDirective(false, name, (HRACIntegerNode) value));
+		}
+		if (value instanceof Integer) {
+			addDirective(name, new HRACIntegerNode((Integer) value));
+		}
+		addAddDirective(name, value.toString());
 	}
 
 	public void addDirective(String name, String value) {
-		directives.put(name, value);
+		addDirective(new StringDirective(false, name, value));
+	}
+
+	public void addDirective(AbstractDirective<?> directive) {
+		addDirectiveToMap(directive, directives);
+	}
+
+	public static void addDirectiveToMap(AbstractDirective<?> directive,
+			Map<String,AbstractDirective<?>> directivse) {		
+		directivse.put(directive.getName(),directive);
 	}
 
 	public void addInitOnceAdress(AbstractHRACMemoryAddress adr, boolean set) {
@@ -252,7 +288,6 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		if (!duplicate || symbol.isOp()) {
 			symbols.add(symbol);
 		}
-
 	}
 
 	public String asCode() {
@@ -276,7 +311,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	private boolean checkN(int n) {
-		additionalDirectives.put("N", n + "");
+		addAddDirective("N", n);
 		int hs = getHeapSize();
 		if (n < getMinimumN()) {
 			return false;
@@ -301,9 +336,8 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.globalDirectives = new HashMap<>(cloneDirectiveMap(globalDirectives, true));
-		clone.directives = new HashMap<>(cloneDirectiveMap(directives, true));
-		clone.additionalDirectives = new HashMap<>(cloneDirectiveMap(additionalDirectives, true));
+		clone.directives = new HashMap<String,AbstractDirective<?>>(cloneDirectiveMap(directives));
+		clone.additionalDirectives = new HashMap<String,AbstractDirective<?>>(cloneDirectiveMap(additionalDirectives));
 		if (initOnceAddresses != null) {
 			clone.initOnceAddresses = new ArrayList<Map.Entry<AbstractHRACMemoryAddress, Boolean>>();
 			for (Entry<AbstractHRACMemoryAddress, Boolean> hracForDup : initOnceAddresses) {
@@ -327,74 +361,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return clone;
 	}
 
-	private <T1, T2> Map<T1, T2> cloneDirectiveMap(Map<T1, T2> directives, boolean addNonClonables) { // since clone is
-																										// protected on
-																										// Object, a
-																										// generic
-																										// approach
-																										// needs this
-																										// rather ugly
-																										// reflective
-																										// call
-		Map<T1, T2> retMap = new HashMap<T1, T2>();
-		if (directives != null) {
-			for (Entry<T1, T2> entry : directives.entrySet()) {
-				T1 key = entry.getKey();
-				T2 val = entry.getValue();
-				T1 keyClone = null;
-				T2 valClone = null;
-				if (key instanceof Cloneable) {
-					// Getting the clone() method using reflection
-					Method cloneMethod = null;
-					try {
-						cloneMethod = key.getClass().getDeclaredMethod("clone");
-					} catch (NoSuchMethodException | SecurityException e) {
-					}
-					if (cloneMethod != null) {
-						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
-
-						// Invoking the clone() method reflectively
-						try {
-							keyClone = (T1) cloneMethod.invoke(key);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-				if (val instanceof Cloneable) {
-					// Getting the clone() method using reflection
-					Method cloneMethod = null;
-					try {
-						cloneMethod = key.getClass().getDeclaredMethod("clone");
-					} catch (NoSuchMethodException | SecurityException e) {
-					}
-					if (cloneMethod != null) {
-						cloneMethod.setAccessible(true); // Necessary if clone() is protected or private
-
-						// Invoking the clone() method reflectively
-						try {
-							valClone = (T2) cloneMethod.invoke(val);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-				if (addNonClonables) {
-					if (keyClone == null) {
-						keyClone = key;
-					}
-					if (valClone == null) {
-						valClone = val;
-					}
-				}
-				if (keyClone != null) {
-					if (valClone != null || addNonClonables) {
-						retMap.put(keyClone, valClone);
-					}
-				}
-			}
+	private <T extends AbstractDirective<?>> Map<String,T> cloneDirectiveMap(Map<String,? extends T> directives) {
+		Map<String,T> retMap = new HashMap<String,T>();
+		for (Entry<String, ? extends T> entry : directives.entrySet()) {
+			String key = entry.getKey();
+			T val = entry.getValue();
+			retMap.put(key, (T) val.clone());			
 		}
 		return retMap;
 	}
@@ -402,7 +374,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	public HRASModel compileToHRAS() {
 		HRACModel toc = clone();
 		int n = toc.findN();
-		toc.additionalDirectives.put("N", n + "");
+		toc.addAddDirective("N", n);
 		toc.precompile("", new HashMap<>(), true);
 		HRASModel m = new HRASModel();
 		// add calculate n as directive to be used later on
@@ -418,13 +390,13 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				AbstractHRACMemoryAddress tgt = s.getTargetSymbol();
 				if (tgt instanceof FixedHRACMemoryAddress) {
 					int adr = 0;
-					HRACAbstractExpressionNode ofsET = tgt.getOffset();
-					if (ofsET != null) {// shóuld offset be directive, replace the directive with its value
-						adr = ofsET.getResolvedExpressionTree(this).calculateNumericalValue();
+					HRACAbstractDirectiveExpressionTreeNode ofset = tgt.getOffset();
+					if (ofset != null) {// should offset be directive, replace the directive with its value
+						adr = ofset.clone().accept(new HRACResolveDirectiveTreeVisitor(this)).accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 					}
 
-					adr += ((FixedHRACMemoryAddress) tgt).getAddress().getResolvedExpressionTree(this)
-							.calculateNumericalValue();
+					adr += ((FixedHRACMemoryAddress) tgt).getAddress().clone().accept(new HRACResolveDirectiveTreeVisitor(this))
+							.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor());
 					if (adr > nxtSymbolAddress) {
 						nxtSymbolAddress = adr + 1;
 					}
@@ -435,10 +407,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (s.getTargetSymbol() == null) {
 				int address = nxtSymbolAddress;
 
-				HRACAbstractExpressionNode et = s.getBitCnt();
+				HRACAbstractDirectiveExpressionTreeNode et = s.getBitCnt();
 				if (et != null) {
-					et = et.getResolvedExpressionTree(this);
-					nxtSymbolAddress += et.calculateNumericalValue();
+					et = et.clone().accept(new HRACResolveDirectiveTreeVisitor(this));
+					nxtSymbolAddress += et.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor());
 				} else {
 					nxtSymbolAddress++;
 				}
@@ -463,7 +435,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			}
 		}
 		for (var oti : initOnceAddresses) {
-			HRACAbstractExpressionNode hracOfs = oti.getKey().getOffset();
+			HRACAbstractDirectiveExpressionTreeNode hracOfs = oti.getKey().getOffset();
 			SymbolHRASMemoryAddress newmadr = new SymbolHRASMemoryAddress();
 			if (hracOfs != null) {
 				newmadr.setAddressOffset(oti.getKey().getOffset().compileToHRAS(this));
@@ -534,11 +506,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return n;
 	}
 
-	public Map<String, Object> getAllDirectives() {
-		Map<String, Object> retMap = new HashMap<>();
-		retMap.putAll(additionalDirectives);
-		retMap.putAll(directives);
-		return retMap;
+	public Collection<AbstractDirective<?>> getAllDirectives() {
+		Collection<AbstractDirective<?>> retList = new ArrayList<AbstractDirective<?>>();
+		retList.addAll(additionalDirectives.values());
+		retList.addAll(directives.values());
+		return retList;
 	}
 
 	public Collection<String> getAllLabelsRecursive(boolean includeMirrorSymbols) {
@@ -619,39 +591,46 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		return tmp;
 	}
 
-	public HRACAbstractExpressionNode getDirectiveAsExpressionTree(String name) {
-		Object sv = additionalDirectives.get(name);
-		if (sv == null) {
-			sv = directives.get(name);
+	public HRACAbstractDirectiveExpressionTreeNode getDirectiveAsExpressionTree(String name) {
+		if (name == null) {
+			return null;
 		}
-		if (sv == null) {
-			return new HRACIntegerNode(0);
+		AbstractDirective<?> found = additionalDirectives.get(name);
+		if (found instanceof HRACExpressionTreeDirective) {
+			return ((HRACExpressionTreeDirective) found).getValue();
 		}
-		if (sv instanceof HRACAbstractExpressionNode) {
-			return (HRACAbstractExpressionNode) sv;
+		found = directives.get(name);
+		if (found instanceof HRACExpressionTreeDirective) {
+			return ((HRACExpressionTreeDirective) found).getValue();
 		}
-		if (sv instanceof Integer) {
-			return new HRACIntegerNode((Integer) sv);
+		if (found == null) {
+			log.warning("Directive " + name + " not found");
+			return null;
 		}
-		String svStr = sv.toString();
+		String svStr = found.getValue().toString();
 		try {
 			int svI = Util.decodeInt(svStr);
 			return new HRACIntegerNode(svI);
 		} catch (Exception e) {
-			log.warning("Directive " + name + " not a number: " + sv);
+			log.warning("Directive " + name + " not a number: " + svStr);
 		}
 
-		return new HRACIntegerNode(0);
+		return null;
 	}
 
-	public Map<String, Object> getDirectives() {
+	/**
+	 * Returns the directives (but not the additional ones)
+	 * 
+	 * @return
+	 */
+	public Map<String, AbstractDirective<?>> getDirectives() {
 		return directives;
 	}
 
 	private List<String> getDirectivesAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<String, Object> symbol : directives.entrySet()) {
-			tmp.add(String.format(";%s=\"%s\"", symbol.getKey(), symbol.getValue()));
+		for (AbstractDirective<?> symbol : directives.values()) {
+			tmp.add(symbol.toString());
 		}
 		return tmp;
 	}
@@ -661,7 +640,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public int getHeapSize() {
-		return getDirectiveAsExpressionTree("heap").calculateNumericalValue();
+		HRACAbstractDirectiveExpressionTreeNode heapNode = getDirectiveAsExpressionTree("heap");
+		if (heapNode != null) {
+			return heapNode.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
+		}
+		return 0;
 	}
 
 	private int getHeapStartAddress(int n) {
@@ -673,7 +656,11 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 	}
 
 	public int getMinimumN() {
-		return getDirectiveAsExpressionTree("n").calculateNumericalValue();
+		HRACAbstractDirectiveExpressionTreeNode minNNode = getDirectiveAsExpressionTree("n");
+		if (minNNode != null) {
+			return minNNode.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
+		}
+		return 0;
 	}
 
 	@Override
@@ -694,10 +681,10 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACSymbol s : symbols) {
 			if (isSymbolNameAllowed(s.getName())) {
 				if (s.getTargetSymbol() == null) {
-					HRACAbstractExpressionNode et = s.getBitCnt();
+					HRACAbstractDirectiveExpressionTreeNode et = s.getBitCnt();
 					if (et != null) {
-						et = et.getResolvedExpressionTree(this);
-						cnt += et.calculateNumericalValue();
+						et = et.accept(new HRACResolveDirectiveTreeVisitor(this, true));
+						cnt += et.accept(new HRACDirectiveTreeCalculateIntegerValueVisitor());
 					} else {
 						cnt++;
 					}
@@ -763,12 +750,12 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (!oldName.equals(newName)) {// prevent self-referencing symbols
 				hracForDup.setName(newName);
 				localSymbolNameReplacementList.put(oldName, newName);
-				if (!symbolNameReplacementList.containsKey(oldName)) {
-					// retain old symbol name by creating a mirror
-					HRACSymbol newSymbol = new HRACSymbol(oldName);
-					newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(newName));
-					newSymbols.add(newSymbol);
-				}
+				// retain old symbol name by creating a mirror
+				HRACSymbol newSymbol = new HRACSymbol(oldName);
+				newSymbol.setTargetSymbol(new NamedHRACMemoryAddress(newName));
+				newSymbol.setOp(hracForDup.isOp()); // if the symbol this is referencing is op, make this op too
+				newSymbols.add(newSymbol);
+
 			}
 		}
 
@@ -813,7 +800,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 			if (symbl.getBitCnt() == null) {
 				symbl.setBitCnt(1);
 			} else {
-				symbl.setBitCnt(symbl.getBitCnt().resolve(this));
+				symbl.setBitCnt(symbl.getBitCnt().accept(new HRACResolveDirectiveTreeVisitor(this)));
 			}
 
 		}
@@ -823,13 +810,7 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 				ma.resolve(this);
 			}
 		}
-		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
-			if (hracForDup.getCmd() != null) {
-				HRACCommand cmd = hracForDup.getCmd();
-				AbstractHRACMemoryAddress ma = cmd.getTarget();
-				ma.resolve(this);
-			}
-		}
+		
 		List<HRACCommand> newCommandList = new ArrayList<>();
 		for (HRACForDup hracForDup : commands) {// precompile childs
 			if (hracForDup.getCmd() != null) {
@@ -851,15 +832,29 @@ public class HRACModel implements ISetN, IHeap, Cloneable {
 		for (HRACCommand hracCommand : newCommandList) {
 			addCommand(hracCommand);
 		}
+		for (HRACForDup hracForDup : commands) {// resolve command targets, only on individual commands
+			if (hracForDup.getCmd() != null) {
+				HRACCommand cmd = hracForDup.getCmd();
+				AbstractHRACMemoryAddress ma = cmd.getTarget();
+				ma.resolve(this);
+			}
+		}
 		addMultipleSymbols(newSymbols);
 	}
 
 	public void setHeapSize(int heapSize) {
-		directives.put("heap", heapSize + "");
+		int curValue = getHeapSize();
+		if (heapSize > curValue) {
+			addDirective("heap", heapSize);
+		}
+
 	}
 
 	public void setMinimumN(int minimumN) {
-		this.directives.put("n", minimumN + "");
+		int curValue = getMinimumN();
+		if (minimumN > curValue) {
+			addDirective("n", minimumN);
+		}
 	}
 
 	@Override

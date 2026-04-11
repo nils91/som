@@ -1,6 +1,6 @@
 package de.dralle.som.languages.hrbs.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Cloneable {
@@ -22,7 +22,7 @@ public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Clone
 	}
 
 	@Override
-	public HRACAbstractExpressionNode compileToHRAC() {
+	public HRACAbstractDirectiveExpressionTreeNode compileToHRAC() {
 		return new HRACIntegerNode(value);
 	}
 

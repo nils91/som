@@ -13,15 +13,9 @@ public class HRACDivisionExpressionNode extends HRACDualChildExpressionNode impl
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRACDivisionExpressionNode(HRACAbstractExpressionNode child1, HRACAbstractExpressionNode child2) {
+	public HRACDivisionExpressionNode(HRACAbstractDirectiveExpressionTreeNode child1, HRACAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return getChilds()[0].calculateNumericalValue() / getChilds()[1].calculateNumericalValue();
 	}
 
 	@Override

@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrbs.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarBaseVisitor;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser;
 import de.dralle.som.languages.hrbs.generated.HRBSGrammarParser.Cmd_headContext;
@@ -153,7 +154,7 @@ public class HRBSProgramVisitor extends HRBSGrammarBaseVisitor<HRBSModel> {
 				gD = true;
 			}
 			if (ctx.primary_expr() != null) {
-				value = ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().calculateNumericalValue()
+				value = ctx.primary_expr().accept(new HRBSExpressionVisitor()).compileToHRAC().accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue()
 						+ "";
 			}
 			if (ctx.DIRECTIVE_VALUE_STR() != null) {

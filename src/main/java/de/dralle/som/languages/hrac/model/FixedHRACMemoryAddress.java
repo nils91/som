@@ -1,16 +1,17 @@
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
-	private HRACAbstractExpressionNode address;
+	private HRACAbstractDirectiveExpressionTreeNode address;
 
 	public FixedHRACMemoryAddress() {
 		super();
 	}
 
-	public FixedHRACMemoryAddress(HRACAbstractExpressionNode accept) {
+	public FixedHRACMemoryAddress(HRACAbstractDirectiveExpressionTreeNode accept) {
 		super();
 		this.address = accept;
 	}
@@ -35,10 +36,10 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 	@Override
 	public void resolve(HRACModel parent, String[] directives) {
 		super.resolve(parent, directives);
-		if(directives==null) {
-			address=address.resolve(parent);
+		if(directives!=null) {
+			address=address.accept(new HRACResolveDirectiveTreeVisitor(parent, directives, false));
 		}else {
-			address=address.resolve(parent, directives);
+			address=address.accept(new HRACResolveDirectiveTreeVisitor(parent));
 		}
 	}
 
@@ -52,7 +53,7 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 		return false;
 	}
 
-	public HRACAbstractExpressionNode getAddress() {
+	public HRACAbstractDirectiveExpressionTreeNode getAddress() {
 		return address;
 	}
 
@@ -61,7 +62,7 @@ public class FixedHRACMemoryAddress extends AbstractHRACMemoryAddress {
 		return address.hashCode() + super.hashCode();
 	}
 
-	public void setAddress(HRACAbstractExpressionNode address) {
+	public void setAddress(HRACAbstractDirectiveExpressionTreeNode address) {
 		this.address = address;
 	}
 

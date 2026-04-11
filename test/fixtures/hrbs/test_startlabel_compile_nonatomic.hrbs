@@ -1,0 +1,5 @@
+import NAR1;
+
+MAIN:
+	alloc A[2];
+	NAR1 A[0];

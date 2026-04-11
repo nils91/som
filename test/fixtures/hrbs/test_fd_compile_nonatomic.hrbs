@@ -1,0 +1,5 @@
+import NAR1;
+
+MAIN:
+	alloc A[2];
+	[0:1] NAR1 A[$i];

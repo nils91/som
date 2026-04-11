@@ -2,6 +2,7 @@ package de.dralle.som.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -167,11 +168,130 @@ class IssueTests {
 //
 //		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
 //		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
-		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile.hrbs", SOMFormats.HRBS);
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
 		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
 		assertEquals(3, hras.getCommandCount()); // 2 from loop, 1 added by hrac compiler
 	}
-
+	@Test
+	void testIssue152_HRBSForDupCompileRangeCommandOffsetNotDiscard() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrac = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAC);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP);
+		HRASModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAS);
+		int hrbsStartAddress = hras.resolveSymbolToAddress("HRBS_START");
+		int secCmdAddress = hrbsStartAddress+hras.getN()+1;
+		HRASCommand[] cmds=new HRASCommand[2];
+		cmds[0]=hras.getCommandAtAddress(hrbsStartAddress);
+		cmds[1]=hras.getCommandAtAddress(secCmdAddress);
+		int[] cmdTgtAdr = new int[cmds.length];
+		for (int i = 0; i < cmds.length; i++) {
+			HRASCommand j = cmds[i];
+			assertNotNull(j);
+			cmdTgtAdr[i] = j.getAddress().resolve(hras);
+		}
+		assertNotEquals(cmdTgtAdr[0], cmdTgtAdr[1]);
+	}
+	//Test for issue 153
+	@Test
+	void testIssue153_StartLabelWhereExpectedForDupCompileAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		HRACCommand startingCommand = cmds.get(0).getCmd();
+		String startlabel = startingCommand.getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedForDupCompileNonAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileNonAtomic2() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_nonatomic2.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileAtomic2() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_atomic2.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileNonAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_nonatomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_StartLabelWhereExpectedCompileAtomic() throws IOException {
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_startlabel_compile_atomic.hrbs", SOMFormats.HRBS);
+		HRACModel hrap = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP); //test in hrap, because easier
+		List<HRACForDup> cmds = hrap.getCommands();
+		String startlabel = cmds.get(0).getCmd().getLabel().getName();
+		assertNotNull(startlabel);
+		HRASModel hras = c.compile(hrap, SOMFormats.HRAP, SOMFormats.HRAS);
+		int startLabelAdr = hras.resolveSymbolToAddress(startlabel);
+		int hrbsStartAdr = hras.resolveSymbolToAddress("HRBS_START");
+		assertEquals(hrbsStartAdr, startLabelAdr);
+	}
+	@Test
+	void testIssue153_HRBSForDupCompileLabelAtomic() throws IOException { 
+//		Ok, so this only happens if:
+//
+//		    The compile path starts at HRBS
+//		    The command is a standard command (NAR or NAW)
+//		    Theres a range on that command
+//Theres a label on it
+//		When compiling a standard command from HRBS to HRAC, the compiler will place the new command directly in the hracForDup instance regardless of wether it has a range. The HRAC precompiler, which then resolves the ranges, cant handle that
+//		The files "test/fixtures/hrbs/test_fd_compile.hrbs" and "test/fixtures/hrac/test_rng_compile.hrac" should help
+		HRBSModel model = f.loadFromFile("test/fixtures/hrbs/test_fd_compile_atomic_w_lbl.hrbs", SOMFormats.HRBS);
+		HRACModel hras = c.compile(model, SOMFormats.HRBS, SOMFormats.HRAP);
+		List<HRACForDup> hsCom = hras.getCommands();
+		int lblCnt = 0;
+		for (HRACForDup hracForDup : hsCom) {
+			if(hracForDup.getCmd()!=null) {
+				HRACCommand cmd = hracForDup.getCmd();
+				if(cmd.getLabel()!=null) {
+					if(cmd.getLabel().getName().equals("LABEL")) {
+						lblCnt++;
+					}
+				}
+			}
+		}
+		assertEquals(1, lblCnt);
+	}
+	//to here
 	@Test
 	void testIssue62_HRAPCompilation() throws IOException {
 		HRACModel model = f.loadFromFile("test/fixtures/hrac/test_for_simple.hrac", SOMFormats.HRAC);

@@ -3,26 +3,26 @@ package de.dralle.som.languages.hrac.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
 /**
  * Provides a range of values (as an arry) via getRange().
  */
 public class HRACForDupFixedRangeProvider implements IHRACRangeProvider, Cloneable {
-	private List<HRACAbstractExpressionNode> values;
+	private List<HRACAbstractDirectiveExpressionTreeNode> values;
 	private String runningDirectiveName = "i";
 
-	public void addValue(HRACAbstractExpressionNode value) {
+	public void addValue(HRACAbstractDirectiveExpressionTreeNode value) {
 		if (values == null) {
-			values = new ArrayList<HRACAbstractExpressionNode>();
+			values = new ArrayList<HRACAbstractDirectiveExpressionTreeNode>();
 		}
 		values.add(value);
 	}
 
 	public void addValue(int value) {
 		if (values == null) {
-			values = new ArrayList<HRACAbstractExpressionNode>();
+			values = new ArrayList<HRACAbstractDirectiveExpressionTreeNode>();
 		}
 		values.add(new HRACIntegerNode(value));
 	}
@@ -54,17 +54,17 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider, Cloneab
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		clone.values = new ArrayList<HRACAbstractExpressionNode>();
-		for (HRACAbstractExpressionNode v : values) {
+		clone.values = new ArrayList<HRACAbstractDirectiveExpressionTreeNode>();
+		for (HRACAbstractDirectiveExpressionTreeNode v : values) {
 			clone.values.add(v.clone());
 		}
 		return null;
 	}
 
-	public HRACAbstractExpressionNode[] getRange(HRACModel parent) {
-		HRACAbstractExpressionNode[] rng = new HRACAbstractExpressionNode[values.size()];
+	public HRACAbstractDirectiveExpressionTreeNode[] getRange(HRACModel parent) {
+		HRACAbstractDirectiveExpressionTreeNode[] rng = new HRACAbstractDirectiveExpressionTreeNode[values.size()];
 		for (int i = 0; i < values.size(); i++) {
-			HRACAbstractExpressionNode value = new HRACIntegerNode(0);
+			HRACAbstractDirectiveExpressionTreeNode value = new HRACIntegerNode(0);
 			if (values.get(i) != null) {
 				value = values.get(i);
 			}
@@ -83,7 +83,7 @@ public class HRACForDupFixedRangeProvider implements IHRACRangeProvider, Cloneab
 		runningDirectiveName = name;
 	}
 
-	public void setValues(List<HRACAbstractExpressionNode> values) {
+	public void setValues(List<HRACAbstractDirectiveExpressionTreeNode> values) {
 		this.values = values;
 	}
 

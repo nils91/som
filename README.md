@@ -140,23 +140,31 @@ The accumulator will be set at program start.
    Minimum value for N. N will be calculated automatically. (Optional) 
 	- `;heap=<value>`
 Minimum number of additional unused bytes to be included.
+- OTI
+OTI stands for 'one time initialization' and is used to have the compiler set bits. Available commands are ```setonce``` and ```clearonce``` and can be used with symbols:
+`setonce A`
+`clearonce A`
 - Symbols:
 Symbols are placeholders for memory addresses. They can be used within commands. The memory address for each symbol will be calculated automatically.
 	- Symbols can be defined by writing just the symbol name:
-	```A```
+	```alloc A```
 	- Arrays of symbols can be defined:
-	```A[10]```
+	```alloc A[10]```
 	- Symbols  can be defined using other symbols:
-	```B A```
+	```symbol B A```
+	- Symbols can also point to fixed addresses:
+	``` symbol A @42```
 	- Symbols can be used within commands:
 	```NAR A```
 	- When using symbols, a address offset can be used:
 	`NAR A[4]`
-	`B A[4]`
+	`symbol B A[4]`
 	- Header symbols, like those of the accumulator, must be declared by the user if needed:
-	```ACC 0```
+	```ACC @0```
 - Commands
-	- Available commands are `NAW` and `NAR`. Both can only be used with symbols, using memory addresses directly is not supported with hrac.
+	- Available commands are `NAW` and `NAR`. Both can be used with symbols and fixed addresses:
+	`NAR A`
+	`NAR @42`
 	- The first command `NAW ADR_EVAL` to clear the ADR_EVAL bit is added automatically.
 	
 The accumulator will be set at program start.

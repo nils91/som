@@ -9,17 +9,10 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSNegationExpressionN
 
 public class HRACNegationExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
-	public HRACNegationExpressionNode(HRACAbstractExpressionNode child) {
+	public HRACNegationExpressionNode(HRACAbstractDirectiveExpressionTreeNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public int calculateNumericalValue() {
-		// TODO Auto-generated method stub
-		return super.calculateNumericalValue() * -1;
-	}
-
 	@Override
 	public HRASAbstractExpressionNode compileToHRAS(HRACModel parent) {
 		return new HRASMultiplicationExpression(getChild().compileToHRAS(parent), new HRASIntegerNode(-1));

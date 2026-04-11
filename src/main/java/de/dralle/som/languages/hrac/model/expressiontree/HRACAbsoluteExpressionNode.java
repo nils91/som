@@ -8,14 +8,9 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionN
 
 public class HRACAbsoluteExpressionNode extends HRACSingleChildExpressionNode implements Cloneable {
 
-	public HRACAbsoluteExpressionNode(HRACAbstractExpressionNode child) {
+	public HRACAbsoluteExpressionNode(HRACAbstractDirectiveExpressionTreeNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public int calculateNumericalValue() {
-		return Math.abs(super.calculateNumericalValue());
 	}
 
 	@Override

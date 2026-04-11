@@ -3,8 +3,10 @@
  */
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACDirectiveTreeCalculateIntegerValueVisitor;
+import de.dralle.som.languages.hrac.model.expressiontree.visitors.HRACResolveDirectiveTreeVisitor;
 
 /**
  * @author Nils
@@ -13,14 +15,15 @@ import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 public class HRACSymbol implements Cloneable {
 	private String name;
 	/**
-	 * Op means 'overwrite parent'. Controls wether this symbol should overwrite a symbol of the same name in the parent scope when merging
+	 * Op means 'overwrite parent'. Controls wether this symbol should overwrite a
+	 * symbol of the same name in the parent scope when merging
 	 */
-	private boolean op=false;
+	private boolean op = false;
 	/**
 	 * Potential target symbol. Might be null.
 	 */
 	private AbstractHRACMemoryAddress targetSymbol;
-	private HRACAbstractExpressionNode bitCnt;
+	private HRACAbstractDirectiveExpressionTreeNode bitCnt;
 
 	public HRACSymbol() {
 		// TODO Auto-generated constructor stub
@@ -32,7 +35,7 @@ public class HRACSymbol implements Cloneable {
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
-		if(op) {
+		if (op) {
 			sb.append("op ");
 		}
 		if (targetSymbol != null) {
@@ -67,6 +70,10 @@ public class HRACSymbol implements Cloneable {
 		if (targetSymbol != null) {
 			clone.targetSymbol = targetSymbol.clone();
 		}
+		if (bitCnt != null) {
+			clone.bitCnt = bitCnt.clone();
+		}
+		clone.op = op;
 		return clone;
 	}
 
@@ -81,19 +88,19 @@ public class HRACSymbol implements Cloneable {
 			if (equals) {
 				equals = targetSymbol == oth.targetSymbol || targetSymbol.equals(oth.targetSymbol);
 			}
-			if(equals) {
-				equals=op==oth.op;
+			if (equals) {
+				equals = op == oth.op;
 			}
 			return equals;
 		}
 		return super.equals(obj);
 	}
-	
+
 	public boolean equalsName(HRACSymbol oth) {
 		return name == oth.name || name.equals(oth.name);
 	}
 
-	public HRACAbstractExpressionNode getBitCnt() {
+	public HRACAbstractDirectiveExpressionTreeNode getBitCnt() {
 		return bitCnt;
 	}
 
@@ -104,7 +111,7 @@ public class HRACSymbol implements Cloneable {
 	 * @return
 	 */
 	public int getBitCntAsInt(HRACModel model) {
-		return bitCnt.getResolvedExpressionTree(model).calculateNumericalValue();
+		return bitCnt.accept(new HRACResolveDirectiveTreeVisitor(model, true)).accept(new HRACDirectiveTreeCalculateIntegerValueVisitor()).intValue();
 	}
 
 	public String getName() {
@@ -115,7 +122,7 @@ public class HRACSymbol implements Cloneable {
 		return targetSymbol;
 	}
 
-	public void setBitCnt(HRACAbstractExpressionNode bitCnt) {
+	public void setBitCnt(HRACAbstractDirectiveExpressionTreeNode bitCnt) {
 		this.bitCnt = bitCnt;
 	}
 

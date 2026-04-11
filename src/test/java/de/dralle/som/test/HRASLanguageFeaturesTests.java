@@ -28,7 +28,7 @@ import de.dralle.som.languages.hrac.model.FixedHRACMemoryAddress;
 import de.dralle.som.languages.hrac.model.HRACForDup;
 import de.dralle.som.languages.hrac.model.HRACModel;
 import de.dralle.som.languages.hrac.model.HRACSymbol;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
 import de.dralle.som.languages.hras.model.HRASModel;

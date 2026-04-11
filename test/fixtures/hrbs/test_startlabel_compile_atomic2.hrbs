@@ -1,0 +1,4 @@
+MAIN:
+	alloc A[2];
+	NAR A[0];
+	NAR A[1];

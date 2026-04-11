@@ -1,13 +1,13 @@
 package de.dralle.som.languages.hrac.model;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractExpressionNode;
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 
 public interface IHRACRangeProvider extends Cloneable {
 	public String asCode();
 
 	public IHRACRangeProvider clone();
 
-	HRACAbstractExpressionNode[] getRange(HRACModel model);
+	HRACAbstractDirectiveExpressionTreeNode[] getRange(HRACModel model);
 
 	public String getRunningDirectiveName();
 

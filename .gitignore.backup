@@ -11,8 +11,12 @@
 .classpath
 /.settings/
 
+#vscode
+/.vscode/
+
 #intellij
 /.idea
+/gen
 
 #java
 *.class

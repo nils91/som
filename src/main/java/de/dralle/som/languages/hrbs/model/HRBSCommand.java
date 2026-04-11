@@ -62,10 +62,11 @@ public class HRBSCommand implements Cloneable {
 		if (targets != null) {
 			code += " ";
 			for (AbstractHRBSMemoryAddress hrbsMemoryAddress : targets) {
-				code += hrbsMemoryAddress.asHRBSCode() + ",";
+				code += hrbsMemoryAddress.asHRBSCode() + ", ";
 			}
-			code = code.substring(0, code.length() - 1);
+			code = code.substring(0, code.length() - 2);
 		}
+		code+=";";
 		return code;
 	}
 

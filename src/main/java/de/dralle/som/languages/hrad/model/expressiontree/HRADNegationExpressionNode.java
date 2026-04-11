@@ -3,9 +3,9 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACNegationExpressionNode;
 
-public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode implements Cloneable {
+public class HRADNegationExpressionNode extends HRADSingleChildExpressionNode implements Cloneable {
 
-	public HRBSNegationExpressionNode(HRBSAbstractExpressionNode child) {
+	public HRADNegationExpressionNode(HRADAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
@@ -17,7 +17,7 @@ public class HRBSNegationExpressionNode extends HRBSSingleChildExpressionNode im
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSNegationExpressionNode) {
+		if (obj instanceof HRADNegationExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

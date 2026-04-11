@@ -3,22 +3,22 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
 
-public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode implements Cloneable {
-	private HRBSAbstractExpressionNode child;
+public class HRADSingleChildExpressionNode extends HRADAbstractExpressionNode implements Cloneable {
+	private HRADAbstractExpressionNode child;
 
-	public HRBSSingleChildExpressionNode() {
+	public HRADSingleChildExpressionNode() {
 		super();
 	}
 
-	public HRBSSingleChildExpressionNode(HRBSAbstractExpressionNode child) {
+	public HRADSingleChildExpressionNode(HRADAbstractExpressionNode child) {
 		super();
 		this.child = child;
 	}
 
 	@Override
-	public HRBSSingleChildExpressionNode clone() {
+	public HRADSingleChildExpressionNode clone() {
 		// TODO Auto-generated method stub
-		HRBSSingleChildExpressionNode cl = (HRBSSingleChildExpressionNode) super.clone();
+		HRADSingleChildExpressionNode cl = (HRADSingleChildExpressionNode) super.clone();
 		cl.child = child.clone();
 		return cl;
 	}
@@ -30,14 +30,14 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSSingleChildExpressionNode) {
-			HRBSSingleChildExpressionNode oth = (HRBSSingleChildExpressionNode) obj;
+		if (obj instanceof HRADSingleChildExpressionNode) {
+			HRADSingleChildExpressionNode oth = (HRADSingleChildExpressionNode) obj;
 			return child.equals(oth.child);
 		}
 		return false;
 	}
 
-	public HRBSAbstractExpressionNode getChild() {
+	public HRADAbstractExpressionNode getChild() {
 		return child;
 	}
 
@@ -47,7 +47,7 @@ public class HRBSSingleChildExpressionNode extends HRBSAbstractExpressionNode im
 		return child.hashCode();
 	}
 
-	public void setChild(HRBSAbstractExpressionNode child) {
+	public void setChild(HRADAbstractExpressionNode child) {
 		this.child = child;
 	}
 

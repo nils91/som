@@ -1,15 +1,15 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-public class HRBSAbsoluteExpressionNode extends HRBSSingleChildExpressionNode implements Cloneable {
+public class HRADAbsoluteExpressionNode extends HRADSingleChildExpressionNode implements Cloneable {
 
-	public HRBSAbsoluteExpressionNode(HRBSAbstractExpressionNode child) {
+	public HRADAbsoluteExpressionNode(HRADAbstractExpressionNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSAbsoluteExpressionNode) {
+		if (obj instanceof HRADAbsoluteExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

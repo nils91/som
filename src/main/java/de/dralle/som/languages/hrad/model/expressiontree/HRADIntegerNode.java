@@ -3,22 +3,22 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
 
-public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Cloneable {
+public class HRADIntegerNode extends HRADAbstractExpressionNode implements Cloneable {
 	private int value;
 
-	public HRBSIntegerNode() {
+	public HRADIntegerNode() {
 		super();
 	}
 
-	public HRBSIntegerNode(int value) {
+	public HRADIntegerNode(int value) {
 		super();
 		this.value = value;
 	}
 
 	@Override
-	public HRBSIntegerNode clone() {
+	public HRADIntegerNode clone() {
 		// TODO Auto-generated method stub
-		return (HRBSIntegerNode) super.clone();
+		return (HRADIntegerNode) super.clone();
 	}
 
 	@Override
@@ -28,8 +28,8 @@ public class HRBSIntegerNode extends HRBSAbstractExpressionNode implements Clone
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSIntegerNode) {
-			HRBSIntegerNode oth = (HRBSIntegerNode) obj;
+		if (obj instanceof HRADIntegerNode) {
+			HRADIntegerNode oth = (HRADIntegerNode) obj;
 			return value == oth.value;
 		}
 		if (obj instanceof Integer) {

@@ -3,22 +3,22 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
 
-public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Cloneable {
+public class HRADDirectiveNode extends HRADAbstractExpressionNode implements Cloneable {
 	private String directiveName;
 
-	public HRBSDirectiveNode() {
+	public HRADDirectiveNode() {
 		super();
 	}
 
-	public HRBSDirectiveNode(String directiveName) {
+	public HRADDirectiveNode(String directiveName) {
 		super();
 		this.directiveName = directiveName;
 	}
 
 	@Override
-	public HRBSDirectiveNode clone() {
+	public HRADDirectiveNode clone() {
 		// TODO Auto-generated method stub
-		return (HRBSDirectiveNode) super.clone();
+		return (HRADDirectiveNode) super.clone();
 	}
 
 	@Override
@@ -28,8 +28,8 @@ public class HRBSDirectiveNode extends HRBSAbstractExpressionNode implements Clo
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSDirectiveNode) {
-			HRBSDirectiveNode oth = (HRBSDirectiveNode) obj;
+		if (obj instanceof HRADDirectiveNode) {
+			HRADDirectiveNode oth = (HRADDirectiveNode) obj;
 			return directiveName.equals(oth.directiveName);
 		}
 		return false;

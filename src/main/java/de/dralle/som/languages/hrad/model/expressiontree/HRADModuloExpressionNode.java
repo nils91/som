@@ -2,14 +2,14 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACModuloExpressionNode;
 
-public class HRBSModuloExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
+public class HRADModuloExpressionNode extends HRADDualChildExpressionNode implements Cloneable {
 
-	public HRBSModuloExpressionNode() {
+	public HRADModuloExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRBSModuloExpressionNode(HRBSAbstractExpressionNode child1, HRBSAbstractExpressionNode child2) {
+	public HRADModuloExpressionNode(HRADAbstractExpressionNode child1, HRADAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -22,7 +22,7 @@ public class HRBSModuloExpressionNode extends HRBSDualChildExpressionNode implem
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSModuloExpressionNode) {
+		if (obj instanceof HRADModuloExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

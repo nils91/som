@@ -9,22 +9,22 @@ import de.dralle.som.Opcode;
  * @author Nils
  *
  */
-public class HRAVCommand {
+public class HRADCommand {
 	private Opcode op;
 	private int address;
 
-	public HRAVCommand() {
+	public HRADCommand() {
 		super();
 	}
 
-	public String asHRAVCode() {
+	public String asHRADCode() {
 		return String.format("%s %d", op, address);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRAVCommand) {
-			HRAVCommand other = (HRAVCommand) obj;
+		if (obj instanceof HRADCommand) {
+			HRADCommand other = (HRADCommand) obj;
 			boolean equal = op.equals(other.op);
 			equal = equal && address == other.address;
 			return equal;
@@ -50,6 +50,6 @@ public class HRAVCommand {
 
 	@Override
 	public String toString() {
-		return asHRAVCode();
+		return asHRADCode();
 	}
 }

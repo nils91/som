@@ -2,14 +2,14 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACMinusExpressionNode;
 
-public class HRBSMinusExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
+public class HRADMinusExpressionNode extends HRADDualChildExpressionNode implements Cloneable {
 
-	public HRBSMinusExpressionNode() {
+	public HRADMinusExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRBSMinusExpressionNode(HRBSAbstractExpressionNode child1, HRBSAbstractExpressionNode child2) {
+	public HRADMinusExpressionNode(HRADAbstractExpressionNode child1, HRADAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -22,7 +22,7 @@ public class HRBSMinusExpressionNode extends HRBSDualChildExpressionNode impleme
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSMinusExpressionNode) {
+		if (obj instanceof HRADMinusExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

@@ -2,16 +2,16 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 
-public abstract class HRBSAbstractExpressionNode implements Cloneable {
-	public HRBSAbstractExpressionNode() {
+public abstract class HRADAbstractExpressionNode implements Cloneable {
+	public HRADAbstractExpressionNode() {
 
 	}
 
 	@Override
-	public HRBSAbstractExpressionNode clone() {
+	public HRADAbstractExpressionNode clone() {
 		// TODO Auto-generated method stub
 		try {
-			return (HRBSAbstractExpressionNode) super.clone();
+			return (HRADAbstractExpressionNode) super.clone();
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

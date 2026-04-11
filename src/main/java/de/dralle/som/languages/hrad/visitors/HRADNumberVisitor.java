@@ -1,14 +1,14 @@
 package de.dralle.som.languages.hrad.visitors;
 
-import de.dralle.som.languages.hrav.generated.HRAVGrammarBaseVisitor;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.Based_intContext;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.Binary_intContext;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.Decimal_intContext;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.Hex_intContext;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.NumberContext;
-import de.dralle.som.languages.hrav.generated.HRAVGrammarParser.Octal_intContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarBaseVisitor;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Based_intContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Binary_intContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Decimal_intContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Hex_intContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.NumberContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Octal_intContext;
 
-public class HRAVNumberVisitor extends HRAVGrammarBaseVisitor<Integer> {
+public class HRADNumberVisitor extends HRADGrammarBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitBased_int(Based_intContext ctx) {

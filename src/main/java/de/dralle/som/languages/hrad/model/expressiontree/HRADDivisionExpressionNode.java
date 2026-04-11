@@ -3,14 +3,14 @@ package de.dralle.som.languages.hrad.model.expressiontree;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrac.model.expressiontree.HRACDivisionExpressionNode;
 
-public class HRBSDivisionExpressionNode extends HRBSDualChildExpressionNode implements Cloneable {
+public class HRADDivisionExpressionNode extends HRADDualChildExpressionNode implements Cloneable {
 
-	public HRBSDivisionExpressionNode() {
+	public HRADDivisionExpressionNode() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRBSDivisionExpressionNode(HRBSAbstractExpressionNode child1, HRBSAbstractExpressionNode child2) {
+	public HRADDivisionExpressionNode(HRADAbstractExpressionNode child1, HRADAbstractExpressionNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
@@ -22,7 +22,7 @@ public class HRBSDivisionExpressionNode extends HRBSDualChildExpressionNode impl
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRBSDivisionExpressionNode) {
+		if (obj instanceof HRADDivisionExpressionNode) {
 			return super.equals(obj);
 		}
 		return false;

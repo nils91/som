@@ -22,8 +22,8 @@ import de.dralle.som.Util;
  * @author Nils
  *
  */
-public class HRAVModel implements ISetN {
-	public static HRAVModel compileFromMemspace(IMemspace sourceModel) {
+public class HRADModel implements ISetN {
+	public static HRADModel compileFromMemspace(IMemspace sourceModel) {
 		if (sourceModel instanceof ISomMemspace) {
 			return compileFromMemspace((ISomMemspace) sourceModel);
 		}
@@ -33,13 +33,13 @@ public class HRAVModel implements ISetN {
 	}
 
 	/**
-	 * The resulting model should never be expected to be the same as a HRAV model
+	 * The resulting model should never be expected to be the same as a HRAD model
 	 * which has been compiled to a memspace.
 	 * 
 	 * @param mem
 	 */
-	public static HRAVModel compileFromMemspace(ISomMemspace mem) {
-		HRAVModel model = new HRAVModel();
+	public static HRADModel compileFromMemspace(ISomMemspace mem) {
+		HRADModel model = new HRADModel();
 		model.n = mem.getN();
 		model.setStartAdress(mem.getNextAddress());
 		model.setStartAddressExplicit(true);
@@ -64,7 +64,7 @@ public class HRAVModel implements ISetN {
 			} else {
 				op = Opcode.NAW;
 			}
-			HRAVCommand newc = new HRAVCommand();
+			HRADCommand newc = new HRADCommand();
 			newc.setOp(op);
 			newc.setAddress(cTgtAddress);
 			model.addCommand(newc);
@@ -82,13 +82,13 @@ public class HRAVModel implements ISetN {
 
 	boolean startAddressExplicit;
 
-	private Map<Integer, HRAVCommand> commands;
+	private Map<Integer, HRADCommand> commands;
 
-	public HRAVModel() {
+	public HRADModel() {
 
 	}
 
-	public int addCommand(HRAVCommand c) {
+	public int addCommand(HRADCommand c) {
 		if (commands == null) {
 			commands = new LinkedHashMap<>();
 		}
@@ -125,13 +125,13 @@ public class HRAVModel implements ISetN {
 		for (Entry<Integer, Boolean> entry : initOnceValues) {
 			mem.setBit(entry.getKey(), entry.getValue());
 		}
-		for (Entry<Integer, HRAVCommand> c : commands.entrySet()) {
+		for (Entry<Integer, HRADCommand> c : commands.entrySet()) {
 			Integer address = c.getKey();
-			HRAVCommand command = c.getValue();
+			HRADCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
 			if (cTgtAddress < 0) {
 				System.out.println(
-						"Warning: (HRAV -> Memspace) Negative memory address in command at address " + address + ".");
+						"Warning: (HRAD -> Memspace) Negative memory address in command at address " + address + ".");
 			}
 			mem.setBit(address, command.getOp().getBitValue());
 			mem.setBitsUnsigned(address + 1, n, cTgtAddress);
@@ -143,14 +143,14 @@ public class HRAVModel implements ISetN {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRAVModel) {
-			HRAVModel other = (HRAVModel) (obj);
+		if (obj instanceof HRADModel) {
+			HRADModel other = (HRADModel) (obj);
 			boolean equal = n == other.n;
 			equal = equal && startAdress == other.startAdress;
-			for (Entry<Integer, HRAVCommand> entry : commands.entrySet()) {
+			for (Entry<Integer, HRADCommand> entry : commands.entrySet()) {
 				Integer key = entry.getKey();
-				HRAVCommand val = entry.getValue();
-				HRAVCommand othercommand = other.commands.get(key);
+				HRADCommand val = entry.getValue();
+				HRADCommand othercommand = other.commands.get(key);
 				equal = equal && val.equals(othercommand);
 			}
 			return equal;
@@ -158,7 +158,7 @@ public class HRAVModel implements ISetN {
 		return super.equals(obj);
 	}
 
-	public Map<Integer, HRAVCommand> getCommands() {
+	public Map<Integer, HRADCommand> getCommands() {
 		return commands;
 	}
 
@@ -168,16 +168,16 @@ public class HRAVModel implements ISetN {
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
-		for (Entry<Integer, HRAVCommand> c : commands.entrySet()) {
+		for (Entry<Integer, HRADCommand> c : commands.entrySet()) {
 			Integer address = c.getKey();
-			HRAVCommand command = c.getValue();
+			HRADCommand command = c.getValue();
 			tmp.add(String.format("%s%s%s", getContinueDirective(address), System.lineSeparator(),
-					command.asHRAVCode()));
+					command.asHRADCode()));
 		}
 		return tmp;
 	}
 
-	private int getCommandTargetAddress(HRAVCommand c) {
+	private int getCommandTargetAddress(HRADCommand c) {
 		int tgtAdddress = c.getAddress();
 		return tgtAdddress;
 	}
@@ -215,7 +215,7 @@ public class HRAVModel implements ISetN {
 		return startAddressExplicit;
 	}
 
-	public void setCommands(Map<Integer, HRAVCommand> commands) {
+	public void setCommands(Map<Integer, HRADCommand> commands) {
 		this.commands = commands;
 	}
 

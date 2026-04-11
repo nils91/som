@@ -7,13 +7,12 @@ public abstract class HRADCommutativeDualChildExpressionNode extends HRADDualChi
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRADCommutativeDualChildExpressionNode(HRADAbstractExpressionNode child1,
-			HRADAbstractExpressionNode child2) {
+	public HRADCommutativeDualChildExpressionNode(HRADAbstractDirectiveExpressionTreeNode child1, HRADAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRADCommutativeDualChildExpressionNode(HRADAbstractExpressionNode[] childs) {
+	public HRADCommutativeDualChildExpressionNode(HRADAbstractDirectiveExpressionTreeNode[] childs) {
 		super(childs);
 		// TODO Auto-generated constructor stub
 	}
@@ -22,8 +21,8 @@ public abstract class HRADCommutativeDualChildExpressionNode extends HRADDualChi
 	public boolean equals(Object obj) {
 		if (obj instanceof HRADCommutativeDualChildExpressionNode) {
 			HRADCommutativeDualChildExpressionNode oth = (HRADCommutativeDualChildExpressionNode) obj;
-			HRADAbstractExpressionNode[] childs = getChilds();
-			HRADAbstractExpressionNode[] othChilds = oth.getChilds();
+			HRADAbstractDirectiveExpressionTreeNode[] childs = getChilds();
+			HRADAbstractDirectiveExpressionTreeNode[] othChilds = oth.getChilds();
 			return (childs[0].equals(othChilds[0]) && childs[1].equals(othChilds[1]))
 					|| (childs[0].equals(othChilds[1]) && childs[1].equals(othChilds[0]));
 		}

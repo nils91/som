@@ -1,9 +1,13 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACIntegerNode;
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveExpressionTreeVisitorInterface;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hras.model.HRASIntegerNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSIntegerNode;
 
-public class HRADIntegerNode extends HRADAbstractExpressionNode implements Cloneable {
+public class HRADIntegerNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private int value;
 
 	public HRADIntegerNode() {
@@ -15,6 +19,10 @@ public class HRADIntegerNode extends HRADAbstractExpressionNode implements Clone
 		this.value = value;
 	}
 
+	public int getValue() {
+		return value;
+	}
+
 	@Override
 	public HRADIntegerNode clone() {
 		// TODO Auto-generated method stub
@@ -22,8 +30,13 @@ public class HRADIntegerNode extends HRADAbstractExpressionNode implements Clone
 	}
 
 	@Override
-	public HRACAbstractDirectiveExpressionTreeNode compileToHRAC() {
-		return new HRACIntegerNode(value);
+	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
+		return new HRASIntegerNode(value);
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSIntegerNode(value);
 	}
 
 	@Override
@@ -37,10 +50,6 @@ public class HRADIntegerNode extends HRADAbstractExpressionNode implements Clone
 			return value == oth.intValue();
 		}
 		return false;
-	}
-
-	public int getValue() {
-		return value;
 	}
 
 	@Override

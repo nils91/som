@@ -1,6 +1,9 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACMultiplicationExpressionNode;
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hras.model.HRASMultiplicationExpression;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSMultiplicationExpressionNode;
 
 public class HRADMultiplicationExpressionNode extends HRADCommutativeDualChildExpressionNode implements Cloneable {
 
@@ -9,15 +12,22 @@ public class HRADMultiplicationExpressionNode extends HRADCommutativeDualChildEx
 		// TODO Auto-generated constructor stub
 	}
 
-	public HRADMultiplicationExpressionNode(HRADAbstractExpressionNode child1, HRADAbstractExpressionNode child2) {
+	public HRADMultiplicationExpressionNode(HRADAbstractDirectiveExpressionTreeNode child1, HRADAbstractDirectiveExpressionTreeNode child2) {
 		super(child1, child2);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public HRACMultiplicationExpressionNode compileToHRAC() {
+	public HRASMultiplicationExpression compileToHRAS(HRADModel parent) {
 
-		return new HRACMultiplicationExpressionNode(getChilds()[0].compileToHRAC(), getChilds()[1].compileToHRAC());
+		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAS(parent),
+				getChilds()[1].compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+
+		return new HRBSMultiplicationExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
 	}
 
 	@Override

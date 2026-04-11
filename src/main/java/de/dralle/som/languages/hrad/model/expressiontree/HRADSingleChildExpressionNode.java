@@ -1,16 +1,21 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACSingleChildExpressionNode;
+import java.util.Collection;
 
-public class HRADSingleChildExpressionNode extends HRADAbstractExpressionNode implements Cloneable {
-	private HRADAbstractExpressionNode child;
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hras.model.HRASSingleChildExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSSingleChildExpressionNode;
+
+public class HRADSingleChildExpressionNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
+	private HRADAbstractDirectiveExpressionTreeNode child;
 
 	public HRADSingleChildExpressionNode() {
 		super();
 	}
 
-	public HRADSingleChildExpressionNode(HRADAbstractExpressionNode child) {
+	public HRADSingleChildExpressionNode(HRADAbstractDirectiveExpressionTreeNode child) {
 		super();
 		this.child = child;
 	}
@@ -24,8 +29,13 @@ public class HRADSingleChildExpressionNode extends HRADAbstractExpressionNode im
 	}
 
 	@Override
-	public HRACAbstractDirectiveExpressionTreeNode compileToHRAC() {
-		return new HRACSingleChildExpressionNode(getChild().compileToHRAC());
+	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
+		return new HRASSingleChildExpressionNode(getChild().compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSSingleChildExpressionNode(child.compileToHRBS());
 	}
 
 	@Override
@@ -37,8 +47,13 @@ public class HRADSingleChildExpressionNode extends HRADAbstractExpressionNode im
 		return false;
 	}
 
-	public HRADAbstractExpressionNode getChild() {
+	public HRADAbstractDirectiveExpressionTreeNode getChild() {
 		return child;
+	}
+
+	@Override
+	public Collection<String> getUsedDirectives() {
+		return child.getUsedDirectives();
 	}
 
 	@Override
@@ -47,7 +62,9 @@ public class HRADSingleChildExpressionNode extends HRADAbstractExpressionNode im
 		return child.hashCode();
 	}
 
-	public void setChild(HRADAbstractExpressionNode child) {
+	
+
+	public void setChild(HRADAbstractDirectiveExpressionTreeNode child) {
 		this.child = child;
 	}
 

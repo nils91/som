@@ -1,18 +1,23 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-public abstract class HRADDualChildExpressionNode extends HRADAbstractExpressionNode implements Cloneable {
-	private HRADAbstractExpressionNode[] childs = new HRADAbstractExpressionNode[2];
+import java.util.ArrayList;
+import java.util.Collection;
+
+import de.dralle.som.languages.hrad.model.HRADModel;
+
+public abstract class HRADDualChildExpressionNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
+	private HRADAbstractDirectiveExpressionTreeNode[] childs = new HRADAbstractDirectiveExpressionTreeNode[2];
 
 	public HRADDualChildExpressionNode() {
 		super();
 	}
 
-	public HRADDualChildExpressionNode(HRADAbstractExpressionNode child1, HRADAbstractExpressionNode child2) {
+	public HRADDualChildExpressionNode(HRADAbstractDirectiveExpressionTreeNode child1, HRADAbstractDirectiveExpressionTreeNode child2) {
 		super();
-		this.childs = new HRADAbstractExpressionNode[] { child1, child2 };
+		this.childs = new HRADAbstractDirectiveExpressionTreeNode[] { child1, child2 };
 	}
 
-	public HRADDualChildExpressionNode(HRADAbstractExpressionNode[] childs) {
+	public HRADDualChildExpressionNode(HRADAbstractDirectiveExpressionTreeNode[] childs) {
 		super();
 		this.childs = childs;
 	}
@@ -22,7 +27,7 @@ public abstract class HRADDualChildExpressionNode extends HRADAbstractExpression
 		// TODO Auto-generated method stub
 		HRADDualChildExpressionNode cl = (HRADDualChildExpressionNode) super.clone();
 		for (int i = 0; i < childs.length; i++) {
-			HRADAbstractExpressionNode abstractExpressionNode = childs[i];
+			HRADAbstractDirectiveExpressionTreeNode abstractExpressionNode = childs[i];
 			cl.childs[i] = abstractExpressionNode.clone();
 		}
 		return cl;
@@ -37,8 +42,16 @@ public abstract class HRADDualChildExpressionNode extends HRADAbstractExpression
 		return false;
 	}
 
-	public HRADAbstractExpressionNode[] getChilds() {
+	public HRADAbstractDirectiveExpressionTreeNode[] getChilds() {
 		return childs;
+	}
+
+	@Override
+	public Collection<String> getUsedDirectives() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(childs[0].getUsedDirectives());
+		list.addAll(childs[1].getUsedDirectives());
+		return list;
 	}
 
 	@Override
@@ -47,11 +60,12 @@ public abstract class HRADDualChildExpressionNode extends HRADAbstractExpression
 		return childs.hashCode();
 	}
 
-	public void setChild(HRADAbstractExpressionNode child, int i) {
+	
+	public void setChild(HRADAbstractDirectiveExpressionTreeNode child, int i) {
 		this.childs[i] = child;
 	}
 
-	public void setChilds(HRADAbstractExpressionNode[] childs) {
+	public void setChilds(HRADAbstractDirectiveExpressionTreeNode[] childs) {
 		this.childs = childs;
 	}
 

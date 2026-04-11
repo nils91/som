@@ -1,10 +1,26 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hras.model.HRASAbsoluteExpressionNode;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbsoluteExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+
 public class HRADAbsoluteExpressionNode extends HRADSingleChildExpressionNode implements Cloneable {
 
-	public HRADAbsoluteExpressionNode(HRADAbstractExpressionNode child) {
+	public HRADAbsoluteExpressionNode(HRADAbstractDirectiveExpressionTreeNode child) {
 		super(child);
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
+		return new HRASAbsoluteExpressionNode(getChild().compileToHRAS(parent));
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
 	}
 
 	@Override

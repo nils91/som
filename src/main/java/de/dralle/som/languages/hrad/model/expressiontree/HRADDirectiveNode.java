@@ -1,9 +1,16 @@
 package de.dralle.som.languages.hrad.model.expressiontree;
 
-import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrac.model.expressiontree.HRACDirectiveNode;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class HRADDirectiveNode extends HRADAbstractExpressionNode implements Cloneable {
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADResolveDirectiveTreeVisitor;
+import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
+import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
+
+public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private String directiveName;
 
 	public HRADDirectiveNode() {
@@ -15,6 +22,7 @@ public class HRADDirectiveNode extends HRADAbstractExpressionNode implements Clo
 		this.directiveName = directiveName;
 	}
 
+
 	@Override
 	public HRADDirectiveNode clone() {
 		// TODO Auto-generated method stub
@@ -22,8 +30,17 @@ public class HRADDirectiveNode extends HRADAbstractExpressionNode implements Clo
 	}
 
 	@Override
-	public HRACAbstractDirectiveExpressionTreeNode compileToHRAC() {
-		return new HRACDirectiveNode(directiveName);
+	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
+		HRADAbstractDirectiveExpressionTreeNode resolvedNode = this.accept(new HRADResolveDirectiveTreeVisitor(parent, true));
+		if (resolvedNode != null) {
+			return resolvedNode.compileToHRAS(parent);
+		}
+		return null;
+	}
+
+	@Override
+	public HRBSAbstractExpressionNode compileToHRBS() {
+		return new HRBSDirectiveNode(directiveName);
 	}
 
 	@Override
@@ -39,13 +56,21 @@ public class HRADDirectiveNode extends HRADAbstractExpressionNode implements Clo
 		return directiveName;
 	}
 
+		
+	@Override
+	public Collection<String> getUsedDirectives() {
+		List<String> list = new ArrayList<String>();
+		list.add(directiveName);
+		return list;
+	}
+
 	@Override
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		return directiveName.hashCode();
 	}
 
-	public void setdirectiveName(String directiveName) {
+	public void setDirectiveName(String directiveName) {
 		this.directiveName = directiveName;
 	}
 

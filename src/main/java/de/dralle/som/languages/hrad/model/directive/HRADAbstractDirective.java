@@ -1,16 +1,7 @@
 package de.dralle.som.languages.hrad.model.directive;
 
 public abstract class HRADAbstractDirective<T> implements Cloneable {
-	private boolean global;
-
-	public boolean isGlobal() {
-		return global;
-	}
-
-	public void setGlobal(boolean global) {
-		this.global = global;
-	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -24,7 +15,6 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		int hc = 1;
 		hc += name == null ? 0 : name.hashCode();
 		hc += value == null ? 0 : value.hashCode();
-		hc *= global ? 3 : 2;
 		return hc;
 	}
 
@@ -43,9 +33,6 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 					equal = value == oth.value;
 				}
 			}
-			if (equal) {
-				equal = global == oth.global;
-			}
 			return equal;
 		}
 		return super.equals(obj);
@@ -57,21 +44,17 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		try {
 			clone = (HRADAbstractDirective<T>) super.clone();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		clone.name = name;
 		clone.value = value;
-		clone.global = global;
 		return clone;
 	}
 
 	@Override
 	public String toString() {
 		String str = ";";
-		if(global) {
-			str+=" global ";
-		}
+		
 		if(name!=null) {
 			str+=name;
 		}
@@ -82,9 +65,8 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		return str;
 	}
 
-	public HRADAbstractDirective(boolean global, String name, T value) {
+	public HRADAbstractDirective(String name, T value) {
 		super();
-		this.global=global;
 		this.name = name;
 		this.value = value;
 	}

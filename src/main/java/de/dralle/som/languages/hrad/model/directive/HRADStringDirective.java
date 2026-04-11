@@ -11,9 +11,6 @@ public class HRADStringDirective extends HRADAbstractDirective<String> {
 	@Override
 	public String toString() {
 		String str = ";";
-		if(isGlobal()) {
-			str+=" global ";
-		}
 		if(getName()!=null) {
 			str+=getName();
 		}
@@ -24,8 +21,8 @@ public class HRADStringDirective extends HRADAbstractDirective<String> {
 		return str;
 	}
 
-	public HRADStringDirective(boolean global, String name, String value) {
-		super(global, name, value);
+	public HRADStringDirective(String name, String value) {
+		super(name, value);
 		// TODO Auto-generated constructor stub
 	}
 

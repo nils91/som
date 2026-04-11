@@ -102,6 +102,24 @@ NAW ADR_EVAL
 
 That program is equivalent to above bitcode example. The same in hrac would only need to contain the commands, n and the start address are calculated automatically.
 
+### hrav
+- Basic directives:
+`;n=<int`
+`;start=<int>`
+- OTI:
+ Sets or clears a bit (at compile-time)
+  `setone 0`
+`clearonce 0`
+- NAR and NAW:
+ `NAR 0`
+`NAW 0`
+
+#### Example:
+TODO
+
+### hrad
+hrav + directives
+
 ### Language features hras
 
 - Directives:

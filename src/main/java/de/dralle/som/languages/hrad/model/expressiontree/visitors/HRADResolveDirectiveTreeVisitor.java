@@ -1,20 +1,9 @@
 package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
 import de.dralle.som.languages.hrad.model.HRADModel;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADCommutativeDualChildExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADDivisionExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDualChildExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADFactorialExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADIntegerNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADMinusExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADModuloExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADMultiplicationExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADNegationExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADPlusExpressionNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADPowerExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADSingleChildExpressionNode;
 
 //For abstract nodes, nothing needs to happen

@@ -1,6 +1,5 @@
 package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
-import de.dralle.som.languages.hrad.model.expressiontree.HRADCommutativeDualChildExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
@@ -15,6 +14,7 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADNegationExpressionN
 import de.dralle.som.languages.hrad.model.expressiontree.HRADPlusExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADPowerExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADSingleChildExpressionNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNode;
 
 //Partially generated with GenerateHRADDirectiveTreeVisitorInterface.java
 public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
@@ -31,6 +31,7 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 			case HRADDivisionExpressionNode n -> visit(n);
 			case HRADFactorialExpressionNode n -> visit(n);
 			case HRADIntegerNode n -> visit(n);
+			case HRADStringNode n -> visit(n);
 			case HRADMinusExpressionNode n -> visit(n);
 			case HRADModuloExpressionNode n -> visit(n);
 			case HRADMultiplicationExpressionNode n -> visit(n);
@@ -68,11 +69,6 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 		return null;
 	}
 
-
-	default T visit(HRADCommutativeDualChildExpressionNode node) {
-		return visit((HRADDualChildExpressionNode) node);
-	}
-
 	default T visit(HRADDirectiveNode node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
 	}
@@ -90,6 +86,9 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 	}
 
 	default T visit(HRADIntegerNode node) {
+		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
+	}
+	default T visit(HRADStringNode node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
 	}
 
@@ -110,7 +109,7 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 	}
 
 	default T visit(HRADPlusExpressionNode node) {
-		return visit((HRADCommutativeDualChildExpressionNode) node);
+		return visit((HRADDualChildExpressionNode) node);
 	}
 
 	default T visit(HRADPowerExpressionNode node) {

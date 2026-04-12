@@ -25,10 +25,10 @@ import de.dralle.som.languages.hrav.model.HRAVModel;
  */
 public class HRADParser {
 	public HRADModel parse(InputStream is) throws IOException {
-		HRAVGrammarLexer lexer = new HRADGrammarLexer(CharStreams.fromStream(is));
-		HRAVGrammarParser parser = new HRADGrammarParser(new CommonTokenStream(lexer));
-		ProgramContext pt = parser.program();
-		HRAVModel model = pt.accept(new HRADProgramVisitor());
+		HRADGrammarLexer lexer = new HRADGrammarLexer(CharStreams.fromStream(is));
+		HRADGrammarParser parser = new HRADGrammarParser(new CommonTokenStream(lexer));
+		de.dralle.som.languages.hrad.generated.HRADGrammarParser.ProgramContext pt = parser.program();
+		HRADModel model = pt.accept(new HRADProgramVisitor());
 		return model;
 	}
 

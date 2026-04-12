@@ -26,38 +26,52 @@ public class HRADDirectiveTreeCalculateValueVisitor
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADAbsoluteExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChild().accept(this);
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			return new HRADIntegerDirectiveValue(Math.abs(v1Int.getValue()), node.getSourceLocation());
+		}
+		return new HRADIntegerDirectiveValue(v1.getValue().toString().length(), node.getSourceLocation());
 	}
-
-	@Override
-	public HRADAbstractDirectiveValue<?> visit(HRADAbstractDirectiveExpressionTreeNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
-	}
-
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADDirectiveNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		throw new RuntimeException("Unresolved directive node " + node.getSourceLocation());
 	}
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADDivisionExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
-	}
-
-	@Override
-	public HRADAbstractDirectiveValue<?> visit(HRADDualChildExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChilds()[0].accept(this);
+		HRADAbstractDirectiveValue<?> v2 = node.getChilds()[1].accept(this);
+		if (v1 instanceof HRADStringDirectiveValue) {
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADStringDirectiveValue(
+						v1.getValue().toString().substring(0, v1.getValue().toString().length() / v2Int.getValue()),
+						node.getSourceLocation());
+			}
+		}
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADIntegerDirectiveValue(v1Int.getValue() / v2Int.getValue(), node.getSourceLocation());
+			}
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 	}
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADFactorialExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChild().accept(this);
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			return new HRADIntegerDirectiveValue(getFac(v1Int.getValue()), node.getSourceLocation());
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
+	}
+
+	private int getFac(int value) {
+		return value == 0 ? 1 : value * getFac(value - 1);
 	}
 
 	@Override
@@ -68,19 +82,48 @@ public class HRADDirectiveTreeCalculateValueVisitor
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADStringNode node) {
 		return new HRADStringDirectiveValue(node.getValue(), node.getSourceLocation());
-
 	}
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADMinusExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChilds()[0].accept(this);
+		HRADAbstractDirectiveValue<?> v2 = node.getChilds()[1].accept(this);
+		if (v1 instanceof HRADStringDirectiveValue) {
+			if (v2 instanceof HRADStringDirectiveValue) {
+				return new HRADStringDirectiveValue(v1.getValue().toString().replaceAll(v2.getValue().toString(), ""),
+						node.getSourceLocation());
+			}
+		}
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADIntegerDirectiveValue(v1Int.getValue() - v2Int.getValue(), node.getSourceLocation());
+			}
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 	}
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADModuloExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChilds()[0].accept(this);
+		HRADAbstractDirectiveValue<?> v2 = node.getChilds()[1].accept(this);
+		if (v1 instanceof HRADStringDirectiveValue) {
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADStringDirectiveValue(
+						v1.getValue().toString().substring(v1.getValue().toString().length() / v2Int.getValue()),
+						node.getSourceLocation());
+			}
+		}
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADIntegerDirectiveValue(v1Int.getValue() % v2Int.getValue(), node.getSourceLocation());
+			}
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 	}
 
 	@Override
@@ -88,19 +131,12 @@ public class HRADDirectiveTreeCalculateValueVisitor
 		HRADAbstractDirectiveValue<?> v1 = node.getChilds()[0].accept(this);
 		HRADAbstractDirectiveValue<?> v2 = node.getChilds()[1].accept(this);
 		if (v1 instanceof HRADStringDirectiveValue) {
-			if (v2 instanceof HRADStringDirectiveValue) {
-				return new HRADStringDirectiveValue(v1.getValue().toString() + v2.getValue().toString(),
-						node.getSourceLocation());
-			}
-			if (v2 instanceof HRADIntegerDirectiveValue) {
-				return new HRADStringDirectiveValue(v1.getValue().toString() + v2.getValue().toString(),
-						node.getSourceLocation());
-			}
+			throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 		}
 		if (v1 instanceof HRADIntegerDirectiveValue) {
 			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
 			if (v2 instanceof HRADStringDirectiveValue) {
-				return new HRADIntegerDirectiveValue(v1Int.getValue() * Integer.parseInt(v2.getValue().toString()),
+				return new HRADStringDirectiveValue(v2.getValue().toString().repeat(v1Int.getValue()),
 						node.getSourceLocation());
 			}
 			if (v2 instanceof HRADIntegerDirectiveValue) {
@@ -113,8 +149,23 @@ public class HRADDirectiveTreeCalculateValueVisitor
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADNegationExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+		HRADAbstractDirectiveValue<?> v1 = node.getChild().accept(this);
+		if (v1 instanceof HRADStringDirectiveValue) {
+			String str = v1.getValue().toString();
+			int vi=0;
+			String stri = "";
+			for (int i = 0; i < str.length(); i++) {
+				char c = str.charAt(i);
+				vi+=c;
+
+			}
+			return new HRADIntegerDirectiveValue(vi, node.getSourceLocation());
+		}
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			return new HRADIntegerDirectiveValue(-v1Int.getValue(), node.getSourceLocation());
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 	}
 
 	@Override
@@ -147,14 +198,29 @@ public class HRADDirectiveTreeCalculateValueVisitor
 
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADPowerExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
-	}
+		HRADAbstractDirectiveValue<?> v1 = node.getChilds()[0].accept(this);
+		HRADAbstractDirectiveValue<?> v2 = node.getChilds()[1].accept(this);
+		if (v1 instanceof HRADStringDirectiveValue) {
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				if (v2Int.getValue() > 0) {
+					String v1str = v1.getValue().toString();
+					for (int i = 0; i < v2Int.getValue(); i++) {
+						v1str = i % 2 == 0 ? v1str.toUpperCase() : v1str.toLowerCase();
+					}
+					return new HRADStringDirectiveValue(v1str, node.getSourceLocation());
+				}
 
-	@Override
-	public HRADAbstractDirectiveValue<?> visit(HRADSingleChildExpressionNode node) {
-		// TODO Auto-generated method stub
-		return HRADDirectiveExpressionTreeVisitorInterface.super.visit(node);
+			}
+		}
+		if (v1 instanceof HRADIntegerDirectiveValue) {
+			HRADIntegerDirectiveValue v1Int = (HRADIntegerDirectiveValue) v1;
+			if (v2 instanceof HRADIntegerDirectiveValue) {
+				HRADIntegerDirectiveValue v2Int = (HRADIntegerDirectiveValue) v2;
+				return new HRADIntegerDirectiveValue((int) Math.pow(v1Int.getValue(), v2Int.getValue()),
+						node.getSourceLocation());
+			}
+		}
+		throw new RuntimeException("Could not determine return type " + node.getSourceLocation());
 	}
-
 }

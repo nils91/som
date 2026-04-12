@@ -4,17 +4,18 @@
 package de.dralle.som.languages.hrad.model;
 
 import de.dralle.som.Opcode;
+import de.dralle.som.languages.hrad.HRADSourceLocation;
 
 /**
  * @author Nils
  *
  */
-public class HRADCommand {
+public class HRADCommand extends AbstractHRADCommand{
 	private Opcode op;
 	private int address;
 
-	public HRADCommand() {
-		super();
+	public HRADCommand(HRADSourceLocation sourceLocation) {
+		super(sourceLocation);
 	}
 
 	public String asHRADCode() {

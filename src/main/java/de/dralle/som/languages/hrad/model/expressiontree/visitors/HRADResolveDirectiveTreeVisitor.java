@@ -1,5 +1,8 @@
 package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
@@ -25,23 +28,17 @@ public class HRADResolveDirectiveTreeVisitor
 		return clone?node.clone():node;
 	}
 
-	private HRADModel parent;
-	private String[] directiveNamesToResolve;
-	private boolean clone;
+	private Map<String,HRADAbstractDirectiveExpressionTreeNode> resolvables=new HashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+	private boolean clone; //clone node first to avoid modifying original
+	private boolean deep; //attempt to resolve subtrees too
 
-	public HRADResolveDirectiveTreeVisitor(HRADModel parent, String[] directiveNamesToResolve, boolean clone) {
+	
+	public HRADResolveDirectiveTreeVisitor(Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvables,
+			boolean clone,boolean deep) {
 		super();
-		this.parent = parent;
-		this.directiveNamesToResolve = directiveNamesToResolve;
+		this.resolvables = resolvables;
 		this.clone = clone;
-	}
-
-	public HRADResolveDirectiveTreeVisitor(HRADModel parent, boolean clone) {
-		this(parent, null, clone);
-	}
-
-	public HRADResolveDirectiveTreeVisitor(HRADModel parent) {
-		this(parent, null, false);
+		this.deep=deep;
 	}
 
 	@Override
@@ -70,14 +67,14 @@ public class HRADResolveDirectiveTreeVisitor
 		if (clone) {
 			node = node.clone();
 		}
-		if (directiveNamesToResolve == null) {
-			return parent.getDirectiveAsExpressionTree(node.getDirectiveName());
-		} else {
-			for (int i = 0; i < directiveNamesToResolve.length; i++) {
-				if (directiveNamesToResolve[i].contentEquals(node.getDirectiveName())) {
-					return parent.getDirectiveAsExpressionTree(node.getDirectiveName());
-				}
+		HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(node.getDirectiveName());
+		if(sub!=null) {
+			if(deep) {
+				sub=sub.accept(this);
 			}
+		}
+		if(sub!=null) {
+			return sub;
 		}
 		return node;
 	}

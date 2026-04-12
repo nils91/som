@@ -46,13 +46,7 @@ public abstract class HRADDualChildExpressionNode extends HRADAbstractDirectiveE
 		return childs;
 	}
 
-	@Override
-	public Collection<String> getUsedDirectives() {
-		ArrayList<String> list = new ArrayList<String>();
-		list.addAll(childs[0].getUsedDirectives());
-		list.addAll(childs[1].getUsedDirectives());
-		return list;
-	}
+
 
 	@Override
 	public int hashCode() {

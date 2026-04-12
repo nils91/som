@@ -17,6 +17,7 @@ import de.dralle.som.ISetN;
 import de.dralle.som.ISomMemspace;
 import de.dralle.som.Opcode;
 import de.dralle.som.Util;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 
 /**
  * @author Nils
@@ -238,5 +239,9 @@ public class HRADModel implements ISetN {
 	@Override
 	public String toString() {
 		return asCode();
+	}
+
+	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getDirectives() {
+		return null;
 	}
 }

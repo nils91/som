@@ -31,7 +31,7 @@ public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode i
 
 	@Override
 	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		HRADAbstractDirectiveExpressionTreeNode resolvedNode = this.accept(new HRADResolveDirectiveTreeVisitor(parent, true));
+		HRADAbstractDirectiveExpressionTreeNode resolvedNode = this.accept(new HRADResolveDirectiveTreeVisitor(parent.getDirectives(), true,true));
 		if (resolvedNode != null) {
 			return resolvedNode.compileToHRAS(parent);
 		}
@@ -57,12 +57,6 @@ public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode i
 	}
 
 		
-	@Override
-	public Collection<String> getUsedDirectives() {
-		List<String> list = new ArrayList<String>();
-		list.add(directiveName);
-		return list;
-	}
 
 	@Override
 	public int hashCode() {

@@ -51,10 +51,7 @@ public class HRADSingleChildExpressionNode extends HRADAbstractDirectiveExpressi
 		return child;
 	}
 
-	@Override
-	public Collection<String> getUsedDirectives() {
-		return child.getUsedDirectives();
-	}
+
 
 	@Override
 	public int hashCode() {

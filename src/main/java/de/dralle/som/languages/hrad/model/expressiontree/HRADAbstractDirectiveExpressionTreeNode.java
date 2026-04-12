@@ -59,8 +59,5 @@ public abstract class HRADAbstractDirectiveExpressionTreeNode implements Cloneab
 
 	public abstract HRBSAbstractExpressionNode compileToHRBS();
 
-	public Collection<String> getUsedDirectives() {
-		return new ArrayList<String>();
-	}
 
 }

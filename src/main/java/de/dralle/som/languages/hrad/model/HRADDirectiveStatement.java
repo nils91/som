@@ -1,5 +1,6 @@
 package de.dralle.som.languages.hrad.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import de.dralle.som.languages.hrad.HRADSourceLocation;
@@ -8,6 +9,13 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveEx
 
 public class HRADDirectiveStatement extends AbstractHRADCommand {
 	private String name;
+	private List<String> params;
+	public List<String> getParams() {
+		return params;
+	}
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
 	private HRADAbstractDirectiveExpressionTreeNode value;
 	public HRADDirectiveStatement( String name,
 			HRADAbstractDirectiveExpressionTreeNode value,HRADSourceLocation sourceLocation) {

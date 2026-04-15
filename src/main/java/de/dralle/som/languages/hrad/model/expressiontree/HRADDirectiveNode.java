@@ -12,6 +12,7 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
 public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private String directiveName;
+	private List<HRADAbstractDirectiveExpressionTreeNode> params;
 
 	public HRADDirectiveNode() {
 		super();

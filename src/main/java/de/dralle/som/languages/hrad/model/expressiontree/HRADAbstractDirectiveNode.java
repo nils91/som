@@ -10,33 +10,22 @@ import de.dralle.som.languages.hras.model.HRASAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSAbstractExpressionNode;
 import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
-public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
-	private String directiveName;
+public abstract class HRADAbstractDirectiveNode<T> extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
+	private T directiveName;
 	private List<HRADAbstractDirectiveExpressionTreeNode> params;
 
-	public HRADDirectiveNode() {
+	public HRADAbstractDirectiveNode() {
 		super();
 	}
 
-	public HRADDirectiveNode(String directiveName) {
+	public HRADAbstractDirectiveNode(T directiveName) {
 		super();
 		this.directiveName = directiveName;
 	}
 
-
 	@Override
-	public HRADDirectiveNode clone() {
-		// TODO Auto-generated method stub
-		return (HRADDirectiveNode) super.clone();
-	}
-
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		HRADAbstractDirectiveExpressionTreeNode resolvedNode = this.accept(new HRADResolveDirectiveTreeVisitor(parent.getDirectives(), true,true));
-		if (resolvedNode != null) {
-			return resolvedNode.compileToHRAS(parent);
-		}
-		return null;
+	public HRADAbstractDirectiveNode<T> clone() {
+		return (HRADAbstractDirectiveNode<T>) super.clone();
 	}
 
 	@Override
@@ -46,18 +35,16 @@ public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode i
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRADDirectiveNode) {
-			HRADDirectiveNode oth = (HRADDirectiveNode) obj;
+		if (obj instanceof HRADAbstractDirectiveNode) {
+			HRADAbstractDirectiveNode oth = (HRADAbstractDirectiveNode) obj;
 			return directiveName.equals(oth.directiveName);
 		}
 		return false;
 	}
 
-	public String getDirectiveName() {
+	public T getDirectiveName() {
 		return directiveName;
 	}
-
-		
 
 	@Override
 	public int hashCode() {
@@ -65,7 +52,7 @@ public class HRADDirectiveNode extends HRADAbstractDirectiveExpressionTreeNode i
 		return directiveName.hashCode();
 	}
 
-	public void setDirectiveName(String directiveName) {
+	public void setDirectiveName(T directiveName) {
 		this.directiveName = directiveName;
 	}
 

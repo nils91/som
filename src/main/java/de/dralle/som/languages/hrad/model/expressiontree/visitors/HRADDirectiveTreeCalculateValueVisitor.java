@@ -6,7 +6,7 @@ import de.dralle.som.languages.hrad.model.directive.HRADIntegerDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADStringDirectiveValue;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDivisionExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDualChildExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADFactorialExpressionNode;
@@ -34,7 +34,7 @@ public class HRADDirectiveTreeCalculateValueVisitor
 		return new HRADIntegerDirectiveValue(v1.getValue().toString().length(), node.getSourceLocation());
 	}
 	@Override
-	public HRADAbstractDirectiveValue<?> visit(HRADDirectiveNode node) {
+	public HRADAbstractDirectiveValue<?> visit(HRADStringNamedDirectiveNode node) {
 		throw new RuntimeException("Unresolved directive node " + node.getSourceLocation());
 	}
 

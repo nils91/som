@@ -9,7 +9,7 @@ import java.util.Map;
 
 import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDualChildExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADSingleChildExpressionNode;
 
@@ -26,7 +26,7 @@ public class HRADUsedDirectiveNamesCollectorTreeVisitor
 	}
 
 	@Override
-	public Collection<String> visit(HRADDirectiveNode node) {
+	public Collection<String> visit(HRADStringNamedDirectiveNode node) {
 		return Arrays.asList(node.getDirectiveName());
 	}
 

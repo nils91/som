@@ -2,7 +2,7 @@ package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADDirectiveNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDivisionExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDualChildExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADFactorialExpressionNode;
@@ -26,7 +26,7 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 		if (node.preAccept(this)) {
 			node = preVisit(this, node);
 			T returnyValue = switch (node) {
-			case HRADDirectiveNode n -> visit(n);
+			case HRADStringNamedDirectiveNode n -> visit(n);
 			case HRADAbsoluteExpressionNode n -> visit(n);
 			case HRADDivisionExpressionNode n -> visit(n);
 			case HRADFactorialExpressionNode n -> visit(n);
@@ -69,7 +69,7 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 		return null;
 	}
 
-	default T visit(HRADDirectiveNode node) {
+	default T visit(HRADStringNamedDirectiveNode node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
 	}
 

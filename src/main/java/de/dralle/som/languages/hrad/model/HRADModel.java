@@ -22,6 +22,7 @@ import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADIntegerDirectiveValue;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADIntegerNode;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveTreeCalculateValueVisitor;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADResolveDirectiveTreeVisitor;
 import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
@@ -230,73 +231,15 @@ public class HRADModel implements ISetN {
 
 	public HRAVModel compileToHRAV() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
-		int n = getN(localDirectivesMap);
-		int start = 0;
+		int n = getN();
+		int start = getStartAdress();
 		HRAVModel hrav = new HRAVModel();
-		// Find N directive: N first (which is the one actually set by the compiler), n
-		// as fall back (minimum n)
-		HRADDirectiveStatement nDir = null;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
-			if (abstractHRADCommand instanceof HRADDirectiveStatement) {
-				if (((HRADDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
-					nDir = (HRADDirectiveStatement) abstractHRADCommand;
-				}
-			}
-		}
-		if (nDir == null) {
-			logger.info("No N directive found. This could be OK if this is not compiled from a SOM language >= HRAC. "
-					+ sourceLocation != null ? sourceLocation + "" : "");
-			for (AbstractHRADCommand abstractHRADCommand : commands2) {
-				if (abstractHRADCommand instanceof HRADDirectiveStatement) {
-					if (((HRADDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
-						nDir = (HRADDirectiveStatement) abstractHRADCommand;
-					}
-				}
-			}
-		}
-		if (nDir == null) {
-			logger.warning(
-					"No n directive found either (No N was found previously). This is bad. " + sourceLocation != null
-							? sourceLocation + ""
-							: "");
-		} else {
-			HRADAbstractDirectiveExpressionTreeNode nTree = nDir.getValue();
 
-			HRADAbstractDirectiveExpressionTreeNode ntresolved = nTree
-					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap, true, true));
-			HRADAbstractDirectiveValue<?> nval = ntresolved.accept(new HRADDirectiveTreeCalculateValueVisitor());
-			if (nval instanceof HRADIntegerDirectiveValue) {
-				n = ((HRADIntegerDirectiveValue) nval).getValue();
-			} else {
-				n = Integer.parseInt(nval.getValue().toString());
-			}
-			hrav.setN(n);
-		}
-		// Find start directive
-		HRADDirectiveStatement sDir = null;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
-			if (abstractHRADCommand instanceof HRADDirectiveStatement) {
-				if (((HRADDirectiveStatement) abstractHRADCommand).getName().equals("start")) {
-					sDir = (HRADDirectiveStatement) abstractHRADCommand;
-				}
-			}
-		}
-		if (sDir == null) {
-			logger.warning("No start directive found. There really should be one here, or the compiled code wont work. "
-					+ sourceLocation != null ? sourceLocation + "" : "");
-		} else {
-			HRADAbstractDirectiveExpressionTreeNode nTree = sDir.getValue();
-			HRADAbstractDirectiveExpressionTreeNode ntresolved = nTree
-					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap, true, true));
-			HRADAbstractDirectiveValue<?> nval = ntresolved.accept(new HRADDirectiveTreeCalculateValueVisitor());
-			if (nval instanceof HRADIntegerDirectiveValue) {
-				start = ((HRADIntegerDirectiveValue) nval).getValue();
-			} else {
-				start = Integer.parseInt(nval.getValue().toString());
-			}
-			hrav.setStartAddressExplicit(true);
-			hrav.setStartAdress(start);
-		}
+		hrav.setN(n);
+
+		hrav.setStartAddressExplicit(true);
+		hrav.setStartAdress(start);
+
 		for (AbstractHRADCommand entry : commands2) {
 			if (entry instanceof HRADOti)
 				hrav.addInitOnceAddress(((HRADOti) entry).getAddress(), ((HRADOti) entry).isSet());
@@ -323,11 +266,11 @@ public class HRADModel implements ISetN {
 		// Find N directive: N first (which is the one actually set by the compiler), n
 		// as fall back (minimum n)
 		int n = 0;
-		HRADDirectiveStatement nDir = null;
+		HRADStringNamedDirectiveStatement nDir = null;
 		for (AbstractHRADCommand abstractHRADCommand : commands2) {
-			if (abstractHRADCommand instanceof HRADDirectiveStatement) {
-				if (((HRADDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
-					nDir = (HRADDirectiveStatement) abstractHRADCommand;
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
+					nDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
 				}
 			}
 		}
@@ -335,9 +278,9 @@ public class HRADModel implements ISetN {
 			logger.info("No N directive found. This could be OK if this is not compiled from a SOM language >= HRAC. "
 					+ sourceLocation != null ? sourceLocation + "" : "");
 			for (AbstractHRADCommand abstractHRADCommand : commands2) {
-				if (abstractHRADCommand instanceof HRADDirectiveStatement) {
-					if (((HRADDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
-						nDir = (HRADDirectiveStatement) abstractHRADCommand;
+				if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+					if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
+						nDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
 					}
 				}
 			}
@@ -364,7 +307,7 @@ public class HRADModel implements ISetN {
 
 	@Override
 	public int getN() {
-		return getN(null);
+		return getN(getDirectives());
 	}
 
 	private String getNDirective() {
@@ -375,8 +318,36 @@ public class HRADModel implements ISetN {
 		return nextCommandAddress;
 	}
 
+	public int getStartAdress(Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap) {
+		int start = 0;
+		// Find start directive
+		HRADStringNamedDirectiveStatement sDir = null;
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("start")) {
+					sDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
+				}
+			}
+		}
+		if (sDir == null) {
+			logger.warning("No start directive found. There really should be one here, or the compiled code wont work. "
+					+ sourceLocation != null ? sourceLocation + "" : "");
+		} else {
+			HRADAbstractDirectiveExpressionTreeNode nTree = sDir.getValue();
+			HRADAbstractDirectiveExpressionTreeNode ntresolved = nTree
+					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap, true, true));
+			HRADAbstractDirectiveValue<?> nval = ntresolved.accept(new HRADDirectiveTreeCalculateValueVisitor());
+			if (nval instanceof HRADIntegerDirectiveValue) {
+				start = ((HRADIntegerDirectiveValue) nval).getValue();
+			} else {
+				start = Integer.parseInt(nval.getValue().toString());
+			}
+		}
+		return start;
+	}
+
 	public int getStartAdress() {
-		return startAdress;
+		return getStartAdress(getDirectives());
 	}
 
 	private String getStartDirective() {
@@ -387,24 +358,59 @@ public class HRADModel implements ISetN {
 		return startAddressExplicit;
 	}
 
-	public void setCommands(Map<Integer, HRADCommand> commands) {
-		this.commands = commands;
+	public void setCommands(List<AbstractHRADCommand> commands) {
+		this.commands2 = commands;
+	}
+
+	public void setN(int n, HRADSourceLocation from) {
+		// Check if theres already an n set. If not, set minimum (lowercase n) and
+		// actual (uppercase N). If n is set, set N
+		boolean nLCSet = false;
+		boolean nUCSet = false;
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
+					nLCSet = true;
+				}
+			}
+		}
+		if (!nLCSet) {
+			commands2.add(new HRADStringNamedDirectiveStatement("n", new HRADIntegerNode(n), from));
+		}
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
+					nUCSet = true;
+				}
+			}
+		}
+		if (nUCSet) {
+			logger.warning("Overwrting actual n. " + from != null ? from + "" : "");
+		}
+		commands2.add(new HRADStringNamedDirectiveStatement("N", new HRADIntegerNode(n), from));
 	}
 
 	public void setN(int n) {
-		this.n = n;
+		setN(n, null);
 	}
 
-	public void setNextCommandAddress(int nextCommandAddress) {
-		this.nextCommandAddress = nextCommandAddress;
-	}
-
-	public void setStartAddressExplicit(boolean startAddressExplicit) {
-		this.startAddressExplicit = startAddressExplicit;
+	public void setStartAdress(int startAdress, HRADSourceLocation from) {
+		boolean nUCSet = false;
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("start")) {
+					nUCSet = true;
+				}
+			}
+		}
+		if (nUCSet) {
+			logger.warning("Overwriting start address. " + from != null ? from + "" : "");
+		}
+		commands2.add(new HRADStringNamedDirectiveStatement("start", new HRADIntegerNode(n), from));
 	}
 
 	public void setStartAdress(int startAdress) {
-		this.startAdress = startAdress;
+		setStartAdress(startAdress, null);
 	}
 
 	@Override
@@ -412,7 +418,29 @@ public class HRADModel implements ISetN {
 		return asCode();
 	}
 
+	//static analysis (before compile)
+	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives() {
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				String name = ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName();
+				r.put(name, ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getValue());
+			}
+		}
+		return r;
+	}
+	//static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getDirectives() {
-		return null;
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = getStringNamedDirectives();
+		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			if (abstractHRADCommand instanceof HRADComplexNamedDirectiveStatement) {
+				HRADAbstractDirectiveExpressionTreeNode name = ((HRADComplexNamedDirectiveStatement) abstractHRADCommand)
+						.getName();
+				r.put(name.accept(new HRADResolveDirectiveTreeVisitor(r, true, true))
+						.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue() + "",
+						((HRADComplexNamedDirectiveStatement) abstractHRADCommand).getValue());
+			}
+		}
+		return r;
 	}
 }

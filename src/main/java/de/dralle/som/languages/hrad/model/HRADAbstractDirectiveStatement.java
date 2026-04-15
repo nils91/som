@@ -7,8 +7,8 @@ import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirective;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 
-public class HRADDirectiveStatement extends AbstractHRADCommand {
-	private String name;
+public abstract class HRADAbstractDirectiveStatement<T> extends AbstractHRADCommand {
+	private T name;
 	private List<String> params;
 	public List<String> getParams() {
 		return params;
@@ -17,16 +17,16 @@ public class HRADDirectiveStatement extends AbstractHRADCommand {
 		this.params = params;
 	}
 	private HRADAbstractDirectiveExpressionTreeNode value;
-	public HRADDirectiveStatement( String name,
+	public HRADAbstractDirectiveStatement( T name,
 			HRADAbstractDirectiveExpressionTreeNode value,HRADSourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.name = name;
 		this.value = value;
 	}
-	public String getName() {
+	public T getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public void setName(T name) {
 		this.name = name;
 	}
 	public HRADAbstractDirectiveExpressionTreeNode getValue() {
@@ -47,7 +47,7 @@ public class HRADDirectiveStatement extends AbstractHRADCommand {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HRADDirectiveStatement other = (HRADDirectiveStatement) obj;
+		HRADAbstractDirectiveStatement<?> other = (HRADAbstractDirectiveStatement<?>) obj;
 		return Objects.equals(name, other.name) && Objects.equals(value, other.value);
 	}
 	@Override

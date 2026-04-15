@@ -17,10 +17,7 @@ public class HRADPowerExpressionNode extends HRADDualChildExpressionNode impleme
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public HRASPowerExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASPowerExpressionNode(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

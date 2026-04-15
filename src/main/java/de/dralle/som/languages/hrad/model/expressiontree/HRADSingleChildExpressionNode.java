@@ -28,10 +28,7 @@ public class HRADSingleChildExpressionNode extends HRADAbstractDirectiveExpressi
 		return cl;
 	}
 
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASSingleChildExpressionNode(getChild().compileToHRAS(parent));
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

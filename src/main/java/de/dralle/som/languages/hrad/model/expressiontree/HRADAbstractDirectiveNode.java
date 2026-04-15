@@ -30,7 +30,7 @@ public abstract class HRADAbstractDirectiveNode<T> extends HRADAbstractDirective
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSDirectiveNode(directiveName);
+		return new HRBSDirectiveNode(directiveName.toString());
 	}
 
 	@Override

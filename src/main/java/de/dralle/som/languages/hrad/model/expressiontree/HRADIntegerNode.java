@@ -29,10 +29,7 @@ public class HRADIntegerNode extends HRADAbstractDirectiveExpressionTreeNode imp
 		return (HRADIntegerNode) super.clone();
 	}
 
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASIntegerNode(value);
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

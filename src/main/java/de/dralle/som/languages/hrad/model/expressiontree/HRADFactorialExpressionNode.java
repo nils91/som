@@ -17,10 +17,7 @@ public class HRADFactorialExpressionNode extends HRADSingleChildExpressionNode i
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public HRASFactorialExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASFactorialExpressionNode(getChild().compileToHRAS(parent));
-	}
+
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

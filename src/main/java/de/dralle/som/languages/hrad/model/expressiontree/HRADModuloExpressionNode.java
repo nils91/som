@@ -18,11 +18,7 @@ public class HRADModuloExpressionNode extends HRADDualChildExpressionNode implem
 	}
 
 
-	@Override
-	public HRASModuloExpression compileToHRAS(HRADModel parent) {
-
-		return new HRASModuloExpression(getChilds()[0].compileToHRAS(parent), getChilds()[1].compileToHRAS(parent));
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

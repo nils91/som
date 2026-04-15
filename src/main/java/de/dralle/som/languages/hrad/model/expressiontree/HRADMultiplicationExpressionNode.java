@@ -17,11 +17,7 @@ public class HRADMultiplicationExpressionNode extends HRADDualChildExpressionNod
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public HRASMultiplicationExpression compileToHRAS(HRADModel parent) {
-		return new HRASMultiplicationExpression(getChilds()[0].compileToHRAS(parent),
-				getChilds()[1].compileToHRAS(parent));
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

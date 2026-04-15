@@ -2,6 +2,8 @@ package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADComplexNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDivisionExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADDualChildExpressionNode;
@@ -26,7 +28,9 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 		if (node.preAccept(this)) {
 			node = preVisit(this, node);
 			T returnyValue = switch (node) {
+			case HRADComplexNamedDirectiveNode n -> visit(n);
 			case HRADStringNamedDirectiveNode n -> visit(n);
+			case HRADAbstractDirectiveNode<?> n -> visit(n);
 			case HRADAbsoluteExpressionNode n -> visit(n);
 			case HRADDivisionExpressionNode n -> visit(n);
 			case HRADFactorialExpressionNode n -> visit(n);
@@ -45,7 +49,8 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 											// reason the
 											// node type
 											// isnt known
-											// here, the default .process is called, which in turn calls the node´s .accept
+											// here, the default .process is called, which in turn calls the node´s
+											// .accept
 			};
 			returnyValue = postVisit(this, node, returnyValue);
 			returnyValue = node.postAccept(this, returnyValue);
@@ -64,13 +69,21 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 			HRADAbstractDirectiveExpressionTreeNode node) {
 		return node;
 	}
-	
+
 	default T visit(HRADAbstractDirectiveExpressionTreeNode node) {
 		return null;
 	}
 
-	default T visit(HRADStringNamedDirectiveNode node) {
+	default T visit(HRADAbstractDirectiveNode<?> node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
+	}
+
+	default T visit(HRADComplexNamedDirectiveNode node) {
+		return visit((HRADAbstractDirectiveNode<HRADAbstractDirectiveExpressionTreeNode>) node);
+	}
+
+	default T visit(HRADStringNamedDirectiveNode node) {
+		return visit((HRADAbstractDirectiveNode<String>) node);
 	}
 
 	default T visit(HRADDivisionExpressionNode node) {
@@ -88,6 +101,7 @@ public interface HRADDirectiveExpressionTreeVisitorInterface<T> {
 	default T visit(HRADIntegerNode node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
 	}
+
 	default T visit(HRADStringNode node) {
 		return visit((HRADAbstractDirectiveExpressionTreeNode) node);
 	}

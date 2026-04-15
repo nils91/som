@@ -13,10 +13,7 @@ public class HRADAbsoluteExpressionNode extends HRADSingleChildExpressionNode im
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASAbsoluteExpressionNode(getChild().compileToHRAS(parent));
-	}
+	
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

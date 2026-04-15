@@ -13,10 +13,7 @@ public class HRADNegationExpressionNode extends HRADSingleChildExpressionNode im
 		super(child);
 		// TODO Auto-generated constructor stub
 	}
-	@Override
-	public HRASAbstractExpressionNode compileToHRAS(HRADModel parent) {
-		return new HRASMultiplicationExpression(getChild().compileToHRAS(parent), new HRASIntegerNode(-1));
-	}
+
 
 	@Override
 	public HRBSAbstractExpressionNode compileToHRBS() {

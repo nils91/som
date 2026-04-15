@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrad.model;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +41,10 @@ public class HRADModel implements ISetN {
 
 	private static final Logger logger = Logger.getLogger(HRADModel.class.getName());
 
-	private List<AbstractHRADCommand> commands2 = new ArrayList<AbstractHRADCommand>();
+	private List<AbstractHRADCommand> commands = new ArrayList<AbstractHRADCommand>();
 
 	public void addCommand2(AbstractHRADCommand c) {
-		commands2.add(c);
+		commands.add(c);
 	}
 
 	private HRADSourceLocation sourceLocation;
@@ -69,7 +70,6 @@ public class HRADModel implements ISetN {
 		for (int i = 0; i < mem.getInitOnceValues().size(); i++) {
 			model.addInitOnceAddress(mem.getInitOnceValues().get(i).getKey(),mem.getInitOnceValues().get(i).getValue());
 		}
-		int commandSize = model.getCommandSize();
 		List<Integer> commandLocs=new ArrayList( mem.getCommands().keySet());
 		Collections.sort(commandLocs);
 		for (Integer integer : commandLocs) {
@@ -82,92 +82,40 @@ public class HRADModel implements ISetN {
 		return model;
 	}
 
-	private int nextCommandAddress;
-
-	private int n;
-
-	private List<Map.Entry<Integer, Boolean>> initOnceValues = new ArrayList<Map.Entry<Integer, Boolean>>();
-
-	private int startAdress;
-
-	boolean startAddressExplicit;
-
-	private Map<Integer, HRADCommand> commands;
+	
 
 	public HRADModel() {
 
 	}
 
-	public int addCommand(HRADCommand c) {
-		if (commands == null) {
-			commands = new LinkedHashMap<>();
-		}
-		commands.put(nextCommandAddress, c);
-		nextCommandAddress += getCommandSize();
-		return nextCommandAddress - getCommandSize();
-	}
-
+	
 	public void addInitOnceAddress(int address, boolean set) {
-		initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(address, set));
 		addCommand2(new HRADOti(set, address, null));
 	}
 
 	public String asCode() {
 		StringBuilder sb = new StringBuilder();
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			sb.append(abstractHRADCommand.toString());
 			sb.append(System.lineSeparator());
 		}
 
-		// old below todo remove
-		sb.append(getNDirective());
-		sb.append(System.lineSeparator());
-		sb.append(getStartDirective());
-		sb.append(System.lineSeparator());
-		for (Entry<Integer, Boolean> entry : initOnceValues) {
-			sb.append((entry.getValue() ? "setonce" : "clearonce") + " " + entry.getKey());
-			sb.append(System.lineSeparator());
-		}
-		for (String symbolString : getCommandssAsStrings()) {
-			sb.append(symbolString);
-			sb.append(System.lineSeparator());
-		}
+		
 		return sb.toString();
 	}
 
-	public IMemspace compileToMemspace() {
-		ISomMemspace mem = new ByteArrayMemspace((int) Math.pow(2, n));
-		mem.setN(n);
-		mem.setNextAddress(getStartAdress());
-		for (Entry<Integer, Boolean> entry : initOnceValues) {
-			mem.setBit(entry.getKey(), entry.getValue());
-		}
-		for (Entry<Integer, HRADCommand> c : commands.entrySet()) {
-			Integer address = c.getKey();
-			HRADCommand command = c.getValue();
-			int cTgtAddress = getCommandTargetAddress(command);
-			if (cTgtAddress < 0) {
-				System.out.println(
-						"Warning: (HRAD -> Memspace) Negative memory address in command at address " + address + ".");
-			}
-			mem.setBit(address, command.getOp().getBitValue());
-			mem.setBitsUnsigned(address + 1, n, cTgtAddress);
-		}
-		mem.setAccumulatorValue(true);
-		mem.setAdrEval(true);
-		return mem;
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof HRADModel) {
 			HRADModel oth = (HRADModel) obj;
-			if (oth.commands2.size() != commands2.size()) {
+			if (oth.commands.size() != commands.size()) {
 				return false;
 			}
-			for (int i = 0; i < commands2.size(); i++) {
-				AbstractHRADCommand array_element = commands2.get(i);
-				AbstractHRADCommand othc = oth.commands2.get(i);
+			for (int i = 0; i < commands.size(); i++) {
+				AbstractHRADCommand array_element = commands.get(i);
+				AbstractHRADCommand othc = oth.commands.get(i);
 				if (!array_element.equals(othc))
 					return false;
 			}
@@ -175,35 +123,20 @@ public class HRADModel implements ISetN {
 		return super.equals(obj);
 	}
 
-	public Map<Integer, HRADCommand> getCommands() {
-		return commands;
+	
+
+	private int getProbableCommandSize() {
+		return 1 + getN();
 	}
 
-	private int getCommandSize() {
-		return 1 + n;
-	}
-
-	private List<String> getCommandssAsStrings() {
-		List<String> tmp = new ArrayList<>();
-		for (Entry<Integer, HRADCommand> c : commands.entrySet()) {
-			Integer address = c.getKey();
-			HRADCommand command = c.getValue();
-			tmp.add(String.format("%s%s%s", getContinueDirective(address), System.lineSeparator(),
-					command.asHRADCode()));
-		}
-		return tmp;
-	}
-
-	private int getCommandTargetAddress(HRADCommand c) {
-		int tgtAdddress = c.getAddress();
-		return tgtAdddress;
-	}
-
-	private String getContinueDirective(int string) {
-		return String.format(";continue = %d", string);
-	}
-
+	//only static analysis
 	public List<Map.Entry<Integer, Boolean>> getInitOnceValues() {
+		List<Entry<Integer, Boolean>> initOnceValues=new ArrayList<Map.Entry<Integer,Boolean>>();
+		for (AbstractHRADCommand entry : commands) {
+			if(entry instanceof HRADOti) {
+				initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(((HRADOti)entry).getAddress(), ((HRADOti)entry).isSet()));
+			}
+		}
 		return initOnceValues;
 	}
 
@@ -218,12 +151,12 @@ public class HRADModel implements ISetN {
 		hrav.setStartAddressExplicit(true);
 		hrav.setStartAdress(start);
 
-		for (AbstractHRADCommand entry : commands2) {
+		for (AbstractHRADCommand entry : commands) {
 			if (entry instanceof HRADOti)
 				hrav.addInitOnceAddress(((HRADOti) entry).getAddress(), ((HRADOti) entry).isSet());
 		}
 		int nca = start;
-		for (AbstractHRADCommand entry : commands2) {
+		for (AbstractHRADCommand entry : commands) {
 			if (entry instanceof HRADCommand) {
 				HRADCommand c = (HRADCommand) entry;
 				hrav.setNextCommandAddress(nca);
@@ -245,7 +178,7 @@ public class HRADModel implements ISetN {
 		// as fall back (minimum n)
 		int n = 0;
 		HRADStringNamedDirectiveStatement nDir = null;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
 					nDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
@@ -255,7 +188,7 @@ public class HRADModel implements ISetN {
 		if (nDir == null) {
 			logger.info("No N directive found. This could be OK if this is not compiled from a SOM language >= HRAC. "
 					+ sourceLocation != null ? sourceLocation + "" : "");
-			for (AbstractHRADCommand abstractHRADCommand : commands2) {
+			for (AbstractHRADCommand abstractHRADCommand : commands) {
 				if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 					if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
 						nDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
@@ -289,18 +222,13 @@ public class HRADModel implements ISetN {
 	}
 
 	private String getNDirective() {
-		return String.format(";n = %d", n);
+		return String.format(";n = %d", getN());
 	}
-
-	public int getNextCommandAddress() {
-		return nextCommandAddress;
-	}
-
 	public int getStartAdress(Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap) {
 		int start = 0;
 		// Find start directive
 		HRADStringNamedDirectiveStatement sDir = null;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("start")) {
 					sDir = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
@@ -332,12 +260,8 @@ public class HRADModel implements ISetN {
 		return String.format(";start = %s", getStartAdress());
 	}
 
-	public boolean isStartAddressExplicit() {
-		return startAddressExplicit;
-	}
-
 	public void setCommands(List<AbstractHRADCommand> commands) {
-		this.commands2 = commands;
+		this.commands = commands;
 	}
 
 	public void setN(int n, HRADSourceLocation from) {
@@ -345,7 +269,7 @@ public class HRADModel implements ISetN {
 		// actual (uppercase N). If n is set, set N
 		boolean nLCSet = false;
 		boolean nUCSet = false;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("n")) {
 					nLCSet = true;
@@ -353,9 +277,9 @@ public class HRADModel implements ISetN {
 			}
 		}
 		if (!nLCSet) {
-			commands2.add(new HRADStringNamedDirectiveStatement("n", new HRADIntegerNode(n), from));
+			commands.add(new HRADStringNamedDirectiveStatement("n", new HRADIntegerNode(n), from));
 		}
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("N")) {
 					nUCSet = true;
@@ -365,7 +289,7 @@ public class HRADModel implements ISetN {
 		if (nUCSet) {
 			logger.warning("Overwrting actual n. " + from != null ? from + "" : "");
 		}
-		commands2.add(new HRADStringNamedDirectiveStatement("N", new HRADIntegerNode(n), from));
+		commands.add(new HRADStringNamedDirectiveStatement("N", new HRADIntegerNode(n), from));
 	}
 
 	public void setN(int n) {
@@ -374,7 +298,7 @@ public class HRADModel implements ISetN {
 
 	public void setStartAdress(int startAdress, HRADSourceLocation from) {
 		boolean nUCSet = false;
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				if (((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName().equals("start")) {
 					nUCSet = true;
@@ -384,7 +308,7 @@ public class HRADModel implements ISetN {
 		if (nUCSet) {
 			logger.warning("Overwriting start address. " + from != null ? from + "" : "");
 		}
-		commands2.add(new HRADStringNamedDirectiveStatement("start", new HRADIntegerNode(n), from));
+		commands.add(new HRADStringNamedDirectiveStatement("start", new HRADIntegerNode(startAdress), from));
 	}
 
 	public void setStartAdress(int startAdress) {
@@ -399,7 +323,7 @@ public class HRADModel implements ISetN {
 	//static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
 				String name = ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName();
 				r.put(name, ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getValue());
@@ -410,7 +334,7 @@ public class HRADModel implements ISetN {
 	//static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getDirectives() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = getStringNamedDirectives();
-		for (AbstractHRADCommand abstractHRADCommand : commands2) {
+		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADComplexNamedDirectiveStatement) {
 				HRADAbstractDirectiveExpressionTreeNode name = ((HRADComplexNamedDirectiveStatement) abstractHRADCommand)
 						.getName();

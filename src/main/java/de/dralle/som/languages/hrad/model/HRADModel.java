@@ -5,6 +5,7 @@ package de.dralle.som.languages.hrad.model;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,51 +56,28 @@ public class HRADModel implements ISetN {
 		this.sourceLocation = sourceLocation;
 	}
 
-	public static HRADModel compileFromMemspace(IMemspace sourceModel) {
-		if (sourceModel instanceof ISomMemspace) {
-			return compileFromMemspace((ISomMemspace) sourceModel);
-		}
-		BooleanArrayMemspace newMem = new BooleanArrayMemspace();
-		newMem.copy(sourceModel);
-		return compileFromMemspace(newMem);
-	}
-
 	/**
 	 * The resulting model should never be expected to be the same as a HRAD model
-	 * which has been compiled to a memspace.
+	 * which has been compiled to HRAV. Could be, but unlikely.
 	 * 
 	 * @param mem
 	 */
-	public static HRADModel compileFromMemspace(ISomMemspace mem) {
+	public static HRADModel compileFromHRAV(HRAVModel mem) {
 		HRADModel model = new HRADModel();
-		model.n = mem.getN();
-		model.setStartAdress(mem.getNextAddress());
-		model.setStartAddressExplicit(true);
-		model.setNextCommandAddress(mem.getNextAddress());
-		for (int i = ISomMemspace.START_ADDRESS_START + mem.getN(); i < mem.getNextAddress(); i++) {
-			model.addInitOnceAddress(i, mem.getBit(i));
+		model.setN(mem.getN());
+		model.setStartAdress(mem.getStartAdress());
+		for (int i = 0; i < mem.getInitOnceValues().size(); i++) {
+			model.addInitOnceAddress(mem.getInitOnceValues().get(i).getKey(),mem.getInitOnceValues().get(i).getValue());
 		}
 		int commandSize = model.getCommandSize();
-		for (int i = mem.getNextAddress(); i < mem.getSize(); i += commandSize) {
-			boolean[] nxtCommand = new boolean[commandSize];
-			for (int j = 0; j < nxtCommand.length; j++) {
-				nxtCommand[j] = mem.getBit(i + j);
-			}
-			boolean[] ctgtAddressBit = new boolean[nxtCommand.length - 1];
-			for (int j = 0; j < ctgtAddressBit.length; j++) {
-				ctgtAddressBit[j] = nxtCommand[j + 1];
-			}
-			int cTgtAddress = Util.getAsUnsignedInt(ctgtAddressBit);
-			Opcode op = null;
-			if (nxtCommand[0] == false) {
-				op = Opcode.NAR;
-			} else {
-				op = Opcode.NAW;
-			}
-			HRADCommand newc = new HRADCommand();
-			newc.setOp(op);
-			newc.setAddress(cTgtAddress);
-			model.addCommand(newc);
+		List<Integer> commandLocs=new ArrayList( mem.getCommands().keySet());
+		Collections.sort(commandLocs);
+		for (Integer integer : commandLocs) {
+			HRAVCommand cHrav = mem.getCommands().get(integer);
+			HRADCommand cHrad = new HRADCommand(null);
+			cHrad.setOp(cHrav.getOp());
+			cHrad.setAddress(cHrav.getAddress());
+			model.addCommand2(cHrad);
 		}
 		return model;
 	}

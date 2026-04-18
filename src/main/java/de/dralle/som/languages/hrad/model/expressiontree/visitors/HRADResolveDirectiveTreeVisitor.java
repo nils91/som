@@ -6,7 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.dralle.som.languages.hrac.model.expressiontree.HRACAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hrad.model.directive.HRADAbstractCustomDirectiveFunction;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADComplexNamedDirectiveNode;
@@ -19,27 +21,47 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADSingleChildExpressi
 public class HRADResolveDirectiveTreeVisitor
 		implements HRADDirectiveExpressionTreeVisitorInterface<HRADAbstractDirectiveExpressionTreeNode> {
 
-	private Map<String, HRADAbstractDirectiveExpressionTreeNode> getResolvablesWithParameters(String nodeName, List<HRADAbstractDirectiveExpressionTreeNode> nodeParamValues){
+	private Map<String, HRADAbstractCustomDirectiveFunction> customFunctions = new LinkedHashMap<String, HRADAbstractCustomDirectiveFunction>();
+
+	public void addCustomDirectiveFunction(String name, HRADAbstractCustomDirectiveFunction f) {
+		customFunctions.put(name, f);
+	}
+
+	private Map<String, HRADAbstractDirectiveExpressionTreeNode> getResolvablesWithParameters(String nodeName,
+			List<HRADAbstractDirectiveExpressionTreeNode> nodeParamValues) {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = new LinkedHashMap<>(resolvables);
+
+		// go over custom functions
+		HRADAbstractCustomDirectiveFunction cf = customFunctions.get(nodeName);
+		if (cf != null) {
+			HRADAbstractDirectiveExpressionTreeNode cfv = cf.getValue(nodeParamValues);
+			if (cfv != null && !nodeName.isEmpty()) {
+				resolvablesCopy.put(nodeName, cfv);
+			}
+		}
+
+		// match parameter names to values
 		List<String> parameters = resolvableParameter.get(nodeName);
-		if(parameters!=null) {
+		if (parameters != null) {
 			List<HRADAbstractDirectiveExpressionTreeNode> pValues = nodeParamValues;
 			for (int i = 0; i < parameters.size(); i++) {
 				String pName = parameters.get(i);
-				if(i<pValues.size()) {
-					HRADAbstractDirectiveExpressionTreeNode pValue = pValues.get(i);						
-					if(pValue!=null) {
+				if (i < pValues.size()) {
+					HRADAbstractDirectiveExpressionTreeNode pValue = pValues.get(i);
+					if (pValue != null) {
 						resolvablesCopy.put(pName, pValue);
 					}
-				}					
+				}
 			}
 		}
 		return resolvablesCopy;
 	}
-	private Map<String, HRADAbstractDirectiveExpressionTreeNode> getResolvablesWithParameters(HRADStringNamedDirectiveNode node){
+
+	private Map<String, HRADAbstractDirectiveExpressionTreeNode> getResolvablesWithParameters(
+			HRADStringNamedDirectiveNode node) {
 		return getResolvablesWithParameters(node.getDirectiveName(), node.getParamValues());
 	}
-	
+
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visit(HRADComplexNamedDirectiveNode node) {
 		if (clone) {
@@ -49,13 +71,16 @@ public class HRADResolveDirectiveTreeVisitor
 			HRADAbstractDirectiveExpressionTreeNode nameNode = node.getDirectiveName();
 			HRADAbstractDirectiveExpressionTreeNode resolvedNameNode = nameNode.accept(this);
 			HRADAbstractDirectiveValue<?> rnnv = resolvedNameNode.accept(new HRADDirectiveTreeCalculateValueVisitor());
-			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(rnnv.toString());
-			
-			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = getResolvablesWithParameters(rnnv.toString(), node.getParamValues());
-			
+			String nodeName = rnnv.toString();
+			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(nodeName);
+
+			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = getResolvablesWithParameters(
+					nodeName, node.getParamValues());
+
 			if (sub != null) {
 				if (deep) {
-					sub = sub.accept(new HRADResolveDirectiveTreeVisitor(resolvablesCopy, resolvableParameter, clone, deep));
+					sub = sub.accept(
+							new HRADResolveDirectiveTreeVisitor(resolvablesCopy, resolvableParameter, clone, deep));
 				}
 			}
 			if (sub != null) {
@@ -80,7 +105,15 @@ public class HRADResolveDirectiveTreeVisitor
 	}
 
 	private Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvables = new HashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
-	
+
+	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getResolvables() {
+		return resolvables;
+	}
+
+	public void setResolvables(Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvables) {
+		this.resolvables = resolvables;
+	}
+
 	private boolean clone; // clone node first to avoid modifying original
 	private boolean deep; // attempt to resolve subtrees too
 
@@ -89,7 +122,7 @@ public class HRADResolveDirectiveTreeVisitor
 	public HRADResolveDirectiveTreeVisitor(Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvables,
 			Map<String, List<String>> resolvableParameter, boolean clone, boolean deep) {
 		super();
-		this.resolvableParameter=resolvableParameter;
+		this.resolvableParameter = resolvableParameter;
 		this.resolvables = resolvables;
 		this.clone = clone;
 		this.deep = deep;
@@ -125,7 +158,8 @@ public class HRADResolveDirectiveTreeVisitor
 			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(node.getDirectiveName());
 			if (sub != null) {
 				if (deep) {
-					sub = sub.accept(new HRADResolveDirectiveTreeVisitor(getResolvablesWithParameters(node), resolvableParameter, clone, deep));
+					sub = sub.accept(new HRADResolveDirectiveTreeVisitor(getResolvablesWithParameters(node),
+							resolvableParameter, clone, deep));
 				}
 			}
 			if (sub != null) {

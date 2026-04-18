@@ -44,6 +44,8 @@ directive_name
 :
 	INT
 	| NAME
+	| directive_access
+	| (P_OPEN primary_expr P_CLOSE)
 ;
 directive_access
 :

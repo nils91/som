@@ -15,10 +15,6 @@ public class HRADNegationExpressionNode extends HRADSingleChildExpressionNode im
 	}
 
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSNegationExpressionNode(getChild().compileToHRBS());
-	}
 
 	@Override
 	public boolean equals(Object obj) {

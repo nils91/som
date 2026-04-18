@@ -31,10 +31,7 @@ public class HRADIntegerNode extends HRADAbstractDirectiveExpressionTreeNode imp
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSIntegerNode(value);
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

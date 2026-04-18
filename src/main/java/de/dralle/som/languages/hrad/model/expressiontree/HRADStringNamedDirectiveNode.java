@@ -26,10 +26,6 @@ public class HRADStringNamedDirectiveNode extends HRADAbstractDirectiveNode<Stri
 		return (HRADStringNamedDirectiveNode) super.clone();
 	}
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSDirectiveNode(directiveName);
-	}
 
 	@Override
 	public String toString() {

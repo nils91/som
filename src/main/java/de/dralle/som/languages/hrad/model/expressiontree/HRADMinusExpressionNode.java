@@ -20,11 +20,7 @@ public class HRADMinusExpressionNode extends HRADDualChildExpressionNode impleme
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSMinusExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
-
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

@@ -19,11 +19,7 @@ public class HRADPowerExpressionNode extends HRADDualChildExpressionNode impleme
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSPowerExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
-
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

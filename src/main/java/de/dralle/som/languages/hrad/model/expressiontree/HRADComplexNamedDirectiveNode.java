@@ -27,10 +27,7 @@ public class HRADComplexNamedDirectiveNode extends HRADAbstractDirectiveNode<HRA
 		return rn;
 	}
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSDirectiveNode(directiveName);
-	}
+	
 
 	@Override
 	public String toString() {

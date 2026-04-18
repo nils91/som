@@ -16,11 +16,6 @@ public class HRADAbsoluteExpressionNode extends HRADSingleChildExpressionNode im
 	
 
 	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSAbsoluteExpressionNode(getChild().compileToHRBS());
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof HRADAbsoluteExpressionNode) {
 			return super.equals(obj);

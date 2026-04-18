@@ -30,10 +30,6 @@ public class HRADSingleChildExpressionNode extends HRADAbstractDirectiveExpressi
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSSingleChildExpressionNode(child.compileToHRBS());
-	}
 
 	@Override
 	public boolean equals(Object obj) {

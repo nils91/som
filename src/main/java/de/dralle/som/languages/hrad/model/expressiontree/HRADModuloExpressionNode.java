@@ -20,10 +20,7 @@ public class HRADModuloExpressionNode extends HRADDualChildExpressionNode implem
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSModuloExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

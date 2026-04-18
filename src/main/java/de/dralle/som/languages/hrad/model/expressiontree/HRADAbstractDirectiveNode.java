@@ -36,10 +36,6 @@ public abstract class HRADAbstractDirectiveNode<T> extends HRADAbstractDirective
 		return (HRADAbstractDirectiveNode<T>) super.clone();
 	}
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSDirectiveNode(directiveName.toString());
-	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -19,10 +19,7 @@ public class HRADFactorialExpressionNode extends HRADSingleChildExpressionNode i
 
 
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSFactorialExpressionNode(getChild().compileToHRBS());
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

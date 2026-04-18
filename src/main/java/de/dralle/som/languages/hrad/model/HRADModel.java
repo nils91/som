@@ -7,20 +7,13 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import de.dralle.som.BooleanArrayMemspace;
-import de.dralle.som.ByteArrayMemspace;
-import de.dralle.som.IMemspace;
 import de.dralle.som.ISetN;
-import de.dralle.som.ISomMemspace;
-import de.dralle.som.Opcode;
-import de.dralle.som.Util;
 import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractCustomDirectiveFunction;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
@@ -30,9 +23,6 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveEx
 import de.dralle.som.languages.hrad.model.expressiontree.HRADIntegerNode;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveTreeCalculateValueVisitor;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADResolveDirectiveTreeVisitor;
-import de.dralle.som.languages.hras.model.AbstractHRASMemoryAddress;
-import de.dralle.som.languages.hras.model.HRASCommand;
-import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 

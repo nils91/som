@@ -20,11 +20,6 @@ public class HRADDivisionExpressionNode extends HRADDualChildExpressionNode impl
 
 	
 
-	@Override
-	public HRBSAbstractExpressionNode compileToHRBS() {
-		return new HRBSDivisionExpressionNode(getChilds()[0].compileToHRBS(), getChilds()[1].compileToHRBS());
-
-	}
 
 	@Override
 	public boolean equals(Object obj) {

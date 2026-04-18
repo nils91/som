@@ -2,6 +2,7 @@ package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +29,25 @@ public class HRADResolveDirectiveTreeVisitor
 			HRADAbstractDirectiveExpressionTreeNode resolvedNameNode = nameNode.accept(this);
 			HRADAbstractDirectiveValue<?> rnnv = resolvedNameNode.accept(new HRADDirectiveTreeCalculateValueVisitor());
 			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(rnnv.toString());
+			
+			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = new LinkedHashMap<>(resolvables);
+			List<String> parameters = resolvableParameter.get(rnnv.toString());
+			if(parameters!=null) {
+				List<HRADAbstractDirectiveExpressionTreeNode> pValues = node.getParamValues();
+				for (int i = 0; i < parameters.size(); i++) {
+					String pName = parameters.get(i);
+					if(i<pValues.size()) {
+						HRADAbstractDirectiveExpressionTreeNode pValue = pValues.get(i);						
+						if(pValue!=null) {
+							resolvablesCopy.put(pName, pValue);
+						}
+					}					
+				}
+			}
+			
 			if (sub != null) {
 				if (deep) {
-					sub = sub.accept(this);
+					sub = sub.accept(new HRADResolveDirectiveTreeVisitor(resolvablesCopy, resolvableParameter, clone, deep));
 				}
 			}
 			if (sub != null) {
@@ -98,7 +115,7 @@ public class HRADResolveDirectiveTreeVisitor
 		}
 		if (resolvables != null) {
 			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(node.getDirectiveName());
-			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = new HashMap<>(resolvables);
+			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = new LinkedHashMap<>(resolvables);
 			List<String> parameters = resolvableParameter.get(node.getDirectiveName());
 			if(parameters!=null) {
 				List<HRADAbstractDirectiveExpressionTreeNode> pValues = node.getParamValues();

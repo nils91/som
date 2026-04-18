@@ -6,6 +6,7 @@ package de.dralle.som.languages.hrad.model;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,9 +69,10 @@ public class HRADModel implements ISetN {
 		model.setN(mem.getN());
 		model.setStartAdress(mem.getStartAdress());
 		for (int i = 0; i < mem.getInitOnceValues().size(); i++) {
-			model.addInitOnceAddress(mem.getInitOnceValues().get(i).getKey(),mem.getInitOnceValues().get(i).getValue());
+			model.addInitOnceAddress(mem.getInitOnceValues().get(i).getKey(),
+					mem.getInitOnceValues().get(i).getValue());
 		}
-		List<Integer> commandLocs=new ArrayList( mem.getCommands().keySet());
+		List<Integer> commandLocs = new ArrayList(mem.getCommands().keySet());
 		Collections.sort(commandLocs);
 		for (Integer integer : commandLocs) {
 			HRAVCommand cHrav = mem.getCommands().get(integer);
@@ -82,13 +84,10 @@ public class HRADModel implements ISetN {
 		return model;
 	}
 
-	
-
 	public HRADModel() {
 
 	}
 
-	
 	public void addInitOnceAddress(int address, boolean set) {
 		addCommand2(new HRADOti(set, address, null));
 	}
@@ -100,11 +99,8 @@ public class HRADModel implements ISetN {
 			sb.append(System.lineSeparator());
 		}
 
-		
 		return sb.toString();
 	}
-
-	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -123,18 +119,17 @@ public class HRADModel implements ISetN {
 		return super.equals(obj);
 	}
 
-	
-
 	private int getProbableCommandSize() {
 		return 1 + getN();
 	}
 
-	//only static analysis
+	// only static analysis
 	public List<Map.Entry<Integer, Boolean>> getInitOnceValues() {
-		List<Entry<Integer, Boolean>> initOnceValues=new ArrayList<Map.Entry<Integer,Boolean>>();
+		List<Entry<Integer, Boolean>> initOnceValues = new ArrayList<Map.Entry<Integer, Boolean>>();
 		for (AbstractHRADCommand entry : commands) {
-			if(entry instanceof HRADOti) {
-				initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(((HRADOti)entry).getAddress(), ((HRADOti)entry).isSet()));
+			if (entry instanceof HRADOti) {
+				initOnceValues.add(new AbstractMap.SimpleEntry<Integer, Boolean>(((HRADOti) entry).getAddress(),
+						((HRADOti) entry).isSet()));
 			}
 		}
 		return initOnceValues;
@@ -142,6 +137,7 @@ public class HRADModel implements ISetN {
 
 	public HRAVModel compileToHRAV() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+		Map<String, List<String>> directiveParameterMap=new HashMap<String, List<String>>();
 		int n = getN();
 		int start = getStartAdress();
 		HRAVModel hrav = new HRAVModel();
@@ -156,10 +152,41 @@ public class HRADModel implements ISetN {
 				hrav.addInitOnceAddress(((HRADOti) entry).getAddress(), ((HRADOti) entry).isSet());
 		}
 		int nca = start;
+		hrav.setNextCommandAddress(nca);
 		for (AbstractHRADCommand entry : commands) {
+			if (entry instanceof HRADAbstractDirectiveStatement<?>) {
+				HRADAbstractDirectiveExpressionTreeNode value = ((HRADAbstractDirectiveStatement<?>) entry).getValue();
+				List<String> params = new ArrayList<String>();
+				params = ((HRADAbstractDirectiveStatement<?>) entry).getParams();
+				Map<String, HRADAbstractDirectiveExpressionTreeNode> lldm = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>(
+						localDirectivesMap);
+				if (params != null) {
+					for (String string : params) {
+						lldm.remove(string);
+					}
+				}
+				HRADAbstractDirectiveExpressionTreeNode resolvedValueTree = value
+						.accept(new HRADResolveDirectiveTreeVisitor(lldm,directiveParameterMap, true, true));
+				String name=null;
+				if (entry instanceof HRADStringNamedDirectiveStatement) {
+					name = ((HRADStringNamedDirectiveStatement) entry).getName();
+				}
+				if (entry instanceof HRADComplexNamedDirectiveStatement) {
+					HRADAbstractDirectiveExpressionTreeNode nameTree = ((HRADComplexNamedDirectiveStatement) entry).getName();				
+					HRADDirectiveTreeCalculateValueVisitor vrv = new HRADDirectiveTreeCalculateValueVisitor();
+					vrv.setResolver(new HRADResolveDirectiveTreeVisitor(localDirectivesMap,directiveParameterMap,  true, true));
+					HRADAbstractDirectiveValue<?> nameTreeValue = nameTree.accept(vrv);
+					name=nameTreeValue.toString();
+				}
+				if(name!=null&&!name.isBlank()) {
+					localDirectivesMap.put(name, resolvedValueTree);
+					directiveParameterMap.put(name, params);
+				}
+			}
+
 			if (entry instanceof HRADCommand) {
 				HRADCommand c = (HRADCommand) entry;
-				hrav.setNextCommandAddress(nca);
+
 				HRAVCommand hravCommand = new HRAVCommand();
 				hravCommand.setOp(c.getOp());
 				if (c.getAddress() < 0) {
@@ -205,7 +232,7 @@ public class HRADModel implements ISetN {
 			HRADAbstractDirectiveExpressionTreeNode nTree = nDir.getValue();
 
 			HRADAbstractDirectiveExpressionTreeNode ntresolved = nTree
-					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap, true, true));
+					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap,null, true, true));
 			HRADAbstractDirectiveValue<?> nval = ntresolved.accept(new HRADDirectiveTreeCalculateValueVisitor());
 			if (nval instanceof HRADIntegerDirectiveValue) {
 				n = ((HRADIntegerDirectiveValue) nval).getValue();
@@ -224,6 +251,7 @@ public class HRADModel implements ISetN {
 	private String getNDirective() {
 		return String.format(";n = %d", getN());
 	}
+
 	public int getStartAdress(Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap) {
 		int start = 0;
 		// Find start directive
@@ -241,7 +269,7 @@ public class HRADModel implements ISetN {
 		} else {
 			HRADAbstractDirectiveExpressionTreeNode nTree = sDir.getValue();
 			HRADAbstractDirectiveExpressionTreeNode ntresolved = nTree
-					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap, true, true));
+					.accept(new HRADResolveDirectiveTreeVisitor(localDirectivesMap,null, true, true));
 			HRADAbstractDirectiveValue<?> nval = ntresolved.accept(new HRADDirectiveTreeCalculateValueVisitor());
 			if (nval instanceof HRADIntegerDirectiveValue) {
 				start = ((HRADIntegerDirectiveValue) nval).getValue();
@@ -320,7 +348,7 @@ public class HRADModel implements ISetN {
 		return asCode();
 	}
 
-	//static analysis (before compile)
+	// static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 		for (AbstractHRADCommand abstractHRADCommand : commands) {
@@ -331,14 +359,15 @@ public class HRADModel implements ISetN {
 		}
 		return r;
 	}
-	//static analysis (before compile)
+
+	// static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getDirectives() {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = getStringNamedDirectives();
 		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADComplexNamedDirectiveStatement) {
 				HRADAbstractDirectiveExpressionTreeNode name = ((HRADComplexNamedDirectiveStatement) abstractHRADCommand)
 						.getName();
-				r.put(name.accept(new HRADResolveDirectiveTreeVisitor(r, true, true))
+				r.put(name.accept(new HRADResolveDirectiveTreeVisitor(r,null, true, true))
 						.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue() + "",
 						((HRADComplexNamedDirectiveStatement) abstractHRADCommand).getValue());
 			}

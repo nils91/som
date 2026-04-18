@@ -788,7 +788,7 @@ public class HRBSModel implements ISetN, IHeap {
 		additionalSymbols.clear();
 
 		// if there is a label but no command to take it, add a NOOP0. Also add a NOOP0
-		// if the availabel command have no atomic child commands (issue 145)
+		// if the available command have no atomic child commands (issue 145)
 
 		if (label != null && lclCommands.isEmpty()) {
 			HRBSCommand ncmd = loadAndAddNOOP0();
@@ -814,7 +814,7 @@ public class HRBSModel implements ISetN, IHeap {
 				}
 			}
 		}
-		for (int i = 0; i < lclCommands.size(); i++) { // iterate over all commands, and if they have labels, bump ths
+		for (int i = 0; i < lclCommands.size(); i++) { // iterate over all commands, and if they have labels, bump those
 			// labels one forward on those that have no atomic childs
 			HRBSCommand array_element = lclCommands.get(i);
 			if (array_element.getLabel() != null && array_element.recursiveCountAtomicCommands(this) == 0) {

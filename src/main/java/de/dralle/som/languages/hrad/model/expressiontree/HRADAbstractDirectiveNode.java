@@ -12,7 +12,15 @@ import de.dralle.som.languages.hrbs.model.expressiontree.HRBSDirectiveNode;
 
 public abstract class HRADAbstractDirectiveNode<T> extends HRADAbstractDirectiveExpressionTreeNode implements Cloneable {
 	private T directiveName;
-	private List<HRADAbstractDirectiveExpressionTreeNode> params;
+	private List<HRADAbstractDirectiveExpressionTreeNode> paramValues;
+
+	public List<HRADAbstractDirectiveExpressionTreeNode> getParamValues() {
+		return paramValues;
+	}
+
+	public void setParamValues(List<HRADAbstractDirectiveExpressionTreeNode> paramValues) {
+		this.paramValues = paramValues;
+	}
 
 	public HRADAbstractDirectiveNode() {
 		super();

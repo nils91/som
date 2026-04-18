@@ -2,7 +2,7 @@ package de.dralle.som.languages.hrad.model.directive;
 import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADIntegerNode;
 
-public class HRADIntegerDirective extends HRADAbstractDirective<Integer> {
+public class HRADIntegerDirective extends HRADAbstractDirectiveName<Integer> {
 
 	public HRADIntegerDirective( String name, HRADIntegerNode value, HRADSourceLocation sourceLocation) {
 		super(name, value.getValue(), sourceLocation);

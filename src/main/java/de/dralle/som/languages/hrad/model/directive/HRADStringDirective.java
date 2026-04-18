@@ -2,7 +2,7 @@ package de.dralle.som.languages.hrad.model.directive;
 
 import de.dralle.som.languages.hrad.HRADSourceLocation;
 
-public class HRADStringDirective extends HRADAbstractDirective<String> {
+public class HRADStringDirective extends HRADAbstractDirectiveName<String> {
 
 	@Override
 	public HRADStringDirective clone() {

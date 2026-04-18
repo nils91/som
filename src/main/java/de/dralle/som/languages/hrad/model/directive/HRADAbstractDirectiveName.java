@@ -2,7 +2,7 @@ package de.dralle.som.languages.hrad.model.directive;
 
 import de.dralle.som.languages.hrad.HRADSourceLocation;
 
-public abstract class HRADAbstractDirective<T> implements Cloneable {
+public abstract class HRADAbstractDirectiveName implements Cloneable {
 	
 	private HRADSourceLocation sourceLocation;
 	
@@ -26,25 +26,17 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 	public int hashCode() {
 		int hc = 1;
 		hc += name == null ? 0 : name.hashCode();
-		hc += value == null ? 0 : value.hashCode();
 		return hc;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HRADAbstractDirective<?>) {
-			HRADAbstractDirective<?> oth = (HRADAbstractDirective<?>) obj;
+		if (obj instanceof HRADAbstractDirectiveName) {
+			HRADAbstractDirectiveName oth = (HRADAbstractDirectiveName) obj;
 			boolean equal = name == oth.name;
 			if (name != null) {
 				equal = name.equals(oth.name);
-			}
-			if (equal) {
-				if (value != null) {
-					equal = value.equals(oth.value);
-				} else {
-					equal = value == oth.value;
-				}
-			}
+			}			
 			if(equal&&sourceLocation!=null) {
 				equal=sourceLocation.equals(oth.sourceLocation);
 			}
@@ -54,15 +46,14 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 	}
 
 	@Override
-	public HRADAbstractDirective<T> clone() {
-		HRADAbstractDirective<T> clone = null;
+	public HRADAbstractDirectiveName clone() {
+		HRADAbstractDirectiveName clone = null;
 		try {
-			clone = (HRADAbstractDirective<T>) super.clone();
+			clone = (HRADAbstractDirectiveName) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
 		clone.name = name;
-		clone.value = value;
 		clone.sourceLocation=sourceLocation;
 		return clone;
 	}
@@ -73,29 +64,17 @@ public abstract class HRADAbstractDirective<T> implements Cloneable {
 		
 		if(name!=null) {
 			str+=name;
-		}
-		str+=" = ";
-		if(value!=null) {
-			str+=value.toString();
-		}
+		}		
 		return str;
 	}
 
-	public HRADAbstractDirective(String name, T value, HRADSourceLocation sourceLocation) {
+	public HRADAbstractDirectiveName(String name, HRADSourceLocation sourceLocation) {
 		super();
 		this.name = name;
-		this.value = value;
 		this.sourceLocation=sourceLocation;
 	}
 
-	public T getValue() {
-		return value;
-	}
-
-	public void setValue(T value) {
-		this.value = value;
-	}
+	
 
 	private String name;
-	private T value;
 }

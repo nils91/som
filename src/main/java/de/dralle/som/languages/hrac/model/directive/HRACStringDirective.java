@@ -1,11 +1,11 @@
 package de.dralle.som.languages.hrac.model.directive;
 
-public class StringDirective extends AbstractDirective<String> {
+public class HRACStringDirective extends AbstractDirective<String> {
 
 	@Override
-	public StringDirective clone() {
+	public HRACStringDirective clone() {
 		// TODO Auto-generated method stub
-		return (StringDirective) super.clone();
+		return (HRACStringDirective) super.clone();
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class StringDirective extends AbstractDirective<String> {
 		return str;
 	}
 
-	public StringDirective(boolean global, String name, String value) {
+	public HRACStringDirective(boolean global, String name, String value) {
 		super(global, name, value);
 		// TODO Auto-generated constructor stub
 	}

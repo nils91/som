@@ -168,11 +168,18 @@ public class HRAVModel implements ISetN {
 
 	private List<String> getCommandssAsStrings() {
 		List<String> tmp = new ArrayList<>();
+		int padr = getStartAdress() - getCommandSize();
 		for (Entry<Integer, HRAVCommand> c : commands.entrySet()) {
 			Integer address = c.getKey();
 			HRAVCommand command = c.getValue();
-			tmp.add(String.format("%s%s%s", getContinueDirective(address), System.lineSeparator(),
-					command.asHRAVCode()));
+			if (address.intValue() != padr+getCommandSize()) {
+				tmp.add(String.format("%s%s%s", getContinueDirective(address), System.lineSeparator(),
+						command.asHRAVCode()));
+			} else {
+				tmp.add(String.format("%s",
+						command.asHRAVCode()));
+			}
+			padr=address;
 		}
 		return tmp;
 	}

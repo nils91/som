@@ -6,6 +6,7 @@ package de.dralle.som;
 import java.awt.image.RenderedImage;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
@@ -16,11 +17,12 @@ import de.dralle.som.languages.hrbs.model.HRBSModel;
  */
 public enum SOMFormats {
 	AB(String.class, "ascii binary", "ab"), BIN(IMemspace.class, "binary", "bin"),
+	HRAV(HRAVModel.class, "human readable som Type a very simple", "hrav"),
+	HRAD(HRADModel.class, "human readable som Type A very simple with complex directive system", "hrad"),
 	HRAS(HRASModel.class, "human readable SOM Type A Simple", "hras"),
 	HRAP(HRACModel.class, "Human readable SOM type A complex precompiled", "hrap", new String[] { ".hrap" }),
 	HRAC(HRACModel.class, "human readable SOM Type A Complex", "hrac", new String[] { ".hra", ".hrac" }),
 	HRBS(HRBSModel.class, "human readable som type b simple", "hrbs"),
-	HRAV(HRAVModel.class, "human readable som Type a very simple", "hrav"),
 	IMAGE(RenderedImage.class, "Binary as png", "png"),
 	CBIN(byte[].class, "compressed binary", "cbin", new String[] { ".cbin", ".zip" }),
 	B64(String.class, "KBase64 binary", "b64");

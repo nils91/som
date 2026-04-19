@@ -8,12 +8,12 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveEx
 
 public abstract class HRADAbstractDirectiveStatement<T> extends AbstractHRADCommand {
 	private T name;
-	private List<String> params;
-	public List<String> getParams() {
-		return params;
+	private List<HRADAbstractDirectiveExpressionTreeNode> paramNames;
+	public List<HRADAbstractDirectiveExpressionTreeNode> getParams() {
+		return paramNames;
 	}
-	public void setParams(List<String> params) {
-		this.params = params;
+	public void setParams(List<HRADAbstractDirectiveExpressionTreeNode> params) {
+		this.paramNames = params;
 	}
 	private HRADAbstractDirectiveExpressionTreeNode value;
 	public HRADAbstractDirectiveStatement( T name,

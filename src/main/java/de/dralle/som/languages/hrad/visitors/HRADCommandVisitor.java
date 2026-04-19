@@ -4,6 +4,7 @@
 package de.dralle.som.languages.hrad.visitors;
 
 import de.dralle.som.Opcode;
+import de.dralle.som.languages.hrad.HRADSourceLocation;
 import de.dralle.som.languages.hrad.generated.HRADGrammarBaseVisitor;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.CommandContext;
 import de.dralle.som.languages.hrad.model.HRADCommand;
@@ -17,7 +18,7 @@ public class HRADCommandVisitor extends HRADGrammarBaseVisitor<HRADCommand> {
 
 	@Override
 	public HRADCommand visitCommand(CommandContext ctx) {
-		c = new HRADCommand();
+		c = new HRADCommand(new HRADSourceLocation("", ctx.start.getLine(), ctx.start.getStartIndex()));
 		if (ctx.NAR() != null) {
 			c.setOp(Opcode.NAR);
 		} else if (ctx.NAW() != null) {

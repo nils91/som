@@ -5,9 +5,12 @@ package de.dralle.som.languages.hrad.visitors;
 
 import de.dralle.som.languages.hrad.generated.HRADGrammarBaseVisitor;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.DirectiveContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Directive_nameContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.LineContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.OtiContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.ProgramContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Simple_directiveContext;
+import de.dralle.som.languages.hrad.model.HRADAbstractDirectiveStatement;
 import de.dralle.som.languages.hrad.model.HRADCommand;
 import de.dralle.som.languages.hrad.model.HRADModel;
 
@@ -17,21 +20,15 @@ import de.dralle.som.languages.hrad.model.HRADModel;
  */
 public class HRADProgramVisitor extends HRADGrammarBaseVisitor<HRADModel> {
 
+	
 	private HRADModel model;
 
 	@Override
 	public HRADModel visitDirective(DirectiveContext ctx) {
-		if (ctx.number() != null) {
-			int address = ctx.number().accept(new HRADNumberVisitor());
-			if (ctx.START() != null) {
-				model.setStartAdress(address);
-				model.setStartAddressExplicit(true);
-				model.setNextCommandAddress(address);
-			} else if (ctx.CONT() != null) {
-				model.setNextCommandAddress(address);
-			} else if (ctx.D_N() != null) {
-				model.setN(address);
-			}
+		if(ctx.simple_directive()!=null) {
+			ctx.simple_directive().accept(this);
+		}if(ctx.directive_function()!=null) {
+			ctx.directive_function().accept(this);
 		}
 		return model;
 	}
@@ -39,7 +36,8 @@ public class HRADProgramVisitor extends HRADGrammarBaseVisitor<HRADModel> {
 	@Override
 	public HRADModel visitLine(LineContext ctx) {
 		if (ctx.directive() != null) {
-			ctx.directive().accept(this);
+			HRADAbstractDirectiveStatement<?> directive= ctx.directive().accept(new HRADDirectiveVisitor());
+			model.addCommand(directive);
 		} else if (ctx.command() != null) {
 			HRADCommand c = ctx.command().accept(new HRADCommandVisitor());
 			model.addCommand(c);

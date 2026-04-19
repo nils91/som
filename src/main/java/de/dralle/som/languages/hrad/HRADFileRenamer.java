@@ -7,7 +7,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-public class Util {
+public class HRADFileRenamer {
 
 	public static void refactorDirectory(String rootPath, String target, String replacement) throws IOException {
 		Path root = Path.of(rootPath);

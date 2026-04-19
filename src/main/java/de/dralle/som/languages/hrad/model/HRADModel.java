@@ -36,6 +36,10 @@ public class HRADModel implements ISetN {
 
 	private List<AbstractHRADCommand> commands = new ArrayList<AbstractHRADCommand>();
 
+	public List<AbstractHRADCommand> getCommands() {
+		return commands;
+	}
+
 	public void addCommand(AbstractHRADCommand c) {
 		commands.add(c);
 	}
@@ -64,7 +68,7 @@ public class HRADModel implements ISetN {
 			model.addInitOnceAddress(mem.getInitOnceValues().get(i).getKey(),
 					mem.getInitOnceValues().get(i).getValue());
 		}
-		List<Integer> commandLocs = new ArrayList(mem.getCommands().keySet());
+		List<Integer> commandLocs = new ArrayList<Integer>(mem.getCommands().keySet());
 		Collections.sort(commandLocs);
 		for (Integer integer : commandLocs) {
 			HRAVCommand cHrav = mem.getCommands().get(integer);

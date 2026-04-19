@@ -14,6 +14,19 @@ import java.util.logging.Logger;
 
 import de.dralle.som.ISetN;
 import de.dralle.som.Util;
+import de.dralle.som.languages.hrad.model.AbstractHRADCommand;
+import de.dralle.som.languages.hrad.model.HRADAbstractDirectiveStatement;
+import de.dralle.som.languages.hrad.model.HRADCommand;
+import de.dralle.som.languages.hrad.model.HRADComplexNamedDirectiveStatement;
+import de.dralle.som.languages.hrad.model.HRADModel;
+import de.dralle.som.languages.hrad.model.HRADOti;
+import de.dralle.som.languages.hrad.model.HRADStringNamedDirectiveStatement;
+import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
+import de.dralle.som.languages.hrad.model.directive.HRADIntegerDirectiveValue;
+import de.dralle.som.languages.hrad.model.directive.HRADStringDirectiveValue;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveTreeCalculateValueVisitor;
+import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADResolveDirectiveTreeVisitor;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 
@@ -25,6 +38,75 @@ public class HRASModel implements ISetN {
 
 	private static final Logger logger = Logger.getLogger(HRASModel.class.getName());
 
+	public static HRASModel compileFromHRAD(HRADModel model) {
+		Map<Integer, String> symbols = new HashMap<Integer, String>();
+		symbols.putAll(Util.getBuiltinAdressesAddressKey()); //
+		HRASModel newm = new HRASModel();
+		newm.setN(model.getN());
+		newm.setStartAdress(model.getStartAdress());
+		newm.setStartAddressExplicit(true);
+		newm.setNextCommandAddress(model.getStartAdress());
+		AbstractHRASMemoryAddress nca = newm.nextCommandAddress;
+		for (AbstractHRADCommand ce : model.getCommands()) {
+			if(ce instanceof HRADOti) {
+				Integer oAdr = ((HRADOti) ce).getAddress();
+				String symbolName = symbols.getOrDefault(oAdr, "MA" + oAdr);
+				symbols.put(oAdr, symbolName);
+				newm.addInitOnceValue(new SymbolHRASMemoryAddress(symbolName), ((HRADOti)ce).isSet());
+			}
+			if(ce instanceof HRADCommand) {
+				Integer cadr = nca.resolve(newm);
+				HRADCommand c = (HRADCommand) ce;
+				String symbolName = symbols.getOrDefault(cadr, "MA" + cadr);
+				symbols.put(cadr, symbolName);
+				newm.setNextCommandAddress(new SymbolHRASMemoryAddress(symbolName));
+				symbolName = symbols.getOrDefault(c.getAddress(), "MA" + c.getAddress());
+				symbols.put(c.getAddress(), symbolName);
+				SymbolHRASMemoryAddress ctgtadr = new SymbolHRASMemoryAddress(symbolName);
+				HRASCommand nc = new HRASCommand();
+				nc.setOp(c.getOp());
+				nc.setAddress(ctgtadr);
+				newm.addCommand(nc);
+				
+				int ncaaInt = cadr+newm.getCommandSize();
+				String ncaaSymbolName = symbols.getOrDefault(ncaaInt, "MA"+ncaaInt);
+				symbols.put(ncaaInt, ncaaSymbolName);
+				newm.setNextCommandAddress(new SymbolHRASMemoryAddress(ncaaSymbolName));
+			}
+			if(ce instanceof HRADAbstractDirectiveStatement<?>) {
+				String dName ="";
+				if(ce instanceof HRADStringNamedDirectiveStatement) {
+					dName = ((HRADStringNamedDirectiveStatement) ce).getName();
+				}if(ce instanceof HRADComplexNamedDirectiveStatement) {
+					HRADAbstractDirectiveExpressionTreeNode dNameET = ((HRADComplexNamedDirectiveStatement) ce).getName();
+					dName=dNameET.accept(new HRADResolveDirectiveTreeVisitor(model.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+				}
+				if("continue".equals(dName)||"cont".equals(dName)) {
+					HRADAbstractDirectiveExpressionTreeNode valueET = ((HRADAbstractDirectiveStatement<?>) ce).getValue();
+					HRADAbstractDirectiveValue<?> valueETvalue = valueET.accept(new HRADResolveDirectiveTreeVisitor(model.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor());
+					if(valueETvalue instanceof HRADStringDirectiveValue) {
+						int ncaaInt = Util.decodeInt(valueETvalue.toString());
+						String ncaaSymbolName = symbols.getOrDefault(ncaaInt, "MA"+ncaaInt);
+						symbols.put(ncaaInt, ncaaSymbolName);
+						newm.setNextCommandAddress(new SymbolHRASMemoryAddress(ncaaSymbolName));
+					}
+					if(valueETvalue instanceof HRADIntegerDirectiveValue) {
+						int ncaaInt =((HRADIntegerDirectiveValue) valueETvalue).getValue();
+						String ncaaSymbolName = symbols.getOrDefault(ncaaInt, "MA"+ncaaInt);
+						symbols.put(ncaaInt, ncaaSymbolName);
+						newm.setNextCommandAddress(new SymbolHRASMemoryAddress(ncaaSymbolName));
+					}
+				}
+				//HRAS does not support directives (yet), so once it does, all of this can probably go
+			}
+		}
+		for (Entry<Integer, String> entry : symbols.entrySet()) {
+			Integer key = entry.getKey();
+			String val = entry.getValue();
+			newm.addSymbol(val, new SymbolHRASMemoryAddress(key));
+		}
+		return newm;
+	}
 	public static HRASModel compileFromHRAV(HRAVModel model) {
 		Map<Integer, String> symbols = new HashMap<Integer, String>();
 		symbols.putAll(Util.getBuiltinAdressesAddressKey());
@@ -278,7 +360,6 @@ public class HRASModel implements ISetN {
 
 	public void setNextCommandAddress(int startAdress2) {
 		setNextCommandAddress(new SymbolHRASMemoryAddress(startAdress2));
-
 	}
 
 	public void setStartAddressExplicit(boolean startAddressExplicit) {

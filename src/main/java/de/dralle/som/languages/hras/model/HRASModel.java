@@ -80,7 +80,8 @@ public class HRASModel implements ISetN {
 					dName = ((HRADStringNamedDirectiveStatement) ce).getName();
 				}if(ce instanceof HRADComplexNamedDirectiveStatement) {
 					HRADAbstractDirectiveExpressionTreeNode dNameET = ((HRADComplexNamedDirectiveStatement) ce).getName();
-					dName=dNameET.accept(new HRADResolveDirectiveTreeVisitor(model.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+					dName = dNameET.accept(new HRADResolveDirectiveTreeVisitor(model
+							.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
 				}
 				if("continue".equals(dName)||"cont".equals(dName)) {
 					HRADAbstractDirectiveExpressionTreeNode valueET = ((HRADAbstractDirectiveStatement<?>) ce).getValue();

@@ -248,14 +248,8 @@ public class HRADModel implements ISetN {
 				if (name != null && !name.isBlank()) {
 					localDirectivesMap.put(name, resolvedValueTree);
 					// Resolve param names
-					List<String> pNames = new ArrayList<String>();
-					if (params != null) {
-						for (HRADAbstractDirectiveExpressionTreeNode hradAbstractDirectiveExpressionTreeNode : params) {
-							pNames.add(hradAbstractDirectiveExpressionTreeNode.accept(directiveResolver)
-									.accept(new HRADDirectiveTreeCalculateValueVisitor()).toString());
-						}
-					}
-					directiveParameterMap.put(name, pNames);
+					List<String> pNames = resolveParamNamesToString(localDirectivesMap, directiveParameterMap, params);
+					if(pNames!=null) directiveParameterMap.put(name, pNames);
 					// Check for some special directives
 					if ("continue".equals(name) || "cont".equals(name)) {
 						HRADAbstractDirectiveValue<?> rtv = resolvedValueTree
@@ -344,10 +338,6 @@ public class HRADModel implements ISetN {
 		return getN(getDirectives());
 	}
 
-	private String getNDirective() {
-		return String.format(";n = %d", getN());
-	}
-
 	public int getStartAdress(Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap) {
 		int start = 0;
 		// Find start directive
@@ -378,10 +368,6 @@ public class HRADModel implements ISetN {
 
 	public int getStartAdress() {
 		return getStartAdress(getDirectives());
-	}
-
-	private String getStartDirective() {
-		return String.format(";start = %s", getStartAdress());
 	}
 
 	public void setCommands(List<AbstractHRADCommand> commands) {
@@ -445,27 +431,63 @@ public class HRADModel implements ISetN {
 	}
 
 	// static analysis (before compile)
-	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives() {
+	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives(
+			Map<String, List<String>> directiveParameterMap) {
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+		if (directiveParameterMap == null)
+			directiveParameterMap = new HashMap<String, List<String>>();
 		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADStringNamedDirectiveStatement) {
+				List<String> paramNamesStrings = resolveParamNamesToString(r, directiveParameterMap,
+						(HRADAbstractDirectiveStatement<?>) abstractHRADCommand);
 				String name = ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName();
 				r.put(name, ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getValue());
+				if (paramNamesStrings != null)
+					directiveParameterMap.put(name, paramNamesStrings);
 			}
 		}
 		return r;
 	}
 
 	// static analysis (before compile)
+	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getStringNamedDirectives() {
+		return getStringNamedDirectives(null);
+	}
+
+	private List<String> resolveParamNamesToString(Map<String, HRADAbstractDirectiveExpressionTreeNode> directiveMap,
+			Map<String, List<String>> directiveParameterMap, HRADAbstractDirectiveStatement<?> directiveStatment) {
+		return resolveParamNamesToString(directiveMap, directiveParameterMap, directiveStatment.getParams());
+	}
+	private List<String> resolveParamNamesToString(
+			Map<String, HRADAbstractDirectiveExpressionTreeNode> directiveMap,
+			Map<String, List<String>> directiveParameterMap, List<HRADAbstractDirectiveExpressionTreeNode> paramNames) {
+		if (paramNames == null) {
+			return null;
+		}
+		List<String> paramNamesStrings = new ArrayList<String>();
+		for (HRADAbstractDirectiveExpressionTreeNode paramName : paramNames) {
+			String paramNameString = paramName
+					.accept(new HRADResolveDirectiveTreeVisitor(directiveMap, directiveParameterMap, true, true))
+					.accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+			paramNamesStrings.add(paramNameString);
+		}
+		return paramNamesStrings;
+	}
+
+	// static analysis (before compile)
 	public Map<String, HRADAbstractDirectiveExpressionTreeNode> getDirectives() {
-		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = getStringNamedDirectives();
+		Map<String, List<String>> directiveParameterMap = new HashMap<String, List<String>>();
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> r = getStringNamedDirectives(directiveParameterMap);		
 		for (AbstractHRADCommand abstractHRADCommand : commands) {
 			if (abstractHRADCommand instanceof HRADComplexNamedDirectiveStatement) {
+				List<String> paramNamesStrings = resolveParamNamesToString(r, directiveParameterMap,
+						(HRADAbstractDirectiveStatement<?>) abstractHRADCommand);
 				HRADAbstractDirectiveExpressionTreeNode name = ((HRADComplexNamedDirectiveStatement) abstractHRADCommand)
 						.getName();
-				r.put(name.accept(new HRADResolveDirectiveTreeVisitor(r, null, true, true))
-						.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue() + "",
-						((HRADComplexNamedDirectiveStatement) abstractHRADCommand).getValue());
+				String nameAsString = name.accept(new HRADResolveDirectiveTreeVisitor(r, directiveParameterMap, true, true))
+						.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue() + "";
+				r.put(nameAsString, ((HRADComplexNamedDirectiveStatement) abstractHRADCommand).getValue());
+				if(paramNamesStrings!=null)directiveParameterMap.put(nameAsString, paramNamesStrings);
 			}
 		}
 		return r;

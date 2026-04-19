@@ -2,8 +2,10 @@ grammar HRAIGrammar;
 
 program
 :
-	line+ EOF?
+	codeblock EOF?
 ;
+
+codeblock:line+;
 
 line
 :
@@ -22,22 +24,10 @@ oti
 	) number
 ;
 
-directive: SEMICOLON (simple_directive | directive_function);
-
-directive_function
+directive: SEMICOLON (directive_name | directive_function_def) (EQ (primary_expr | (C_OPEN codeblock C_CLOSE)))?;
+directive_function_def
 :
-	directive_name P_OPEN (directive_name COMMA)* directive_name P_CLOSE EQ
-	(
-		primary_expr
-	)
-;
-
-simple_directive
-:
-	directive_name EQ
-	(
-		primary_expr
-	)
+	directive_name P_OPEN (directive_name COMMA)* directive_name P_CLOSE
 ;
 
 directive_name
@@ -164,7 +154,15 @@ P_CLOSE
 :
 	')'
 ;
+C_OPEN
+:
+	'{'
+;
 
+C_CLOSE
+:
+	'}'
+;
 DASH
 :
 	'-'
@@ -314,16 +312,6 @@ SEMICOLON
 ;
 
 COMMA:',';
-
-B_OPEN
-:
-	'['
-;
-
-B_CLOSE
-:
-	']'
-;
 
 WS
 :

@@ -25,6 +25,7 @@ import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADIntegerDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADStringDirectiveValue;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
+import de.dralle.som.languages.hrad.model.expressiontree.HRADIntegerNode;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADDirectiveTreeCalculateValueVisitor;
 import de.dralle.som.languages.hrad.model.expressiontree.visitors.HRADResolveDirectiveTreeVisitor;
 import de.dralle.som.languages.hrav.model.HRAVCommand;
@@ -107,42 +108,6 @@ public class HRASModel implements ISetN {
 		}
 		return newm;
 	}
-	public static HRASModel compileFromHRAV(HRAVModel model) {
-		Map<Integer, String> symbols = new HashMap<Integer, String>();
-		symbols.putAll(Util.getBuiltinAdressesAddressKey());
-		HRASModel newm = new HRASModel();
-		newm.setN(model.getN());
-		newm.setStartAdress(model.getStartAdress());
-		newm.setStartAddressExplicit(true);
-		newm.setNextCommandAddress(model.getStartAdress());
-		for (Entry<Integer, Boolean> otiE : model.getInitOnceValues()) {
-			Integer oAdr = otiE.getKey();
-			String symbolName = symbols.getOrDefault(oAdr, "MA" + oAdr);
-			symbols.put(oAdr, symbolName);
-			newm.addInitOnceValue(new SymbolHRASMemoryAddress(symbolName), otiE.getValue());
-		}
-		for (Entry<Integer, HRAVCommand> ce : model.getCommands().entrySet()) {
-			Integer cadr = ce.getKey();
-			HRAVCommand c = ce.getValue();
-			String symbolName = symbols.getOrDefault(cadr, "MA" + cadr);
-			symbols.put(cadr, symbolName);
-			newm.setNextCommandAddress(new SymbolHRASMemoryAddress(symbolName));
-			symbolName = symbols.getOrDefault(c.getAddress(), "MA" + c.getAddress());
-			symbols.put(c.getAddress(), symbolName);
-			SymbolHRASMemoryAddress ctgtadr = new SymbolHRASMemoryAddress(symbolName);
-			HRASCommand nc = new HRASCommand();
-			nc.setOp(c.getOp());
-			nc.setAddress(ctgtadr);
-			newm.addCommand(nc);
-		}
-		for (Entry<Integer, String> entry : symbols.entrySet()) {
-			Integer key = entry.getKey();
-			String val = entry.getValue();
-			newm.addSymbol(val, new SymbolHRASMemoryAddress(key));
-		}
-		return newm;
-	}
-
 	private AbstractHRASMemoryAddress nextCommandAddress;
 
 	private HRASAbstractExpressionNode n; // This can either be a integer (wrapped in the IntegerNode class) or an
@@ -223,25 +188,28 @@ public class HRASModel implements ISetN {
 		return sb.toString();
 	}
 
-	public HRAVModel compileToHRAV() {
-		HRAVModel hrav = new HRAVModel();
+	public HRADModel compileToHRAD() {
+		HRADModel hrav = new HRADModel();
 		hrav.setN(n.calculateNumericalValue());
 		if (startAdress != null) {
-			hrav.setStartAddressExplicit(true);
 			hrav.setStartAdress(startAdress.resolve(this));
 		}
 		for (Entry<AbstractHRASMemoryAddress, Boolean> entry : initOnceList) {
 			hrav.addInitOnceAddress(entry.getKey().resolve(this), entry.getValue());
 		}
-		for (Entry<AbstractHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {
+		int pca=startAdress.resolve(this)-getCommandSize();
+		for (Entry<AbstractHRASMemoryAddress, HRASCommand> c : commands.entrySet()) {			
 			AbstractHRASMemoryAddress address = c.getKey();
-			hrav.setNextCommandAddress(address.resolve(this));
+			if(address.resolve(this)-getCommandSize()!=pca) {
+				hrav.addCommand(new HRADStringNamedDirectiveStatement("continue", new HRADIntegerNode(address.resolve(this)), null));
+			}
+			pca=address.resolve(this);
 			HRASCommand command = c.getValue();
 			int cTgtAddress = getCommandTargetAddress(command);
-			HRAVCommand hravCommand = new HRAVCommand();
+			HRADCommand hravCommand = new HRADCommand(null);
 			hravCommand.setOp(command.getOp());
 			if (cTgtAddress < 0) {
-				logger.warning("(HRAS -> HRAV) Negative memory address in command at address " + address + ".");
+				logger.warning("(HRAS -> HRAD) Negative memory address in command at address " + address + ".");
 			}
 			hravCommand.setAddress(cTgtAddress);
 			hrav.addCommand(hravCommand);

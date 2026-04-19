@@ -20,6 +20,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.model.HRAVModel;
 import de.dralle.som.languages.hrbs.model.HRBSModel;
@@ -36,9 +37,11 @@ public class Compiler {
 							new SOMFormats[] { SOMFormats.AB, SOMFormats.CBIN, SOMFormats.IMAGE, SOMFormats.B64,
 									SOMFormats.HRAV }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAV,
-							new SOMFormats[] { SOMFormats.BIN, SOMFormats.HRAS }),
+							new SOMFormats[] { SOMFormats.BIN, SOMFormats.HRAD }),
+					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAD,
+							new SOMFormats[] { SOMFormats.HRAV, SOMFormats.HRAS }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAS,
-							new SOMFormats[] { SOMFormats.HRAV, SOMFormats.HRAC }),
+							new SOMFormats[] { SOMFormats.HRAD, SOMFormats.HRAC }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAC,
 							new SOMFormats[] { SOMFormats.HRAS, SOMFormats.HRBS, SOMFormats.HRAP }),
 					new AbstractMap.SimpleImmutableEntry<SOMFormats, SOMFormats[]>(SOMFormats.HRAP,
@@ -170,17 +173,23 @@ public class Compiler {
 			return (T) ((HRACModel) sourceModel); // no compilation needed. HRAP is no language in itself, but a
 													// modified ("precompiled") version of HRAC
 		}
-		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAV)) {
-			return (T) compileHRAStoHRAV((HRASModel) sourceModel);
+		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAD)) {
+			return (T) compileHRAStoHRAD((HRASModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.HRAS) && targetFormat.equals(SOMFormats.HRAC)) {
 			return (T) compileHRAS2HRAC((HRASModel) sourceModel);
 		}
+		if (sourceFormat.equals(SOMFormats.HRAD) && targetFormat.equals(SOMFormats.HRAV)) {
+			return (T) compileHRADtoHRAV((HRADModel) sourceModel);
+		}
+		if (sourceFormat.equals(SOMFormats.HRAD) && targetFormat.equals(SOMFormats.HRAS)) {
+			return (T) compileHRADtoHRAS((HRADModel) sourceModel);
+		}
 		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.BIN)) {
 			return (T) compileHRAVtoMemspace((HRAVModel) sourceModel);
 		}
-		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.HRAS)) {
-			return (T) HRASModel.compileFromHRAV((HRAVModel) sourceModel);
+		if (sourceFormat.equals(SOMFormats.HRAV) && targetFormat.equals(SOMFormats.HRAD)) {
+			return (T) HRADModel.compileFromHRAV((HRAVModel) sourceModel);
 		}
 		if (sourceFormat.equals(SOMFormats.BIN) && targetFormat.equals(SOMFormats.AB)) {
 			return (T) memSpaceToABString((IMemspace) sourceModel);
@@ -230,8 +239,16 @@ public class Compiler {
 		return HRACModel.compileFromHRAS(m);
 	}
 
-	public HRAVModel compileHRAStoHRAV(HRASModel m) {
+	public HRADModel compileHRAStoHRAD(HRASModel m) {
+		return m.compileToHRAD();
+	}
+
+	public HRAVModel compileHRADtoHRAV(HRADModel m) {
 		return m.compileToHRAV();
+	}
+
+	public HRASModel compileHRADtoHRAS(HRADModel m) {
+		return HRASModel.compileFromHRAD(m);
 	}
 
 	public IMemspace compileHRAVtoMemspace(HRAVModel model) {

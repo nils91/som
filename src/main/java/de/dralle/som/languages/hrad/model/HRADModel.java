@@ -157,7 +157,7 @@ public class HRADModel implements ISetN {
 						localDirectivesMap);
 				HRADResolveDirectiveTreeVisitor directiveResolver = new HRADResolveDirectiveTreeVisitor(lldm,
 						directiveParameterMap, true, true);
-				int si=i; //Need to be able to use i inside the gci function definition
+				int si = i; // Need to be able to use i inside the gci function definition
 				HRADAbstractCustomDirectiveFunction gciFunction = new HRADAbstractCustomDirectiveFunction() {
 
 					@Override
@@ -212,9 +212,9 @@ public class HRADModel implements ISetN {
 							int reqIdx = j * step + startIndex;
 							if (reqIdx > 0 && reqIdx < commands.size()) {
 								AbstractHRADCommand array_element = commands.get(reqIdx);
-								if(array_element instanceof HRADStringNamedDirectiveStatement) {
+								if (array_element instanceof HRADStringNamedDirectiveStatement) {
 									String nodeName = ((HRADStringNamedDirectiveStatement) array_element).getName();
-									if(searchedNodeName.equals(nodeName)) {
+									if (searchedNodeName.equals(nodeName)) {
 										return new HRADIntegerNode(reqIdx);
 									}
 								}
@@ -226,10 +226,11 @@ public class HRADModel implements ISetN {
 				directiveResolver.addCustomDirectiveFunction("gci", gciFunction);
 				if (params != null) {
 					for (HRADAbstractDirectiveExpressionTreeNode string : params) {
-						String pName = string.accept(directiveResolver).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+						String pName = string.accept(directiveResolver)
+								.accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
 						lldm.remove(pName);
 					}
-				}				
+				}
 				HRADAbstractDirectiveExpressionTreeNode resolvedValueTree = value.accept(directiveResolver);
 				String name = null;
 				if (entry instanceof HRADStringNamedDirectiveStatement) {
@@ -246,10 +247,13 @@ public class HRADModel implements ISetN {
 				}
 				if (name != null && !name.isBlank()) {
 					localDirectivesMap.put(name, resolvedValueTree);
-					//Resolve param names
-					List<String> pNames=new ArrayList<String>();
-					for (HRADAbstractDirectiveExpressionTreeNode hradAbstractDirectiveExpressionTreeNode : params) {
-						pNames.add(hradAbstractDirectiveExpressionTreeNode.accept(directiveResolver).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString());
+					// Resolve param names
+					List<String> pNames = new ArrayList<String>();
+					if (params != null) {
+						for (HRADAbstractDirectiveExpressionTreeNode hradAbstractDirectiveExpressionTreeNode : params) {
+							pNames.add(hradAbstractDirectiveExpressionTreeNode.accept(directiveResolver)
+									.accept(new HRADDirectiveTreeCalculateValueVisitor()).toString());
+						}
 					}
 					directiveParameterMap.put(name, pNames);
 					// Check for some special directives
@@ -467,5 +471,4 @@ public class HRADModel implements ISetN {
 		return r;
 	}
 
-	
 }

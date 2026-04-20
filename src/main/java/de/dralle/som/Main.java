@@ -63,7 +63,7 @@ public class Main {
 		gitignLines.add("#GENERATED END");
 	}
 
-	public static void generateAllNewLinesForFormatsAndExceludedFolders(List<String> gitignLines) {
+	public static void generateAllNewLinesForFormatsAndExcludedFolders(List<String> gitignLines) {
 		gitignLines.add(0, "");
 		gitignLines.add(0,
 				"#This file has been generated from a prototype file. Changes should be made to the prototype instead and this file should be regenerated");
@@ -285,7 +285,7 @@ public class Main {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(gitign));
 		readGitignorePrototype(reader, gitignLines);
 		// Add new lines for somformats, except in test/ sample/ and src/
-		generateAllNewLinesForFormatsAndExceludedFolders(gitignLines);
+		generateAllNewLinesForFormatsAndExcludedFolders(gitignLines);
 		for (String string : gitignLines) {
 			writer.write(string);
 			writer.newLine();

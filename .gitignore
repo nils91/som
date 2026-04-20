@@ -35,6 +35,7 @@
 *.bak
 
 #local gitignore backups
+.gitignore.backup
 .gitignore.*.backup
 
 #tmp folder

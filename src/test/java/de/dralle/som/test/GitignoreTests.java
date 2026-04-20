@@ -42,7 +42,7 @@ class GitignoreTests {
 		List<String> prototypeLines = Files.readAllLines(Paths.get(prototypeFile));
 		List<String> actualLines = Files.readAllLines(Paths.get(actualFile));
 		List<String> expectedLines = new ArrayList<>(prototypeLines);
-		Main.generateAllNewLinesForFormatsAndExceludedFolders(expectedLines);
+		Main.generateAllNewLinesForFormatsAndExcludedFolders(expectedLines);
 
 		assertEquals(expectedLines.size(), actualLines.size(), "Number of lines mismatch (--regenerate gitignore)");
 

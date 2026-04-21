@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 
 import de.dralle.som.languages.hrac.HRACParser;
 import de.dralle.som.languages.hrac.model.HRACModel;
+import de.dralle.som.languages.hrad.HRADParser;
 import de.dralle.som.languages.hras.HRASParser;
 import de.dralle.som.languages.hras.model.HRASModel;
 import de.dralle.som.languages.hrav.HRAVParser;
@@ -261,12 +262,14 @@ public class FileLoader {
 		if (sourceFormat.equals(SOMFormats.HRAS)) {
 			return new HRASParser().parse(source);
 		}
+		if (sourceFormat.equals(SOMFormats.HRAD)) {
+			return new HRADParser().parse(source);
+		}
 		if (sourceFormat.equals(SOMFormats.HRAV)) {
 			return new HRAVParser().parse(source);
 		}
 		if (sourceFormat.equals(SOMFormats.HRBS)) {
 			return new HRBSParser().parse(source);
-
 		}
 		if (sourceFormat.equals(SOMFormats.AB)) {
 			Scanner s = new Scanner(source, StandardCharsets.UTF_8.name()).useDelimiter("\\A");

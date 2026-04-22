@@ -151,7 +151,7 @@ signed_integer_or_directive
 integer_or_directive
 :
 	directive_access
-	| INT | DIRECTIVE_VALUE_STR
+	| number | DIRECTIVE_VALUE_STR
 ;
 
 

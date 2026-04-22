@@ -111,8 +111,8 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitInteger_or_directive(Integer_or_directiveContext ctx) {
-		if (ctx.INT() != null) {
-			return new HRADIntegerNode(Util.decodeInt(ctx.INT().getText()));
+		if (ctx.number() != null) {
+			return new HRADIntegerNode(ctx.number().accept(new HRADNumberVisitor()));
 		} else if (ctx.directive_access() != null) {
 			return ctx.directive_access().accept(this);
 		} else if (ctx.DIRECTIVE_VALUE_STR()!=null) {

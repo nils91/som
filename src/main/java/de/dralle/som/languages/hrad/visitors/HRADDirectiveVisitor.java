@@ -54,7 +54,7 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 	@Override
 	public HRADAbstractDirectiveStatement<?> visitSimple_directive(Simple_directiveContext ctx) {
 		if (ctx.directive_name() != null) {
-			ctx.directive_name().accept(this);
+			directive= ctx.directive_name().accept(this);
 		}
 		if (ctx.primary_expr() != null) {
 			directive.setValue(ctx.primary_expr().accept(new HRADExpressionVisitor()));

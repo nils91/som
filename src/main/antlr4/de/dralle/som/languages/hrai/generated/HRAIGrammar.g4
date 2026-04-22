@@ -1,9 +1,11 @@
-grammar HRADGrammar;
+grammar HRAIGrammar;
 
 program
 :
-	line+ EOF?
+	codeblock EOF?
 ;
+
+codeblock:line+;
 
 line
 :
@@ -22,28 +24,16 @@ oti
 	) number
 ;
 
-directive: SEMICOLON (simple_directive | directive_function);
-
-directive_function
+directive: SEMICOLON (directive_name | directive_function_def) (EQ (primary_expr | (C_OPEN codeblock C_CLOSE)))?;
+directive_function_def
 :
-	directive_name P_OPEN (directive_name COMMA)* directive_name P_CLOSE EQ
-	(
-		primary_expr
-	)
-;
-
-simple_directive
-:
-	directive_name EQ
-	(
-		primary_expr
-	)
+	directive_name P_OPEN (directive_name COMMA)* directive_name P_CLOSE
 ;
 
 directive_name
 :
 	INT
-	| name
+	| NAME
 	| directive_access
 	| (P_OPEN primary_expr P_CLOSE)
 ;
@@ -164,7 +154,15 @@ P_CLOSE
 :
 	')'
 ;
+C_OPEN
+:
+	'{'
+;
 
+C_CLOSE
+:
+	'}'
+;
 DASH
 :
 	'-'
@@ -190,7 +188,7 @@ number
 
 based_int
 :
-	INT ITS_A_B
+	INT 'b'
 	(
 		INT
 		| EINT
@@ -224,13 +222,6 @@ decimal_int
 	'0d'? INT
 ;
 
-
-name
-:
-	NAME_TK | ITS_A_B | EINT
-;
-
-
 COMMENT
 :
 	(
@@ -246,8 +237,6 @@ COMMENT
 		)
 	) -> skip
 ;
-
-ITS_A_B : 'b';
 
 NAR
 :
@@ -270,6 +259,21 @@ OTI_CLEAR
 ;
 
 
+CONT
+:
+	'continue'
+	| 'cont'
+;
+
+START
+:
+	'start'
+;
+
+D_N
+:
+	'n'
+;
 DIRECTIVE_VALUE_STR
 :
 	(
@@ -282,8 +286,6 @@ DIRECTIVE_VALUE_STR
 	)
 ;
 
-
-
 INT
 :
 	[0-9]+
@@ -294,7 +296,10 @@ EINT
 	[A-Z0-9]+
 ;
 
-NAME_TK:[a-zA-Z] [a-zA-Z0-9_-]*;
+NAME
+:
+	[a-zA-Z] [a-zA-Z0-9_-]*
+;
 
 EQ
 :
@@ -307,16 +312,6 @@ SEMICOLON
 ;
 
 COMMA:',';
-
-B_OPEN
-:
-	'['
-;
-
-B_CLOSE
-:
-	']'
-;
 
 WS
 :

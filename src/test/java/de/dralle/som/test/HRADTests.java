@@ -147,7 +147,7 @@ class HRADTests {
 	void testComplexDirectiveParseDirectivesParsed() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
 				.loadFromFile("test/fixtures/hrad/ComplexDirectiveParse.hrad");
-		assertIterableEquals(Arrays.asList("a", "b", "c"), hradmodel.getDirectives().values());
+		assertIterableEquals(Arrays.asList("a", "b", "c"), hradmodel.getDirectives().keySet());
 	}
 
 	@Test

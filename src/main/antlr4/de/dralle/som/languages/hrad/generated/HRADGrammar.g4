@@ -43,7 +43,7 @@ simple_directive
 directive_name
 :
 	INT
-	| NAME
+	| name
 	| directive_access
 	| (P_OPEN primary_expr P_CLOSE)
 ;
@@ -190,7 +190,7 @@ number
 
 based_int
 :
-	INT 'b'
+	INT ITS_A_B
 	(
 		INT
 		| EINT
@@ -224,6 +224,13 @@ decimal_int
 	'0d'? INT
 ;
 
+
+name
+:
+	NAME_TK | ITS_A_B | EINT
+;
+
+
 COMMENT
 :
 	(
@@ -239,6 +246,8 @@ COMMENT
 		)
 	) -> skip
 ;
+
+ITS_A_B : 'b';
 
 NAR
 :
@@ -261,21 +270,6 @@ OTI_CLEAR
 ;
 
 
-CONT
-:
-	'continue'
-	| 'cont'
-;
-
-START
-:
-	'start'
-;
-
-D_N
-:
-	'n'
-;
 DIRECTIVE_VALUE_STR
 :
 	(
@@ -288,6 +282,8 @@ DIRECTIVE_VALUE_STR
 	)
 ;
 
+
+
 INT
 :
 	[0-9]+
@@ -298,10 +294,7 @@ EINT
 	[A-Z0-9]+
 ;
 
-NAME
-:
-	[a-zA-Z] [a-zA-Z0-9_-]*
-;
+NAME_TK:[a-zA-Z] [a-zA-Z0-9_-]*;
 
 EQ
 :

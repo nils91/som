@@ -68,8 +68,8 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 		HRADAbstractDirectiveExpressionTreeNode complexName = null;
 		if (ctx.INT() != null) {
 			strName = ctx.INT().getText();
-		} else if (ctx.NAME() != null) {
-			strName = ctx.NAME().getText();
+		} else if (ctx.name() != null) {
+			strName = ctx.name().getText();
 		} else if (ctx.directive_access() != null) {
 			complexName = ctx.directive_access().accept(new HRADExpressionVisitor());
 		} else if (ctx.primary_expr() != null) {
@@ -86,8 +86,8 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 				}
 				if (ctx.INT() != null) {
 					params.add(new HRADIntegerNode(Util.decodeInt(ctx.INT().getText())));
-				} else if (ctx.NAME() != null) {
-					params.add(new HRADStringNode(ctx.NAME().getText()));
+				} else if (ctx.name() != null) {
+					params.add(new HRADStringNode(ctx.name().getText()));
 				} else if (ctx.directive_access() != null) {
 					params.add(ctx.directive_access().accept(new HRADExpressionVisitor()));
 				} else if (ctx.primary_expr() != null) {
@@ -106,8 +106,8 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 				}
 				if (ctx.INT() != null) {
 					params.add(new HRADIntegerNode(Util.decodeInt(ctx.INT().getText())));
-				} else if (ctx.NAME() != null) {
-					params.add(new HRADStringNode(ctx.NAME().getText()));
+				} else if (ctx.name() != null) {
+					params.add(new HRADStringNode(ctx.name().getText()));
 				} else if (ctx.directive_access() != null) {
 					params.add(ctx.directive_access().accept(new HRADExpressionVisitor()));
 				} else if (ctx.primary_expr() != null) {

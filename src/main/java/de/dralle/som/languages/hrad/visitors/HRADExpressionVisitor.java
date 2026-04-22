@@ -115,6 +115,8 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 			return new HRADIntegerNode(Util.decodeInt(ctx.INT().getText()));
 		} else if (ctx.directive_access() != null) {
 			return ctx.directive_access().accept(this);
+		} else if (ctx.DIRECTIVE_VALUE_STR()!=null) {
+			return new HRADStringNode(ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1));
 		}
 		return null;
 	}

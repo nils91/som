@@ -93,6 +93,7 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 				} else if (ctx.primary_expr() != null) {
 					params.add(ctx.primary_expr().accept(new HRADExpressionVisitor()));
 				}
+				directive.setParams(params);
 			}
 		}
 		if (complexName != null) {
@@ -113,6 +114,7 @@ public class HRADDirectiveVisitor extends HRADGrammarBaseVisitor<HRADAbstractDir
 				} else if (ctx.primary_expr() != null) {
 					params.add(ctx.primary_expr().accept(new HRADExpressionVisitor()));
 				}
+				directive.setParams(params);
 			}
 		}
 		return directive;

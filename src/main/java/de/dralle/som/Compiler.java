@@ -128,7 +128,9 @@ public class Compiler {
 	public <T> T compile(Object sourceModel, SOMFormats targetFormat) {
 		SOMFormats sourceFormat = null;
 		for (SOMFormats iterable_element : SOMFormats.values()) {
-			if (sourceModel.getClass().isAssignableFrom(iterable_element.getInternalClazz().getClass())) {
+			Class<? extends Object> sourceModelClass = sourceModel.getClass();
+			Class<?> somFormatClass = iterable_element.getInternalClazz();
+			if (sourceModelClass.isAssignableFrom(somFormatClass)) {
 				sourceFormat = iterable_element;
 			}
 		}

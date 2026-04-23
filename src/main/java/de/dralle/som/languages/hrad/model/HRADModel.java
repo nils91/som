@@ -470,7 +470,7 @@ public class HRADModel implements ISetN {
 		for (HRADAbstractDirectiveExpressionTreeNode paramName : paramNames) {
 			String paramNameString = paramName
 					.accept(new HRADResolveDirectiveTreeVisitor(directiveMap, directiveParameterMap, true, true))
-					.accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+					.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue().toString();
 			paramNamesStrings.add(paramNameString);
 		}
 		return paramNamesStrings;

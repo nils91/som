@@ -40,8 +40,8 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 	public HRADAbstractDirectiveExpressionTreeNode visitDirective_name(Directive_nameContext ctx) {
 		if (ctx.INT() != null) {
 			return new HRADIntegerNode(Util.decodeInt(ctx.INT().getText()));
-		} else if (ctx.name() != null) {
-			return new HRADStringNode(ctx.name().getText());
+		} else if (ctx.NAME() != null) {
+			return new HRADStringNode(ctx.NAME().getText());
 		} else if (ctx.directive_access() != null) {
 			return ctx.directive_access().accept(new HRADExpressionVisitor());
 		} else if (ctx.primary_expr() != null) {

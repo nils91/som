@@ -103,7 +103,7 @@ class HRADTests {
 		if (file != null) {
 			HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile(file, SOMFormats.HRAD);
 			HRAVModel hravmodel = new Compiler().compile(hradmodel, SOMFormats.HRAV);
-			assertEquals(hravmodel.getN(), ((HRADIntegerDirectiveValue) hradmodel.getDirectives().get("start")
+			assertEquals(hravmodel.getStartAdress(), ((HRADIntegerDirectiveValue) hradmodel.getDirectives().get("start")
 					.accept(new HRADDirectiveTreeCalculateValueVisitor())).getValue().intValue());
 		}
 	}

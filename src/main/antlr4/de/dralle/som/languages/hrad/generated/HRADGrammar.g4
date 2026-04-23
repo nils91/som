@@ -43,7 +43,7 @@ simple_directive
 directive_name
 :
 	INT
-	| name
+	| NAME
 	| directive_access
 	| (P_OPEN primary_expr P_CLOSE)
 ;
@@ -181,54 +181,11 @@ command
 
 number
 :
-	based_int
-	| binary_int
-	| octal_int
-	| hex_int
-	| decimal_int
-;
-
-based_int
-:
-	INT ITS_A_B
-	(
-		INT
-		| EINT
-	)
-;
-
-binary_int
-:
-	'0b' INT
-;
-
-octal_int
-:
-	'0o' INT
-;
-
-hex_int
-:
-	(
-		'0h'
-		| '0x'
-	)
-	(
-		INT
-		| EINT
-	)
-;
-
-decimal_int
-:
-	'0d'? INT
+	PREFIXED_INT | INT
 ;
 
 
-name
-:
-	NAME_TK | ITS_A_B | EINT
-;
+
 
 
 COMMENT
@@ -246,8 +203,6 @@ COMMENT
 		)
 	) -> skip
 ;
-
-ITS_A_B : 'b';
 
 NAR
 :
@@ -282,19 +237,48 @@ DIRECTIVE_VALUE_STR
 	)
 ;
 
-
-
-INT
+NAME
 :
-	[0-9]+
+	[a-zA-Z] [a-zA-Z0-9_-]*
 ;
 
-EINT
+BINARY_NUMBER_PREFIX
 :
-	[A-Z0-9]+
+	'0b'
 ;
 
-NAME_TK:[a-zA-Z] [a-zA-Z0-9_-]*;
+OCTAL_NUMBER_PREFIX
+:
+	'0o'
+;
+
+HEX_NUMBER_PREFIX
+:
+	'0h'
+	| '0x'
+;
+
+DECIMAL_NUMBER_PREFIX
+:
+	'0d'
+;
+
+BASE_NUMBER_PREFIX
+:
+	INT 'b'
+;
+
+PREFIXED_INT
+:
+	(
+		BINARY_NUMBER_PREFIX
+		| OCTAL_NUMBER_PREFIX
+		| HEX_NUMBER_PREFIX
+		| DECIMAL_NUMBER_PREFIX
+		| BASE_NUMBER_PREFIX
+	) [0-9a-zA-Z]+
+;
+INT: ([1-9][0-9]*) | '0';
 
 EQ
 :

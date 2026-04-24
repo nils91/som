@@ -67,27 +67,33 @@ public class HRADResolveDirectiveTreeVisitor
 		if (clone) {
 			node = node.clone();
 		}
-		if (resolvables != null) {
-			HRADAbstractDirectiveExpressionTreeNode nameNode = node.getDirectiveName();
-			HRADAbstractDirectiveExpressionTreeNode resolvedNameNode = nameNode.accept(this);
-			HRADAbstractDirectiveValue<?> rnnv = resolvedNameNode.accept(new HRADDirectiveTreeCalculateValueVisitor());
-			String nodeName = rnnv.toString();
-			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(nodeName);
-
-			Map<String, HRADAbstractDirectiveExpressionTreeNode> resolvablesCopy = getResolvablesWithParameters(
-					nodeName, node.getParamValues());
-
-			if (sub != null) {
-				if (deep) {
-					sub = sub.accept(
-							new HRADResolveDirectiveTreeVisitor(resolvablesCopy, resolvableParameter, clone, deep));
-				}
-			}
-			if (sub != null) {
-				return sub;
+		HRADAbstractDirectiveExpressionTreeNode nameNode = node.getDirectiveName();
+		HRADAbstractDirectiveExpressionTreeNode resolvedNameNode = nameNode.accept(this);
+		HRADAbstractDirectiveValue<?> rnnv = resolvedNameNode.accept(new HRADDirectiveTreeCalculateValueVisitor());
+		String nodeName = rnnv.toString();
+		HRADAbstractDirectiveExpressionTreeNode sub = null;
+		if (customFunctions != null) {
+			HRADAbstractCustomDirectiveFunction cf = customFunctions.get(nodeName);
+			if (cf != null) {
+				sub = cf.getValue(node.getParamValues());
 			}
 		}
+		if (sub == null && resolvables != null) {
+			sub = resolvables.get(nodeName);
+
+		}
+		if (sub != null) {
+			if (deep) {
+				sub = sub.accept(new HRADResolveDirectiveTreeVisitor(
+						getResolvablesWithParameters(nodeName, node.getParamValues()), resolvableParameter, clone,
+						deep));
+			}
+		}
+		if (sub != null) {
+			return sub;
+		}
 		return node;
+
 	}
 
 	@Override
@@ -154,17 +160,26 @@ public class HRADResolveDirectiveTreeVisitor
 		if (clone) {
 			node = node.clone();
 		}
-		if (resolvables != null) {
-			HRADAbstractDirectiveExpressionTreeNode sub = resolvables.get(node.getDirectiveName());
-			if (sub != null) {
-				if (deep) {
-					sub = sub.accept(new HRADResolveDirectiveTreeVisitor(getResolvablesWithParameters(node),
-							resolvableParameter, clone, deep));
-				}
+		String nodeName = node.getDirectiveName();
+		HRADAbstractDirectiveExpressionTreeNode sub = null;
+		if (customFunctions != null) {
+			HRADAbstractCustomDirectiveFunction cf = customFunctions.get(nodeName);
+			if (cf != null) {
+				sub = cf.getValue(node.getParamValues());
 			}
-			if (sub != null) {
-				return sub;
+		}
+		if (sub == null && resolvables != null) {
+			sub = resolvables.get(node.getDirectiveName());
+
+		}
+		if (sub != null) {
+			if (deep) {
+				sub = sub.accept(new HRADResolveDirectiveTreeVisitor(getResolvablesWithParameters(node),
+						resolvableParameter, clone, deep));
 			}
+		}
+		if (sub != null) {
+			return sub;
 		}
 		return node;
 	}

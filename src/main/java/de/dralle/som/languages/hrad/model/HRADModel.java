@@ -114,11 +114,6 @@ public class HRADModel implements ISetN {
 		}
 		return super.equals(obj);
 	}
-
-	private int getProbableCommandSize() {
-		return 1 + getN();
-	}
-
 	// only static analysis
 	public List<Map.Entry<Integer, Boolean>> getInitOnceValues() {
 		List<Entry<Integer, Boolean>> initOnceValues = new ArrayList<Map.Entry<Integer, Boolean>>();
@@ -246,7 +241,7 @@ public class HRADModel implements ISetN {
 					HRADDirectiveTreeCalculateValueVisitor vrv = new HRADDirectiveTreeCalculateValueVisitor();
 					vrv.setResolver(directiveResolver);
 					HRADAbstractDirectiveValue<?> nameTreeValue = nameTree.accept(vrv);
-					name = nameTreeValue.toString();
+					name = nameTreeValue.getValue().toString();
 				}
 				if (name != null && !name.isBlank()) {
 					localDirectivesMap.put(name, resolvedValueTree);
@@ -445,8 +440,12 @@ public class HRADModel implements ISetN {
 				List<String> paramNamesStrings = resolveParamNamesToString(r, directiveParameterMap,
 						(HRADAbstractDirectiveStatement<?>) abstractHRADCommand);
 				String name = ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getName();
-				r.put(name, ((HRADStringNamedDirectiveStatement) abstractHRADCommand).getValue()
-						.accept(new HRADResolveDirectiveTreeVisitor(r, directiveParameterMap, true, true)));
+				HRADStringNamedDirectiveStatement snds = (HRADStringNamedDirectiveStatement) abstractHRADCommand;
+				HRADAbstractDirectiveExpressionTreeNode sndsValue = snds.getValue();
+				HRADAbstractDirectiveExpressionTreeNode sndsValueClone = sndsValue.clone();
+				HRADResolveDirectiveTreeVisitor resolver = new HRADResolveDirectiveTreeVisitor(r, directiveParameterMap, true, true);
+				HRADAbstractDirectiveExpressionTreeNode sndsValueCloneResolved = sndsValueClone.accept(resolver);
+				r.put(name, sndsValueCloneResolved);
 				if (paramNamesStrings != null)
 					directiveParameterMap.put(name, paramNamesStrings);
 			}
@@ -489,7 +488,7 @@ public class HRADModel implements ISetN {
 						(HRADAbstractDirectiveStatement<?>) abstractHRADCommand);
 				HRADAbstractDirectiveExpressionTreeNode name = ((HRADComplexNamedDirectiveStatement) abstractHRADCommand)
 						.getName();
-				String nameAsString = name
+				String nameAsString = name.clone()
 						.accept(new HRADResolveDirectiveTreeVisitor(r, directiveParameterMap, true, true))
 						.accept(new HRADDirectiveTreeCalculateValueVisitor()).getValue() + "";
 				r.put(nameAsString, ((HRADComplexNamedDirectiveStatement) abstractHRADCommand).getValue()

@@ -128,9 +128,11 @@ EXCL
 
 absolute_expr
 :
-	par_expr
-	| PIPE par_expr PIPE
+	negation_expr
+	| PIPE negation_expr PIPE
 ;
+
+negation_expr: DASH? par_expr;
 
 PIPE
 :
@@ -139,14 +141,10 @@ PIPE
 
 par_expr
 :
-	signed_integer_or_directive
+	integer_or_directive
 	| P_OPEN primary_expr P_CLOSE
 ;
 
-signed_integer_or_directive
-:
-	DASH? integer_or_directive
-;
 
 integer_or_directive
 :

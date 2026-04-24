@@ -338,4 +338,34 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+	@Test
+	void testSimpleTestCompile() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/test_simple_compile.hrad");
+		HRAVModel hravModel=new Compiler().compile(hradmodel, SOMFormats.HRAV);
+		
+		assertEquals(3, hravModel.getCommands().size());
+
+	}
+	@Test
+	void testSciForward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/test_sci_jump_forward_compile.hrad");
+		HRAVModel hravModel=new Compiler().compile(hradmodel, SOMFormats.HRAV);
+		
+		assertEquals(2, hravModel.getCommands().size());
+
+	}
+	@Test
+	void testSciBackward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/test_sci_jump_backward_compile.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		
+		HRAVModel hravModel=hradmodel.compileToHRAV(compiledDirectives, null);
+		
+		assertEquals(4, hravModel.getCommands().size());
+
+	}
 }

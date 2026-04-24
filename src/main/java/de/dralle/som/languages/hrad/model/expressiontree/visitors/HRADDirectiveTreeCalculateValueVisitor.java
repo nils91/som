@@ -1,6 +1,9 @@
 package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
+import java.util.logging.Logger;
+
 import de.dralle.som.languages.hrad.HRADSourceLocation;
+import de.dralle.som.languages.hrad.model.HRADModel;
 import de.dralle.som.languages.hrad.model.directive.HRADAbstractDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADIntegerDirectiveValue;
 import de.dralle.som.languages.hrad.model.directive.HRADStringDirectiveValue;
@@ -26,6 +29,8 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNode;
 public class HRADDirectiveTreeCalculateValueVisitor
 		implements HRADDirectiveExpressionTreeVisitorInterface<HRADAbstractDirectiveValue<?>> {
 
+	private static final Logger logger = Logger.getLogger(HRADDirectiveTreeCalculateValueVisitor.class.getName());
+	
 	private HRADResolveDirectiveTreeVisitor resolver = null;
 
 	public HRADResolveDirectiveTreeVisitor getResolver() {
@@ -59,7 +64,8 @@ public class HRADDirectiveTreeCalculateValueVisitor
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADAbstractDirectiveNode<?> node) {
 		if(resolver==null) {
-			throw new RuntimeException("Unresolved directive node " + node.getSourceLocation());
+			logger.warning("Unresolved directive node " + node.getSourceLocation());
+			return new HRADIntegerDirectiveValue(0,node.getSourceLocation());
 		}else {
 			HRADAbstractDirectiveExpressionTreeNode resolvedNode = node.accept(resolver);
 			return resolvedNode.accept(this);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -215,6 +216,125 @@ class HRADTests {
 
 		HRADAbstractDirectiveExpressionTreeNode dValueTree = parsedDirectives.get("b");
 		assertEquals(1, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testUnknownDirectiveReturn0() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/directive_unknown.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> parsedDirectives = hradmodel.getDirectives();
+
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = parsedDirectives.get("c");
+		assertEquals(0, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindBackwardForward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_backward_forward.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(1, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindBackward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_backward.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(1, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindCorrect() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_correct.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(4, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindForwardClosest() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_forward_closest.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(4, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindForward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_forward.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(4, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindSelfName() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_self_name.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(3, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciFindSelfNoParam() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_find_self_noparam.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(3, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciNotFindForward() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_not_find_forward_limit.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(-1, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
+				.getValue().intValue());
+
+	}
+	@Test
+	void testGciNotFindUnknown() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader()
+				.loadFromFile("test/fixtures/hrad/gci_not_find_unknown.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		HRADAbstractDirectiveExpressionTreeNode dValueTree = compiledDirectives.get("c");
+		assertEquals(-1, ((HRADIntegerDirectiveValue) dValueTree.accept(new HRADDirectiveTreeCalculateValueVisitor()))
 				.getValue().intValue());
 
 	}

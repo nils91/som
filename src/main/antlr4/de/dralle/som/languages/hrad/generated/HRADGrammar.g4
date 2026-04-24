@@ -148,8 +148,7 @@ par_expr
 
 integer_or_directive
 :
-	directive_access
-	| number | DIRECTIVE_VALUE_STR
+	number | DIRECTIVE_VALUE_STR | directive_access
 ;
 
 
@@ -237,7 +236,7 @@ DIRECTIVE_VALUE_STR
 
 NAME
 :
-	[a-zA-Z] [a-zA-Z0-9_-]*
+	[a-zA-Z] [a-zA-Z0-9_]*
 ;
 
 BINARY_NUMBER_PREFIX

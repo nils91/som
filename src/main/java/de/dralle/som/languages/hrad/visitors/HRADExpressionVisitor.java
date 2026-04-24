@@ -12,10 +12,10 @@ import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Directive_nameCo
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Factorial_exprContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Integer_or_directiveContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Multiplicative_exprContext;
+import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Negation_exprContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Par_exprContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Power_exprContext;
 import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Primary_exprContext;
-import de.dralle.som.languages.hrad.generated.HRADGrammarParser.Signed_integer_or_directiveContext;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbsoluteExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveNode;
@@ -37,6 +37,15 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveEx
 public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDirectiveExpressionTreeNode> {
 
 	@Override
+	public HRADAbstractDirectiveExpressionTreeNode visitNegation_expr(Negation_exprContext ctx) {
+		HRADAbstractDirectiveExpressionTreeNode child0 = ctx.par_expr().accept(this);
+		if (ctx.DASH() != null ) {
+			return new HRADNegationExpressionNode(child0);
+		}
+		return child0;
+	}
+
+	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitDirective_name(Directive_nameContext ctx) {
 		if (ctx.INT() != null) {
 			return new HRADIntegerNode(Util.decodeInt(ctx.INT().getText()));
@@ -52,7 +61,7 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitAbsolute_expr(Absolute_exprContext ctx) {
-		HRADAbstractDirectiveExpressionTreeNode child0 = ctx.par_expr().accept(this);
+		HRADAbstractDirectiveExpressionTreeNode child0 = ctx.negation_expr().accept(this);
 		if (ctx.PIPE() != null && ctx.PIPE().size() == 2) {
 			return new HRADAbsoluteExpressionNode(child0);
 		}
@@ -140,8 +149,8 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitPar_expr(Par_exprContext ctx) {
-		if (ctx.signed_integer_or_directive() != null) {
-			return ctx.signed_integer_or_directive().accept(this);
+		if (ctx.integer_or_directive() != null) {
+			return ctx.integer_or_directive().accept(this);
 		}
 		if (ctx.primary_expr() != null) {
 			return ctx.primary_expr().accept(this);
@@ -166,14 +175,6 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 		return ctx.additive_expr().accept(this);
 	}
 
-	@Override
-	public HRADAbstractDirectiveExpressionTreeNode visitSigned_integer_or_directive(
-			Signed_integer_or_directiveContext ctx) {
-		HRADAbstractDirectiveExpressionTreeNode childNode = ctx.integer_or_directive().accept(this);
-		if (ctx.DASH() != null) {
-			return new HRADNegationExpressionNode(childNode);
-		}
-		return childNode;
-	}
+
 
 }

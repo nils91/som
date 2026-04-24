@@ -132,8 +132,11 @@ public class HRADModel implements ISetN {
 	}
 
 	public HRAVModel compileToHRAV() {
-		Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
-		Map<String, List<String>> directiveParameterMap = new HashMap<String, List<String>>();
+		return compileToHRAV(null, null);
+	}
+	public HRAVModel compileToHRAV(Map<String, HRADAbstractDirectiveExpressionTreeNode> localDirectivesMap, Map<String, List<String>> directiveParameterMap) {
+		if(localDirectivesMap==null) localDirectivesMap = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+		if(directiveParameterMap==null) directiveParameterMap = new HashMap<String, List<String>>();
 		int n = getN();
 		int start = getStartAdress();
 		HRAVModel hrav = new HRAVModel();

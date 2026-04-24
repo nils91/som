@@ -49,7 +49,7 @@ directive_name
 ;
 directive_access
 :
-	DOLLAR directive_name ( P_OPEN (primary_expr COMMA)* primary_expr P_CLOSE )?
+	DOLLAR directive_name ( P_OPEN ((primary_expr COMMA)* primary_expr)? P_CLOSE )?
 ;
 
 DOLLAR

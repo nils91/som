@@ -203,10 +203,10 @@ public class HRADModel implements ISetN {
 							}
 						}
 						if (npvv.size() >= 1) {
-							searchedNodeName = npvv.get(0).toString();
+							searchedNodeName = npvv.get(0).getValue().toString();
 						}
 						if (searchedNodeName == null) {
-							return null;
+							return new HRADIntegerNode(si);
 						}
 						if (limit == -1) {
 							limit = commands.size();

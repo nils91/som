@@ -26,6 +26,7 @@ public abstract class HRADDualChildExpressionNode extends HRADAbstractDirectiveE
 	public HRADDualChildExpressionNode clone() {
 		// TODO Auto-generated method stub
 		HRADDualChildExpressionNode cl = (HRADDualChildExpressionNode) super.clone();
+		cl.childs=new HRADAbstractDirectiveExpressionTreeNode[childs.length];
 		for (int i = 0; i < childs.length; i++) {
 			HRADAbstractDirectiveExpressionTreeNode abstractExpressionNode = childs[i];
 			cl.childs[i] = abstractExpressionNode.clone();

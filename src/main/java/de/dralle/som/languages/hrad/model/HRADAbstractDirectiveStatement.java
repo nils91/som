@@ -1,5 +1,6 @@
 package de.dralle.som.languages.hrad.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,19 @@ public abstract class HRADAbstractDirectiveStatement<T> extends AbstractHRADComm
 	}
 	public HRADAbstractDirectiveExpressionTreeNode getValue() {
 		return value;
+	}
+	@Override
+	public HRADAbstractDirectiveStatement<?> clone() {
+		// TODO Auto-generated method stub
+		HRADAbstractDirectiveStatement<?> clone = (HRADAbstractDirectiveStatement<?>) super.clone();
+		if(value!=null) clone.value=value.clone();
+		if(paramNames!=null) {
+			clone.paramNames=new ArrayList<HRADAbstractDirectiveExpressionTreeNode>();
+			for (HRADAbstractDirectiveExpressionTreeNode hradAbstractDirectiveExpressionTreeNode : paramNames) {
+				clone.paramNames.add(hradAbstractDirectiveExpressionTreeNode.clone());
+			}
+		}
+		return clone;
 	}
 	public void setValue(HRADAbstractDirectiveExpressionTreeNode value) {
 		this.value = value;

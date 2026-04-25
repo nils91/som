@@ -31,15 +31,13 @@ import de.dralle.som.languages.hrad.model.expressiontree.HRADPlusExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADPowerExpressionNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNamedDirectiveNode;
 import de.dralle.som.languages.hrad.model.expressiontree.HRADStringNode;
-import de.dralle.som.languages.hrad.generated.HRADGrammarBaseVisitor;
-import de.dralle.som.languages.hrad.model.expressiontree.HRADAbstractDirectiveExpressionTreeNode;
 
 public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDirectiveExpressionTreeNode> {
 
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitNegation_expr(Negation_exprContext ctx) {
 		HRADAbstractDirectiveExpressionTreeNode child0 = ctx.par_expr().accept(this);
-		if (ctx.DASH() != null ) {
+		if (ctx.DASH() != null) {
 			return new HRADNegationExpressionNode(child0);
 		}
 		return child0;
@@ -61,7 +59,13 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitAbsolute_expr(Absolute_exprContext ctx) {
-		HRADAbstractDirectiveExpressionTreeNode child0 = ctx.negation_expr().accept(this);
+		HRADAbstractDirectiveExpressionTreeNode child0 = null;
+		if (ctx.negation_expr() != null) {
+			child0 = ctx.negation_expr().accept(this);
+		}
+		if (ctx.primary_expr() != null) {
+			child0 = ctx.primary_expr().accept(this);
+		}
 		if (ctx.PIPE() != null && ctx.PIPE().size() == 2) {
 			return new HRADAbsoluteExpressionNode(child0);
 		}
@@ -86,20 +90,18 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 	@Override
 	public HRADAbstractDirectiveExpressionTreeNode visitDirective_access(Directive_accessContext ctx) {
 		HRADAbstractDirectiveExpressionTreeNode name = ctx.directive_name().accept(new HRADExpressionVisitor());
-		HRADAbstractDirectiveNode<?> returnNode=null;
-		if(name instanceof HRADIntegerNode) {
-			returnNode= new HRADStringNamedDirectiveNode(((HRADIntegerNode)name).getValue()+"");
+		HRADAbstractDirectiveNode<?> returnNode = null;
+		if (name instanceof HRADIntegerNode) {
+			returnNode = new HRADStringNamedDirectiveNode(((HRADIntegerNode) name).getValue() + "");
+		} else if (name instanceof HRADStringNode) {
+			returnNode = new HRADStringNamedDirectiveNode(((HRADStringNode) name).getValue() + "");
+		} else {
+			returnNode = new HRADComplexNamedDirectiveNode(name);
 		}
-		else if(name instanceof HRADStringNode) {
-			returnNode= new HRADStringNamedDirectiveNode(((HRADStringNode)name).getValue()+"");
-		}
-		else{
-			returnNode= new HRADComplexNamedDirectiveNode(name);
-		}
-		if(ctx.primary_expr()!=null) {
+		if (ctx.primary_expr() != null) {
 			List<HRADAbstractDirectiveExpressionTreeNode> pValues = returnNode.getParamValues();
-			if(pValues==null) {
-				pValues=new ArrayList<HRADAbstractDirectiveExpressionTreeNode>();
+			if (pValues == null) {
+				pValues = new ArrayList<HRADAbstractDirectiveExpressionTreeNode>();
 			}
 			for (Primary_exprContext hradAbstractDirectiveExpressionTreeNode : ctx.primary_expr()) {
 				pValues.add(hradAbstractDirectiveExpressionTreeNode.accept(new HRADExpressionVisitor()));
@@ -124,8 +126,9 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 			return new HRADIntegerNode(ctx.number().accept(new HRADNumberVisitor()));
 		} else if (ctx.directive_access() != null) {
 			return ctx.directive_access().accept(this);
-		} else if (ctx.DIRECTIVE_VALUE_STR()!=null) {
-			return new HRADStringNode(ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length()-1));
+		} else if (ctx.DIRECTIVE_VALUE_STR() != null) {
+			return new HRADStringNode(
+					ctx.DIRECTIVE_VALUE_STR().getText().substring(1, ctx.DIRECTIVE_VALUE_STR().getText().length() - 1));
 		}
 		return null;
 	}
@@ -174,7 +177,5 @@ public class HRADExpressionVisitor extends HRADGrammarBaseVisitor<HRADAbstractDi
 	public HRADAbstractDirectiveExpressionTreeNode visitPrimary_expr(Primary_exprContext ctx) {
 		return ctx.additive_expr().accept(this);
 	}
-
-
 
 }

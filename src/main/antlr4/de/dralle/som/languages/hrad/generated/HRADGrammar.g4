@@ -129,7 +129,7 @@ EXCL
 absolute_expr
 :
 	negation_expr
-	| PIPE negation_expr PIPE
+	| PIPE primary_expr PIPE
 ;
 
 negation_expr: DASH? par_expr;

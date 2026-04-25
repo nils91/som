@@ -70,7 +70,7 @@ public class HRADResolveDirectiveTreeVisitor
 		HRADAbstractDirectiveExpressionTreeNode nameNode = node.getDirectiveName();
 		HRADAbstractDirectiveExpressionTreeNode resolvedNameNode = nameNode.accept(this);
 		HRADAbstractDirectiveValue<?> rnnv = resolvedNameNode.accept(new HRADDirectiveTreeCalculateValueVisitor());
-		String nodeName = rnnv.toString();
+		String nodeName = rnnv.getValue().toString();
 		HRADAbstractDirectiveExpressionTreeNode sub = null;
 		if (customFunctions != null) {
 			HRADAbstractCustomDirectiveFunction cf = customFunctions.get(nodeName);

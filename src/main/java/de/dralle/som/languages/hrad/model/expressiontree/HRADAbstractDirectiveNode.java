@@ -33,7 +33,14 @@ public abstract class HRADAbstractDirectiveNode<T> extends HRADAbstractDirective
 
 	@Override
 	public HRADAbstractDirectiveNode<T> clone() {
-		return (HRADAbstractDirectiveNode<T>) super.clone();
+		HRADAbstractDirectiveNode<T> clone = (HRADAbstractDirectiveNode<T>) super.clone();
+		if(paramValues!=null) {
+			clone.paramValues=new ArrayList<HRADAbstractDirectiveExpressionTreeNode>();
+			for (HRADAbstractDirectiveExpressionTreeNode hradAbstractDirectiveExpressionTreeNode : paramValues) {
+				clone.paramValues.add(hradAbstractDirectiveExpressionTreeNode.clone());
+			}
+		}
+		return clone;
 	}
 
 

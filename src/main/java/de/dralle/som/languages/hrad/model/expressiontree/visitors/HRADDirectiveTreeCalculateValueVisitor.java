@@ -1,5 +1,7 @@
 package de.dralle.som.languages.hrad.model.expressiontree.visitors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import de.dralle.som.languages.hrad.HRADSourceLocation;
@@ -31,6 +33,12 @@ public class HRADDirectiveTreeCalculateValueVisitor
 
 	private static final Logger logger = Logger.getLogger(HRADDirectiveTreeCalculateValueVisitor.class.getName());
 	
+	private List<HRADAbstractDirectiveNode<?>> unresolvables=new ArrayList<HRADAbstractDirectiveNode<?>>();
+	
+	public List<HRADAbstractDirectiveNode<?>> getUnresolvables() {
+		return unresolvables;
+	}
+
 	private HRADResolveDirectiveTreeVisitor resolver = null;
 
 	public HRADResolveDirectiveTreeVisitor getResolver() {
@@ -41,16 +49,7 @@ public class HRADDirectiveTreeCalculateValueVisitor
 		this.resolver = resolver;
 	}
 
-	@Override
-	public HRADAbstractDirectiveValue<?> visit(HRADComplexNamedDirectiveNode node) {
-		if(resolver==null) {
-			throw new RuntimeException("Unresolved directive node " + node.getSourceLocation());
-		}else {
-			HRADAbstractDirectiveExpressionTreeNode resolvedNode = node.accept(resolver);
-			return resolvedNode.accept(this);
-		}		
-	}
-
+	
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADAbsoluteExpressionNode node) {
 		HRADAbstractDirectiveValue<?> v1 = node.getChild().accept(this);
@@ -64,7 +63,8 @@ public class HRADDirectiveTreeCalculateValueVisitor
 	@Override
 	public HRADAbstractDirectiveValue<?> visit(HRADAbstractDirectiveNode<?> node) {
 		if(resolver==null) {
-			logger.warning("Unresolved directive node " + node.getSourceLocation());
+			logger.warning("Unresolved directive node " +node.getDirectiveName()+"("+ node.getSourceLocation()+")");
+			unresolvables.add(node);
 			return new HRADIntegerDirectiveValue(0,node.getSourceLocation());
 		}else {
 			HRADAbstractDirectiveExpressionTreeNode resolvedNode = node.accept(resolver);

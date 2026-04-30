@@ -219,10 +219,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testUnknownDirectiveReturn0() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/directive_unknown.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/directive_unknown.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> parsedDirectives = hradmodel.getDirectives();
 
 		HRADAbstractDirectiveExpressionTreeNode dValueTree = parsedDirectives.get("c");
@@ -230,6 +230,7 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindBackwardForward() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
@@ -242,10 +243,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindBackward() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/gci_find_backward.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/gci_find_backward.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
 		hradmodel.compileToHRAV(compiledDirectives, null);
@@ -254,10 +255,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindCorrect() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/gci_find_correct.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/gci_find_correct.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
 		hradmodel.compileToHRAV(compiledDirectives, null);
@@ -266,6 +267,7 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindForwardClosest() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
@@ -278,10 +280,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindForward() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/gci_find_forward.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/gci_find_forward.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
 		hradmodel.compileToHRAV(compiledDirectives, null);
@@ -290,10 +292,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindSelfName() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/gci_find_self_name.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/gci_find_self_name.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
 		hradmodel.compileToHRAV(compiledDirectives, null);
@@ -302,6 +304,7 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciFindSelfNoParam() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
@@ -314,6 +317,7 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciNotFindForward() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
@@ -326,10 +330,10 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testGciNotFindUnknown() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/gci_not_find_unknown.hrad");
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/gci_not_find_unknown.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
 		hradmodel.compileToHRAV(compiledDirectives, null);
@@ -338,34 +342,52 @@ class HRADTests {
 				.getValue().intValue());
 
 	}
+
 	@Test
 	void testSimpleTestCompile() throws IOException {
-		HRADModel hradmodel = (HRADModel) new FileLoader()
-				.loadFromFile("test/fixtures/hrad/test_simple_compile.hrad");
-		HRAVModel hravModel=new Compiler().compile(hradmodel, SOMFormats.HRAV);
-		
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/test_simple_compile.hrad");
+		HRAVModel hravModel = new Compiler().compile(hradmodel, SOMFormats.HRAV);
+
 		assertEquals(3, hravModel.getCommands().size());
 
 	}
+
 	@Test
 	void testSciForward() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
 				.loadFromFile("test/fixtures/hrad/test_sci_jump_forward_compile.hrad");
-		HRAVModel hravModel=new Compiler().compile(hradmodel, SOMFormats.HRAV);
-		
+		HRAVModel hravModel = new Compiler().compile(hradmodel, SOMFormats.HRAV);
+
 		assertEquals(2, hravModel.getCommands().size());
 
 	}
+
 	@Test
 	void testSciBackward() throws IOException {
 		HRADModel hradmodel = (HRADModel) new FileLoader()
 				.loadFromFile("test/fixtures/hrad/test_sci_jump_backward_compile.hrad");
 		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
 
-		
-		HRAVModel hravModel=hradmodel.compileToHRAV(compiledDirectives, null);
-		
+		HRAVModel hravModel = hradmodel.compileToHRAV(compiledDirectives, null);
+
 		assertEquals(4, hravModel.getCommands().size());
 
+	}
+
+	@Test
+	void testRecursiveDirective() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/recursive_directive.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> compiledDirectives = new LinkedHashMap<String, HRADAbstractDirectiveExpressionTreeNode>();
+		hradmodel.compileToHRAV(compiledDirectives, null);
+		assertTrue(!compiledDirectives.isEmpty());
+		for (int i = 0; i < 20; i++) {
+			assertNotNull(compiledDirectives.get(i + ""));
+		}
+	}
+	@Test
+	void testRecursiveDirectiveSimple() throws IOException {
+		HRADModel hradmodel = (HRADModel) new FileLoader().loadFromFile("test/fixtures/hrad/recursive_directive_simple.hrad");
+		Map<String, HRADAbstractDirectiveExpressionTreeNode> directives = hradmodel.getDirectives();
+		assertEquals(9,((HRADIntegerDirectiveValue) directives.get("a").accept(new HRADDirectiveTreeCalculateValueVisitor())).getValue().intValue());
 	}
 }

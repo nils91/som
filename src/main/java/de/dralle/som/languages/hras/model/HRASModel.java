@@ -75,17 +75,18 @@ public class HRASModel implements ISetN {
 				newm.setNextCommandAddress(new SymbolHRASMemoryAddress(ncaaSymbolName));
 			}
 			if(ce instanceof HRADAbstractDirectiveStatement<?>) {
+				List<HRADAbstractDirectiveExpressionTreeNode> params = ((HRADAbstractDirectiveStatement<?>) ce).getParams();
 				String dName ="";
 				if(ce instanceof HRADStringNamedDirectiveStatement) {
 					dName = ((HRADStringNamedDirectiveStatement) ce).getName();
 				}if(ce instanceof HRADComplexNamedDirectiveStatement) {
 					HRADAbstractDirectiveExpressionTreeNode dNameET = ((HRADComplexNamedDirectiveStatement) ce).getName();
 					dName = dNameET.accept(new HRADResolveDirectiveTreeVisitor(model
-							.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
+							.getDirectives(), null, params, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor()).toString();
 				}
 				if("continue".equals(dName)||"cont".equals(dName)) {
 					HRADAbstractDirectiveExpressionTreeNode valueET = ((HRADAbstractDirectiveStatement<?>) ce).getValue();
-					HRADAbstractDirectiveValue<?> valueETvalue = valueET.accept(new HRADResolveDirectiveTreeVisitor(model.getDirectives(), null, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor());
+					HRADAbstractDirectiveValue<?> valueETvalue = valueET.accept(new HRADResolveDirectiveTreeVisitor(model.getDirectives(), null, params, true, true)).accept(new HRADDirectiveTreeCalculateValueVisitor());
 					if(valueETvalue instanceof HRADStringDirectiveValue) {
 						int ncaaInt = Util.decodeInt(valueETvalue.toString());
 						String ncaaSymbolName = symbols.getOrDefault(ncaaInt, "MA"+ncaaInt);

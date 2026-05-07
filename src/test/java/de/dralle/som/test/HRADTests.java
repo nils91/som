@@ -382,7 +382,17 @@ class HRADTests {
 		assertTrue(!compiledDirectives.isEmpty());
 		for (int i = 0; i < 20; i++) {
 			assertNotNull(compiledDirectives.get(i + ""));
+			assertEquals(getFib(i), ((HRADIntegerDirectiveValue)compiledDirectives.get(i+"").accept(new HRADDirectiveTreeCalculateValueVisitor())).getValue());
 		}
+	}
+	int getFib(int n) {
+		if(n<=0) {
+			return 0;
+		}if(n==1) {
+			return 1;
+		}
+		return getFib(n-2)+getFib(n-1);
+		
 	}
 	@Test
 	void testRecursiveDirectiveSimple() throws IOException {

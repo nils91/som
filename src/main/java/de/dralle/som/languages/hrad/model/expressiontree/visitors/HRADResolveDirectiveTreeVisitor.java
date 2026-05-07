@@ -112,7 +112,6 @@ public class HRADResolveDirectiveTreeVisitor
 							.accept(new HRADResolveDirectiveTreeVisitor(resolvables, resolvableParameter, dependables,
 									clone, deep));
 					if (pValue != null) {
-						System.out.println(pName + ":" + pValue);
 						resolvablesCopy.put(pName, pValue);
 					}
 				}

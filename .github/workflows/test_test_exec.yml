@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-java@v6
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Test with Maven
       env:
         TEST_TEST_EXEC_FILE: ./tmp/test/JUnitTestExecutionTestfile

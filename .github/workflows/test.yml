@@ -11,6 +11,6 @@ jobs:
       uses: actions/setup-java@v6
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Test with Maven
       run: mvn clean test
